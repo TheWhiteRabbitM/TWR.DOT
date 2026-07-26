@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "places": [
     {
       "key": "node/3123151652",
@@ -10,12 +10,43 @@
       "lat": 40.8497493,
       "lon": 14.263352,
       "reviews": [
-        { "alias": "a1", "rating": 5, "tier": 2, "daysAgo": 2, "body": "The Margherita is everything. Two euros of pure joy, worth the queue." },
-        { "alias": "a2", "rating": 5, "tier": 2, "daysAgo": 6, "body": "Only two pizzas on the menu and they nailed both. A pilgrimage." },
-        { "alias": "a3", "rating": 4, "tier": 2, "daysAgo": 12, "body": "Incredible pizza, but be ready to wait 40 minutes on a Saturday." },
-        { "alias": "a4", "rating": 5, "tier": 2, "daysAgo": 30, "body": "Best pizza of my life, and I have eaten a lot of pizza." },
-        { "alias": "a5", "rating": 3, "tier": 1, "daysAgo": 48, "body": "Great dough, chaotic service. Bring cash." }
-      ]
+        {
+          "alias": "a1",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 2,
+          "body": "The Margherita is everything. Two euros of pure joy, worth the queue."
+        },
+        {
+          "alias": "a2",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 6,
+          "body": "Only two pizzas on the menu and they nailed both. A pilgrimage."
+        },
+        {
+          "alias": "a3",
+          "rating": 4,
+          "tier": 2,
+          "daysAgo": 12,
+          "body": "Incredible pizza, but be ready to wait 40 minutes on a Saturday."
+        },
+        {
+          "alias": "a4",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 30,
+          "body": "Best pizza of my life, and I have eaten a lot of pizza."
+        },
+        {
+          "alias": "a5",
+          "rating": 3,
+          "tier": 1,
+          "daysAgo": 48,
+          "body": "Great dough, chaotic service. Bring cash."
+        }
+      ],
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Pizzeria%20Da%20Michele%2C%20Napoli.jpg?width=960"
     },
     {
       "key": "node/2246354459",
@@ -26,9 +57,27 @@
       "lat": 41.9091879,
       "lon": 12.46687,
       "reviews": [
-        { "alias": "b1", "rating": 5, "tier": 2, "daysAgo": 1, "body": "The pistachio tastes like actual pistachios. Rare and wonderful." },
-        { "alias": "b2", "rating": 5, "tier": 2, "daysAgo": 9, "body": "Natural ingredients, no fake colours. You can taste the difference." },
-        { "alias": "b3", "rating": 4, "tier": 2, "daysAgo": 20, "body": "A bit pricey but the hazelnut is unforgettable." }
+        {
+          "alias": "b1",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 1,
+          "body": "The pistachio tastes like actual pistachios. Rare and wonderful."
+        },
+        {
+          "alias": "b2",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 9,
+          "body": "Natural ingredients, no fake colours. You can taste the difference."
+        },
+        {
+          "alias": "b3",
+          "rating": 4,
+          "tier": 2,
+          "daysAgo": 20,
+          "body": "A bit pricey but the hazelnut is unforgettable."
+        }
       ]
     },
     {
@@ -39,11 +88,29 @@
       "address": "Calle Longa, Venezia",
       "lat": 45.4380556,
       "lon": 12.3422689,
-      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Libreria_Acqua_Alta_04.jpg/640px-Libreria_Acqua_Alta_04.jpg",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Libreria_Acqua_Alta_04.jpg?width=960",
       "reviews": [
-        { "alias": "c1", "rating": 5, "tier": 2, "daysAgo": 3, "body": "Books in a gondola. The most beautiful, chaotic bookshop anywhere." },
-        { "alias": "c2", "rating": 4, "tier": 2, "daysAgo": 15, "body": "More of an experience than a shop. The cat is in charge." },
-        { "alias": "c3", "rating": 5, "tier": 2, "daysAgo": 40, "body": "A staircase made of books leads to a canal view. Magic." }
+        {
+          "alias": "c1",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 3,
+          "body": "Books in a gondola. The most beautiful, chaotic bookshop anywhere."
+        },
+        {
+          "alias": "c2",
+          "rating": 4,
+          "tier": 2,
+          "daysAgo": 15,
+          "body": "More of an experience than a shop. The cat is in charge."
+        },
+        {
+          "alias": "c3",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 40,
+          "body": "A staircase made of books leads to a canal view. Magic."
+        }
       ]
     },
     {
@@ -54,10 +121,22 @@
       "address": "Via dei Condotti 86, Roma",
       "lat": 41.9056653,
       "lon": 12.4816137,
-      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Caff%C3%A8_Greco._Roma.jpg/640px-Caff%C3%A8_Greco._Roma.jpg",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Caff%C3%A8_Greco._Roma.jpg?width=960",
       "reviews": [
-        { "alias": "d1", "rating": 4, "tier": 2, "daysAgo": 5, "body": "History in every corner. Coffee is good; you pay for the room." },
-        { "alias": "d2", "rating": 3, "tier": 1, "daysAgo": 22, "body": "Beautiful but touristy. Stand at the bar to save half the price." }
+        {
+          "alias": "d1",
+          "rating": 4,
+          "tier": 2,
+          "daysAgo": 5,
+          "body": "History in every corner. Coffee is good; you pay for the room."
+        },
+        {
+          "alias": "d2",
+          "rating": 3,
+          "tier": 1,
+          "daysAgo": 22,
+          "body": "Beautiful but touristy. Stand at the bar to save half the price."
+        }
       ]
     },
     {
@@ -68,11 +147,28 @@
       "address": "Via dei Vascellari 29, Roma",
       "lat": 41.8880864,
       "lon": 12.477807,
-      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Santa_Maria_in_Trastevere_fountain.jpg/640px-Santa_Maria_in_Trastevere_fountain.jpg",
       "reviews": [
-        { "alias": "e1", "rating": 5, "tier": 2, "daysAgo": 4, "body": "Cacio e pepe done right. Tiny place, huge flavour." },
-        { "alias": "e2", "rating": 5, "tier": 2, "daysAgo": 18, "body": "The carbonara is the reason I keep coming back to Trastevere." },
-        { "alias": "e3", "rating": 4, "tier": 2, "daysAgo": 33, "body": "Worth the wait. Get there before it opens or queue." }
+        {
+          "alias": "e1",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 4,
+          "body": "Cacio e pepe done right. Tiny place, huge flavour."
+        },
+        {
+          "alias": "e2",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 18,
+          "body": "The carbonara is the reason I keep coming back to Trastevere."
+        },
+        {
+          "alias": "e3",
+          "rating": 4,
+          "tier": 2,
+          "daysAgo": 33,
+          "body": "Worth the wait. Get there before it opens or queue."
+        }
       ]
     },
     {
@@ -83,10 +179,22 @@
       "address": "Piazza del Carmine, Palermo",
       "lat": 38.1113556,
       "lon": 13.3615778,
-      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Ballar%C3%B2_Palermo.JPG/640px-Ballar%C3%B2_Palermo.JPG",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Ballar%C3%B2_Palermo.JPG?width=960",
       "reviews": [
-        { "alias": "f1", "rating": 5, "tier": 2, "daysAgo": 7, "body": "Loud, alive, delicious. The panelle alone are worth the trip." },
-        { "alias": "f2", "rating": 4, "tier": 2, "daysAgo": 25, "body": "Watch your pockets, feast your eyes. Real Palermo." }
+        {
+          "alias": "f1",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 7,
+          "body": "Loud, alive, delicious. The panelle alone are worth the trip."
+        },
+        {
+          "alias": "f2",
+          "rating": 4,
+          "tier": 2,
+          "daysAgo": 25,
+          "body": "Watch your pockets, feast your eyes. Real Palermo."
+        }
       ]
     },
     {
@@ -98,8 +206,20 @@
       "lat": 45.0762364,
       "lon": 7.678984,
       "reviews": [
-        { "alias": "g1", "rating": 5, "tier": 2, "daysAgo": 11, "body": "The bicerin is dessert, coffee and history in one glass. Since 1763." },
-        { "alias": "g2", "rating": 5, "tier": 2, "daysAgo": 29, "body": "Tiny marble tables, zero rush. This is how coffee should feel." }
+        {
+          "alias": "g1",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 11,
+          "body": "The bicerin is dessert, coffee and history in one glass. Since 1763."
+        },
+        {
+          "alias": "g2",
+          "rating": 5,
+          "tier": 2,
+          "daysAgo": 29,
+          "body": "Tiny marble tables, zero rush. This is how coffee should feel."
+        }
       ]
     }
   ]

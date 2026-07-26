@@ -134,6 +134,12 @@ async function refreshSeedFromBulletin(): Promise<boolean> {
         state.places[k] = p;
         state.reviews[k] = fresh.reviews[k] ?? [];
         changed = true;
+      } else if (state.places[k].image !== p.image) {
+        // Corrections to place FACTS (a photo URL that 404s, a fixed address)
+        // must reach people who already have the place cached; their own
+        // reviews and ratings are never touched.
+        state.places[k] = { ...state.places[k], image: p.image, address: p.address };
+        changed = true;
       }
     }
     if (changed || state.seedVersion !== fresh.seedVersion) {

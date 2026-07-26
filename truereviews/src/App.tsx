@@ -8,6 +8,7 @@ import { REVIEW_REGISTRY } from './lib/config';
 import { osmLink, mapsLink } from './lib/osm';
 import { openExternal, copyText, type OpenResult } from './lib/host-nav';
 import { Stars, RatePicker } from './Stars';
+import { usePlacePhoto } from './usePlacePhoto';
 import {
   pseudonym,
   initials,
@@ -131,24 +132,26 @@ function PlaceCard({
   index: number;
 }) {
   const rated = place.fullCount > 0;
+  const { ref: photoRef, photo, onError } = usePlacePhoto(place);
   return (
     <button
       className="pcard"
       style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }}
       onClick={() => onOpen(place)}
     >
+      {/* The glyph panel is always painted; a photo is layered over it. A place
+          with no photo — the common case — still looks finished, and a file
+          that 404s falls back instead of leaving an empty frame. */}
       <span
         className="pcard-banner"
-        style={{
-          backgroundImage: place.image
-            ? `linear-gradient(rgba(8,8,12,0.08), rgba(8,8,12,0.34)), url("${place.image}")`
-            : categoryGradient(place.category),
-        }}
+        ref={photoRef}
+        style={{ backgroundImage: categoryGradient(place.category) }}
       >
-        {!place.image && (
-          <span className="pcard-emoji" aria-hidden="true">
-            {place.emoji}
-          </span>
+        <span className="pcard-emoji" aria-hidden="true">
+          {place.emoji}
+        </span>
+        {photo && (
+          <img className="pcard-photo" src={photo.url} alt="" loading="lazy" onError={onError} />
         )}
       </span>
       {/* Sibling of the banner, not a child: the banner clips its overflow for
@@ -324,24 +327,7 @@ function Home({ driver, onOpen }: { driver: ReviewsDriver; onOpen: (p: Place) =>
           <div className="section-hd">Loved by verified humans</div>
           <div className="feat-row">
             {featured.map((p) => (
-              <button className="feat-card" key={p.key} onClick={() => onOpen(p)}>
-                <span
-                  className="feat-banner"
-                  style={{
-                    backgroundImage: p.image
-                      ? `linear-gradient(rgba(8,8,12,0.06), rgba(8,8,12,0.3)), url("${p.image}")`
-                      : categoryGradient(p.category),
-                  }}
-                >
-                  {!p.image && <span className="feat-emoji" aria-hidden="true">{p.emoji}</span>}
-                </span>
-                <span className="feat-body">
-                  <span className="feat-name">{p.name}</span>
-                  <span className="feat-meta">
-                    <b>{p.avgFull.toFixed(1)}</b> <Stars value={p.avgFull} /> · {p.fullCount}
-                  </span>
-                </span>
-              </button>
+              <FeaturedCard key={p.key} place={p} onOpen={onOpen} />
             ))}
           </div>
         </>
@@ -385,6 +371,33 @@ function Home({ driver, onOpen }: { driver: ReviewsDriver; onOpen: (p: Place) =>
         )}
       </div>
     </div>
+  );
+}
+
+/** A place in the "loved by verified humans" strip, with its own lazy photo. */
+function FeaturedCard({ place, onOpen }: { place: Place; onOpen: (p: Place) => void }) {
+  const { ref, photo, onError } = usePlacePhoto(place);
+  return (
+    <button className="feat-card" onClick={() => onOpen(place)}>
+      <span
+        className="feat-banner"
+        ref={ref}
+        style={{ backgroundImage: categoryGradient(place.category) }}
+      >
+        <span className="feat-emoji" aria-hidden="true">
+          {place.emoji}
+        </span>
+        {photo && (
+          <img className="pcard-photo" src={photo.url} alt="" loading="lazy" onError={onError} />
+        )}
+      </span>
+      <span className="feat-body">
+        <span className="feat-name">{place.name}</span>
+        <span className="feat-meta">
+          <b>{place.avgFull.toFixed(1)}</b> <Stars value={place.avgFull} /> · {place.fullCount}
+        </span>
+      </span>
+    </button>
   );
 }
 
