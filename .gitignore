@@ -16,6 +16,10 @@ contract/cache/
 contract/target/
 contract/bin/
 
+# local tooling config (removed from the repo on GitHub — keep it out)
+.claude/
+*.log
+
 # OS noise
 Thumbs.db
 .DS_Store
