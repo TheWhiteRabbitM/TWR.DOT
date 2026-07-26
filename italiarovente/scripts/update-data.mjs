@@ -445,16 +445,9 @@ async function main() {
     `Snapshot: ${ok} aggiornate, ${kept} mantenute, ${skipped} saltate, ${deferred} rinviate (budget), ${Object.keys(out).filter((k) => out[k]?.yearly?.length).length}/${CITIES.length} totali. -> ${OUT}`,
   );
 
-  // Il Build Command su Vercel è fissato dal pannello (non legge più
-  // package.json "build"), quindi tutto ciò che deve girare al build va
-  // agganciato qui, nello script che sappiamo essere sempre eseguito.
-  // L'archivio dei mari è incrementale e usa un'API diversa (marine-api, quota
-  // separata da quella dell'archivio ERA5): non fallisce insieme alle città.
-  const { run: fetchSea } = await import("./fetch-sea.mjs");
-  await fetchSea().catch((e) => console.log(`✗ mari: ${e.message}`));
-
-  const { run: generateCaptions } = await import("./generate-captions.mjs");
-  await generateCaptions();
+  // Nel port Bulletin i mari hanno il loro npm script (update-sea, chiamato da
+  // refresh.sh) e le social card non esistono: la coda Vercel dell'originale
+  // (fetch-sea + generate-captions) è stata rimossa.
 }
 
 // Solo se eseguito direttamente (non quando importato, es. dai test).
