@@ -20,7 +20,7 @@
     "domain": "btcusd.dot",
     "url": "https://btcusd.dev-dot.li",
     "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11441987,
+    "lastSeenBlock": 11455254,
     "firstSeenAt": 1784873532
   },
   "ethusd": {
@@ -28,7 +28,7 @@
     "domain": "ethusd.dot",
     "url": "https://ethusd.dev-dot.li",
     "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11441987,
+    "lastSeenBlock": 11455254,
     "firstSeenAt": 1784873532
   },
   "dotusd": {
@@ -36,7 +36,7 @@
     "domain": "dotusd.dot",
     "url": "https://dotusd.dev-dot.li",
     "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11441987,
+    "lastSeenBlock": 11455254,
     "firstSeenAt": 1784873532
   },
   "openpetition": {
@@ -494,5 +494,13 @@
     "firstSeenBlock": 11441987,
     "lastSeenBlock": 11441987,
     "firstSeenAt": 1785071064
+  },
+  "dotify-test01": {
+    "label": "dotify-test01",
+    "domain": "dotify-test01.dot",
+    "url": "https://dotify-test01.dev-dot.li",
+    "firstSeenBlock": 11455254,
+    "lastSeenBlock": 11455254,
+    "firstSeenAt": 1785097908
   }
 }
