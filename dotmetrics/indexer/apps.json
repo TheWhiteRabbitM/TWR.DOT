@@ -20,7 +20,7 @@
     "domain": "btcusd.dot",
     "url": "https://btcusd.dev-dot.li",
     "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11400848,
+    "lastSeenBlock": 11441987,
     "firstSeenAt": 1784873532
   },
   "ethusd": {
@@ -28,7 +28,7 @@
     "domain": "ethusd.dot",
     "url": "https://ethusd.dev-dot.li",
     "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11400848,
+    "lastSeenBlock": 11441987,
     "firstSeenAt": 1784873532
   },
   "dotusd": {
@@ -36,7 +36,7 @@
     "domain": "dotusd.dot",
     "url": "https://dotusd.dev-dot.li",
     "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11400848,
+    "lastSeenBlock": 11441987,
     "firstSeenAt": 1784873532
   },
   "openpetition": {
@@ -300,7 +300,7 @@
     "domain": "bfyi.dot",
     "url": "https://bfyi.dev-dot.li",
     "firstSeenBlock": 11368493,
-    "lastSeenBlock": 11368493,
+    "lastSeenBlock": 11414980,
     "firstSeenAt": 1784921268
   },
   "ik4j": {
@@ -446,5 +446,53 @@
     "firstSeenBlock": 11409522,
     "lastSeenBlock": 11409522,
     "firstSeenAt": 1785004740
+  },
+  "discreetly": {
+    "label": "discreetly",
+    "domain": "discreetly.dot",
+    "url": "https://discreetly.dev-dot.li",
+    "firstSeenBlock": 11414980,
+    "lastSeenBlock": 11414980,
+    "firstSeenAt": 1785016164
+  },
+  "tetris-bulletin": {
+    "label": "tetris-bulletin",
+    "domain": "tetris-bulletin.dot",
+    "url": "https://tetris-bulletin.dev-dot.li",
+    "firstSeenBlock": 11425464,
+    "lastSeenBlock": 11425464,
+    "firstSeenAt": 1785037284
+  },
+  "docs": {
+    "label": "docs",
+    "domain": "docs.dot",
+    "url": "https://docs.dev-dot.li",
+    "firstSeenBlock": 11433475,
+    "lastSeenBlock": 11433475,
+    "firstSeenAt": 1785053724
+  },
+  "oblv-widgets": {
+    "label": "oblv-widgets",
+    "domain": "oblv-widgets.dot",
+    "url": "https://oblv-widgets.dev-dot.li",
+    "firstSeenBlock": 11441714,
+    "lastSeenBlock": 11441987,
+    "firstSeenAt": 1785070512
+  },
+  "vf5sy": {
+    "label": "vf5sy",
+    "domain": "vf5sy.dot",
+    "url": "https://vf5sy.dev-dot.li",
+    "firstSeenBlock": 11441932,
+    "lastSeenBlock": 11441932,
+    "firstSeenAt": 1785070956
+  },
+  "widget": {
+    "label": "widget",
+    "domain": "widget.dot",
+    "url": "https://widget.dev-dot.li",
+    "firstSeenBlock": 11441987,
+    "lastSeenBlock": 11441987,
+    "firstSeenAt": 1785071064
   }
 }
