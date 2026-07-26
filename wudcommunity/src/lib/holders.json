@@ -1,0 +1,764 @@
+{
+  "asset": 31337,
+  "name": "GAVUN WUD",
+  "symbol": "WUD",
+  "decimals": 10,
+  "supply": 999939162978,
+  "holders": 221373,
+  "reportedHolders": 221373,
+  "top10Share": 0.9955509193501826,
+  "topShare": 0.9991948646299618,
+  "tiers": [
+    {
+      "key": "whale",
+      "label": "Whale",
+      "emoji": "🐋",
+      "minShare": 0.01,
+      "count": 6,
+      "total": 989382824673
+    },
+    {
+      "key": "shark",
+      "label": "Shark",
+      "emoji": "🦈",
+      "minShare": 0.001,
+      "count": 3,
+      "total": 5567751927
+    },
+    {
+      "key": "dolphin",
+      "label": "Dolphin",
+      "emoji": "🐬",
+      "minShare": 0.0001,
+      "count": 7,
+      "total": 1989130292
+    },
+    {
+      "key": "fish",
+      "label": "Fish",
+      "emoji": "🐟",
+      "minShare": 0.00001,
+      "count": 135,
+      "total": 2874975026
+    },
+    {
+      "key": "shrimp",
+      "label": "Shrimp",
+      "emoji": "🦐",
+      "minShare": 0.000001,
+      "count": 34,
+      "total": 108025847
+    },
+    {
+      "key": "plankton",
+      "label": "Plankton",
+      "emoji": "🦠",
+      "minShare": 0,
+      "count": 221188,
+      "total": 16155196
+    }
+  ],
+  "top": [
+    {
+      "rank": 1,
+      "address": "13cKp89Uh2yWgTG28JA1QEvPUMjEPKejqkjHKf9zqLiFKjH6",
+      "amount": 815337743833,
+      "share": 0.8153873495711244,
+      "tier": "whale"
+    },
+    {
+      "rank": 2,
+      "address": "15wrCg3UKrzKsHnye4Q6HTiRPSVRRmZV7myDPjPPNorNBDq1",
+      "amount": 50010361759,
+      "share": 0.050013404425585335,
+      "tier": "whale"
+    },
+    {
+      "rank": 3,
+      "address": "16LviqDmEdn49UqeVSw3N1SjoJxRVV1EBbydbEqqaCvdtAsY",
+      "amount": 50007658072,
+      "share": 0.050010700574091065,
+      "tier": "whale"
+    },
+    {
+      "rank": 4,
+      "address": "13MTX3Qnbcb4xoRyJSojeKCpC9EUXE73eqNXegTXDT7UW36b",
+      "amount": 50000000001,
+      "share": 0.05000304203716848,
+      "tier": "whale"
+    },
+    {
+      "rank": 5,
+      "address": "1nkZg8witk1fMvvTAbCnUbXrVRj1Sq8oWhFX1CvqJLei3eb",
+      "amount": 13956152001,
+      "share": 0.01395700110338318,
+      "tier": "whale"
+    },
+    {
+      "rank": 6,
+      "address": "13EhijtNwGkNSHv9ejjVogzHvBPhdLr8gqYD2v8Pyacbryou",
+      "amount": 10070909007,
+      "share": 0.010071521728388964,
+      "tier": "whale"
+    },
+    {
+      "rank": 7,
+      "address": "15x2GNpyRK9L79zCKfhRMUpuajFQHotXcQXHLRU4j6zs5FUM",
+      "amount": 2754700587,
+      "share": 0.0027548681849763764,
+      "tier": "shark"
+    },
+    {
+      "rank": 8,
+      "address": "14gFKtUBTHd6Hz1wPsWfx5CGh9dfZrnm5YjePfZRabxc8Q7Y",
+      "amount": 1645404776,
+      "share": 0.0016455048836168057,
+      "tier": "shark"
+    },
+    {
+      "rank": 9,
+      "address": "13cKp89VHu94Ep3SbBbBynqbmFiUpQT78tPkDUegcDpA1ESE",
+      "amount": 1167646564,
+      "share": 0.0011677176044615925,
+      "tier": "shark"
+    },
+    {
+      "rank": 10,
+      "address": "148WbbjS4iVTgLp7k4ao9q5RAmHrZ7pEQk9V9E7rUwUN1egb",
+      "amount": 539776397,
+      "share": 0.0005398092373864507,
+      "tier": "dolphin"
+    },
+    {
+      "rank": 11,
+      "address": "1BbQPMu5Q8fzc1VKd6Fe7iDheZ3SYfziAzGJ6RVUmh9nqzQ",
+      "amount": 508895809,
+      "share": 0.0005089267705891388,
+      "tier": "dolphin"
+    },
+    {
+      "rank": 12,
+      "address": "1vfBJEigwKByGXN17gscMrstYhV9JioSVyf9dcGZueR7wQa",
+      "amount": 220000000,
+      "share": 0.00022001338495914106,
+      "tier": "dolphin"
+    },
+    {
+      "rank": 13,
+      "address": "15XicAwBqTVJCESaCUhvTenLqjxhatCyJtoNhXbNqYeW2s64",
+      "amount": 207009050,
+      "share": 0.0002070216445803458,
+      "tier": "dolphin"
+    },
+    {
+      "rank": 14,
+      "address": "16SDAKg9N6kKAbhgDyxBXdHEwpwHUHs2CNEiLNGeZV55qHna",
+      "amount": 200001000,
+      "share": 0.0002000131682055144,
+      "tier": "dolphin"
+    },
+    {
+      "rank": 15,
+      "address": "1555ryMkFKZddZJhfvrUaNeQecHfNEvpVqjjTvxxJtLRmRgL",
+      "amount": 165000000,
+      "share": 0.00016501003871935579,
+      "tier": "dolphin"
+    },
+    {
+      "rank": 16,
+      "address": "1294V2gJHBdNRGioHxZcQSDW1Dny1A2YK4yQoVNZbwWRSCdU",
+      "amount": 148448036,
+      "share": 0.00014845706768589287,
+      "tier": "dolphin"
+    },
+    {
+      "rank": 17,
+      "address": "14mVyca8wysUL8brKckUEHtvAU6FMJ7EVYqNfNPA7Qt5eCaS",
+      "amount": 94466932,
+      "share": 0.00009447267943647728,
+      "tier": "fish"
+    },
+    {
+      "rank": 18,
+      "address": "15m6bg6oMBv9aS6LjRZHvyFNz5EkAakMuE5fBT49Wc64gXHR",
+      "amount": 89933450,
+      "share": 0.00008993892161615301,
+      "tier": "fish"
+    },
+    {
+      "rank": 19,
+      "address": "13peMkdJunSFMcKMVcuoYkfCRmNriyqWagN37DuK5B9b7Vcu",
+      "amount": 80971656,
+      "share": 0.00008097658237412338,
+      "tier": "fish"
+    },
+    {
+      "rank": 20,
+      "address": "165HaQqQ2WeXpa7LccofMNG6W4qCNyxiTcV7ZisEHci2NF2k",
+      "amount": 67476380,
+      "share": 0.00006748048531176949,
+      "tier": "fish"
+    },
+    {
+      "rank": 21,
+      "address": "163HdhsZNBMfS8SndA6L6skVkdMkZAdaDY63PpH91CcejhoW",
+      "amount": 67476380,
+      "share": 0.00006748048531176949,
+      "tier": "fish"
+    },
+    {
+      "rank": 22,
+      "address": "14x6ah3J21QonWASv6QKwqd8SWrS7ddqmMzyRCmGQWMaPzae",
+      "amount": 67476380,
+      "share": 0.00006748048531176949,
+      "tier": "fish"
+    },
+    {
+      "rank": 23,
+      "address": "13bY1sHRuy7PS9PaSnbCTi7dE9SLSSMZxgCPa7EYRYQ5jupx",
+      "amount": 53981104,
+      "share": 0.000053984388249415585,
+      "tier": "fish"
+    },
+    {
+      "rank": 24,
+      "address": "148sLZa6DQCT9TufJe21MBAUADVg5mXLxcknkMhFXvm6ER8a",
+      "amount": 53981104,
+      "share": 0.000053984388249415585,
+      "tier": "fish"
+    },
+    {
+      "rank": 25,
+      "address": "136sAh8ku3Ubqi29bMMGn8qvNbQfz1JMnaciRUnznR6WqNH4",
+      "amount": 53981104,
+      "share": 0.000053984388249415585,
+      "tier": "fish"
+    },
+    {
+      "rank": 26,
+      "address": "14XNJmoUzkvmh9cYoqG4axBRR4BWzWRbnFP79oiZgKu7V9bz",
+      "amount": 46905762,
+      "share": 0.00004690861578049023,
+      "tier": "fish"
+    },
+    {
+      "rank": 27,
+      "address": "14dATDSzpgVsCu1qE1fbNtsZpsPxwM5hBi5gwxG1uLCXMbHM",
+      "amount": 40485828,
+      "share": 0.00004048829118706169,
+      "tier": "fish"
+    },
+    {
+      "rank": 28,
+      "address": "13YJiScaaCtf4CUMvEbnb6ntX7cm6EMGHwXRLFZC39Vq6ibL",
+      "amount": 40485828,
+      "share": 0.00004048829118706169,
+      "tier": "fish"
+    },
+    {
+      "rank": 29,
+      "address": "1Kb2Nnf3STy8BuJWCES3tkUP1R3nciext3MD9aqeckRjwb4",
+      "amount": 40485828,
+      "share": 0.00004048829118706169,
+      "tier": "fish"
+    },
+    {
+      "rank": 30,
+      "address": "131a6qFdrwEFqokqmqrgEQZ5g5kWc3xpKQXiWT6kVmMCAcaV",
+      "amount": 40485828,
+      "share": 0.00004048829118706169,
+      "tier": "fish"
+    },
+    {
+      "rank": 31,
+      "address": "13sSp31fjwMZTG76kUniyztg3J83GMKs8ZxPGKW3vPQHXiU3",
+      "amount": 40485828,
+      "share": 0.00004048829118706169,
+      "tier": "fish"
+    },
+    {
+      "rank": 32,
+      "address": "15tDWp9dZb55q2wnZhLHikGRFAox3yBQfhwReEC41vUNCyoM",
+      "amount": 40485828,
+      "share": 0.00004048829118706169,
+      "tier": "fish"
+    },
+    {
+      "rank": 33,
+      "address": "16f8m7HHxNZpHU3hRVnnH3VTrL4edjNy8nkG7iHMKcBKBZ1i",
+      "amount": 34521129,
+      "share": 0.00003452322929045986,
+      "tier": "fish"
+    },
+    {
+      "rank": 34,
+      "address": "13ts8727Xwx86PVxjjq6LVNTXjy5a54Xm9Cof1P5jGt3hfpj",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 35,
+      "address": "165XC1MoABZPp4pn7hDY5iGG3hnDJFGLuvTUz2JtQTTWc5Jt",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 36,
+      "address": "13wTSVm9AMpWfAyureZo2vqzZzkpvZpVhmKkzGb29hyEsDMo",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 37,
+      "address": "14Vb73NnysgNhQTmwZpbSqua5aghZVHTj1RAwMFngJTDu2ro",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 38,
+      "address": "12gERuE74dkHY8ist39EL6PBpZJkgYUw3y5dczEXzPwZPdRg",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 39,
+      "address": "12Ba5DyJryXSbMNkd3cwvoGryw737SLdQYe8RmCHpsCKFjRB",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 40,
+      "address": "1ufxz19ZoytRM8T2QPWiHHFnDws3uahhxUxRCzZuaSsLZoY",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 41,
+      "address": "14aq55UKL57YjcME5WBXziZpSmWUTbGTMWH3xWPXnkBa2Dqf",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 42,
+      "address": "15fqHZQbBFNVpsmCKLSBcwCKq4d2GpVv1LYv336M5t3ymusm",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 43,
+      "address": "16g22tspdDbydgAr46m3PmkK3DmW6n7CnQBLpN9GTPKbuNGv",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 44,
+      "address": "12izrZAJuzLohMxCtVBWZ7cDuwtcYwoom38NWSgdf4oe2rrv",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 45,
+      "address": "12xcE9wiHeoU5YhPA685uLHz27z5wPmRy9cQvCwc3etgGeKq",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 46,
+      "address": "16Csjz9kKHnMExKUbCS19whBqL1TBtCvbivK1xJeNCvM7NTZ",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 47,
+      "address": "1xwcNbYd68p8JfcY1kRtLG3yYPZBHKBGMH6oE6nHqrSY4sN",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 48,
+      "address": "1qQZJiikRhvh7tZ4iXtiWZ5MueQiBDraTfQCHvewdZzXoB3",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 49,
+      "address": "15PhvTfkjx5bRB8qdARQ52xy2Pr2PruBq4DXh4q88AfWZFm5",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 50,
+      "address": "1biCNzNw2wesKZEh84Uii8Y2s3U8yi7Xg2q2DU7FPgAtkfQ",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 51,
+      "address": "15E2dGndkZKh83RzMUeiNxqKQ74HNT1UKsn49HvkHrAtz8Nu",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 52,
+      "address": "15MPXGaQrZFggj8JejkXnRnDGwBNViRAWdZWjyrAbKdhKfmL",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 53,
+      "address": "12bZVUVrdWdK87dXR5shjuysdQ8gUL2kvt2W7WjJ7QRZimQh",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 54,
+      "address": "15Jh18f56ewEzBH4wLuDf7C1ETjaFp9tirZ1rwrPiSwNVrnk",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 55,
+      "address": "14PwbBvjuewSXdiWTgjv8eP4FanfttCusj3QTdnHqHp6kWK2",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 56,
+      "address": "168K5PahL2AV1jMWSdXQvAGoxcE9df4wRWNFtdAj7yMgaFcR",
+      "amount": 26990552,
+      "share": 0.000026992194124707793,
+      "tier": "fish"
+    },
+    {
+      "rank": 57,
+      "address": "14NEwYM8VzT1faobHQqaN1TZSzbKe4Ne6jRuFF3ZhHHHia7c",
+      "amount": 25536757,
+      "share": 0.000025538310674768363,
+      "tier": "fish"
+    },
+    {
+      "rank": 58,
+      "address": "14qxiVi7UNMzcSHKxLgCVQQ6FKHwoUTR7edv5wSFUo3fKd33",
+      "amount": 24000000,
+      "share": 0.000024001460177360843,
+      "tier": "fish"
+    },
+    {
+      "rank": 59,
+      "address": "1214sFoMcc6LiMUjD4VNhUUz8bkwDXPFXfY8AJn4w5VbgxxF",
+      "amount": 16644899,
+      "share": 0.000016645911687695553,
+      "tier": "fish"
+    },
+    {
+      "rank": 60,
+      "address": "135np1zjv679CtpDxw2tqznRthP5x5NF9ZFHsytYPTehXT31",
+      "amount": 13507950,
+      "share": 0.000013508771833449225,
+      "tier": "fish"
+    },
+    {
+      "rank": 61,
+      "address": "12jpQfGZWX83aotWcjJnFktqojcc7Pq7K5CoQznkL6P2EHRV",
+      "amount": 13495277,
+      "share": 0.000013496098062414738,
+      "tier": "fish"
+    },
+    {
+      "rank": 62,
+      "address": "12nJE4CF2dZF36uS5ZTQcbSTXhTgKTeeH321zrAEEcwDeyaD",
+      "amount": 13495277,
+      "share": 0.000013496098062414738,
+      "tier": "fish"
+    },
+    {
+      "rank": 63,
+      "address": "13Y2UShDWJa9vbSmbMt7mYWerM2U1tpdwcbcWqGzah8omk5k",
+      "amount": 13495277,
+      "share": 0.000013496098062414738,
+      "tier": "fish"
+    },
+    {
+      "rank": 64,
+      "address": "1CRmVRcQymMpot855oKDq76kF19jJezMMkGcrvHh1ozEqXa",
+      "amount": 13495277,
+      "share": 0.000013496098062414738,
+      "tier": "fish"
+    },
+    {
+      "rank": 65,
+      "address": "13Mgqpru977m6ZVqpUq5yfX4fgmQTYL5HpdVe248vbhDMNQ8",
+      "amount": 13495277,
+      "share": 0.000013496098062414738,
+      "tier": "fish"
+    },
+    {
+      "rank": 66,
+      "address": "1688NFjMVK98os33veedFTg3cZom5kZPT3o52swF6whEwLwJ",
+      "amount": 13495277,
+      "share": 0.000013496098062414738,
+      "tier": "fish"
+    },
+    {
+      "rank": 67,
+      "address": "14mH2752oH6phG36st3Zc62vFJD1X2JSdhMoNBoxRPnRAHNJ",
+      "amount": 13495277,
+      "share": 0.000013496098062414738,
+      "tier": "fish"
+    },
+    {
+      "rank": 68,
+      "address": "1e2qhaXs3qCunzRtHLJVd5zCsG4XMnyoTpUv9qTzuvcRVrd",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 69,
+      "address": "13fjoSk48ZpZXuyjhaaiodDF5AhQyiLrVdSKHZYyZyE8H5zb",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 70,
+      "address": "15d74PfZZbfUHv7zQhtrnspYxjeC7hAXENss1LdHvgF9MEjb",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 71,
+      "address": "14dmYv6cFdJD1HeyyksLFYwubwwqiBYMm3QNo5yoFhZGWeCd",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 72,
+      "address": "13mwj1C1sSbwbHc7GkdK5aQuNYPNZ8dnD77NdsmyVPiWuG24",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 73,
+      "address": "139EAyJnNnEgNjSupeem5H3Te4zHDZfG3aWByWeK9cWx3Hzp",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 74,
+      "address": "15YFN4DqfCdpo3StVANS9jGC5jnzBawd3HdPdgsoiQDgf3fF",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 75,
+      "address": "12uW3K6aJPsSPj5Lbr11ofvVuzSHmMKeGDZPxJvat97ZYx99",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 76,
+      "address": "15gLsigVDxZoSFGjtqh4S1UD5WBhvuKLQNG2wwFHtJvbca5K",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 77,
+      "address": "14MGWHT5zhDyCSDGWVKt2Sbj7SicXsvoZabRjsEpzLcn4tb8",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 78,
+      "address": "128hVaX96rzY38YU3ocVHAkhWPBW5SWW55mMsxiZPZkbiJ5B",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 79,
+      "address": "14zEy7HqCiNiw9ch9DxE9XCgKRxWCcQdr7NZEn2DSCHQQXMb",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 80,
+      "address": "13xifQbXBmarUW9KpWyAiyVieKmoGhDoNVYxQcLH7qPAzBKC",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 81,
+      "address": "1dzNYoxGQ1xpyJuSr3LS5DFp1n4SQK5phvpSuAL23NaDzUf",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 82,
+      "address": "14SJWrvH13QrAnDfaffhvmqx5w23GhZzMsw4vQzCNPDuqJWs",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 83,
+      "address": "12bsi7NbMpRCnhWDM4HiubGRpH35i2PuSWejW8biG24nhBQU",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 84,
+      "address": "12HgxTBwj6rYoqYpXj8Br2Xkfh26idp7WaKGXNbNYagucKf4",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 85,
+      "address": "12vDtS5GtPBRUzb63pEJsj4P1RLm2vC5MyYZiz9Ro9u3ivYd",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 86,
+      "address": "12c33BCCUmq7pJizSDde3YLrQznJFfJGY1L9jvcf1KUB11Gz",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 87,
+      "address": "13C99Xybu9TJ6Wzx7WM6qfcDQsUd2YbaguqeNBtpTQb738Sh",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 88,
+      "address": "1419rdbTd2ymo6rwNAc2jH5QdXkW5nMQQFGP35XnbE7nD5R8",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 89,
+      "address": "14BmzcRb6JUUev2vbSryKfHZhBMtT4KnYH19FiQZ4EjwGHaX",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 90,
+      "address": "164wQDTxjZHcnm7r12fBjd9kJKtLDo7ZoPY7tSHmTvjqaSVC",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 91,
+      "address": "14rQ3gnFkQvT8xQ7XriZ3h9LHB28epm2awwrxiQfi2eoCHVi",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 92,
+      "address": "1567asRuZY75znT89bgdHoeU3gbjcQe7MNG4r8BSqPLy2vPz",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 93,
+      "address": "1GoccJs99BFNc4k7Qw4pt7oaDby5EbQR7eLCe2sZ6RBhwmo",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 94,
+      "address": "16eo9gBjnvuG41zNQT5RRX4QhjUZzs59jX2q2kSsDtjhdWmS",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 95,
+      "address": "121VampzB224GFSc16WvtT3GGzSYTDbfHwA4AYNc3Pcw6FCP",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 96,
+      "address": "1268WEiaWpyegszcufzhhAc1xg7bPSiouGYVFZESUNY1rD9d",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 97,
+      "address": "16aFJTv32jDmamJfncC8kgHRGv4RNc3B3q2KahnLZLKSCNNC",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 98,
+      "address": "14mHZxUmV57ZagY3E1Sqtgn9CW1UU9GQAi6Dzdfy55RD42Wa",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 99,
+      "address": "14xKmFQjJrgqwJ2gShQKpjWvAu9EVrtC6csxNuYD1tQfVRwq",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    },
+    {
+      "rank": 100,
+      "address": "15XTY3wKScKVRp4AoEesytWUH8Gw3sbfQX6vWQR6gBLoY9GL",
+      "amount": 13495276,
+      "share": 0.000013496097062353896,
+      "tier": "fish"
+    }
+  ],
+  "updatedAt": "2026-07-24T12:59:50.673Z"
+}

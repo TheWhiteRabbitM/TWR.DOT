@@ -1,0 +1,10 @@
+﻿{
+  "name": "Discreet",
+  "short_name": "Discreet",
+  "description": "Private bookings for real people: book services as an anonymous verified human. No name, no phone, no email - proof of personhood, escrow deposits, portable kept-word reputation.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0c1110",
+  "theme_color": "#0f766e",
+  "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

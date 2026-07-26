@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "places": [
+    {
+      "key": "node/2891910953",
+      "osmRef": "node/2891910953",
+      "name": "Pizzeria Da Michele",
+      "category": "Pizza",
+      "address": "Via Cesare Sersale, Napoli",
+      "lat": 40.849,
+      "lon": 14.263,
+      "reviews": [
+        { "alias": "a1", "rating": 5, "tier": 2, "daysAgo": 2, "body": "The Margherita is everything. Two euros of pure joy, worth the queue." },
+        { "alias": "a2", "rating": 5, "tier": 2, "daysAgo": 6, "body": "Only two pizzas on the menu and they nailed both. A pilgrimage." },
+        { "alias": "a3", "rating": 4, "tier": 2, "daysAgo": 12, "body": "Incredible pizza, but be ready to wait 40 minutes on a Saturday." },
+        { "alias": "a4", "rating": 5, "tier": 2, "daysAgo": 30, "body": "Best pizza of my life, and I have eaten a lot of pizza." },
+        { "alias": "a5", "rating": 3, "tier": 1, "daysAgo": 48, "body": "Great dough, chaotic service. Bring cash." }
+      ]
+    },
+    {
+      "key": "node/1401903456",
+      "osmRef": "node/1401903456",
+      "name": "Gelateria dei Gracchi",
+      "category": "Ice Cream",
+      "address": "Via dei Gracchi, Roma",
+      "lat": 41.907,
+      "lon": 12.462,
+      "reviews": [
+        { "alias": "b1", "rating": 5, "tier": 2, "daysAgo": 1, "body": "The pistachio tastes like actual pistachios. Rare and wonderful." },
+        { "alias": "b2", "rating": 5, "tier": 2, "daysAgo": 9, "body": "Natural ingredients, no fake colours. You can taste the difference." },
+        { "alias": "b3", "rating": 4, "tier": 2, "daysAgo": 20, "body": "A bit pricey but the hazelnut is unforgettable." }
+      ]
+    },
+    {
+      "key": "node/302985663",
+      "osmRef": "node/302985663",
+      "name": "Libreria Acqua Alta",
+      "category": "Bookshop",
+      "address": "Calle Longa, Venezia",
+      "lat": 45.437,
+      "lon": 12.341,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Libreria_Acqua_Alta_04.jpg/640px-Libreria_Acqua_Alta_04.jpg",
+      "reviews": [
+        { "alias": "c1", "rating": 5, "tier": 2, "daysAgo": 3, "body": "Books in a gondola. The most beautiful, chaotic bookshop anywhere." },
+        { "alias": "c2", "rating": 4, "tier": 2, "daysAgo": 15, "body": "More of an experience than a shop. The cat is in charge." },
+        { "alias": "c3", "rating": 5, "tier": 2, "daysAgo": 40, "body": "A staircase made of books leads to a canal view. Magic." }
+      ]
+    },
+    {
+      "key": "node/998877665",
+      "osmRef": "node/998877665",
+      "name": "Antico Caffè Greco",
+      "category": "Cafe",
+      "address": "Via dei Condotti, Roma",
+      "lat": 41.905,
+      "lon": 12.481,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Caff%C3%A8_Greco._Roma.jpg/640px-Caff%C3%A8_Greco._Roma.jpg",
+      "reviews": [
+        { "alias": "d1", "rating": 4, "tier": 2, "daysAgo": 5, "body": "History in every corner. Coffee is good; you pay for the room." },
+        { "alias": "d2", "rating": 3, "tier": 1, "daysAgo": 22, "body": "Beautiful but touristy. Stand at the bar to save half the price." }
+      ]
+    },
+    {
+      "key": "node/553311228",
+      "osmRef": "node/553311228",
+      "name": "Trattoria da Enzo",
+      "category": "Restaurant",
+      "address": "Via dei Vascellari, Roma",
+      "lat": 41.887,
+      "lon": 12.476,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Santa_Maria_in_Trastevere_fountain.jpg/640px-Santa_Maria_in_Trastevere_fountain.jpg",
+      "reviews": [
+        { "alias": "e1", "rating": 5, "tier": 2, "daysAgo": 4, "body": "Cacio e pepe done right. Tiny place, huge flavour." },
+        { "alias": "e2", "rating": 5, "tier": 2, "daysAgo": 18, "body": "The carbonara is the reason I keep coming back to Trastevere." },
+        { "alias": "e3", "rating": 4, "tier": 2, "daysAgo": 33, "body": "Worth the wait. Get there before it opens or queue." }
+      ]
+    },
+    {
+      "key": "way/138121600",
+      "osmRef": "way/138121600",
+      "name": "Mercato di Ballarò",
+      "category": "Market",
+      "address": "Via Ballarò, Palermo",
+      "lat": 38.111,
+      "lon": 13.359,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Ballar%C3%B2_Palermo.JPG/640px-Ballar%C3%B2_Palermo.JPG",
+      "reviews": [
+        { "alias": "f1", "rating": 5, "tier": 2, "daysAgo": 7, "body": "Loud, alive, delicious. The panelle alone are worth the trip." },
+        { "alias": "f2", "rating": 4, "tier": 2, "daysAgo": 25, "body": "Watch your pockets, feast your eyes. Real Palermo." }
+      ]
+    },
+    {
+      "key": "node/4113166188",
+      "osmRef": "node/4113166188",
+      "name": "Caffè Al Bicerin",
+      "category": "Cafe",
+      "address": "Piazza della Consolata, Torino",
+      "lat": 45.076,
+      "lon": 7.679,
+      "reviews": [
+        { "alias": "g1", "rating": 5, "tier": 2, "daysAgo": 11, "body": "The bicerin is dessert, coffee and history in one glass. Since 1763." },
+        { "alias": "g2", "rating": 5, "tier": 2, "daysAgo": 29, "body": "Tiny marble tables, zero rush. This is how coffee should feel." }
+      ]
+    }
+  ]
+}

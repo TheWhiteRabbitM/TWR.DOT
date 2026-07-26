@@ -1,0 +1,965 @@
+[
+  {
+    "slug": "roma",
+    "name": "Roma",
+    "region": "Lazio",
+    "zone": "Centro",
+    "lat": 41.8933,
+    "lon": 12.4828,
+    "main": true
+  },
+  {
+    "slug": "milano",
+    "name": "Milano",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.4642,
+    "lon": 9.19,
+    "main": true
+  },
+  {
+    "slug": "napoli",
+    "name": "Napoli",
+    "region": "Campania",
+    "zone": "Sud",
+    "lat": 40.8518,
+    "lon": 14.2681,
+    "main": true
+  },
+  {
+    "slug": "torino",
+    "name": "Torino",
+    "region": "Piemonte",
+    "zone": "Nord",
+    "lat": 45.0703,
+    "lon": 7.6869,
+    "main": true
+  },
+  {
+    "slug": "palermo",
+    "name": "Palermo",
+    "region": "Sicilia",
+    "zone": "Isole",
+    "lat": 38.1157,
+    "lon": 13.3615,
+    "main": true
+  },
+  {
+    "slug": "genova",
+    "name": "Genova",
+    "region": "Liguria",
+    "zone": "Nord",
+    "lat": 44.4056,
+    "lon": 8.9463,
+    "main": true
+  },
+  {
+    "slug": "bologna",
+    "name": "Bologna",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 44.4949,
+    "lon": 11.3426,
+    "main": true
+  },
+  {
+    "slug": "firenze",
+    "name": "Firenze",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 43.7696,
+    "lon": 11.2558,
+    "main": true
+  },
+  {
+    "slug": "bari",
+    "name": "Bari",
+    "region": "Puglia",
+    "zone": "Sud",
+    "lat": 41.1171,
+    "lon": 16.8719,
+    "main": true
+  },
+  {
+    "slug": "venezia",
+    "name": "Venezia",
+    "region": "Veneto",
+    "zone": "Nord",
+    "lat": 45.4408,
+    "lon": 12.3155,
+    "main": true
+  },
+  {
+    "slug": "catania",
+    "name": "Catania",
+    "region": "Sicilia",
+    "zone": "Isole",
+    "lat": 37.5079,
+    "lon": 15.083,
+    "main": true
+  },
+  {
+    "slug": "cagliari",
+    "name": "Cagliari",
+    "region": "Sardegna",
+    "zone": "Isole",
+    "lat": 39.2238,
+    "lon": 9.1217,
+    "main": true
+  },
+  {
+    "slug": "aosta",
+    "name": "Aosta",
+    "region": "Valle d'Aosta",
+    "zone": "Nord",
+    "lat": 45.7372,
+    "lon": 7.3206,
+    "main": false
+  },
+  {
+    "slug": "trento",
+    "name": "Trento",
+    "region": "Trentino-Alto Adige",
+    "zone": "Nord",
+    "lat": 46.0667,
+    "lon": 11.1167,
+    "main": false
+  },
+  {
+    "slug": "bolzano",
+    "name": "Bolzano",
+    "region": "Trentino-Alto Adige",
+    "zone": "Nord",
+    "lat": 46.4983,
+    "lon": 11.3548,
+    "main": false
+  },
+  {
+    "slug": "trieste",
+    "name": "Trieste",
+    "region": "Friuli-Venezia Giulia",
+    "zone": "Nord",
+    "lat": 45.6495,
+    "lon": 13.7768,
+    "main": false
+  },
+  {
+    "slug": "udine",
+    "name": "Udine",
+    "region": "Friuli-Venezia Giulia",
+    "zone": "Nord",
+    "lat": 46.0711,
+    "lon": 13.2346,
+    "main": false
+  },
+  {
+    "slug": "verona",
+    "name": "Verona",
+    "region": "Veneto",
+    "zone": "Nord",
+    "lat": 45.4384,
+    "lon": 10.9916,
+    "main": false
+  },
+  {
+    "slug": "padova",
+    "name": "Padova",
+    "region": "Veneto",
+    "zone": "Nord",
+    "lat": 45.4064,
+    "lon": 11.8768,
+    "main": false
+  },
+  {
+    "slug": "vicenza",
+    "name": "Vicenza",
+    "region": "Veneto",
+    "zone": "Nord",
+    "lat": 45.5455,
+    "lon": 11.5353,
+    "main": false
+  },
+  {
+    "slug": "brescia",
+    "name": "Brescia",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.5416,
+    "lon": 10.2118,
+    "main": false
+  },
+  {
+    "slug": "bergamo",
+    "name": "Bergamo",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.6983,
+    "lon": 9.6773,
+    "main": false
+  },
+  {
+    "slug": "como",
+    "name": "Como",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.8081,
+    "lon": 9.0852,
+    "main": false
+  },
+  {
+    "slug": "monza",
+    "name": "Monza",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.5845,
+    "lon": 9.2744,
+    "main": false
+  },
+  {
+    "slug": "parma",
+    "name": "Parma",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 44.8015,
+    "lon": 10.3279,
+    "main": false
+  },
+  {
+    "slug": "modena",
+    "name": "Modena",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 44.6471,
+    "lon": 10.9252,
+    "main": false
+  },
+  {
+    "slug": "reggio-emilia",
+    "name": "Reggio Emilia",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 44.6989,
+    "lon": 10.6307,
+    "main": false
+  },
+  {
+    "slug": "rimini",
+    "name": "Rimini",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 44.0678,
+    "lon": 12.5695,
+    "main": false
+  },
+  {
+    "slug": "ferrara",
+    "name": "Ferrara",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 44.8381,
+    "lon": 11.6198,
+    "main": false
+  },
+  {
+    "slug": "la-spezia",
+    "name": "La Spezia",
+    "region": "Liguria",
+    "zone": "Nord",
+    "lat": 44.1025,
+    "lon": 9.824,
+    "main": false
+  },
+  {
+    "slug": "perugia",
+    "name": "Perugia",
+    "region": "Umbria",
+    "zone": "Centro",
+    "lat": 43.1107,
+    "lon": 12.3908,
+    "main": false
+  },
+  {
+    "slug": "terni",
+    "name": "Terni",
+    "region": "Umbria",
+    "zone": "Centro",
+    "lat": 42.5634,
+    "lon": 12.6427,
+    "main": false
+  },
+  {
+    "slug": "ancona",
+    "name": "Ancona",
+    "region": "Marche",
+    "zone": "Centro",
+    "lat": 43.6158,
+    "lon": 13.5189,
+    "main": false
+  },
+  {
+    "slug": "pesaro",
+    "name": "Pesaro",
+    "region": "Marche",
+    "zone": "Centro",
+    "lat": 43.9102,
+    "lon": 12.9134,
+    "main": false
+  },
+  {
+    "slug": "pisa",
+    "name": "Pisa",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 43.7228,
+    "lon": 10.4017,
+    "main": false
+  },
+  {
+    "slug": "livorno",
+    "name": "Livorno",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 43.5485,
+    "lon": 10.3106,
+    "main": false
+  },
+  {
+    "slug": "prato",
+    "name": "Prato",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 43.8777,
+    "lon": 11.1021,
+    "main": false
+  },
+  {
+    "slug": "latina",
+    "name": "Latina",
+    "region": "Lazio",
+    "zone": "Centro",
+    "lat": 41.4677,
+    "lon": 12.9036,
+    "main": false
+  },
+  {
+    "slug": "laquila",
+    "name": "L'Aquila",
+    "region": "Abruzzo",
+    "zone": "Centro",
+    "lat": 42.3506,
+    "lon": 13.3995,
+    "main": false
+  },
+  {
+    "slug": "pescara",
+    "name": "Pescara",
+    "region": "Abruzzo",
+    "zone": "Centro",
+    "lat": 42.4618,
+    "lon": 14.2161,
+    "main": false
+  },
+  {
+    "slug": "campobasso",
+    "name": "Campobasso",
+    "region": "Molise",
+    "zone": "Sud",
+    "lat": 41.563,
+    "lon": 14.656,
+    "main": false
+  },
+  {
+    "slug": "salerno",
+    "name": "Salerno",
+    "region": "Campania",
+    "zone": "Sud",
+    "lat": 40.6824,
+    "lon": 14.7681,
+    "main": false
+  },
+  {
+    "slug": "potenza",
+    "name": "Potenza",
+    "region": "Basilicata",
+    "zone": "Sud",
+    "lat": 40.642,
+    "lon": 15.799,
+    "main": false
+  },
+  {
+    "slug": "taranto",
+    "name": "Taranto",
+    "region": "Puglia",
+    "zone": "Sud",
+    "lat": 40.4644,
+    "lon": 17.247,
+    "main": false
+  },
+  {
+    "slug": "foggia",
+    "name": "Foggia",
+    "region": "Puglia",
+    "zone": "Sud",
+    "lat": 41.4621,
+    "lon": 15.5446,
+    "main": false
+  },
+  {
+    "slug": "lecce",
+    "name": "Lecce",
+    "region": "Puglia",
+    "zone": "Sud",
+    "lat": 40.3515,
+    "lon": 18.175,
+    "main": false
+  },
+  {
+    "slug": "catanzaro",
+    "name": "Catanzaro",
+    "region": "Calabria",
+    "zone": "Sud",
+    "lat": 38.9098,
+    "lon": 16.5877,
+    "main": false
+  },
+  {
+    "slug": "reggio-calabria",
+    "name": "Reggio Calabria",
+    "region": "Calabria",
+    "zone": "Sud",
+    "lat": 38.1113,
+    "lon": 15.6473,
+    "main": false
+  },
+  {
+    "slug": "cosenza",
+    "name": "Cosenza",
+    "region": "Calabria",
+    "zone": "Sud",
+    "lat": 39.2983,
+    "lon": 16.2536,
+    "main": false
+  },
+  {
+    "slug": "messina",
+    "name": "Messina",
+    "region": "Sicilia",
+    "zone": "Isole",
+    "lat": 38.1938,
+    "lon": 15.554,
+    "main": false
+  },
+  {
+    "slug": "siracusa",
+    "name": "Siracusa",
+    "region": "Sicilia",
+    "zone": "Isole",
+    "lat": 37.0755,
+    "lon": 15.2866,
+    "main": false
+  },
+  {
+    "slug": "trapani",
+    "name": "Trapani",
+    "region": "Sicilia",
+    "zone": "Isole",
+    "lat": 38.0176,
+    "lon": 12.5365,
+    "main": false
+  },
+  {
+    "slug": "sassari",
+    "name": "Sassari",
+    "region": "Sardegna",
+    "zone": "Isole",
+    "lat": 40.7259,
+    "lon": 8.5557,
+    "main": false
+  },
+  {
+    "slug": "chieti",
+    "name": "Chieti",
+    "region": "Abruzzo",
+    "zone": "Centro",
+    "lat": 42.3511,
+    "lon": 14.1674,
+    "main": false
+  },
+  {
+    "slug": "teramo",
+    "name": "Teramo",
+    "region": "Abruzzo",
+    "zone": "Centro",
+    "lat": 42.6589,
+    "lon": 13.7039,
+    "main": false
+  },
+  {
+    "slug": "matera",
+    "name": "Matera",
+    "region": "Basilicata",
+    "zone": "Sud",
+    "lat": 40.6667,
+    "lon": 16.6,
+    "main": false
+  },
+  {
+    "slug": "crotone",
+    "name": "Crotone",
+    "region": "Calabria",
+    "zone": "Sud",
+    "lat": 39.0833,
+    "lon": 17.1167,
+    "main": false
+  },
+  {
+    "slug": "vibo-valentia",
+    "name": "Vibo Valentia",
+    "region": "Calabria",
+    "zone": "Sud",
+    "lat": 38.6753,
+    "lon": 16.0959,
+    "main": false
+  },
+  {
+    "slug": "avellino",
+    "name": "Avellino",
+    "region": "Campania",
+    "zone": "Sud",
+    "lat": 40.9153,
+    "lon": 14.7897,
+    "main": false
+  },
+  {
+    "slug": "benevento",
+    "name": "Benevento",
+    "region": "Campania",
+    "zone": "Sud",
+    "lat": 41.1333,
+    "lon": 14.7833,
+    "main": false
+  },
+  {
+    "slug": "caserta",
+    "name": "Caserta",
+    "region": "Campania",
+    "zone": "Sud",
+    "lat": 41.0667,
+    "lon": 14.3333,
+    "main": false
+  },
+  {
+    "slug": "cesena",
+    "name": "Cesena",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 44.1333,
+    "lon": 12.2333,
+    "main": false
+  },
+  {
+    "slug": "forli",
+    "name": "Forlì",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 44.2228,
+    "lon": 12.0414,
+    "main": false
+  },
+  {
+    "slug": "piacenza",
+    "name": "Piacenza",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 45.05,
+    "lon": 9.7,
+    "main": false
+  },
+  {
+    "slug": "ravenna",
+    "name": "Ravenna",
+    "region": "Emilia-Romagna",
+    "zone": "Nord",
+    "lat": 44.4161,
+    "lon": 12.2017,
+    "main": false
+  },
+  {
+    "slug": "gorizia",
+    "name": "Gorizia",
+    "region": "Friuli-Venezia Giulia",
+    "zone": "Nord",
+    "lat": 45.9352,
+    "lon": 13.6193,
+    "main": false
+  },
+  {
+    "slug": "pordenone",
+    "name": "Pordenone",
+    "region": "Friuli-Venezia Giulia",
+    "zone": "Nord",
+    "lat": 45.9626,
+    "lon": 12.6563,
+    "main": false
+  },
+  {
+    "slug": "frosinone",
+    "name": "Frosinone",
+    "region": "Lazio",
+    "zone": "Centro",
+    "lat": 41.6333,
+    "lon": 13.35,
+    "main": false
+  },
+  {
+    "slug": "rieti",
+    "name": "Rieti",
+    "region": "Lazio",
+    "zone": "Centro",
+    "lat": 42.4044,
+    "lon": 12.8567,
+    "main": false
+  },
+  {
+    "slug": "viterbo",
+    "name": "Viterbo",
+    "region": "Lazio",
+    "zone": "Centro",
+    "lat": 42.4186,
+    "lon": 12.1042,
+    "main": false
+  },
+  {
+    "slug": "imperia",
+    "name": "Imperia",
+    "region": "Liguria",
+    "zone": "Nord",
+    "lat": 43.8865,
+    "lon": 8.0297,
+    "main": false
+  },
+  {
+    "slug": "savona",
+    "name": "Savona",
+    "region": "Liguria",
+    "zone": "Nord",
+    "lat": 44.3081,
+    "lon": 8.4811,
+    "main": false
+  },
+  {
+    "slug": "cremona",
+    "name": "Cremona",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.1333,
+    "lon": 10.0247,
+    "main": false
+  },
+  {
+    "slug": "lecco",
+    "name": "Lecco",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.8533,
+    "lon": 9.3905,
+    "main": false
+  },
+  {
+    "slug": "lodi",
+    "name": "Lodi",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.3167,
+    "lon": 9.5,
+    "main": false
+  },
+  {
+    "slug": "mantova",
+    "name": "Mantova",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.1564,
+    "lon": 10.7911,
+    "main": false
+  },
+  {
+    "slug": "pavia",
+    "name": "Pavia",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.1853,
+    "lon": 9.155,
+    "main": false
+  },
+  {
+    "slug": "sondrio",
+    "name": "Sondrio",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 46.1697,
+    "lon": 9.87,
+    "main": false
+  },
+  {
+    "slug": "varese",
+    "name": "Varese",
+    "region": "Lombardia",
+    "zone": "Nord",
+    "lat": 45.8167,
+    "lon": 8.8333,
+    "main": false
+  },
+  {
+    "slug": "ascoli-piceno",
+    "name": "Ascoli Piceno",
+    "region": "Marche",
+    "zone": "Centro",
+    "lat": 42.8547,
+    "lon": 13.5753,
+    "main": false
+  },
+  {
+    "slug": "fermo",
+    "name": "Fermo",
+    "region": "Marche",
+    "zone": "Centro",
+    "lat": 43.1613,
+    "lon": 13.7184,
+    "main": false
+  },
+  {
+    "slug": "macerata",
+    "name": "Macerata",
+    "region": "Marche",
+    "zone": "Centro",
+    "lat": 43.3003,
+    "lon": 13.4533,
+    "main": false
+  },
+  {
+    "slug": "urbino",
+    "name": "Urbino",
+    "region": "Marche",
+    "zone": "Centro",
+    "lat": 43.7252,
+    "lon": 12.6372,
+    "main": false
+  },
+  {
+    "slug": "isernia",
+    "name": "Isernia",
+    "region": "Molise",
+    "zone": "Sud",
+    "lat": 41.6028,
+    "lon": 14.2397,
+    "main": false
+  },
+  {
+    "slug": "alessandria",
+    "name": "Alessandria",
+    "region": "Piemonte",
+    "zone": "Nord",
+    "lat": 44.9133,
+    "lon": 8.62,
+    "main": false
+  },
+  {
+    "slug": "asti",
+    "name": "Asti",
+    "region": "Piemonte",
+    "zone": "Nord",
+    "lat": 44.9,
+    "lon": 8.2069,
+    "main": false
+  },
+  {
+    "slug": "biella",
+    "name": "Biella",
+    "region": "Piemonte",
+    "zone": "Nord",
+    "lat": 45.5664,
+    "lon": 8.0533,
+    "main": false
+  },
+  {
+    "slug": "cuneo",
+    "name": "Cuneo",
+    "region": "Piemonte",
+    "zone": "Nord",
+    "lat": 44.3833,
+    "lon": 7.55,
+    "main": false
+  },
+  {
+    "slug": "novara",
+    "name": "Novara",
+    "region": "Piemonte",
+    "zone": "Nord",
+    "lat": 45.45,
+    "lon": 8.62,
+    "main": false
+  },
+  {
+    "slug": "verbania",
+    "name": "Verbania",
+    "region": "Piemonte",
+    "zone": "Nord",
+    "lat": 45.9228,
+    "lon": 8.5519,
+    "main": false
+  },
+  {
+    "slug": "vercelli",
+    "name": "Vercelli",
+    "region": "Piemonte",
+    "zone": "Nord",
+    "lat": 45.3262,
+    "lon": 8.4234,
+    "main": false
+  },
+  {
+    "slug": "brindisi",
+    "name": "Brindisi",
+    "region": "Puglia",
+    "zone": "Sud",
+    "lat": 40.6383,
+    "lon": 17.9458,
+    "main": false
+  },
+  {
+    "slug": "nuoro",
+    "name": "Nuoro",
+    "region": "Sardegna",
+    "zone": "Isole",
+    "lat": 40.3201,
+    "lon": 9.3281,
+    "main": false
+  },
+  {
+    "slug": "oristano",
+    "name": "Oristano",
+    "region": "Sardegna",
+    "zone": "Isole",
+    "lat": 39.9058,
+    "lon": 8.5916,
+    "main": false
+  },
+  {
+    "slug": "agrigento",
+    "name": "Agrigento",
+    "region": "Sicilia",
+    "zone": "Isole",
+    "lat": 37.3125,
+    "lon": 13.575,
+    "main": false
+  },
+  {
+    "slug": "caltanissetta",
+    "name": "Caltanissetta",
+    "region": "Sicilia",
+    "zone": "Isole",
+    "lat": 37.4915,
+    "lon": 14.0624,
+    "main": false
+  },
+  {
+    "slug": "enna",
+    "name": "Enna",
+    "region": "Sicilia",
+    "zone": "Isole",
+    "lat": 37.5667,
+    "lon": 14.2667,
+    "main": false
+  },
+  {
+    "slug": "ragusa",
+    "name": "Ragusa",
+    "region": "Sicilia",
+    "zone": "Isole",
+    "lat": 36.925,
+    "lon": 14.7306,
+    "main": false
+  },
+  {
+    "slug": "arezzo",
+    "name": "Arezzo",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 43.4631,
+    "lon": 11.8781,
+    "main": false
+  },
+  {
+    "slug": "grosseto",
+    "name": "Grosseto",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 42.7722,
+    "lon": 11.1089,
+    "main": false
+  },
+  {
+    "slug": "lucca",
+    "name": "Lucca",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 43.85,
+    "lon": 10.5167,
+    "main": false
+  },
+  {
+    "slug": "massa",
+    "name": "Massa",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 44.0333,
+    "lon": 10.1333,
+    "main": false
+  },
+  {
+    "slug": "pistoia",
+    "name": "Pistoia",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 43.9333,
+    "lon": 10.9167,
+    "main": false
+  },
+  {
+    "slug": "siena",
+    "name": "Siena",
+    "region": "Toscana",
+    "zone": "Centro",
+    "lat": 43.3183,
+    "lon": 11.3314,
+    "main": false
+  },
+  {
+    "slug": "belluno",
+    "name": "Belluno",
+    "region": "Veneto",
+    "zone": "Nord",
+    "lat": 46.1408,
+    "lon": 12.2156,
+    "main": false
+  },
+  {
+    "slug": "rovigo",
+    "name": "Rovigo",
+    "region": "Veneto",
+    "zone": "Nord",
+    "lat": 45.0707,
+    "lon": 11.7898,
+    "main": false
+  },
+  {
+    "slug": "treviso",
+    "name": "Treviso",
+    "region": "Veneto",
+    "zone": "Nord",
+    "lat": 45.6658,
+    "lon": 12.2456,
+    "main": false
+  }
+]

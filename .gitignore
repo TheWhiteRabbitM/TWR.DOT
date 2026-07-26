@@ -1,0 +1,21 @@
+# dependencies & build outputs
+node_modules/
+dist/
+*.tsbuildinfo
+*.local
+
+# local env & logs (contract addresses live in .env.example; keys never in repo)
+.env
+.env.*
+!.env.example
+*.log
+
+# contract build artifacts (sources + deployed-address annotations stay in .cdm/solidity)
+contract/artifacts/
+contract/cache/
+contract/target/
+contract/bin/
+
+# OS noise
+Thumbs.db
+.DS_Store

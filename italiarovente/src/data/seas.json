@@ -1,0 +1,8 @@
+[
+  { "slug": "tirreno", "name": "Mar Tirreno", "nameEn": "Tyrrhenian Sea", "lat": 40.3, "lon": 11.2 },
+  { "slug": "adriatico", "name": "Mar Adriatico", "nameEn": "Adriatic Sea", "lat": 43.3, "lon": 15.2 },
+  { "slug": "ionio", "name": "Mar Ionio", "nameEn": "Ionian Sea", "lat": 39.2, "lon": 17.9 },
+  { "slug": "ligure", "name": "Mar Ligure", "nameEn": "Ligurian Sea", "lat": 43.6, "lon": 8.4 },
+  { "slug": "sardegna", "name": "Mare di Sardegna", "nameEn": "Sea of Sardinia", "lat": 39.7, "lon": 7.9 },
+  { "slug": "sicilia", "name": "Mare di Sicilia", "nameEn": "Strait of Sicily", "lat": 36.8, "lon": 12.8 }
+]

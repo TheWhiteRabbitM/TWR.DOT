@@ -1,0 +1,10 @@
+﻿{
+  "name": "OpenPetition",
+  "short_name": "OpenPetition",
+  "description": "Petitions signed by real people: one signature per person, guaranteed by proof of personhood, verifiable by anyone.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e2134",
+  "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

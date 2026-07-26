@@ -1,0 +1,17 @@
+{
+  "name": "The Button",
+  "short_name": "The Button",
+  "description": "One button. One press per human, ever. A proof-of-personhood experiment: reinstalling, new wallets, new devices change nothing.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#07080a",
+  "theme_color": "#45ffa1",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

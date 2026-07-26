@@ -1,0 +1,10 @@
+﻿{
+  "name": "WUD Community",
+  "short_name": "WUD Community",
+  "description": "Unofficial $WUD community dashboard: live supply and holders from Polkadot Asset Hub, whale-to-plankton leaderboard.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#141118",
+  "theme_color": "#e6007a",
+  "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

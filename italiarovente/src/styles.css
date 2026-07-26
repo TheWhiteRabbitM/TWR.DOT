@@ -1,0 +1,953 @@
+/*
+ * Italia Rovente — an editorial climate record. The warming stripes are the
+ * identity; everything else is quiet type and generous space so the colour
+ * carries the story. Light and dark both first-class.
+ */
+
+/* Design tokens lifted from the original app (Material 3 Expressive, palette
+ * aligned to the logo): red-hot primary on cream/charcoal neutrals. Reused, not
+ * reinvented. */
+:root {
+  --bg: #f6efe6;
+  --surface: #ffffff;
+  --surface-2: #efe6d8;
+  --ink: #29241f;
+  --ink-soft: #6f6459;
+  --ink-faint: #a89a8a;
+  --line: #e0d3c2;
+  --hot: #d23a22;
+  --accent: #d23a22;
+  --hot-2: #ef6a2a;
+  --shadow: 0 1px 2px rgba(41, 36, 31, 0.16), 0 2px 8px rgba(41, 36, 31, 0.08);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #29241f;
+    --surface: #332c25;
+    --surface-2: #3a322a;
+    --ink: #f6efe6;
+    --ink-soft: #d8c9b8;
+    --ink-faint: #9f8b82;
+    --line: #544a3f;
+    --hot: #ffab98;
+    --accent: #ffab98;
+    --hot-2: #ffab7a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #29241f;
+  --surface: #332c25;
+  --surface-2: #3a322a;
+  --ink: #f6efe6;
+  --ink-soft: #d8c9b8;
+  --ink-faint: #9f8b82;
+  --line: #544a3f;
+  --hot: #ffab98;
+  --accent: #ffab98;
+  --hot-2: #ffab7a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='light'] {
+  --bg: #f6efe6;
+  --surface: #ffffff;
+  --surface-2: #efe6d8;
+  --ink: #29241f;
+  --ink-soft: #6f6459;
+  --ink-faint: #a89a8a;
+  --line: #e0d3c2;
+  --hot: #d23a22;
+  --accent: #d23a22;
+  --hot-2: #ef6a2a;
+  --shadow: 0 1px 2px rgba(41, 36, 31, 0.16), 0 2px 8px rgba(41, 36, 31, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Inter, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 4rem;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------------------------------------------------------------- header */
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.mark {
+  display: inline-flex;
+  height: 40px;
+  width: 40px;
+  border-radius: 9px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.mark i {
+  flex: 1;
+  display: block;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.brand p {
+  margin: 0.1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.city-pick select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 42px;
+  padding: 0 2.4rem 0 1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='%238a8177'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E")
+    no-repeat right 0.7rem center;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.city-pick select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ------------------------------------------------------- city picker */
+
+.citybtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 42px;
+  padding: 0 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.pick-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(20, 16, 12, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8vh 1rem 1rem;
+}
+
+.pick-panel {
+  width: 100%;
+  max-width: 420px;
+  max-height: 74vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.pick-search {
+  margin: 0.8rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+  outline: none;
+}
+
+.pick-search:focus {
+  border-color: var(--hot);
+}
+
+.pick-list {
+  overflow-y: auto;
+  padding: 0 0.5rem 0.6rem;
+}
+
+.pick-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pick-item small {
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+
+.pick-item:hover,
+.pick-item.on {
+  background: color-mix(in srgb, var(--hot) 10%, transparent);
+}
+
+.pick-none {
+  padding: 1.2rem;
+  text-align: center;
+  color: var(--ink-faint);
+}
+
+/* birth-year slider */
+.life-year {
+  color: var(--hot);
+  font-size: 1.25rem;
+  margin-left: 0.3rem;
+}
+
+.life-range {
+  display: block;
+  width: 100%;
+  margin-top: 0.7rem;
+  accent-color: var(--hot);
+  height: 28px;
+  touch-action: pan-x;
+}
+
+/* ------------------------------------------------------------------ hero */
+
+.hero {
+  padding: 1rem 0 1.75rem;
+}
+
+.hero-eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.hero-figure {
+  margin: 0.35rem 0 0.6rem;
+  font-size: clamp(2.4rem, 8vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.hero-figure .hot {
+  color: var(--hot);
+}
+
+.hero-lede {
+  margin: 0;
+  max-width: 42rem;
+  font-size: 1.02rem;
+  color: var(--ink-soft);
+}
+
+/* ------------------------------------------------------------ today (live) */
+
+.today {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 0 1.75rem;
+  padding: 1rem 1.15rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.today-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.today-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+}
+
+.today-now {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--hot);
+  font-variant-numeric: tabular-nums;
+}
+
+.today-load {
+  color: var(--ink-faint);
+}
+
+.today-hilo {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.today-src {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+}
+
+/* --------------------------------------------------------------- stripes */
+
+.stripes-panel {
+  margin: 0.5rem 0 2rem;
+}
+
+.stripes {
+  position: relative;
+  height: 190px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  touch-action: none;
+}
+
+.stripes-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.stripe-hi {
+  fill: rgba(255, 255, 255, 0.001);
+  stroke: var(--ink);
+  stroke-width: 0.4;
+  paint-order: stroke;
+  opacity: 0.9;
+}
+
+.stripe-tip {
+  position: absolute;
+  top: 0.6rem;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+
+.stripe-tip strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.stripes-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+
+.stripes-axis span:nth-child(2) {
+  text-align: center;
+}
+
+/* ----------------------------------------------------------------- tiles */
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 2.25rem;
+}
+
+.tile {
+  padding: 1rem 1.1rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.tile-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.tile-value {
+  display: block;
+  margin: 0.45rem 0 0.2rem;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile-value.is-hot {
+  color: var(--hot);
+}
+
+.tile-sub {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+/* ----------------------------------------------------------------- chart */
+
+.chart-panel {
+  padding: 1.15rem 1.15rem 0.6rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.chart-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.chart-head h3 {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.chart-note {
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.yc-wrap {
+  position: relative;
+  touch-action: none;
+}
+
+.yc-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.yc-grid {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.yc-axis {
+  fill: var(--ink-faint);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.yc-line {
+  stroke: var(--hot);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.yc-cross {
+  stroke: var(--ink-faint);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.yc-dot {
+  fill: var(--hot);
+  stroke: var(--surface);
+  stroke-width: 2;
+}
+
+.yc-tip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 10px));
+  pointer-events: none;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+
+.yc-tip strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.yc-tip span {
+  opacity: 0.75;
+}
+
+/* ------------------------------------------------------- national board */
+
+.nat {
+  margin-bottom: 2.25rem;
+}
+
+.nat-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+
+.nat-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.nat-note {
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+}
+
+.nat-rank {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.nat-rank strong {
+  color: var(--hot);
+}
+
+.board {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(6rem, 1fr) 2fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: none;
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 100ms ease;
+}
+
+.board-row:hover {
+  background: color-mix(in srgb, var(--hot) 7%, var(--surface));
+}
+
+.board-row.is-active {
+  background: color-mix(in srgb, var(--hot) 12%, var(--surface));
+  outline: 1px solid color-mix(in srgb, var(--hot) 40%, transparent);
+}
+
+.board-rank {
+  font-weight: 700;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.board-name {
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.board-region {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 400;
+  color: var(--ink-faint);
+}
+
+.board-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.board-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--hot-2), var(--hot));
+}
+
+.board-val {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--hot);
+}
+
+/* ------------------------------------------------------------- italy map */
+
+.mapwrap {
+  margin-bottom: 2.25rem;
+}
+
+.map-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+
+.map-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.map-note {
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+}
+
+.map-frame-it {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 0.5rem;
+}
+
+.map-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 74vh;
+}
+
+.map-land {
+  fill: var(--surface-2);
+  stroke: var(--line);
+  stroke-width: 1.2;
+}
+
+.map-dot {
+  cursor: pointer;
+  stroke: var(--surface);
+  stroke-width: 1.4;
+  transition: r 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.map-dot:hover {
+  stroke: var(--ink);
+}
+
+.map-dot.is-sel {
+  stroke: var(--ink);
+  stroke-width: 2.4;
+}
+
+.map-badge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.95rem;
+  padding: 0.45rem 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  box-shadow: var(--shadow);
+}
+
+.map-badge b {
+  color: var(--ink);
+}
+
+.map-scale {
+  position: absolute;
+  bottom: 0.9rem;
+  left: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.map-grad {
+  width: 84px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f4b44c, #b2182b);
+}
+
+/* ----------------------------------------------------------------- seas */
+
+.seas {
+  margin-bottom: 2.25rem;
+}
+
+.sea-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+}
+
+.sea-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 1rem 1.05rem;
+  background: linear-gradient(160deg, color-mix(in srgb, #2b6cb0 12%, var(--surface)), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.sea-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.sea-temp {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.sea-delta {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.sea-delta.is-hot {
+  color: var(--hot);
+  font-weight: 600;
+}
+
+.sea-rec {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.sea-foot {
+  margin: 0.8rem 0 0;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  max-width: 40rem;
+}
+
+/* --------------------------------------------------------------- lifetime */
+
+.life {
+  margin-bottom: 2.25rem;
+}
+
+.life-inner {
+  padding: 1.25rem 1.3rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--hot) 14%, var(--surface)), var(--surface));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.life-pick {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+
+.life-pick select {
+  margin-left: 0.35rem;
+  padding: 0.35rem 1.9rem 0.35rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='%238a8177'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E")
+    no-repeat right 0.5rem center;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.life-line {
+  margin: 0.7rem 0 0;
+  font-size: 1.15rem;
+  line-height: 1.45;
+}
+
+.life-hot {
+  color: var(--hot);
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+/* --------------------------------------------------------------- chat cta */
+
+.chat-cta {
+  display: block;
+  width: 100%;
+  margin: 0 0 2rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--hot);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.foot {
+  border-top: 1px solid var(--line);
+  padding-top: 1.25rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.foot a {
+  color: var(--accent);
+}
+
+.foot code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}
+
+.foot-dim {
+  color: var(--ink-faint);
+}
+
+.empty {
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 680px) {
+  .tiles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .sea-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 380px) {
+  .tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Shell-proofing: taps must never wait on double-tap-zoom heuristics. */
+button, select, a, input, textarea, [role='button'] {
+  touch-action: manipulation;
+}
+

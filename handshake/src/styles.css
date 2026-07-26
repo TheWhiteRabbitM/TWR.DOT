@@ -1,0 +1,557 @@
+/*
+ * Handshake — warm and personal, where OpenPetition is civic and cool.
+ * Cream paper, espresso ink, teal for actions, gold for the kept-word record.
+ * Agreement text is set in a serif, like something worth keeping.
+ */
+
+:root {
+  --page: #faf5ee;
+  --card: #fffdf9;
+  --line: #e8dfd2;
+  --line-soft: #f3ece1;
+  --ink: #2e2418;
+  --ink-2: #6b5d4b;
+  --ink-3: #a3947e;
+  --accent: #0e7c6b;
+  --accent-dark: #0a5f52;
+  --gold: #b98324;
+  --gold-bg: #fbf3e2;
+  --green: #3e8e5a;
+  --green-bg: #e9f4ec;
+  --red: #c24e3a;
+  --red-bg: #fbebe7;
+  --radius: 10px;
+  --serif: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family:
+    Inter,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------------------------------- top bar */
+
+.topbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  flex: none;
+}
+
+/* -------------------------------------------------------------- structure */
+
+.container {
+  flex: 1;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.2rem 1rem 2.5rem;
+}
+
+.strapline {
+  margin: 0.2rem 0 1.1rem;
+  color: var(--ink-2);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(46, 36, 24, 0.05);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.card.pad {
+  padding: 1.15rem 1.3rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.75rem;
+}
+
+.section-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* ----------------------------------------------------------------- pills */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.16rem 0.6rem;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pill.is-green {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.pill.is-gray {
+  background: var(--line-soft);
+  color: var(--ink-2);
+}
+
+.pill.is-dim {
+  background: var(--line-soft);
+  color: var(--ink-3);
+}
+
+.pill.is-blue {
+  background: #e3f1ee;
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------- buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    transform 80ms ease,
+    opacity 120ms ease;
+}
+
+.btn:hover {
+  border-color: var(--ink-3);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn.is-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn.is-primary:hover {
+  background: var(--accent-dark);
+}
+
+.btn.is-big {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 15px;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.linklike {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* -------------------------------------------------------------- the list */
+
+.plist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.plist li + li {
+  border-top: 1px solid var(--line-soft);
+}
+
+.plist a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.3rem;
+  color: inherit;
+  text-decoration: none;
+  transition: background 120ms ease;
+}
+
+.plist a:hover {
+  background: #fdf9f2;
+}
+
+.plist-main {
+  min-width: 0;
+}
+
+.plist-title {
+  display: block;
+  font-family: var(--serif);
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plist-meta {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+/* ---------------------------------------------------------------- detail */
+
+.detail-meta {
+  margin: 0 0 0.6rem;
+  color: var(--ink-3);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.detail-title {
+  margin: 0 0 1rem;
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* The agreement itself reads like a letter. */
+.terms {
+  margin: 0.4rem 0 1.1rem;
+  padding: 1.1rem 1.3rem;
+  background: var(--page);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-family: var(--serif);
+  font-size: 16.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.parties {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0 0 0.9rem;
+}
+
+.parties-and {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-3);
+}
+
+.person {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 13px;
+}
+
+.person strong {
+  font-family: var(--serif);
+  font-size: 14px;
+}
+
+.person.is-empty {
+  color: var(--ink-3);
+  font-style: italic;
+}
+
+/* ------------------------------------------------------- kept-word record */
+
+.keptword {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1.1rem;
+  background: var(--gold-bg);
+  border: 1px solid #eeddba;
+  border-radius: var(--radius);
+  font-size: 13px;
+}
+
+.keptword-title {
+  color: var(--gold);
+  font-family: var(--serif);
+  font-weight: 700;
+}
+
+.keptword-nums {
+  color: var(--ink-2);
+}
+
+.keptword-nums strong {
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.keptword .pill.is-green {
+  margin-left: auto;
+}
+
+/* --------------------------------------------------------------- actions */
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.2rem 0;
+}
+
+.actions-block {
+  border-top: 1px dashed var(--line);
+  padding-top: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.signedbox {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  background: var(--green-bg);
+  color: #2c6a44;
+  font-size: 13px;
+  animation: signed-in 240ms ease-out;
+}
+
+.signedbox p {
+  margin: 0.15rem 0 0;
+  font-weight: 400;
+}
+
+.signedbox-check {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+@keyframes signed-in {
+  from {
+    transform: scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.backlink a {
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.backlink a:hover {
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------------ forms */
+
+.field {
+  display: block;
+  margin: 0.9rem 0 0.4rem;
+}
+
+.field span {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.field textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  resize: vertical;
+}
+
+.field textarea:focus {
+  outline: 2px solid rgba(14, 124, 107, 0.25);
+  border-color: var(--accent);
+}
+
+.field-count {
+  display: block;
+  margin-top: 0.3rem;
+  text-align: right;
+  color: var(--ink-3);
+  font-size: 11.5px;
+}
+
+/* ------------------------------------------------------------------ misc */
+
+.banner {
+  margin: 0 0 1rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid #eeddba;
+  border-radius: var(--radius);
+  background: var(--gold-bg);
+  color: #8a6d1d;
+  font-size: 13px;
+}
+
+.hint {
+  color: var(--ink-2);
+  font-size: 12.5px;
+  margin: 0.5rem 0 0;
+}
+
+.hint.is-warning {
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: var(--red-bg);
+  border: 1px solid #f0cfc5;
+  color: #97402f;
+}
+
+.empty {
+  margin: 0;
+  padding: 0.4rem 0;
+  color: var(--ink-2);
+  text-align: center;
+}
+
+.error {
+  margin: 0.6rem 0 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: var(--red-bg);
+  color: var(--red);
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.footer {
+  border-top: 1px solid var(--line);
+  background: var(--card);
+  padding: 0.85rem 1rem 0.95rem;
+  text-align: center;
+}
+
+.footer p {
+  margin: 0.15rem 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+
+.footer .footer-tech {
+  color: var(--ink-3);
+  font-size: 11px;
+}
+
+.footer span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  word-break: break-all;
+}

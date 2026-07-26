@@ -1,0 +1,27 @@
+{
+  "name": "handshake",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Public petition register — one human, one signature.",
+  "scripts": {
+    "dev": "vite --port 5175",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@parity/product-sdk": "^0.19.1",
+    "@parity/product-sdk-descriptors": "^0.8.0",
+    "@parity/product-sdk-signer": "^0.11.1",
+    "polkadot-api": "^2.2.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5"
+  }
+}

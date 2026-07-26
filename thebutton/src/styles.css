@@ -1,0 +1,741 @@
+/*
+ * Station terminal, full screen.
+ *
+ * The whole viewport is the CRT: a green-phosphor tube with scanlines, an
+ * aperture-grille shimmer, a rolling refresh band, corner vignette, and a
+ * power-on snap. The only thing that is not phosphor is the keyboard docked
+ * under the screen — beige keys, because the machine you type the numbers on
+ * is hardware, not software.
+ */
+
+:root {
+  --room: #000;
+  --tube: #03140b;
+  --tube-edge: #010703;
+
+  --ph: #45ffa1;
+  --ph-hi: #b8ffdb;
+  --ph-dim: #1e9e63;
+  --alert: #ff5233;
+
+  --flap-card: #16160f;
+  --flap-num: #efe7d3;
+
+  --key-face: #f0e9d4;
+  --key-mid: #d8cfb4;
+  --key-low: #c3b998;
+  --key-edge: #8d8368;
+  --key-text: #26241c;
+  --deck: #23251f;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--room);
+  font-family: 'Courier New', Courier, ui-monospace, monospace;
+  -webkit-font-smoothing: none;
+}
+
+/* ---------------------------------------------------------------- console */
+
+.station {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.crt {
+  flex: 1;
+  min-height: 0;
+  padding: clamp(0.5rem, 2vw, 1.25rem);
+  background: var(--room);
+}
+
+.tube {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: clamp(0.9rem, 3vw, 2rem) / clamp(1.1rem, 3.5vw, 2.4rem);
+  background:
+    radial-gradient(130% 130% at 50% 42%, var(--tube) 0%, var(--tube-edge) 78%, #000 100%);
+  box-shadow:
+    0 0 0 3px #000 inset,
+    0 0 90px rgba(0, 0, 0, 0.95) inset,
+    0 0 34px rgba(69, 255, 161, 0.07);
+  animation: power-on 600ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+@keyframes power-on {
+  0% {
+    transform: scaleY(0.004) scaleX(0.55);
+    filter: brightness(6);
+  }
+  55% {
+    transform: scaleY(1.03) scaleX(1);
+    filter: brightness(1.6);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Scrollback lives inside the tube, like a real monitor. */
+.session,
+.boot {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: clamp(1.1rem, 3.5vw, 2.2rem) clamp(1rem, 4vw, 2.4rem) 2.2rem;
+  color: var(--ph);
+  font-size: clamp(0.72rem, 2.4vw, 0.84rem);
+  line-height: 2.05;
+  letter-spacing: 0.06em;
+  text-shadow:
+    0 0 2px rgba(69, 255, 161, 0.85),
+    0 0 9px rgba(69, 255, 161, 0.4),
+    1px 0 1px rgba(69, 255, 161, 0.25);
+  animation: jitter 9s steps(1) infinite;
+}
+
+.session::-webkit-scrollbar,
+.boot::-webkit-scrollbar {
+  display: none;
+}
+
+/* The tube twitches once in a while. Never more than 2px. */
+@keyframes jitter {
+  0%,
+  95.8%,
+  100% {
+    transform: translateX(0);
+  }
+  96.1% {
+    transform: translateX(1.6px);
+  }
+  96.4% {
+    transform: translateX(-1px);
+  }
+  96.7% {
+    transform: translateX(0);
+  }
+}
+
+/* ------------------------------------------------------------------ optics */
+
+.glass {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    /* sheen */
+    linear-gradient(112deg, rgba(255, 255, 255, 0.05) 0%, transparent 32%),
+    /* aperture grille */
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0 1px, transparent 1px 3px),
+    /* scanlines */
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.33) 0 1px, transparent 1px 3px),
+    /* vignette */
+    radial-gradient(115% 115% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.62) 100%);
+  animation: flicker 6s steps(1) infinite;
+}
+
+@keyframes flicker {
+  0%,
+  91%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 0.76;
+  }
+  93.5% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 0.88;
+  }
+}
+
+/* Refresh band drifting down the tube. */
+.sweep {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.sweep::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 22%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(69, 255, 161, 0.055) 50%,
+    transparent
+  );
+  animation: sweep 8s linear infinite;
+}
+
+@keyframes sweep {
+  from {
+    top: -24%;
+  }
+  to {
+    top: 104%;
+  }
+}
+
+/* ------------------------------------------------------------------- boot */
+
+.boot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.boot-loading {
+  align-self: flex-start;
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+  font-size: 1.05em;
+  letter-spacing: 0.22em;
+}
+
+.boot-dots {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+  width: 7ch;
+  animation: dots 1.6s steps(7) infinite;
+}
+
+@keyframes dots {
+  from {
+    width: 0;
+  }
+  to {
+    width: 7ch;
+  }
+}
+
+.sigil {
+  color: var(--ph);
+  filter: drop-shadow(0 0 6px rgba(69, 255, 161, 0.6)) drop-shadow(0 0 22px rgba(69, 255, 161, 0.25));
+}
+
+.sigil.is-boot {
+  width: clamp(150px, 42vw, 230px);
+  height: auto;
+  animation: sigil-hum 3.2s ease-in-out infinite;
+}
+
+.sigil.is-header {
+  width: 3rem;
+  height: 3rem;
+  flex: none;
+}
+
+@keyframes sigil-hum {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(69, 255, 161, 0.6))
+      drop-shadow(0 0 22px rgba(69, 255, 161, 0.25));
+  }
+  50% {
+    filter: drop-shadow(0 0 9px rgba(69, 255, 161, 0.8))
+      drop-shadow(0 0 30px rgba(69, 255, 161, 0.4));
+  }
+}
+
+.boot-station {
+  margin: 0.4rem 0 0;
+  font-weight: 700;
+  font-size: 1.2em;
+  letter-spacing: 0.3em;
+  color: var(--ph-hi);
+}
+
+.boot-sub {
+  margin: 0;
+  letter-spacing: 0.2em;
+  color: var(--ph-dim);
+}
+
+.boot-step {
+  margin: 1rem 0 0;
+  align-self: flex-start;
+}
+
+.boot-prompt {
+  margin: 0;
+  align-self: flex-start;
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------- session */
+
+.session {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(0.9rem, 3vh, 1.6rem);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+.wordmark {
+  margin: 0;
+  font-size: clamp(1.15rem, 4.5vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  color: var(--ph-hi);
+  text-shadow:
+    0 0 3px rgba(184, 255, 219, 0.9),
+    0 0 14px rgba(69, 255, 161, 0.5);
+}
+
+.subline {
+  margin: 0.15rem 0 0;
+  font-size: 0.82em;
+  letter-spacing: 0.18em;
+  color: var(--ph-dim);
+}
+
+/* --- split-flap timer: hardware bolted in front of the glass --- */
+
+.timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.flaps {
+  display: flex;
+  gap: 0.3rem;
+  perspective: 460px;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.8));
+}
+
+.flap {
+  position: relative;
+  width: clamp(2.3rem, 10vw, 3.1rem);
+  padding: 0.55rem 0 0.6rem;
+  border-radius: 3px;
+  background: linear-gradient(#20201a 0 50%, #101009 50% 100%);
+  box-shadow:
+    0 0 0 1px #000,
+    0 1px 0 rgba(255, 255, 255, 0.09) inset;
+  transform-origin: center top;
+  animation: flap-drop 300ms ease-out;
+}
+
+.flap i {
+  display: block;
+  font-style: normal;
+  font-size: clamp(1.7rem, 7.5vw, 2.4rem);
+  line-height: 1;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--flap-num);
+  text-shadow: none;
+}
+
+.flap::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: #000;
+}
+
+.flaps.is-logged .flap i {
+  color: var(--alert);
+}
+
+@keyframes flap-drop {
+  0% {
+    transform: rotateX(-92deg);
+    opacity: 0.2;
+  }
+  62% {
+    transform: rotateX(9deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+.timer-label {
+  margin: 0;
+  font-size: 0.85em;
+  letter-spacing: 0.24em;
+  color: var(--ph-dim);
+}
+
+/* --- terminal text --- */
+
+.terminal {
+  text-align: left;
+}
+
+.terminal p {
+  margin: 0;
+  word-break: break-word;
+}
+
+.terminal .is-alert {
+  color: var(--alert);
+  text-shadow:
+    0 0 2px rgba(255, 82, 51, 0.8),
+    0 0 10px rgba(255, 82, 51, 0.4);
+}
+
+.terminal .is-rabbit {
+  color: #f2fff8;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.55);
+}
+
+.terminal .dim,
+.colophon {
+  color: var(--ph-dim);
+}
+
+.echo {
+  font-weight: 700;
+  color: var(--ph-hi);
+}
+
+.failure-band {
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--alert);
+  opacity: 0.5;
+  animation: failure-blink 1.15s steps(1) infinite;
+}
+
+.crt.is-failed .tube {
+  box-shadow:
+    0 0 0 3px #000 inset,
+    0 0 90px rgba(0, 0, 0, 0.95) inset,
+    0 0 40px rgba(255, 82, 51, 0.12);
+}
+
+@keyframes failure-blink {
+  0%,
+  55%,
+  100% {
+    opacity: 0.5;
+  }
+  56%,
+  90% {
+    opacity: 0.18;
+  }
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.05em;
+  margin-left: 0.2em;
+  vertical-align: -0.18em;
+  background: var(--ph);
+  box-shadow: 0 0 8px rgba(69, 255, 161, 0.7);
+  animation: blink 1.05s steps(1) infinite;
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- register log --- */
+
+.log {
+  text-align: left;
+}
+
+.log-title {
+  margin: 0 0 0.4rem;
+  letter-spacing: 0.3em;
+  color: var(--ph-dim);
+}
+
+.log ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.log li {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  opacity: 0.82;
+}
+
+.log li.is-you {
+  opacity: 1;
+  color: var(--ph-hi);
+  font-weight: 700;
+}
+
+.entry-no {
+  min-width: 3ch;
+  font-variant-numeric: tabular-nums;
+}
+
+.entry-who {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entry-when {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--ph-dim);
+}
+
+.colophon {
+  margin-top: auto;
+  font-size: 0.72em;
+  letter-spacing: 0.1em;
+  line-height: 2;
+  text-align: center;
+}
+
+.colophon span {
+  word-break: break-all;
+}
+
+/* --------------------------------------------------------------- keyboard */
+
+.keyboard {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem 1rem;
+  background: linear-gradient(#2b2d26, var(--deck) 30%, #191b16);
+  box-shadow: 0 -8px 22px rgba(0, 0, 0, 0.8);
+}
+
+.keypad {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.key {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--key-text);
+  background: linear-gradient(var(--key-face), var(--key-mid) 55%, var(--key-low));
+  border-radius: 5px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 -2px 0 rgba(0, 0, 0, 0.13) inset,
+    0 5px 0 var(--key-edge),
+    0 8px 12px rgba(0, 0, 0, 0.6);
+  transition:
+    transform 70ms ease,
+    box-shadow 70ms ease,
+    background 160ms ease;
+}
+
+.key:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 1px 0 var(--key-edge),
+    0 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+.key:focus-visible {
+  outline: 2px solid var(--ph);
+  outline-offset: 4px;
+}
+
+.key.num {
+  min-width: 2.9rem;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.key.num.is-armed {
+  background: linear-gradient(#b9f8d2, #74d99c 60%, #4fbe80);
+}
+
+.key.execute {
+  padding: 0.9rem 2.6rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+
+.key.execute:disabled {
+  cursor: not-allowed;
+  color: #7c7a6d;
+  background: linear-gradient(#4b4b43, #38382f);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.07) inset,
+    0 5px 0 #24241e,
+    0 8px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Secondary key: offered only when the chain path is closed to this account. */
+.key.simulate {
+  padding: 0.62rem 1.7rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  color: #cfd6c8;
+  background: linear-gradient(#5a6152, #464c40 60%, #383d33);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.09) inset,
+    0 4px 0 #262a22,
+    0 7px 11px rgba(0, 0, 0, 0.5);
+}
+
+.key.simulate:hover {
+  filter: brightness(1.12);
+}
+
+.key.execute.is-working {
+  animation: key-throb 1s ease-in-out infinite;
+}
+
+@keyframes key-throb {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.22);
+  }
+}
+
+.key-note {
+  margin: 0;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  color: #6d7268;
+}
+
+/* ------------------------------------------------------------- the rabbit */
+
+.rabbit-lane {
+  position: fixed;
+  left: 0;
+  bottom: 16vh;
+  z-index: 30;
+  pointer-events: none;
+  animation: rabbit-cross 5.2s linear forwards;
+}
+
+@keyframes rabbit-cross {
+  from {
+    transform: translateX(-20vw);
+  }
+  to {
+    transform: translateX(120vw);
+  }
+}
+
+.rabbit-hop {
+  animation: rabbit-hop 520ms ease-in-out infinite;
+}
+
+@keyframes rabbit-hop {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  45% {
+    transform: translateY(-34px) scaleY(1.05);
+  }
+}
+
+.rabbit {
+  display: block;
+  width: clamp(46px, 9vw, 74px);
+  height: auto;
+  color: #fdfbf6;
+  filter: drop-shadow(0 0 16px rgba(69, 255, 161, 0.55));
+}
+
+/* --------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .tube,
+  .glass,
+  .sweep::before,
+  .session,
+  .boot,
+  .boot-dots,
+  .sigil.is-boot,
+  .flap,
+  .cursor,
+  .failure-band,
+  .key.execute.is-working,
+  .rabbit-hop {
+    animation: none;
+  }
+
+  .rabbit-lane {
+    animation-duration: 7s;
+  }
+}
+
+/* Shell-proofing: taps must never wait on double-tap-zoom heuristics. */
+button, select, a, input, textarea, [role='button'] {
+  touch-action: manipulation;
+}
+

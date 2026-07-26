@@ -1,0 +1,10 @@
+﻿{
+  "name": "dotmetrics",
+  "short_name": "dotmetrics",
+  "description": "The index of the .dot app ecosystem: every registered app discovered on-chain, growth, and live analytics.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8fafd",
+  "theme_color": "#1a73e8",
+  "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Italia Rovente",
+  "short_name": "Italia Rovente",
+  "description": "How much hotter Italy has become since 1940 — warming stripes, records, seas and rankings for 107 cities, from open ERA5 climate data.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6efe6",
+  "theme_color": "#d23a22",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

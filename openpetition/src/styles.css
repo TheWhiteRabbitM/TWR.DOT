@@ -1,0 +1,692 @@
+/*
+ * OpenPetition — Subsquare-style governance UI: near-white page, white cards
+ * with hairline borders, slate text, pill badges, one navy primary button.
+ */
+
+:root {
+  --page: #f6f7fa;
+  --card: #ffffff;
+  --line: #e0e4eb;
+  --line-soft: #f0f3f8;
+  --ink: #1e2134;
+  --ink-2: #506176;
+  --ink-3: #9da9bb;
+  --green: #4caf50;
+  --green-bg: #edf7ed;
+  --red: #e81f66;
+  --red-bg: #fdecf2;
+  --accent: #e6007a;
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family:
+    Inter,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------------------------------- top bar */
+
+.topbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0.7rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  flex: none;
+}
+
+/* -------------------------------------------------------------- structure */
+
+.container {
+  flex: 1;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.1rem 1rem 2.5rem;
+}
+
+.strapline {
+  margin: 0.2rem 0 1rem;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(30, 33, 52, 0.03);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.card.pad {
+  padding: 1.1rem 1.25rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.75rem;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ----------------------------------------------------------------- pills */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pill.is-green {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.pill.is-gray {
+  background: var(--line-soft);
+  color: var(--ink-2);
+}
+
+.pill.is-dim {
+  background: var(--line-soft);
+  color: var(--ink-3);
+}
+
+.counts {
+  display: inline-flex;
+  gap: 0.4rem;
+  flex: none;
+}
+
+/* --------------------------------------------------------------- buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    opacity 120ms ease;
+}
+
+.btn:hover {
+  border-color: var(--ink-3);
+}
+
+.btn.is-primary {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.btn.is-primary:hover {
+  background: #404252;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.linklike {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* -------------------------------------------------------------- the list */
+
+.plist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.plist li + li {
+  border-top: 1px solid var(--line-soft);
+}
+
+.plist a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 0.85rem 1.25rem;
+  color: inherit;
+  text-decoration: none;
+  transition: background 120ms ease;
+}
+
+.plist a:hover {
+  background: #fafbfc;
+}
+
+.plist-main {
+  min-width: 0;
+  flex: 1 1 60%;
+}
+
+/* The title is the point of the row — let it take two lines rather than
+   truncating to "Publish the perso…", which is what a single-line ellipsis
+   did next to the count pills on a narrow screen. */
+.plist-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* Narrow screens: counts drop below the title instead of squeezing it. */
+@media (max-width: 460px) {
+  .plist a {
+    flex-wrap: wrap;
+  }
+  .plist-main {
+    flex-basis: 100%;
+  }
+  .plist .counts {
+    padding-left: 0;
+  }
+}
+
+.plist-meta {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+/* ---------------------------------------------------------------- detail */
+
+.detail-meta {
+  margin: 0 0 0.35rem;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.detail-title {
+  margin: 0 0 1rem;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.is-green-text {
+  color: var(--green);
+}
+
+/* --- how it works --- */
+
+.how {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.85rem 1.25rem;
+}
+
+.how-step {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+.how-step p {
+  margin: 0.3rem 0;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
+.how-step strong {
+  color: var(--ink);
+}
+
+.how-n {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--line-soft);
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 700;
+  transform: translateY(3px);
+}
+
+/* --- signature progress --- */
+
+.progress-wrap {
+  padding: 0.4rem 0 1.1rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.progress-line {
+  margin: 0.6rem 0 0.5rem;
+  font-size: 15px;
+}
+
+.progress-line strong {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.progress-sub {
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.progress {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--line-soft);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #66bb6a, var(--green));
+  transition: width 400ms ease;
+}
+
+.progress-goal {
+  margin: 0.35rem 0 0;
+  color: var(--ink-3);
+  font-size: 12px;
+  text-align: right;
+}
+
+/* --- signed / signing --- */
+
+.signarea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.btn.is-big {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.signedbox {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  background: var(--green-bg);
+  color: #2e7d32;
+  font-size: 13px;
+  animation: signed-in 240ms ease-out;
+}
+
+.signedbox p {
+  margin: 0.15rem 0 0;
+  font-weight: 400;
+}
+
+.signedbox-check {
+  flex: none;
+  width: 22px;
+  height: 22px;
+}
+
+@keyframes signed-in {
+  from {
+    transform: scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* --- collapsible proof --- */
+
+.proof {
+  margin-top: 0.9rem;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 0.7rem;
+}
+
+.proof summary {
+  cursor: pointer;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.proof summary:hover {
+  color: var(--ink);
+}
+
+.proof .actions {
+  margin-top: 0.6rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.2rem 0;
+}
+
+.evidence {
+  margin: 0.9rem 0 0;
+  padding: 0.85rem 1rem;
+  background: var(--page);
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.backlink a {
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.backlink a:hover {
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------------ forms */
+
+.field {
+  display: block;
+  margin: 0.9rem 0;
+}
+
+.field span {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.field textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+  color: var(--ink);
+  resize: vertical;
+}
+
+.field textarea:focus {
+  outline: 2px solid rgba(230, 0, 122, 0.25);
+  border-color: var(--accent);
+}
+
+.field-count {
+  display: block;
+  margin-top: 0.3rem;
+  text-align: right;
+  color: var(--ink-3);
+  font-size: 11.5px;
+}
+
+/* ------------------------------------------------------------------ misc */
+
+.banner {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #f5e2b8;
+  border-radius: 6px;
+  background: #fdf7e7;
+  color: #8a6d1d;
+  font-size: 13px;
+}
+
+.hint {
+  color: var(--ink-2);
+  font-size: 12.5px;
+  margin: 0.5rem 0 0;
+}
+
+.empty {
+  margin: 0;
+  padding: 0.4rem 0;
+  color: var(--ink-2);
+  text-align: center;
+}
+
+.error {
+  margin: 0.6rem 0 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  background: var(--red-bg);
+  color: var(--red);
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.footer {
+  border-top: 1px solid var(--line);
+  background: var(--card);
+  padding: 0.8rem 1rem 0.9rem;
+  text-align: center;
+}
+
+.footer p {
+  margin: 0.15rem 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+
+.footer .footer-tech {
+  color: var(--ink-3);
+  font-size: 11px;
+}
+
+.footer span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  word-break: break-all;
+}
+
+/* ----------------------------------------------------- verify-first notice */
+
+.verify {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 1rem 1.1rem;
+  border: 1px solid #cfe3f7;
+  border-radius: var(--radius);
+  background: #f2f8fe;
+}
+
+.verify-badge {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #dcecfb;
+  color: #2f6fd0;
+}
+
+.verify-title {
+  margin: 0 0 0.35rem;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.verify-body {
+  margin: 0 0 0.55rem;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.verify-body em {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.verify-how {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.verify-how strong {
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------- the rabbit */
+
+.rabbit-lane {
+  position: fixed;
+  left: 0;
+  bottom: 8vh;
+  z-index: 50;
+  pointer-events: none;
+  animation: rabbit-cross 5.2s linear forwards;
+}
+
+@keyframes rabbit-cross {
+  from {
+    transform: translateX(-20vw);
+  }
+  to {
+    transform: translateX(120vw);
+  }
+}
+
+.rabbit-hop {
+  animation: rabbit-hop 520ms ease-in-out infinite;
+}
+
+@keyframes rabbit-hop {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  45% {
+    transform: translateY(-30px) scaleY(1.05);
+  }
+}
+
+.rabbit {
+  display: block;
+  width: clamp(44px, 8vw, 68px);
+  height: auto;
+  filter: drop-shadow(0 4px 10px rgba(30, 33, 52, 0.25));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rabbit-hop {
+    animation: none;
+  }
+  .rabbit-lane {
+    animation-duration: 7s;
+  }
+}
+
+/* Shell-proofing: taps must never wait on double-tap-zoom heuristics. */
+button, select, a, input, textarea, [role='button'] {
+  touch-action: manipulation;
+}
+

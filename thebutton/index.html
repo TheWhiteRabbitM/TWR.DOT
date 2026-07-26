@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark light" />
+    <title>The Button</title>
+    <!--
+      A data URI, not ./icon.svg: the gateway has served relative asset requests
+      as text/html before, and the manifest icon alone never reaches the tab.
+    -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%2307130c'/%3E%3Cg stroke='%2345ffa1' fill='none'%3E%3Cpolygon points='160,44 352,44 468,160 468,352 352,468 160,468 44,352 44,160' stroke-width='22'/%3E%3Cpolygon points='196,116 316,116 396,196 396,316 316,396 196,396 116,316 116,196' stroke-width='16' opacity='0.6'/%3E%3C/g%3E%3Ccircle cx='256' cy='256' r='72' stroke='%2345ffa1' stroke-width='18' fill='none'/%3E%3Ccircle cx='256' cy='256' r='30' fill='%2345ffa1'/%3E%3C/svg%3E"
+    />
+    <meta name="description" content="One button. One press per human, ever. A proof-of-personhood experiment." />
+    <link rel="manifest" href="./manifest.webmanifest" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
