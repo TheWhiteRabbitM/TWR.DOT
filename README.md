@@ -46,9 +46,11 @@ behind it; write paths activate as personhood rolls out. Each app carries a
   `requestPermission({tag:"Remote", value:{domains}})` — gated fetches otherwise fail silently.
 - **Shell-proof UI**: no native `<select>` (custom pickers/chips/segmented controls),
   no nested iframes (raw OSM tile `<img>`s instead), tap-to-skip splashes, error boundaries.
-- **Self-updating .dot sites**: scheduled tasks re-index / re-fetch data, rebuild
-  (Windows↔WSL interop) and republish with `pad` — Bulletin's incremental publish makes
-  each refresh cheap.
+- **Self-updating .dot sites**: scheduled jobs re-index / re-fetch data, rebuild and
+  republish with `pad` — Bulletin's incremental publish makes each refresh cheap.
+  dotmetrics refreshes hourly on **GitHub Actions**
+  ([workflow](.github/workflows/dotmetrics-refresh.yml)) with no personal machine
+  involved; italiarovente refreshes daily via Task Scheduler + WSL.
 - **Polkadot-app chat link**: `getChatManager().registerRoom(...)` + `navigateTo("polkadot://chat")`
   from `@parity/product-sdk-host`, wired into every app.
 
