@@ -119,6 +119,20 @@ bytes.
 Suggestion: none needed if this is expected Substrate behaviour — a line in the devnet
 docs would confirm the supported pattern (events + raw calldata).
 
+## Platform gap
+
+**12a. Self-updating apps require infrastructure outside the platform.**
+Observed: Bulletin hosting is static and there is no platform-native scheduled
+compute, so every app in this repo that refreshes its own published data
+(dotmetrics hourly, italiarovente daily) needs an external runner — first a
+personal PC via Task Scheduler + WSL, now a GitHub Actions cron for dotmetrics
+(`.github/workflows/dotmetrics-refresh.yml`), which also means the publish key
+must live in a cloud secret store. A readable DotNS text record (see finding 6)
+would remove most of the need: apps could point at "latest data CID" without
+republishing the site at all.
+Suggestion: fixing the `text()` read path is the cheap 80% answer; a
+platform-native "republish on schedule" primitive would close the rest.
+
 ## Personhood rollout
 
 **12. Write paths cannot be exercised by developers without a granted account.**
