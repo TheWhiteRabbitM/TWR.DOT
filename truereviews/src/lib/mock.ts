@@ -18,7 +18,7 @@ const KEY = 'truereviews:demo:v3';
 const YOU = 'demo-you-alias';
 
 /** Bulletin CID of the seed dataset (see scratchpad/upload-seed.sh). */
-export const SEED_CID = 'bafybeia7lz5mztghgmltrqq4plt6xxjxknxytwcwec7ob3wrga4lo5zrje';
+export const SEED_CID = 'bafybeic2ges56zkoksqditellkvxbzlxys3y6kcdbl4b3fjumanbcffqi4';
 
 const GATEWAYS = [
   (cid: string) => `https://dweb.link/ipfs/${cid}`,
