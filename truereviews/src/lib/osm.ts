@@ -100,8 +100,9 @@ export async function searchOsm(query: string, signal?: AbortSignal): Promise<Pl
 
 /** Deep links back to the real business on the big maps. */
 export function osmLink(p: Place): string {
-  const [type, id] = p.osmRef.split('/');
-  return `https://www.openstreetmap.org/${type}/${id}`;
+  // Pin-at-coordinates link: object pages (/node/<id>) 404 when a place's ref
+  // is stale or seeded, while a coordinate pin always lands on the right spot.
+  return `https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lon}#map=18/${p.lat}/${p.lon}`;
 }
 
 export function mapsLink(p: Place): string {

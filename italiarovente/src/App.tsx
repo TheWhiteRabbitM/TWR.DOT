@@ -21,8 +21,10 @@ import { ItalyMap } from './ItalyMap';
 import { Seas } from './Seas';
 import { Lifetime } from './Lifetime';
 
-type HottestDay = { date: string; value: number };
-type Heatwave = { days: number; start: string; end: string; peak: number };
+// ERA5 only carries daily max/min for the main cities; everywhere else the
+// source writes these records as null — every field must be guarded.
+type HottestDay = { date: string; value: number | null };
+type Heatwave = { days: number; start: string; end: string; peak: number | null };
 
 /** One-tap link into the Polkadot app's built-in chat. */
 function ChatButton() {
@@ -158,17 +160,17 @@ export function App() {
         <Tile
           label="Warmest year on record"
           value={warmestYear ? String(warmestYear.year) : '—'}
-          sub={warmestYear ? `${warmestYear.mean.toFixed(1)}°C average` : ''}
+          sub={warmestYear && warmestYear.mean != null ? `${warmestYear.mean.toFixed(1)}°C average` : ''}
         />
         <Tile
           label="Hottest day ever"
-          value={hottest ? `${hottest.value.toFixed(1)}°C` : '—'}
-          sub={hottest ? fmtDate(hottest.date) : ''}
+          value={hottest && hottest.value != null ? `${hottest.value.toFixed(1)}°C` : '—'}
+          sub={hottest && hottest.value != null ? fmtDate(hottest.date) : ''}
         />
         <Tile
           label="Longest heatwave"
           value={heatwave ? `${heatwave.days} days` : '—'}
-          sub={heatwave ? `peak ${heatwave.peak.toFixed(1)}°C · ${fmtDate(heatwave.start)}` : ''}
+          sub={heatwave && heatwave.peak != null ? `peak ${heatwave.peak.toFixed(1)}°C · ${fmtDate(heatwave.start)}` : ''}
         />
         <Tile
           label="Hot days last year"
