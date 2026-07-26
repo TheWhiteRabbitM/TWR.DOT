@@ -39,6 +39,7 @@ export function Console({
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [weekOff, setWeekOff] = useState(0);
+  const [exportHint, setExportHint] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -139,6 +140,11 @@ export function Console({
     a.href = `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
     a.download = 'discreet-bookings.csv';
     a.click();
+    // Saving a file needs the `allow-downloads` sandbox token, which the
+    // Polkadot shell may withhold — and a blocked click throws nothing and
+    // returns nothing, so success is unknowable from here. Say so plainly
+    // instead of leaving a provider staring at a button that did nothing.
+    setExportHint(true);
   };
 
   if (services.length === 0) return null;
@@ -193,6 +199,13 @@ export function Console({
           ⬇ CSV
         </button>
       </div>
+
+      {exportHint && (
+        <p className="export-hint">
+          Export sent. If no file appeared, downloads are blocked inside the Polkadot app — open
+          discreet.dot in a browser to save the CSV.
+        </p>
+      )}
 
       <div className="week">
         {days.map(({ day, cells }) => (

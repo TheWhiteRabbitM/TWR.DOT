@@ -6,6 +6,7 @@ import { buildApps, type Discovered } from './lib/registry';
 import { readContract, ping } from './lib/chain';
 import { RegistrationsTrend, RegsPerDay, Sparkline, type TrendPoint } from './Charts';
 import { openAppChat } from './lib/host-chat';
+import { openExternal } from './lib/host-nav';
 import ecosystemSnapshot from './lib/ecosystem.json';
 import historyRaw from './lib/history.json';
 import type { AppEntry, AppStats } from './lib/types';
@@ -181,10 +182,13 @@ function ChatButton() {
   const go = async () => {
     setLabel('…');
     const r = await openAppChat('dotmetrics', 'dotmetrics community');
-    if (r === 'outside') setLabel('In-app only');
-    else if (r === 'failed') setLabel('Unavailable');
-    else setLabel('Added ✓');
-    window.setTimeout(() => setLabel('💬 Chat'), 2400);
+    // "registered" is a real outcome, not a failure: the room exists in the
+    // user's chat list even when the host refuses to jump there for us.
+    if (r.status === 'outside') setLabel('Chat lives inside the Polkadot app');
+    else if (r.status === 'failed') setLabel('Chat unavailable right now');
+    else if (r.status === 'registered') setLabel('Room added — open the Chat tab');
+    else setLabel('Opened in chat ✓');
+    window.setTimeout(() => setLabel('💬 Chat'), 3200);
   };
   return (
     <button type="button" className="chat-cta" onClick={go}>
@@ -235,6 +239,26 @@ function NewThisWeek({
       </div>
     </div>
   );
+}
+
+/**
+ * Leave for one of the indexed apps.
+ *
+ * Inside the shell the `.dot` name is the better destination: the host resolves
+ * it as a deep link to the sibling app, which is what a directory of .dot apps
+ * should hand you. Outside there is no resolver, so only the public gateway URL
+ * works — and that is what stays in the anchor's `href` so right-click and
+ * standalone use still land somewhere real.
+ */
+async function openEntry(entry: AppEntry): Promise<void> {
+  let url = entry.url;
+  try {
+    const host = await import('@parity/product-sdk-host');
+    if (host.isInsideContainerSync()) url = `https://${entry.domain}`;
+  } catch {
+    // No SDK at all means no shell, so the gateway URL stands.
+  }
+  await openExternal(url);
 }
 
 /** One index row + its expandable detail entry (Search-Console style). */
@@ -297,7 +321,13 @@ function FragmentRow({
             target="_blank"
             rel="noreferrer"
             aria-label={`Open ${entry.name}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              // The row itself is click-to-expand; without this the link would
+              // also toggle the detail panel open behind it.
+              e.stopPropagation();
+              e.preventDefault();
+              void openEntry(entry);
+            }}
           >
             ↗
           </a>
@@ -335,7 +365,16 @@ function FragmentRow({
                 </div>
               </div>
               <p className="detail-tag">{entry.tagline}</p>
-              <a className="detail-open" href={entry.url} target="_blank" rel="noreferrer">
+              <a
+                className="detail-open"
+                href={entry.url}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  void openEntry(entry);
+                }}
+              >
                 Open {entry.domain} ↗
               </a>
             </div>
@@ -363,11 +402,6 @@ export function App() {
     }
     return { interactions, verified, apps: rows.length, live };
   }, [rows]);
-
-  const newest = useMemo(
-    () => rows.reduce((max, r) => Math.max(max, r.entry.firstSeenBlock ?? 0), 0),
-    [rows],
-  );
 
   const newestAt = useMemo(
     () => rows.reduce((max, r) => Math.max(max, r.entry.firstSeenAt ?? 0), 0),
@@ -435,7 +469,9 @@ export function App() {
         </div>
         <div className={`status ${online === false ? 'is-off' : online ? 'is-on' : ''}`}>
           <span className="dot" />
-          {online === false ? 'offline' : online ? (liveTail ? 'LIVE · real-time' : 'Live data') : 'connecting'}
+          {/* "Live reads", not "Live data": this chip only reports the 20s
+              contract-read loop. The index's own freshness is the scorecard's. */}
+          {online === false ? 'offline' : online ? (liveTail ? 'LIVE · real-time' : 'Live reads') : 'connecting'}
           <span className="status-time">· {ago(updatedAt)}</span>
           <button type="button" className="refresh" onClick={reload} aria-label="refresh">
             ↻
@@ -451,7 +487,13 @@ export function App() {
             <span className="total-n accent-blue">{fmt(totals.apps)}</span>
             <Sparkline points={trend} />
           </div>
-          <span className="total-sub">indexed on-chain to #{fmt(newest)}</span>
+          {/* The head block the last indexer run reached, plus how long ago that
+              run was. The newest *registration* block was shown here before, and
+              it froze whenever a refresh found no new name — which read as a
+              dashboard that had stopped updating. `headBlock` moves every run. */}
+          <span className="total-sub">
+            indexed to #{fmt(eco.headBlock)} · {ago(eco.measuredAt)}
+          </span>
         </div>
         <div className="total">
           <span className="total-l">New in last 24h</span>
@@ -589,6 +631,10 @@ export function App() {
                     target="_blank"
                     rel="noreferrer"
                     title={directoryCid ?? undefined}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      void openExternal(`https://dweb.link/ipfs/${directoryCid}`);
+                    }}
                   >
                     live from Bulletin
                   </a>

@@ -6,7 +6,7 @@ import { readContractStatus } from './lib/chain';
 import { DEMO_ENABLED, DISCREET_CONTRACT } from './lib/config';
 import { Splash } from './Splash';
 import { Console } from './Console';
-import { openAppChat } from './lib/host-chat';
+import { openAppChat, type ChatStatus } from './lib/host-chat';
 
 /* --------------------------------------------------------------- helpers */
 
@@ -118,16 +118,24 @@ function ChainChip() {
   );
 }
 
+const CHAT_IDLE = '💬 Discreet community chat';
+
+const CHAT_LABEL: Record<ChatStatus, string> = {
+  opened: 'Opened in chat ✓',
+  // Still a success: the room is in their chat list, the host just wouldn't jump.
+  registered: 'Room added — open the Chat tab',
+  outside: 'Chat lives inside the Polkadot app',
+  failed: 'Chat unavailable right now',
+};
+
 /** One-tap link into the Polkadot app's built-in chat. */
 function ChatButton() {
-  const [label, setLabel] = useState('💬 Discreet community chat');
+  const [label, setLabel] = useState(CHAT_IDLE);
   const go = async () => {
     setLabel('Opening…');
     const r = await openAppChat('discreetly', 'Discreet community');
-    if (r === 'outside') setLabel('Chat lives inside the Polkadot app');
-    else if (r === 'failed') setLabel('Chat unavailable right now');
-    else setLabel('Room added to your Polkadot chat ✓');
-    window.setTimeout(() => setLabel('💬 Discreet community chat'), 2600);
+    setLabel(CHAT_LABEL[r.status]);
+    window.setTimeout(() => setLabel(CHAT_IDLE), 3200);
   };
   return (
     <button type="button" className="chat-cta" onClick={go}>

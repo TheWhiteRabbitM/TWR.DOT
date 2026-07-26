@@ -14,6 +14,7 @@ import {
 import { fetchToday, type Today } from './lib/live';
 import { CityPicker } from './CityPicker';
 import { openAppChat } from './lib/host-chat';
+import { openExternal } from './lib/host-nav';
 import { WarmingStripes } from './WarmingStripes';
 import { YearlyMeanChart } from './YearlyMeanChart';
 import { Rankings } from './Rankings';
@@ -32,10 +33,12 @@ function ChatButton() {
   const go = async () => {
     setLabel('Opening…');
     const r = await openAppChat('italiarovente', 'Italia Rovente community');
-    if (r === 'outside') setLabel('Chat lives inside the Polkadot app');
-    else if (r === 'failed') setLabel('Chat unavailable right now');
-    else setLabel('Room added to your Polkadot chat ✓');
-    window.setTimeout(() => setLabel('💬 Community chat'), 2600);
+    if (r.status === 'outside') setLabel('Chat lives inside the Polkadot app');
+    else if (r.status === 'failed') setLabel('Chat unavailable right now');
+    // 'registered' is a success too: the room exists, the host just would not jump.
+    else if (r.status === 'registered') setLabel('Room added — open the Chat tab');
+    else setLabel('Opened in chat ✓');
+    window.setTimeout(() => setLabel('💬 Community chat'), 3200);
   };
   return (
     <button type="button" className="chat-cta" onClick={go}>
@@ -213,7 +216,17 @@ export function App() {
       <footer className="foot">
         <p>
           Daily temperatures 1940–today from the ERA5 reanalysis via the open{' '}
-          <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">
+          {/* href/target stay for right-click and standalone use; in the host
+              sandbox they are swallowed, so the click goes through openExternal. */}
+          <a
+            href="https://open-meteo.com/"
+            target="_blank"
+            rel="noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              void openExternal('https://open-meteo.com/');
+            }}
+          >
             Open-Meteo
           </a>{' '}
           archive. Anomalies are against the 1961–1990 average. Data as of {fmtDate(dataAsOf())}.

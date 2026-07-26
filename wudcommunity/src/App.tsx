@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import { fetchWud, ASSET_ID, type WudStats } from './lib/wud';
 import { openAppChat } from './lib/host-chat';
+import { openExternal } from './lib/host-nav';
 import { loadSnapshot, BAKED, type Snapshot, type SnapshotSource } from './lib/snapshot';
 
 const REFRESH_MS = 30_000;
@@ -45,11 +46,21 @@ export function App() {
   const goChat = async () => {
     setChatLabel('Opening…');
     const r = await openAppChat('wudcommunity', 'WUD community');
-    if (r === 'outside') setChatLabel('Chat lives inside the Polkadot app');
-    else if (r === 'failed') setChatLabel('Chat unavailable right now');
-    else setChatLabel('Room added to your Polkadot chat ✓');
-    window.setTimeout(() => setChatLabel('💬 Community chat'), 2600);
+    if (r.status === 'outside') setChatLabel('Chat lives inside the Polkadot app');
+    else if (r.status === 'failed') setChatLabel('Chat unavailable right now');
+    // 'registered' is a real success: the room exists, the host just would not jump.
+    else if (r.status === 'registered') setChatLabel('Room added — open the Chat tab');
+    else setChatLabel('Opened in chat ✓');
+    window.setTimeout(() => setChatLabel('💬 Community chat'), 3200);
   };
+
+  // One handler shared by every external anchor. Taking the URL off the event
+  // target keeps it a single stable function instead of one closure per
+  // leaderboard row, and leaves each href intact for right-click / standalone.
+  const onExternal = useCallback((e: ReactMouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    void openExternal(e.currentTarget.href);
+  }, []);
   const [snap, setSnap] = useState<Snapshot>(BAKED);
   const [, setSnapSource] = useState<SnapshotSource>('baked');
   const TIER_BY_KEY = useMemo(() => new Map(snap.tiers.map((t) => [t.key, t])), [snap]);
@@ -131,7 +142,13 @@ export function App() {
               : 'Every number on this page is read straight off the chain — no wallet, no sign-in, nothing typed in by hand.'}
           </p>
           <div className="hero-actions">
-            <a className="btn filled" href={OFFICIAL} target="_blank" rel="noreferrer">
+            <a
+              className="btn filled"
+              href={OFFICIAL}
+              target="_blank"
+              rel="noreferrer"
+              onClick={onExternal}
+            >
               Official site
             </a>
             <button type="button" className="btn tonal" onClick={copyAsset}>
@@ -249,6 +266,7 @@ export function App() {
                     target="_blank"
                     rel="noreferrer"
                     title={h.address}
+                    onClick={onExternal}
                   >
                     {shortAddr(h.address)}
                   </a>
@@ -274,7 +292,7 @@ export function App() {
         <p>
           <strong>Unofficial.</strong> Made by the community, not by the $WUD team. For official
           information see{' '}
-          <a href={OFFICIAL} target="_blank" rel="noreferrer">
+          <a href={OFFICIAL} target="_blank" rel="noreferrer" onClick={onExternal}>
             gavunwud.xyz
           </a>
           .

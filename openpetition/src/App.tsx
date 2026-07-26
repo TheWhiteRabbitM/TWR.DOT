@@ -7,6 +7,8 @@ import { Rabbit, useRabbitSequence } from './Rabbit';
 import { createMockDriver } from './lib/mockDriver';
 import { createChainDriver } from './lib/chainDriver';
 import { CONTRACT_ADDRESS, DEVNET, PUBLIC_HOST, TIER, TITLE_MAX, TITLE_MIN } from './lib/config';
+import { openAppChat } from './lib/host-chat';
+import { copyText } from './lib/host-nav';
 import type { MyState, PetitionRow, PetitionsDriver } from './lib/types';
 
 /* ------------------------------------------------------------------ routing */
@@ -158,6 +160,28 @@ function HowItWorks() {
   );
 }
 
+const CHAT_LABEL = 'Community chat';
+
+function ChatButton({ roomId, name }: { roomId: string; name: string }) {
+  const [label, setLabel] = useState(CHAT_LABEL);
+  const go = async () => {
+    setLabel('Opening…');
+    const r = await openAppChat(roomId, name);
+    // "registered" is a real outcome, not a failure: the room exists in the
+    // user's chat list even when the host refuses to jump there for us.
+    if (r.status === 'outside') setLabel('Chat lives inside the Polkadot app');
+    else if (r.status === 'failed') setLabel('Chat unavailable right now');
+    else if (r.status === 'registered') setLabel('Room added — open the Chat tab');
+    else setLabel('Opened in chat ✓');
+    window.setTimeout(() => setLabel(CHAT_LABEL), 3200);
+  };
+  return (
+    <button type="button" className="btn" onClick={go}>
+      {label}
+    </button>
+  );
+}
+
 /**
  * Shown when someone who isn't verified tries to sign or start a petition.
  *
@@ -288,6 +312,10 @@ function ListScreen({ rows, me }: ScreenProps) {
         </ol>
       </div>
 
+      <div className="actions" style={{ justifyContent: 'center' }}>
+        <ChatButton roomId="openpetition" name="OpenPetition community" />
+      </div>
+
       {me && me.tier < TIER.full && (
         <p className="hint">
           {me.tier === TIER.none
@@ -353,13 +381,16 @@ function DetailScreen({ id, driver, rows, me, refresh, onTryDemo }: ScreenProps 
 
   const copy = (what: 'link' | 'proof') => {
     const text = what === 'link' ? publicUrl(row.id) : evidenceOf(row);
-    void navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        setCopied(what);
-        setTimeout(() => setCopied(null), 2000);
-      })
-      .catch(() => setError('Could not copy — select the text below and copy it by hand.'));
+    // navigator.clipboard rejects outright in the host's sandboxed iframe, which
+    // left this button dead there; copyText keeps the legacy path as a backstop.
+    void copyText(text).then((ok) => {
+      if (!ok) {
+        setError('Could not copy — select the text below and copy it by hand.');
+        return;
+      }
+      setCopied(what);
+      setTimeout(() => setCopied(null), 2000);
+    });
   };
 
   return (
