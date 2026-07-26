@@ -1,52 +1,95 @@
 /*
- * dotmetrics — Material 3, Google-product flavour.
+ * dotmetrics — one-accent dark system.
  *
- * Real MD3 tokens (Google's blue scheme, not the default purple): tonal
- * surface containers instead of borders-everywhere, the MD3 type scale, MD3
- * shape (12–28px), and pill-shaped buttons/chips. Structure follows Google
- * Analytics/Search Console: top app bar, scorecards, a dense data table.
+ * The old sheet was Material 3 with Google's blue scheme and --md-primary
+ * swapped to pink: consumer shape scale (28px pills), tonal containers, and
+ * ~20 saturated hues (mint, red, an 8-hue hashed avatar palette, per-app
+ * accents, two gradients) none of which encoded anything.
+ *
+ * Rules this file enforces:
+ *   1. ONE accent. --pink marks the single most important thing in a view and
+ *      nothing else. Everything structural is neutral. That is the only way
+ *      pink-on-black stops screaming.
+ *   2. No gradients on data. Ever.
+ *   3. Charts get at most two hues: --pink for the measured series, --bg-4 for
+ *      the remainder/track. --warn (amber) for reverts and stalls only — a
+ *      chain-wide artifact is not our failure, so it is not red.
+ *   4. Numbers are tabular-nums globally so they stop jittering as they tick.
+ *   5. Three radii — 6 / 10 / 14, nothing else. (border-radius:50% appears
+ *      twice, on 4px and 8px status dots; a dot is a circle glyph, not a
+ *      fourth entry in the shape scale.) Seven type steps. A 4px spacing
+ *      grid. Use the tokens; an inline style={{fontSize:'26px'}} elsewhere in
+ *      the app is the tell that the scale never worked.
+ *
+ * Contrast (computed, do not substitute):
+ *   --tx-hi 18.04:1 on --bg-0 (AAA) · --tx-mid 8.36 (AAA) · --tx-low 5.78 (AA)
+ *   --pink 5.39 on --bg-0 (AA text) · --on-pink 5.76 on --pink
+ *   --pink-fill 4.12 on --bg-1 — FAILS AA: non-text fills only, never text.
+ *   --line-strong 3.50 on --bg-1 — meets WCAG 1.4.11 for control borders.
  */
 
 :root {
-  /* --- Polkadot-app-aligned scheme: dark surfaces, Polkadot pink primary.
-         Same MD3 role names so every component keeps working. --- */
-  --md-primary: #ff2670;
-  --md-on-primary: #ffffff;
-  --md-primary-container: #4a0d24;
-  --md-on-primary-container: #ffd9e4;
-  --md-secondary-container: #2b1e26;
-  --md-on-secondary-container: #f2dce6;
-  --md-tertiary: #56f39a;
-  --md-tertiary-container: #0f3d26;
-  --md-on-tertiary-container: #b8f5d2;
-  --md-error: #ff5e5e;
-  --md-error-container: #5c1414;
+  /* ---------------------------------------------------- surface ramp */
+  --bg-0: #0b0b0f; /* page */
+  --bg-1: #12121a; /* card / row */
+  --bg-2: #181820; /* hover, thead */
+  --bg-3: #1f1f29; /* input, chip, monogram tile */
+  --bg-4: #2a2a35; /* neutral data ink — bars, tracks */
 
-  --md-surface: #0d0d11;
-  --md-surface-container-lowest: #141419;
-  --md-surface-container-low: #0d0d11;
-  --md-surface-container: #1b1b22;
-  --md-surface-container-high: #23232c;
-  --md-surface-container-highest: #2c2c37;
-  --md-on-surface: #f3f2f6;
-  --md-on-surface-variant: #b4b1bd;
-  --md-outline: #7f7c89;
-  --md-outline-variant: #33323d;
+  /* ---------------------------------------------------------- lines */
+  --line: #24242e; /* hairline */
+  --line-strong: #6a6a78; /* control borders */
 
-  /* --- MD3 shape --- */
-  --md-shape-xs: 4px;
-  --md-shape-s: 8px;
-  --md-shape-m: 12px;
-  --md-shape-l: 16px;
-  --md-shape-xl: 28px;
-  --md-shape-full: 999px;
+  /* ----------------------------------------------------------- text */
+  --tx-hi: #f5f5f7;
+  --tx-mid: #a8a8b6;
+  --tx-low: #8a8a99;
 
-  /* --- MD3 elevation --- */
-  --md-elev-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
-  --md-elev-0: none;
+  /* ----------------------------------------------------- the accent */
+  --pink: #ff2670; /* text, strokes, focus */
+  --pink-fill: #e6007a; /* fills >= 24px only, never behind text */
+  --on-pink: #000000;
+  --warn: #e8a13a; /* reverts, stalls, stale data */
+
+  /* ------------------------------------------- type scale (7 steps) */
+  --fs-0: 11px; /* micro: axis ticks, uppercase eyebrows */
+  --fs-1: 12px; /* caption, table head, chip */
+  --fs-2: 13px; /* dense secondary */
+  --fs-3: 14px; /* base body */
+  --fs-4: 17px; /* emphasised value, panel title */
+  --fs-5: 21px; /* section number */
+  --fs-6: 28px; /* scorecard display */
+
+  /* ------------------------------ spacing grid: --sp-n === n * 4px */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-7: 28px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* --------------------------------------------- radii: exactly 3 */
+  --r-1: 6px; /* chips, inputs, bars, monogram tiles */
+  --r-2: 10px; /* cards, panels */
+  --r-3: 14px; /* the outermost containers only */
+
+  /* --------------------------------------------------------- type */
+  --font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --bar-h: 56px;
 
   color-scheme: dark;
 }
+
+/* ================================================================ base */
 
 * {
   box-sizing: border-box;
@@ -60,224 +103,428 @@ body,
 
 body {
   margin: 0;
-  background: var(--md-surface-container-low);
-  color: var(--md-on-surface);
-  font-family: 'Google Sans Text', 'Google Sans', Roboto, Inter, -apple-system, 'Segoe UI', Arial,
-    sans-serif;
-  font-size: 14px;
+  background: var(--bg-0);
+  color: var(--tx-hi);
+  font-family: var(--font);
+  font-size: var(--fs-3);
   line-height: 1.45;
+  /* every digit in this app is a measurement — stop the jitter. */
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+code,
+kbd,
+samp,
+pre,
+.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  font-variant-numeric: inherit;
+  color: inherit;
+}
+
+/* Neutral control baseline — replaces the per-class MD3 select/input skins. */
+select {
+  height: var(--sp-8);
+  padding: 0 var(--sp-6) 0 var(--sp-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-1);
+  background: var(--bg-3)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%238A8A99'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E")
+    no-repeat right var(--sp-2) center;
+  color: var(--tx-hi);
+  font-size: var(--fs-2);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* The app had no visible focus at all. One ring, one colour, everywhere. */
+:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--pink);
+  color: var(--on-pink);
+}
+
+/* Shell-proofing: taps must never wait on double-tap-zoom heuristics. */
+button,
+select,
+a,
+input,
+textarea,
+[role='button'] {
+  touch-action: manipulation;
 }
 
 .app {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 1rem 3rem;
+  padding: 0 var(--sp-4) var(--sp-12);
 }
 
-/* ------------------------------------------------------- top app bar (MD3) */
+.muted {
+  color: var(--tx-low);
+}
+
+/* Optional single-emphasis hook: put .is-key on the ONE card/number that
+   matters most in a view. Nothing else in the view may take the accent. */
+.is-key {
+  color: var(--pink);
+}
+
+.total.is-key .total-n {
+  color: var(--pink);
+}
+
+.total.is-key .spark-line {
+  stroke: var(--pink);
+}
+
+/* ========================================================= .bar (new) */
+
+/* 56px sticky top bar. Opaque --bg-0 so rows scroll cleanly underneath. */
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  height: var(--bar-h);
+  margin: 0 calc(var(--sp-4) * -1);
+  padding: 0 var(--sp-4);
+  background: var(--bg-0);
+  border-bottom: 1px solid var(--line);
+}
+
+.bar h1 {
+  margin: 0;
+  font-size: var(--fs-4);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--tx-hi);
+  white-space: nowrap;
+}
+
+.bar .spacer,
+.bar-spacer {
+  flex: 1;
+}
+
+/* -------------------------------------------------------- .search (new) */
+
+.search {
+  flex: 1 1 200px;
+  min-width: 0;
+  max-width: 320px;
+  height: var(--sp-8);
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-1);
+  background: var(--bg-3);
+  color: var(--tx-hi);
+  font-size: var(--fs-2);
+  outline: none;
+}
+
+.search::placeholder {
+  color: var(--tx-low);
+}
+
+.search:focus-visible {
+  border-color: var(--pink);
+}
+
+/* ---------------------------------------------------- .statusline (new) */
+
+/* One quiet line of provenance under the bar: block height, lag, source. */
+.statusline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-4);
+  padding: var(--sp-2) 0;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  letter-spacing: 0.02em;
+  color: var(--tx-low);
+}
+
+.statusline b {
+  font-weight: 500;
+  color: var(--tx-mid);
+}
+
+.statusline .is-stale,
+.statusline .is-warn {
+  color: var(--warn);
+}
+
+/* ------------------------------------------------ .facets/.facet (new) */
+
+.facets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  padding: var(--sp-3) 0;
+}
+
+.facet {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: var(--sp-7, 28px);
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  background: var(--bg-1);
+  color: var(--tx-mid);
+  font-size: var(--fs-1);
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 100ms ease, color 100ms ease, border-color 100ms ease;
+}
+
+.facet:hover {
+  background: var(--bg-2);
+  color: var(--tx-hi);
+}
+
+/* The active filter is the one thing the user is doing — it gets the accent. */
+.facet.is-on,
+.facet[aria-pressed='true'] {
+  border-color: var(--pink);
+  color: var(--pink);
+  background: var(--bg-1);
+}
+
+.facet-n {
+  color: var(--tx-low);
+  font-variant-numeric: tabular-nums;
+}
+
+.facet.is-on .facet-n,
+.facet[aria-pressed='true'] .facet-n {
+  color: inherit;
+}
+
+/* ================================================= masthead (existing) */
 
 .masthead {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--sp-4);
   flex-wrap: wrap;
-  min-height: 64px;
-  padding: 0.9rem 0 1.25rem;
+  min-height: var(--bar-h);
+  padding: var(--sp-4) 0 var(--sp-5);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: var(--sp-3);
 }
 
 .logo {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--md-shape-m);
+  width: var(--sp-8);
+  height: var(--sp-8);
+  border-radius: var(--r-1);
 }
 
-/* MD3 title-large */
 .brand h1 {
   margin: 0;
-  font-size: 22px;
-  font-weight: 400;
-  line-height: 28px;
-  letter-spacing: 0;
-  color: var(--md-on-surface);
+  font-size: var(--fs-5);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--tx-hi);
 }
 
-/* MD3 body-medium */
 .brand p {
-  margin: 0.1rem 0 0;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0.25px;
-  color: var(--md-on-surface-variant);
+  margin: 2px 0 0;
+  font-size: var(--fs-2);
+  line-height: 1.35;
+  color: var(--tx-mid);
 }
 
-/* MD3 assist chip */
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  height: 32px;
-  padding: 0 0.5rem 0 0.85rem;
-  background: var(--md-surface-container-high);
-  border: none;
-  border-radius: var(--md-shape-s);
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0.1px;
-  color: var(--md-on-surface-variant);
+  gap: var(--sp-2);
+  height: var(--sp-7, 28px);
+  padding: 0 var(--sp-3);
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
 }
 
 .status .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--md-outline);
+  width: var(--sp-2);
+  height: var(--sp-2);
+  border-radius: 50%; /* a dot is a dot, not a shape-scale radius */
+  background: var(--bg-4);
+  flex: none;
 }
 
 .status.is-on .dot {
-  background: var(--md-tertiary);
+  background: var(--pink);
 }
 
+/* Not red. A stalled indexer is a stall, not a failure of ours. */
 .status.is-off .dot {
-  background: var(--md-error);
+  background: var(--warn);
 }
 
 .status-time {
-  color: var(--md-outline);
+  color: var(--tx-low);
+  font-variant-numeric: tabular-nums;
 }
 
-/* MD3 icon button */
 .refresh {
-  width: 32px;
-  height: 32px;
+  width: var(--sp-8);
+  height: var(--sp-8);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  border-radius: var(--md-shape-full);
-  background: transparent;
-  color: var(--md-primary);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  background: var(--bg-1);
+  color: var(--tx-mid);
   cursor: pointer;
-  font-size: 16px;
+  font-size: var(--fs-3);
   line-height: 1;
-  transition: background 120ms ease;
+  transition: background 100ms ease, color 100ms ease;
 }
 
 .refresh:hover {
-  background: rgba(255, 38, 112, 0.12);
+  background: var(--bg-2);
+  color: var(--tx-hi);
 }
 
 .refresh:active {
-  background: rgba(255, 38, 112, 0.18);
+  background: var(--bg-3);
 }
 
 .chat-cta {
-  height: 32px;
-  padding: 0 0.9rem;
-  border: none;
-  border-radius: var(--md-shape-full);
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
-  font: inherit;
-  font-size: 13px;
+  height: var(--sp-8);
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-1);
+  background: var(--bg-3);
+  color: var(--tx-hi);
+  font-size: var(--fs-2);
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
 }
 
-/* ------------------------------------------------- scorecards (MD3 cards) */
+.chat-cta:hover {
+  background: var(--bg-4);
+}
+
+/* ============================================================ scorecards */
 
 .totals {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
 }
 
-/* MD3 filled card */
 .total {
-  padding: 1.25rem;
-  background: var(--md-surface-container-lowest);
-  border-radius: var(--md-shape-m);
-  border: 1px solid var(--md-outline-variant);
+  padding: var(--sp-4);
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
 }
 
-/* MD3 label-large */
 .total-l {
   display: block;
-  font-size: 14px;
+  font-size: var(--fs-0);
   font-weight: 500;
-  line-height: 20px;
-  letter-spacing: 0.1px;
-  color: var(--md-on-surface-variant);
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+  margin-bottom: var(--sp-2);
 }
 
-/* MD3 display-small */
 .total-n {
   display: block;
-  font-size: 36px;
-  font-weight: 400;
-  line-height: 44px;
-  letter-spacing: 0;
-  color: var(--md-on-surface);
-  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-6);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--tx-hi);
 }
 
-/* MD3 body-small */
 .total-sub {
   display: block;
-  margin-top: 0.35rem;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.4px;
-  color: var(--md-on-surface-variant);
+  margin-top: var(--sp-1);
+  font-size: var(--fs-1);
+  line-height: 1.3;
+  color: var(--tx-mid);
 }
 
-.accent-blue {
-  color: var(--md-primary);
+.total-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-3);
 }
 
-.accent-green {
-  color: var(--md-tertiary);
-}
+/* ---------------------------------------------------------- coverage note */
 
-/* -------------------------------------------------- info banner (MD3 tonal) */
-
+/* Was a tinted MD3 tonal banner. A caveat is not an event — it whispers. */
 .coverage {
   display: flex;
-  gap: 0.85rem;
+  gap: var(--sp-3);
   align-items: flex-start;
-  padding: 1rem 1.25rem;
-  background: var(--md-secondary-container);
-  color: var(--md-on-secondary-container);
-  border-radius: var(--md-shape-m);
-  margin-bottom: 1rem;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0.25px;
+  padding: var(--sp-3) 0 var(--sp-4);
+  font-size: var(--fs-2);
+  line-height: 1.45;
+  color: var(--tx-mid);
 }
 
 .coverage svg {
   flex: none;
   margin-top: 2px;
-  opacity: 0.9;
+  color: var(--tx-low);
 }
 
-/* ------------------------------------------------------ panel / data table */
+/* ======================================================= panel / table */
 
 .panel {
-  background: var(--md-surface-container-lowest);
-  border: 1px solid var(--md-outline-variant);
-  border-radius: var(--md-shape-m);
-  margin-bottom: 1rem;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
+  margin-bottom: var(--sp-3);
   overflow: hidden;
 }
 
@@ -285,25 +532,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem 1rem;
+  gap: var(--sp-2) var(--sp-4);
   flex-wrap: wrap;
-  padding: 1.15rem 1.25rem 0.9rem;
+  padding: var(--sp-4) var(--sp-4) var(--sp-3);
 }
 
-/* MD3 title-medium */
 .panel-title {
   margin: 0;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0.15px;
+  font-size: var(--fs-2);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tx-mid);
 }
 
 .panel-note {
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.4px;
-  color: var(--md-on-surface-variant);
+  font-size: var(--fs-1);
+  line-height: 1.3;
+  color: var(--tx-low);
 }
 
 .table {
@@ -314,18 +560,19 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: var(--fs-2);
 }
 
 thead th {
   text-align: left;
-  padding: 0.6rem 1.25rem;
-  font-size: 12px;
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--bg-2);
+  font-size: var(--fs-0);
   font-weight: 500;
-  line-height: 16px;
-  letter-spacing: 0.5px;
-  color: var(--md-on-surface-variant);
-  border-bottom: 1px solid var(--md-outline-variant);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+  border-bottom: 1px solid var(--line);
   white-space: nowrap;
 }
 
@@ -336,7 +583,7 @@ td.num {
 }
 
 tbody tr {
-  border-bottom: 1px solid var(--md-surface-container-high);
+  border-bottom: 1px solid var(--line);
   transition: background 100ms ease;
 }
 
@@ -345,249 +592,428 @@ tbody tr:last-child {
 }
 
 tbody tr:hover {
-  background: rgba(255, 38, 112, 0.07);
+  background: var(--bg-2);
 }
 
 td {
-  padding: 0.75rem 1.25rem;
+  padding: var(--sp-3) var(--sp-4);
   vertical-align: middle;
-  line-height: 20px;
+  line-height: 1.4;
 }
 
 .app-cell {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: var(--sp-3);
+  min-width: 0;
 }
 
-.app-cell a {
-  color: var(--md-on-surface);
-  text-decoration: none;
+.app-name {
+  display: block;
+  color: var(--tx-hi);
   font-weight: 500;
-  letter-spacing: 0.1px;
-}
-
-.app-cell a:hover {
-  color: var(--md-primary);
-  text-decoration: underline;
-}
-
-/* MD3 avatar-ish leading element */
-.glyph {
-  width: 40px;
-  height: 40px;
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--md-shape-full);
-  font-size: 16px;
-  font-weight: 500;
-  color: #fff;
 }
 
 .app-domain {
   display: block;
   margin-top: 1px;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 16px;
-  letter-spacing: 0.4px;
-  color: var(--md-on-surface-variant);
-  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  line-height: 1.3;
+  color: var(--tx-low);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .big-num {
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 0.15px;
+  font-size: var(--fs-3);
+  font-weight: 600;
+  color: var(--tx-hi);
 }
 
-/* MD3 suggestion chips */
-.pill {
+/* Monogram tile. Neutral by design: an 8-hue charcode hash encodes nothing
+   except "this string is different from that string", which the letter
+   already says. Do not reintroduce a per-app background colour. */
+.glyph,
+.idx-mono {
+  width: var(--sp-8);
+  height: var(--sp-8);
+  flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  height: 24px;
-  padding: 0 0.6rem;
-  border-radius: var(--md-shape-s);
-  font-size: 12px;
+  justify-content: center;
+  border-radius: var(--r-1);
+  background: var(--bg-3);
+  color: var(--tx-mid);
+  font-size: var(--fs-2);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================== .idx list (new markup) */
+
+.idx {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-3);
+  overflow: hidden;
+}
+
+.idx-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 100ms ease;
+}
+
+.idx-row:last-child {
+  border-bottom: none;
+}
+
+.idx-row:hover {
+  background: var(--bg-2);
+}
+
+/* Table fallback: if a row is still a <tr>, keep table layout intact. */
+tr.idx-row {
+  display: table-row;
+  padding: 0;
+  gap: 0;
+}
+
+.idx-row.is-open {
+  background: var(--bg-2);
+  box-shadow: inset 2px 0 0 var(--pink);
+}
+
+tr.idx-row.is-open td:first-child {
+  box-shadow: inset 2px 0 0 var(--pink);
+}
+
+.idx-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------- .badge (new) */
+
+/* Status differentiated by value, not hue. Only "live" — the state the whole
+   page is measuring — takes the accent. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  height: var(--sp-5);
+  padding: 0 var(--sp-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  background: var(--bg-3);
+  color: var(--tx-mid);
+  font-size: var(--fs-0);
   font-weight: 500;
-  line-height: 16px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
-.pill.live {
-  background: var(--md-tertiary-container);
-  color: var(--md-on-tertiary-container);
+.badge.is-live {
+  border-color: var(--pink);
+  color: var(--pink);
+  background: transparent;
 }
 
-.pill.wait {
-  background: var(--md-surface-container-high);
-  color: var(--md-on-surface-variant);
+.badge.is-live::before {
+  content: '';
+  width: var(--sp-1);
+  height: var(--sp-1);
+  border-radius: 50%;
+  background: var(--pink);
 }
 
-.row-loading td {
-  color: var(--md-on-surface-variant);
+.badge.is-published {
+  color: var(--tx-hi);
 }
 
-/* ------------------------------------------------------------------- feed */
+.badge.is-deployed {
+  color: var(--tx-mid);
+}
+
+.badge.is-name {
+  font-family: var(--mono);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--tx-low);
+}
+
+.badge.is-warn {
+  border-color: var(--warn);
+  color: var(--warn);
+  background: transparent;
+}
+
+/* ------------------------------------------------------ .method (new) */
+
+/* "How this number was measured." Prose, folded away, never decorated. */
+.method {
+  margin: var(--sp-3) 0 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  background: var(--bg-1);
+  font-size: var(--fs-1);
+  line-height: 1.5;
+  color: var(--tx-mid);
+}
+
+.method > summary {
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--tx-low);
+  font-size: var(--fs-0);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+}
+
+.method > summary::-webkit-details-marker {
+  display: none;
+}
+
+.method > summary::before {
+  content: '+ ';
+  color: var(--tx-low);
+}
+
+.method[open] > summary::before {
+  content: '− ';
+}
+
+.method[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.method > *:not(summary) {
+  padding: var(--sp-3);
+  margin: 0;
+}
+
+.method code {
+  font-size: var(--fs-0);
+  color: var(--tx-hi);
+}
+
+/* ------------------------------------------- .pulse / .pulse-tick (new) */
+
+/* A run of per-interval ticks. Neutral = nothing happened; pink = activity;
+   amber = revert/stall. Three states, two hues, no rainbow. */
+.pulse {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: var(--sp-5);
+}
+
+.pulse-tick {
+  flex: 1;
+  min-width: 2px;
+  height: 100%;
+  background: var(--bg-4);
+}
+
+.pulse-tick.is-on {
+  background: var(--pink-fill);
+}
+
+.pulse-tick.is-warn {
+  background: var(--warn);
+}
+
+/* ---------------------------------------------- .heat / .heat-cell (new) */
+
+/* Single-hue heat. Intensity rides on --v (0…1) set inline by the row, so
+   the ramp stays one colour instead of becoming a hue scale. */
+.heat {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+}
+
+.heat-cell {
+  position: relative;
+  height: var(--sp-4);
+  background: var(--bg-3);
+}
+
+.heat-cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--pink-fill);
+  opacity: var(--v, 0);
+}
+
+.heat-cell.is-warn::after {
+  background: var(--warn);
+}
+
+/* ------------------------------------------------------ .vitals (new) */
+
+.vitals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--sp-3) var(--sp-5);
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+}
+
+.vitals dt,
+.vitals-l {
+  display: block;
+  margin: 0;
+  font-size: var(--fs-0);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+}
+
+.vitals dd,
+.vitals-n {
+  display: block;
+  margin: 2px 0 0;
+  font-size: var(--fs-4);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--tx-hi);
+}
+
+/* ============================================================== feed */
 
 .feed ol {
   list-style: none;
   margin: 0;
-  padding: 0 0 0.4rem;
+  padding: 0 0 var(--sp-1);
 }
 
 .feed li {
   display: flex;
-  gap: 1rem;
+  gap: var(--sp-4);
   align-items: baseline;
-  padding: 0.7rem 1.25rem;
-  border-top: 1px solid var(--md-surface-container-high);
-  font-size: 14px;
-  line-height: 20px;
+  padding: var(--sp-2) var(--sp-4);
+  border-top: 1px solid var(--line);
+  font-size: var(--fs-2);
+  line-height: 1.4;
 }
 
 .feed-app {
   flex: none;
   min-width: 7.5rem;
-  color: var(--md-primary);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
 }
 
 .feed-text {
-  color: var(--md-on-surface);
+  color: var(--tx-mid);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* ----------------------------------------------------------------- footer */
+/* ============================================================= footer */
 
 .foot {
-  color: var(--md-on-surface-variant);
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.4px;
+  color: var(--tx-low);
+  font-size: var(--fs-1);
+  line-height: 1.4;
   text-align: center;
   max-width: 46rem;
-  margin: 1.5rem auto 0;
+  margin: var(--sp-6) auto 0;
 }
 
-/* -------------------------------------------------------- index controls */
+/* ==================================================== index controls */
 
 .index-tools {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--sp-2);
   flex-wrap: wrap;
 }
 
 .index-search {
-  height: 36px;
+  height: var(--sp-8);
   min-width: 180px;
-  padding: 0 0.85rem;
-  border: 1px solid var(--md-outline-variant);
-  border-radius: var(--md-shape-full);
-  background: var(--md-surface-container-low);
-  color: var(--md-on-surface);
-  font: inherit;
-  font-size: 14px;
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-1);
+  background: var(--bg-3);
+  color: var(--tx-hi);
+  font-size: var(--fs-2);
   outline: none;
-  transition: border-color 120ms ease, background 120ms ease;
-}
-
-.index-search:focus {
-  border-color: var(--md-primary);
-  background: var(--md-surface);
 }
 
 .index-search::placeholder {
-  color: var(--md-outline);
+  color: var(--tx-low);
 }
 
-.index-sort {
-  height: 36px;
-  padding: 0 2rem 0 0.85rem;
-  border: 1px solid var(--md-outline-variant);
-  border-radius: var(--md-shape-full);
-  background: var(--md-surface-container-low)
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='%23444746'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E")
-    no-repeat right 0.5rem center;
-  color: var(--md-on-surface);
-  font: inherit;
-  font-size: 14px;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-}
-
-.index-sort:focus {
-  border-color: var(--md-primary);
-}
-
-.app-name {
-  display: block;
-  color: var(--md-on-surface);
-  font-weight: 500;
-  letter-spacing: 0.1px;
-}
-
-.muted {
-  color: var(--md-outline);
+.index-search:focus-visible {
+  border-color: var(--pink);
 }
 
 .open-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--md-shape-full);
-  color: var(--md-primary);
-  text-decoration: none;
-  font-size: 16px;
-  transition: background 120ms ease;
+  width: var(--sp-8);
+  height: var(--sp-8);
+  flex: none;
+  border-radius: var(--r-1);
+  color: var(--tx-low);
+  font-size: var(--fs-3);
+  transition: background 100ms ease, color 100ms ease;
 }
 
 .open-link:hover {
-  background: rgba(255, 38, 112, 0.12);
+  background: var(--bg-3);
+  color: var(--tx-hi);
+  text-decoration: none;
 }
 
 .index-more {
   display: block;
   width: 100%;
-  padding: 0.85rem;
+  padding: var(--sp-3);
   border: none;
-  border-top: 1px solid var(--md-surface-container-high);
+  border-top: 1px solid var(--line);
   background: transparent;
-  color: var(--md-primary);
-  font: inherit;
-  font-size: 14px;
+  color: var(--tx-mid);
+  font-size: var(--fs-2);
   font-weight: 500;
-  letter-spacing: 0.1px;
   cursor: pointer;
-  transition: background 120ms ease;
+  transition: background 100ms ease, color 100ms ease;
 }
 
 .index-more:hover {
-  background: rgba(255, 38, 112, 0.07);
+  background: var(--bg-2);
+  color: var(--tx-hi);
 }
 
-/* --------------------------------------------------- scorecard sparkline */
+/* =============================================== sparkline (scorecards) */
 
-.total-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
+/* Four pink sparklines is four accents. Sparks stay neutral; put .is-key on
+   the one card that leads and its spark goes pink. */
 .spark {
   width: 96px;
   height: 30px;
@@ -597,7 +1023,7 @@ td {
 
 .spark-line {
   fill: none;
-  stroke: var(--md-primary);
+  stroke: var(--tx-low);
   stroke-width: 1.5;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -605,39 +1031,43 @@ td {
 }
 
 .spark-area {
-  fill: var(--md-primary);
-  opacity: 0.1;
+  fill: var(--bg-4);
   stroke: none;
 }
 
-/* --------------------------------------------------------- trend chart */
+/* =========================================================== trend chart */
 
 .chart-card .panel-head {
   align-items: flex-start;
-  padding-bottom: 0.4rem;
+  padding-bottom: var(--sp-1);
 }
 
 .chart-legend {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.4px;
-  color: var(--md-on-surface-variant);
+  gap: var(--sp-2);
+  font-size: var(--fs-0);
+  color: var(--tx-mid);
   white-space: nowrap;
 }
 
 .chart-swatch {
-  width: 12px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--md-primary);
+  width: var(--sp-3);
+  height: 2px;
+  background: var(--pink);
+}
+
+.chart-swatch.is-track {
+  background: var(--bg-4);
+}
+
+.chart-swatch.is-warn {
+  background: var(--warn);
 }
 
 .chart-wrap {
   position: relative;
-  padding: 0.25rem 0.75rem 0.75rem;
+  padding: var(--sp-1) var(--sp-3) var(--sp-3);
   touch-action: none;
 }
 
@@ -648,40 +1078,48 @@ td {
 }
 
 .chart-grid {
-  stroke: var(--md-outline-variant);
+  stroke: var(--line);
   stroke-width: 1;
-  opacity: 0.55;
 }
 
 .chart-axis {
-  fill: var(--md-on-surface-variant);
-  font-size: 11px;
-  letter-spacing: 0.3px;
+  fill: var(--tx-low);
+  font-size: var(--fs-0);
   font-variant-numeric: tabular-nums;
 }
 
 .chart-axis-dim {
-  fill: var(--md-outline);
-  font-size: 10px;
+  fill: var(--tx-low);
+  font-size: var(--fs-0);
+  opacity: 0.7;
 }
 
+/* The measured series. The only pink stroke on the page. */
 .chart-line {
-  stroke: var(--md-primary);
+  fill: none;
+  stroke: var(--pink);
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
 
+.chart-line.is-track {
+  stroke: var(--bg-4);
+}
+
+.chart-line.is-warn {
+  stroke: var(--warn);
+}
+
 .chart-crosshair {
-  stroke: var(--md-outline);
+  stroke: var(--line-strong);
   stroke-width: 1;
   stroke-dasharray: 3 3;
-  opacity: 0.7;
 }
 
 .chart-dot {
-  fill: var(--md-primary);
-  stroke: var(--md-surface-container-lowest);
+  fill: var(--pink);
+  stroke: var(--bg-1);
   stroke-width: 2;
 }
 
@@ -689,14 +1127,15 @@ td {
   position: absolute;
   transform: translate(-50%, calc(-100% - 12px));
   pointer-events: none;
-  background: var(--md-on-surface);
-  color: var(--md-surface);
-  padding: 0.4rem 0.6rem;
-  border-radius: var(--md-shape-s);
-  font-size: 12px;
+  background: var(--bg-3);
+  border: 1px solid var(--line-strong);
+  color: var(--tx-hi);
+  padding: var(--sp-2);
+  border-radius: var(--r-1);
+  font-size: var(--fs-1);
   line-height: 1.35;
   white-space: nowrap;
-  box-shadow: var(--md-elev-1);
+  box-shadow: var(--shadow);
   z-index: 2;
 }
 
@@ -706,18 +1145,18 @@ td {
 
 .chart-tip span {
   display: block;
-  opacity: 0.7;
-  font-size: 11px;
+  color: var(--tx-low);
+  font-size: var(--fs-0);
   font-variant-numeric: tabular-nums;
 }
 
-/* ------------------------------------------- split row: bars + activity */
+/* ============================================ split row: bars + activity */
 
 .split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
 }
 
 .split .panel {
@@ -727,8 +1166,8 @@ td {
 .regbars {
   display: flex;
   align-items: flex-end;
-  gap: 10px;
-  padding: 0.5rem 1.25rem 1.1rem;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4) var(--sp-4);
   height: 180px;
 }
 
@@ -737,130 +1176,148 @@ td {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
   height: 100%;
   justify-content: flex-end;
   min-width: 0;
 }
 
 .regbar-n {
-  font-size: 12px;
+  font-size: var(--fs-0);
   font-weight: 500;
-  color: var(--md-on-surface-variant);
+  color: var(--tx-mid);
   font-variant-numeric: tabular-nums;
 }
 
+/* Track = the remainder. Neutral data ink, never a tint of the accent. */
 .regbar-track {
   width: 100%;
   max-width: 44px;
   flex: 1;
   display: flex;
   align-items: flex-end;
-  border-radius: 6px 6px 0 0;
+  background: var(--bg-4);
+  border-radius: var(--r-1) var(--r-1) 0 0;
+  overflow: hidden;
 }
 
+/* Was a two-stop gradient. Data is not a mood board — one flat fill. */
 .regbar-fill {
   display: block;
   width: 100%;
-  min-height: 3px;
-  border-radius: 6px 6px 2px 2px;
-  background: linear-gradient(180deg, #ff2670, #ff7aa6);
-  transition: height 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  min-height: 2px;
+  background: var(--pink-fill);
+  transition: height 0.5s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .regbar-day {
-  font-size: 11px;
-  color: var(--md-outline);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .act {
-  padding: 0.25rem 1.25rem 1rem;
+  padding: var(--sp-1) var(--sp-4) var(--sp-4);
 }
 
 .act-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  padding: 0.45rem 0;
-  border-bottom: 1px solid var(--md-surface-container-high);
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .act-l {
-  font-size: 13px;
-  color: var(--md-on-surface-variant);
+  font-size: var(--fs-2);
+  color: var(--tx-mid);
 }
 
 .act-n {
-  font-size: 18px;
-  font-weight: 500;
+  font-size: var(--fs-4);
+  font-weight: 600;
+  color: var(--tx-hi);
   font-variant-numeric: tabular-nums;
 }
 
 .act-top {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  padding: 0.55rem 0 0.2rem;
+  gap: var(--sp-1);
+  padding: var(--sp-2) 0 var(--sp-1);
 }
 
 .act-addr {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12px;
-  color: var(--md-on-surface);
+  gap: var(--sp-3);
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
 }
 
 .act-addr b {
   font-family: inherit;
   font-weight: 500;
-  color: var(--md-primary);
+  color: var(--tx-hi);
 }
 
 .hist {
-  padding: 0.55rem 0 0.2rem;
+  padding: var(--sp-2) 0 var(--sp-1);
 }
 
 .hist-bars {
   display: flex;
   align-items: flex-end;
-  gap: 4px;
+  gap: var(--sp-1);
   height: 56px;
-  margin-top: 0.4rem;
+  margin-top: var(--sp-2);
 }
 
+/* Secondary distribution: neutral. The accent already belongs to the bars
+   in the panel to the left. (Was a mint two-stop gradient.) */
 .hist-bar {
   flex: 1;
   max-width: 22px;
-  border-radius: 4px 4px 1px 1px;
-  background: linear-gradient(180deg, #56f39a, #9df7c4);
-  min-height: 4px;
+  border-radius: var(--r-1) var(--r-1) 0 0;
+  background: var(--bg-4);
+  min-height: 2px;
 }
 
-/* ------------------------------------------------------ new-this-week */
+.act-foot {
+  margin: var(--sp-2) 0 0;
+  font-size: var(--fs-1);
+  line-height: 1.4;
+  color: var(--tx-low);
+}
+
+.act-foot code {
+  font-size: var(--fs-0);
+}
+
+/* ======================================================= new-this-week */
 
 .fresh {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sp-3);
 }
 
 .fresh-hd {
   display: block;
-  padding: 0 0.25rem 0.5rem;
-  font-size: 12px;
+  padding: 0 0 var(--sp-2);
+  font-size: var(--fs-0);
   font-weight: 500;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--md-on-surface-variant);
+  color: var(--tx-low);
 }
 
 .fresh-row {
   display: flex;
-  gap: 0.6rem;
+  gap: var(--sp-2);
   overflow-x: auto;
-  padding-bottom: 0.25rem;
+  padding-bottom: var(--sp-1);
   scrollbar-width: none;
 }
 
@@ -872,70 +1329,60 @@ td {
   flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.45rem 0.9rem 0.45rem 0.5rem;
-  border: 1px solid var(--md-outline-variant);
-  border-radius: 999px;
-  background: var(--md-surface-container-lowest);
-  font: inherit;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) var(--sp-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-1);
+  background: var(--bg-1);
   cursor: pointer;
-  transition: background 120ms ease, transform 120ms ease;
+  transition: background 100ms ease;
 }
 
 .fresh-chip:hover {
-  background: var(--md-surface-container);
-}
-
-.fresh-chip:active {
-  transform: scale(0.97);
+  background: var(--bg-2);
 }
 
 .fresh-glyph {
-  width: 28px;
-  height: 28px;
+  width: var(--sp-6);
+  height: var(--sp-6);
+  flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 500;
+  border-radius: var(--r-1);
+  background: var(--bg-3);
+  color: var(--tx-mid);
+  font-size: var(--fs-1);
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .fresh-name {
   text-align: left;
-  font-size: 13px;
+  font-size: var(--fs-2);
   font-weight: 500;
-  color: var(--md-on-surface);
-  line-height: 1.15;
+  color: var(--tx-hi);
+  line-height: 1.2;
 }
 
 .fresh-when {
   display: block;
-  font-size: 11px;
+  font-size: var(--fs-0);
   font-weight: 400;
-  color: var(--md-on-surface-variant);
+  color: var(--tx-low);
 }
 
-/* -------------------------------------------------- index detail drawer */
-
-.idx-row {
-  cursor: pointer;
-}
-
-.idx-row.is-open {
-  background: rgba(255, 38, 112, 0.09);
-}
+/* ================================================ index detail drawer */
 
 .idx-detail td {
   padding: 0;
-  background: var(--md-surface-container-low);
-  border-bottom: 1px solid var(--md-outline-variant);
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--line);
 }
 
 .detail {
-  padding: 1rem 1.25rem 1.1rem;
-  animation: detail-in 0.25s ease both;
+  padding: var(--sp-4);
+  animation: detail-in 0.18s ease both;
 }
 
 @keyframes detail-in {
@@ -949,71 +1396,71 @@ td {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.75rem 1.25rem;
+  gap: var(--sp-3) var(--sp-5);
 }
 
 .detail-l {
   display: block;
-  font-size: 11px;
+  font-size: var(--fs-0);
   font-weight: 500;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--md-on-surface-variant);
+  color: var(--tx-low);
 }
 
 .detail-v {
   display: block;
   margin-top: 2px;
-  font-size: 14px;
+  font-size: var(--fs-2);
+  color: var(--tx-hi);
 }
 
 .detail-v.mono {
-  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 13px;
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  overflow-wrap: anywhere;
 }
 
 .detail-tag {
-  margin: 0.8rem 0 0.5rem;
-  font-size: 13px;
-  color: var(--md-on-surface-variant);
+  margin: var(--sp-3) 0 var(--sp-2);
+  font-size: var(--fs-2);
+  color: var(--tx-mid);
 }
 
 .detail-open {
-  font-size: 13px;
+  font-size: var(--fs-2);
   font-weight: 500;
-  color: var(--md-primary);
-  text-decoration: none;
+  color: var(--tx-hi);
+  border-bottom: 1px solid var(--line-strong);
 }
 
 .detail-open:hover {
-  text-decoration: underline;
+  color: var(--pink);
+  border-bottom-color: var(--pink);
+  text-decoration: none;
 }
 
-.act-foot {
-  margin: 0.7rem 0 0;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--md-on-surface-variant);
-}
+/* ========================================================== responsive */
 
-.act-foot code {
-  font-size: 11px;
+@media (max-width: 900px) {
+  .totals {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 760px) {
   .split {
     grid-template-columns: 1fr;
-  }
-}
-
-/* ------------------------------------------------------------ responsive */
-
-@media (max-width: 900px) {
-  .totals {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -1026,13 +1473,9 @@ td {
     display: none;
   }
   .total-n {
-    font-size: 32px;
-    line-height: 40px;
+    font-size: var(--fs-5);
+  }
+  .search {
+    max-width: none;
   }
 }
-
-/* Shell-proofing: taps must never wait on double-tap-zoom heuristics. */
-button, select, a, input, textarea, [role='button'] {
-  touch-action: manipulation;
-}
-

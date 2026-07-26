@@ -26,81 +26,62 @@ function field(v: unknown, i: number, name: string): unknown {
   return undefined;
 }
 
+/**
+ * One indexed .dot name. Every field except the first four is a CHAIN FACT
+ * written by indexer/enrich-onchain.mjs — read off the registry and the content
+ * resolver, never inferred, never scored.
+ */
 export interface Discovered {
   label: string;
   domain: string;
   url: string;
   firstSeenBlock: number;
-  lastSeenBlock: number;
   /** Unix seconds of the registration block, added by indexer/enrich-times.mjs. */
   firstSeenAt?: number;
+  /**
+   * `registry.owner(namehash(label + '.dot'))`, checksummed. Present on every
+   * indexed entry — a name without an owner is not in the directory at all.
+   * Optional only for the code-level fallbacks below, which predate the index.
+   */
+  owner?: string;
+  /** From the `manifest` text record. */
+  displayName?: string;
+  description?: string;
+  iconCid?: string;
+  /** `baf…` from the contenthash record: the deployed bundle. */
+  contenthash?: string;
+  /** An `executable` record exists on `app.<label>.dot`. */
+  hasExecutable?: boolean;
+  /** 0 live data · 1 published · 2 deployed · 3 name only. Never a score. */
+  tier?: 0 | 1 | 2 | 3;
 }
 
 /** The directory baked into the bundle at build time — the always-available fallback. */
-const DISCOVERED = discovered as Record<string, Discovered>;
+const DISCOVERED = discovered as unknown as Record<string, Discovered>;
 
-/** Presentation for apps we know something about. */
-const KNOWN: Record<string, { name: string; tagline: string; accent: string; glyph: string }> = {
+/**
+ * Presentation for the apps dotmetrics reads live contract metrics for. These
+ * four are the only names the dashboard claims to know anything extra about;
+ * every other name is described by its own on-chain manifest, or not at all.
+ */
+const KNOWN: Record<string, { name: string; tagline: string }> = {
   openpetition: {
     name: 'OpenPetition',
     tagline: 'Petitions signed by real people — one signature per person.',
-    accent: '#e6007a',
-    glyph: '✍',
   },
   thebutton: {
     name: 'The Button',
     tagline: 'One button, one press per human, ever.',
-    accent: '#34a853',
-    glyph: '⏻',
-  },
-  handshake: {
-    name: 'Handshake',
-    tagline: 'Agreements sealed by two verified humans.',
-    accent: '#0e7c6b',
-    glyph: '🤝',
-  },
-  dotmetrics: {
-    name: 'dotmetrics',
-    tagline: 'This dashboard.',
-    accent: '#1a73e8',
-    glyph: '📊',
   },
   truereviews: {
     name: 'TrueReviews',
     tagline: 'One verified human, one review per place.',
-    accent: '#0a84ff',
-    glyph: '⭐',
   },
   discreetly: {
     name: 'Discreet',
     tagline: 'Private bookings for real people — anonymous, sybil-proof, escrowed.',
-    accent: '#0f766e',
-    glyph: '🔒',
   },
-  italiarovente: {
-    name: 'Italia Rovente',
-    tagline: "Italy's warming since 1940, city by city.",
-    accent: '#d23a22',
-    glyph: '🌡',
-  },
-  wudcommunity: {
-    name: 'WUD Community',
-    tagline: 'Unofficial $WUD holders dashboard.',
-    accent: '#e6007a',
-    glyph: '🐋',
-  },
-  btcusd: { name: 'BTC/USD', tagline: 'Price feed.', accent: '#f7931a', glyph: '₿' },
-  ethusd: { name: 'ETH/USD', tagline: 'Price feed.', accent: '#627eea', glyph: 'Ξ' },
-  dotusd: { name: 'DOT/USD', tagline: 'Price feed.', accent: '#e6007a', glyph: '●' },
 };
-
-const PALETTE = ['#1a73e8', '#34a853', '#e6007a', '#e37400', '#7b1fa2', '#00897b', '#c2185b', '#5d4037'];
-
-function accentFor(label: string): string {
-  let h = 0;
-  for (let i = 0; i < label.length; i += 1) h = (h * 31 + label.charCodeAt(i)) >>> 0;
-  return PALETTE[h % PALETTE.length];
-}
 
 /** Live readers, keyed by label. Only apps whose contract we know. */
 const READERS: Record<string, AppEntry['read']> = {
@@ -186,7 +167,6 @@ const ALWAYS: Discovered[] = [
     domain: 'thebutton.dot',
     url: 'https://thebutton.dev-dot.li',
     firstSeenBlock: 0,
-    lastSeenBlock: 0,
   },
   // Registered recently — listed here until the scheduled indexer run catches
   // them, so their live contract metrics show up immediately.
@@ -195,7 +175,6 @@ const ALWAYS: Discovered[] = [
     domain: 'truereviews.dot',
     url: 'https://truereviews.dev-dot.li',
     firstSeenBlock: 11376975,
-    lastSeenBlock: 11376975,
   },
   {
     label: 'discreetly',
@@ -204,9 +183,28 @@ const ALWAYS: Discovered[] = [
     // Approximate registration block so newest-first ordering holds; the
     // indexer's next pass overwrites this with the exact value.
     firstSeenBlock: 11413600,
-    lastSeenBlock: 11413600,
   },
 ];
+
+/** An entry in the directory file, as opposed to the `excluded` list beside them. */
+function isEntry(value: unknown): value is Discovered {
+  return (
+    !!value &&
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    typeof (value as Discovered).label === 'string'
+  );
+}
+
+/**
+ * The labels the indexer found but the registry disowned: ascii runs that were
+ * never names. Kept so the dashboard can say how many candidates it threw away
+ * instead of quietly inflating the ecosystem by a third.
+ */
+export function excludedFrom(map: Record<string, unknown>): string[] {
+  const list = (map as { excluded?: unknown }).excluded;
+  return Array.isArray(list) ? list.filter((l): l is string => typeof l === 'string') : [];
+}
 
 /**
  * Turn a discovered-app map (from Bulletin or from the baked snapshot) into the
@@ -214,32 +212,45 @@ const ALWAYS: Discovered[] = [
  * attached. Pure — the same input always yields the same list.
  */
 export function buildApps(map: Record<string, Discovered>): AppEntry[] {
+  const entries = Object.values(map).filter(isEntry);
   const all: Discovered[] = [
-    ...Object.values(map),
-    ...ALWAYS.filter((a) => !map[a.label]),
+    ...entries,
+    ...ALWAYS.filter((a) => !isEntry(map[a.label])),
   ];
   return all
     .sort((a, b) => b.firstSeenBlock - a.firstSeenBlock)
     .map((d) => {
       const known = KNOWN[d.label];
+      const read = READERS[d.label] ?? null;
       return {
         id: d.label,
-        name: known?.name ?? d.label,
+        name: known?.name ?? d.displayName ?? d.label,
         domain: d.domain,
-        tagline: known?.tagline ?? 'Registered on the .dot network.',
+        tagline: known?.tagline ?? d.description ?? 'Registered on the .dot network.',
         contract: '',
         url: d.url,
-        accent: known?.accent ?? accentFor(d.label),
-        glyph: known?.glyph ?? d.label.slice(0, 1).toUpperCase(),
         firstSeenBlock: d.firstSeenBlock,
         firstSeenAt: d.firstSeenAt,
-        read: READERS[d.label] ?? null,
+        owner: d.owner ?? '',
+        displayName: d.displayName,
+        description: d.description,
+        iconCid: d.iconCid,
+        contenthash: d.contenthash,
+        hasExecutable: d.hasExecutable ?? false,
+        // A reader is live data by definition; otherwise the tier the indexer
+        // computed from chain facts stands, and an un-enriched entry is
+        // name-only until proven otherwise.
+        tier: read ? 0 : d.tier ?? 3,
+        read,
       };
     });
 }
 
 /** The baked directory — rendered instantly, then replaced by the Bulletin copy. */
 export const APPS: AppEntry[] = buildApps(DISCOVERED);
+
+/** Labels the ascii scan proposed and `registry.owner()` rejected. */
+export const EXCLUDED: string[] = excludedFrom(DISCOVERED as Record<string, unknown>);
 
 /** How fresh the baked directory is. */
 export const DIRECTORY_SIZE = APPS.length;

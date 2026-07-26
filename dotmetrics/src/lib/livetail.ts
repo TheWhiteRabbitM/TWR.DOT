@@ -1,5 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import type { Discovered } from './registry';
+import { readName, REGISTRY } from './dotns';
 
 /**
  * Real-time registry tail, in the browser.
@@ -11,9 +12,16 @@ import type { Discovered } from './registry';
  * runs in registration calldata — historical extrinsics don't decode against
  * current metadata), then subscribe to new heads so registrations appear the
  * moment they finalize.
+ *
+ * The ascii scan is a lead, not a fact: it cannot distinguish a name from a
+ * plausible-looking byte run, and a third of what it finds never existed. So
+ * nothing is emitted until `registry.owner()` confirms the name — and the same
+ * round trip picks up the records, so a name that appears live arrives with the
+ * same fields the indexer would have given it.
  */
 const RPC = 'wss://asset-hub-paseo-rpc.n.dwellir.com';
-const REGISTRY = '0x527b08a640b527a3dae0c4be04d7344e430b6e50';
+/** The address as it appears in `revive.ContractEmitted` data: lowercase hex. */
+const REGISTRY_EVENT_SOURCE = REGISTRY.toLowerCase();
 const LABEL_RE = /^[a-z][a-z0-9-]{3,62}$/;
 const IGNORE = new Set(['aura', 'babe', 'para', 'sudo', 'system', 'timestamp', 'balances']);
 /** How far back the browser itself looks on load. The scheduled indexer owns history. */
@@ -54,6 +62,13 @@ export async function startLiveTail(
   checkpointBlock: number,
   onApp: (app: Discovered) => void,
   onStatus?: (live: boolean) => void,
+  /**
+   * Every new head, as it lands. The subscription below already receives these
+   * and used to drop them on the floor; the top bar's pulse strip is driven by
+   * them, so a stalled chain stops the strip instead of a CSS loop pretending
+   * otherwise. Fires before block inspection so the tick is not delayed by it.
+   */
+  onHead?: (block: number) => void,
 ): Promise<LiveTail> {
   let stopped = false;
   let api: ApiPromise | null = null;
@@ -71,7 +86,7 @@ export async function startLiveTail(
         (r) =>
           r.event.section === 'revive' &&
           r.event.method === 'ContractEmitted' &&
-          String(r.event.data[0] ?? '').toLowerCase() === REGISTRY,
+          String(r.event.data[0] ?? '').toLowerCase() === REGISTRY_EVENT_SOURCE,
       );
       if (!touched) return;
       // Raw block: the plaintext label lives only in registration calldata.
@@ -85,14 +100,28 @@ export async function startLiveTail(
         for (const run of asciiRuns(extrinsics[i])) {
           const label = run.toLowerCase();
           if (!LABEL_RE.test(label) || IGNORE.has(label) || seen.has(label)) continue;
+          // Claim the label before the await so two extrinsics in flight can't
+          // both verify it.
           seen.add(label);
+          let records;
+          try {
+            records = await readName(label);
+          } catch {
+            // The check itself failed — that says nothing about the name, so
+            // release it and try again the next time it is sighted.
+            seen.delete(label);
+            continue;
+          }
+          // A confirmed zero owner: an ascii coincidence, not a registration.
+          // It stays in `seen`, so it is never re-checked.
+          if (!records) continue;
           onApp({
             label,
             domain: `${label}.dot`,
             url: `https://${label}.dev-dot.li`,
             firstSeenBlock: n,
-            lastSeenBlock: n,
             firstSeenAt: Math.floor(ms / 1000),
+            ...records,
           });
         }
       }
@@ -125,7 +154,9 @@ export async function startLiveTail(
       if (stopped) return;
       // …and from here on, true real-time: every new head is inspected as it lands.
       unsub = (await api.rpc.chain.subscribeNewHeads((h) => {
-        void inspectBlock(api!, h.number.toNumber());
+        const n = h.number.toNumber();
+        onHead?.(n);
+        void inspectBlock(api!, n);
       })) as unknown as () => void;
     } catch {
       onStatus?.(false);

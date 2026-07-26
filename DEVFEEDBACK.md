@@ -3,15 +3,18 @@
 **Reported by:** Claude Code (Anthropic's coding agent), which built, deployed and
 published every app in this repository end-to-end during the first three days of the
 devnet (2026-07-23 → 2026-07-26), operated by the repository owner. Last updated
-2026-07-26 after verifying the scheduled self-publish pipelines end-to-end.
+2026-07-27: finding 6 is **corrected** (see below) and finding 8a added after auditing
+how the ecosystem can be discovered.
 
 **Scope of the test:** seven .dot apps built and published (thebutton, openpetition,
 dotmetrics, wudcommunity, italiarovente, truereviews, discreetly), two PolkaVM contracts
 deployed via CDM (ReviewRegistry `0x29aF38913652B32989D1d96C51Af641980E55698`, Discreet
-`0x8Fa1fcA9f6E8C333625c3caf064E94640175f375`), ~40 `pad` publishes, DotNS root manifests
-set on all seven names, a block-walking ecosystem indexer, and scheduled republish
-automation (dotmetrics hourly, italiarovente daily — both verified end-to-end under
-Windows Task Scheduler + WSL, including data refresh, rebuild and on-chain publish).
+`0x8Fa1fcA9f6E8C333625c3caf064E94640175f375`), 40+ `pad` publishes by hand plus one an
+hour from the scheduled refresh, DotNS root manifests set on all seven names, a
+block-walking ecosystem indexer (63 registered labels found to date), and scheduled
+republish automation (dotmetrics hourly on GitHub Actions, italiarovente daily under
+Windows Task Scheduler + WSL — both verified end-to-end, including data refresh, rebuild
+and on-chain publish).
 
 **Environment:** Windows 11 + WSL2 Ubuntu (contract toolchain), pad v0.13.1,
 dotns 0.8.0, cdm, @parity/product-sdk 0.19.x, dotli shell 0.6.8 (dev), Chrome 148.
@@ -65,13 +68,24 @@ applied, it worked on all seven names.
 Suggestion: a docs page for the manifest contract, and ideally a `pad manifest` helper
 that uploads the icon and writes the record in one step.
 
-**6. ENS-style `text(node,key)` reverts on the content resolver via `eth_call`.**
-Observed: reading a text record through the standard resolver ABI reverts; records are
-readable via raw storage-slot access (the approach the shell itself uses). Writes via
-`dotns text set` succeed.
-Suggestion: either expose a working view function (this would give apps mutable
-pointers — e.g. "latest data CID" — without republishing), or document the raw-slot
-layout as the supported read path.
+**6. The registry's `resolver(node)` pointer returns a resolver that reverts.**
+Observed: `text(node,key)` and `contenthash(node)` work over plain `eth_call` when called
+**directly** on the content resolver at `0x326bdE29315199c814B1c58b431D84D16EA5cE41` —
+all seven of our names return their `manifest` JSON and their published contenthash from
+that address. What fails is the standard lookup path: `resolver(node)` on the DotNS
+registry `0x527b08a640b527a3dae0C4BE04D7344E430B6E50` returns
+`0xfd2594FcF920B38A970011C486e1E3041563147F` for all seven names (the same address
+`dotns lookup` reports), and `text()` / `contenthash()` on that address revert. Across 66
+registered labels checked, 36 point at the reverting address, 8 point at the working
+resolver (`browse.dot` among them) and 22 carry no resolver record. An app that follows
+registry → resolver → text fails; an app that hard-codes `0x326bdE29…` succeeds. Writes
+via `dotns text set` succeed. *This corrects an earlier version of this report, which
+stated that `text()` itself reverts and that raw storage slots were the only read path.
+That was wrong: the resolver ABI works, the registry's pointer to it does not.*
+Suggestion: repoint `resolver(node)` at the working content resolver for the affected
+names and for new registrations, so standard ENS-style resolution works; until then,
+document `0x326bdE29…` as the supported read address. Either way apps gain a mutable
+pointer — e.g. "latest data CID" — without republishing.
 
 ## polkadot-app-deploy (pad)
 
@@ -83,7 +97,7 @@ scripted use requires grepping the raw output for the first `baf…` string to r
 the CID.
 Suggestion: a `--json` or `--quiet` mode emitting only the stable lines, for both pad
 and the dotns CLI. Otherwise pad's incremental publish + on-chain verification proved
-excellent across ~40 publishes, including unattended scheduled runs.
+excellent across 40+ publishes, including unattended scheduled runs.
 
 ## dotns-sdk / registry
 
@@ -95,6 +109,29 @@ extrinsics do not decode against current metadata after runtime upgrades.
 Suggestion: an enumeration view over registrations (label, block) and/or a manifest
 field for an app's contract address. This would enable per-app analytics for the whole
 ecosystem.
+
+**8a. The official directory cannot name most of its own entries, and nothing else can
+index the ecosystem either.**
+Observed: the Browse registry (`0xaab42efbe8ea4d4228c3a11e973f94c17b9a0f2c`) holds 19
+entries; per entry it stores a labelhash, the publisher address and a timestamp — no
+plaintext name — and it has emitted zero logs over its entire history (`eth_getLogs`
+from block 0), so no third party can index it from events. On-chain reverse resolution
+does not fill the gap: `labelOf(uint256)` on the Registrar
+`0x7f0dF075cc8B7FE7218E90fFC5a553450dB120F3` returns an empty string for all 19. Brute-
+forcing a candidate dictionary against the 19 hashes — the only method a client has —
+recovered 4 names (`browse`, `playground`, `docs`, `survey`); the other 15 remain
+unnamed. Separately, the SDK's own docs use `navigateTo("https://search.dot")` as the
+canonical deep-link example (`@parity/product-sdk-host`, `src/navigation.ts`), and
+`search.dot` has no owner in the registry. And the web gateway serves a byte-identical
+20,506-byte shell for every name (`thebutton`, `dotmetrics`, `truereviews` and `browse`
+all return the same SHA-256), so no .dot app is indexable by a web search engine. By
+contrast, walking Asset Hub blocks from outside the platform enumerated 63 registered
+labels, 42 of them with a non-zero owner on the registry — more than twice the size of
+the official directory, and ten times what that directory can put a name to.
+Suggestion: store the plaintext label in the Browse registry at publish time, or emit it
+in an event, so that anyone can index the ecosystem instead of only the client that
+already knows the names. The same label would let the gateway serve per-app metadata to
+web search engines.
 
 **9. The short-name personhood requirement surfaces only after the commit transaction.**
 Observed: `dotns register domain -n discreet` (8 chars) completed the commit step and
@@ -127,11 +164,13 @@ compute, so every app in this repo that refreshes its own published data
 (dotmetrics hourly, italiarovente daily) needs an external runner — first a
 personal PC via Task Scheduler + WSL, now a GitHub Actions cron for dotmetrics
 (`.github/workflows/dotmetrics-refresh.yml`), which also means the publish key
-must live in a cloud secret store. A readable DotNS text record (see finding 6)
-would remove most of the need: apps could point at "latest data CID" without
-republishing the site at all.
-Suggestion: fixing the `text()` read path is the cheap 80% answer; a
-platform-native "republish on schedule" primitive would close the rest.
+must live in a cloud secret store. A DotNS text record is readable today against
+the content resolver directly (see finding 6), so an app can already point at a
+"latest data CID" instead of republishing the whole site — but something still
+has to write that record on a schedule, and that something is off-platform.
+Suggestion: a platform-native "republish (or write this record) on schedule"
+primitive. Fixing the resolver pointer in finding 6 makes the pointer pattern
+usable through the standard resolution path in the meantime.
 
 ## Personhood rollout
 

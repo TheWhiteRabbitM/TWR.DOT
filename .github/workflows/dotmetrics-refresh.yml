@@ -42,10 +42,15 @@ jobs:
       - name: Install publish CLIs
         run: npm install -g @polkadot-community-foundation/polkadot-app-deploy@0.13.1 @polkadot-community-foundation/dotns-cli@0.8.0
 
-      - name: Re-index registry, timestamps and activity
+      - name: Re-index registry, records, timestamps and activity
         run: |
           set -euo pipefail
+          # index-apps admits a candidate label only when registry.owner()
+          # confirms it; enrich-onchain then reads owner, manifest, contenthash
+          # and executable record for each admitted name off the content
+          # resolver. The directory the UI renders is exactly these two passes.
           node indexer/index-apps.mjs
+          node indexer/enrich-onchain.mjs
           node indexer/enrich-times.mjs
           WINDOW=150 node indexer/measure-activity.mjs
 

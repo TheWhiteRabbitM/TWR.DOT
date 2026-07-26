@@ -19,8 +19,13 @@ export DOTNS_MNEMONIC="$MNEMONIC"
 APP="/mnt/c/Users/miche/Downloads/DOT APP/dotmetrics"
 cd "$APP" || exit 1
 
-echo "===== 1/5 re-index registry + timestamps + activity ====="
+echo "===== 1/5 re-index registry + records + timestamps + activity ====="
+# index-apps admits a name only when registry.owner() confirms it; enrich-onchain
+# then reads each admitted name's owner, manifest, contenthash and executable
+# record straight off the content resolver. Everything the UI shows comes from
+# these two passes, so neither may be skipped.
 node indexer/index-apps.mjs
+node indexer/enrich-onchain.mjs
 node indexer/enrich-times.mjs
 WINDOW=150 node indexer/measure-activity.mjs
 

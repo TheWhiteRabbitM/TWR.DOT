@@ -56,7 +56,7 @@ behind it; write paths activate as personhood rolls out. Each app carries a
 
 ## Developer feedback
 
-[`DEVFEEDBACK.md`](DEVFEEDBACK.md) — twelve factual findings from this build (resolver,
+[`DEVFEEDBACK.md`](DEVFEEDBACK.md) — fourteen factual findings from this build (resolver,
 sandbox, pad, DotNS, tooling, personhood rollout), each with a concrete suggestion.
 Found by Claude Code while building; offered upstream with thanks.
 

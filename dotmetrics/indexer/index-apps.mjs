@@ -14,6 +14,12 @@
  *      extrinsic bytes for the plaintext label. Raw bytes are used on purpose:
  *      historical extrinsics cannot be decoded with current metadata once a
  *      runtime upgrade changes call indices.
+ *   3. VERIFY every candidate against the registry: a label is admitted only if
+ *      `registry.owner(namehash(label + '.dot'))` is non-zero. Step 2 is an
+ *      ascii-run scan, so it also picks up byte runs that were never names —
+ *      one third of what it found was fictional. Nothing reaches the directory
+ *      on the strength of "it looked like a label"; rejects are kept, and
+ *      counted, under `excluded` so the UI can disclose them.
  *
  * Output: apps.json — the directory the dotmetrics dashboard consumes.
  *
@@ -26,6 +32,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { verifyRegistered } from './dotns.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(HERE, 'apps.json');
@@ -73,7 +80,11 @@ function asciiRuns(hex, min = 4) {
 
 async function main() {
   const state = reset ? {} : readJson(STATE, {});
-  const apps = reset ? {} : readJson(OUT, {});
+  const previous = reset ? {} : readJson(OUT, {});
+  // `excluded` is a top-level list beside the entries, not an entry itself.
+  const knownGhosts = Array.isArray(previous.excluded) ? previous.excluded : [];
+  delete previous.excluded;
+  const apps = previous;
 
   const api = await ApiPromise.create({ provider: new WsProvider(RPC), noInitWarn: true });
   const head = (await api.rpc.chain.getHeader()).number.toNumber();
@@ -85,7 +96,8 @@ async function main() {
 
   let scanned = 0;
   let registryBlocks = 0;
-  let discovered = 0;
+  /** label -> earliest block this run saw it in. Unverified until the pass below. */
+  const candidates = new Map();
 
   async function scanBlock(n) {
     try {
@@ -114,17 +126,9 @@ async function main() {
         for (const run of asciiRuns(extrinsics[i])) {
           const label = run.toLowerCase();
           if (!LABEL_RE.test(label) || IGNORE.has(label)) continue;
-          if (!apps[label]) {
-            discovered += 1;
-            console.log(`  + ${label}.dot  (block ${n})`);
-          }
-          apps[label] = {
-            label,
-            domain: `${label}.dot`,
-            url: `https://${label}.dev-dot.li`,
-            firstSeenBlock: apps[label]?.firstSeenBlock ?? n,
-            lastSeenBlock: n,
-          };
+          // Candidate only — nothing is announced or admitted until the
+          // registry confirms an owner, after the scan.
+          candidates.set(label, Math.min(candidates.get(label) ?? n, n));
         }
       }
     } catch {
@@ -132,7 +136,9 @@ async function main() {
     } finally {
       scanned += 1;
       if (scanned % 1000 === 0) {
-        console.log(`  …${scanned} blocks · ${registryBlocks} registry blocks · ${Object.keys(apps).length} apps`);
+        console.log(
+          `  …${scanned} blocks · ${registryBlocks} registry blocks · ${candidates.size} candidates`,
+        );
       }
     }
   }
@@ -141,18 +147,83 @@ async function main() {
   for (let n = from; n <= to; n += 1) queue.push(n);
   while (queue.length) await Promise.all(queue.splice(0, CONCURRENCY).map(scanBlock));
 
-  fs.writeFileSync(OUT, JSON.stringify(apps, null, 2));
+  // ---- verification: the registry decides what is real -------------------
+  // Everything is re-checked every run, not just this window's finds: an app
+  // can be transferred or dropped, and a label rejected last time can be a
+  // genuine registration today.
+  // `state.pending` carries candidates whose owner call failed last time. The
+  // scan window has moved past their block by now, so without this they would
+  // be lost — a real registration dropped because one HTTP request failed.
+  const pending = Array.isArray(state.pending) ? state.pending : [];
+  const toVerify = [
+    ...new Set([...Object.keys(apps), ...candidates.keys(), ...knownGhosts, ...pending]),
+  ].sort();
+  console.log(`\nverifying ${toVerify.length} labels against registry.owner()…`);
+  const { registered, ghosts, failed } = await verifyRegistered(toVerify);
+
+  let discovered = 0;
+  for (const [label, owner] of registered) {
+    const seenAt = candidates.get(label);
+    const existing = apps[label];
+    if (!existing) {
+      discovered += 1;
+      console.log(`  + ${label}.dot  (block ${seenAt ?? '?'})`);
+    }
+    const seen = [existing?.firstSeenBlock, seenAt].filter((b) => typeof b === 'number' && b > 0);
+    const entry = {
+      ...existing,
+      label,
+      domain: `${label}.dot`,
+      url: `https://${label}.dev-dot.li`,
+      firstSeenBlock: seen.length ? Math.min(...seen) : 0,
+      owner,
+    };
+    // `lastSeenBlock` used to be written here. It was an artifact of the ascii
+    // scan (unrelated names shared a value) and no metric may rest on it, so it
+    // is dropped rather than carried forward.
+    delete entry.lastSeenBlock;
+    apps[label] = entry;
+  }
+  let dropped = 0;
+  for (const label of ghosts) {
+    if (apps[label]) {
+      delete apps[label];
+      dropped += 1;
+      console.log(`  - ${label}.dot  no owner — never registered`);
+    }
+  }
+  // A label whose owner call FAILED is left exactly as it was: an RPC hiccup
+  // is not evidence either way.
+  if (failed.length) console.log(`  ? ${failed.length} owner reads failed, left untouched`);
+
+  const out = {};
+  for (const label of Object.keys(apps)) out[label] = apps[label];
+  // Labels whose check failed keep whatever status they already had, so the
+  // disclosed count doesn't flicker with the network.
+  const unresolvedGhosts = failed.filter((l) => knownGhosts.includes(l) && !apps[l]);
+  out.excluded = [...new Set([...ghosts, ...unresolvedGhosts])].sort();
+
+  fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n');
   fs.writeFileSync(
     STATE,
     JSON.stringify(
-      { lastBlock: to, updatedAt: new Date().toISOString(), registry: REGISTRY, rpc: RPC },
+      {
+        lastBlock: to,
+        updatedAt: new Date().toISOString(),
+        registry: REGISTRY,
+        rpc: RPC,
+        pending: failed,
+      },
       null,
       2,
     ),
   );
 
   console.log(`\nscanned ${scanned} blocks · ${registryBlocks} with registry activity`);
-  console.log(`apps in directory: ${Object.keys(apps).length} (+${discovered} new)`);
+  console.log(
+    `registered names: ${Object.keys(apps).length} (+${discovered} new, -${dropped} unregistered) · ` +
+      `${out.excluded.length} candidates excluded`,
+  );
   for (const a of Object.values(apps).sort((x, y) => x.firstSeenBlock - y.firstSeenBlock)) {
     console.log(`  ${a.domain.padEnd(28)} first seen ${a.firstSeenBlock}`);
   }

@@ -1,506 +1,523 @@
 {
-  "dqrwx": {
-    "label": "dqrwx",
-    "domain": "dqrwx.dot",
-    "url": "https://dqrwx.dev-dot.li",
-    "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11344752,
-    "firstSeenAt": 1784873532
-  },
   "petitions": {
     "label": "petitions",
     "domain": "petitions.dot",
     "url": "https://petitions.dev-dot.li",
     "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11344752,
-    "firstSeenAt": 1784873532
-  },
-  "btcusd": {
-    "label": "btcusd",
-    "domain": "btcusd.dot",
-    "url": "https://btcusd.dev-dot.li",
-    "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11455254,
-    "firstSeenAt": 1784873532
-  },
-  "ethusd": {
-    "label": "ethusd",
-    "domain": "ethusd.dot",
-    "url": "https://ethusd.dev-dot.li",
-    "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11455254,
-    "firstSeenAt": 1784873532
-  },
-  "dotusd": {
-    "label": "dotusd",
-    "domain": "dotusd.dot",
-    "url": "https://dotusd.dev-dot.li",
-    "firstSeenBlock": 11344752,
-    "lastSeenBlock": 11455254,
-    "firstSeenAt": 1784873532
+    "firstSeenAt": 1784873532,
+    "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
+    "hasExecutable": false,
+    "tier": 3
   },
   "openpetition": {
     "label": "openpetition",
     "domain": "openpetition.dot",
     "url": "https://openpetition.dev-dot.li",
     "firstSeenBlock": 11345043,
-    "lastSeenBlock": 11345043,
-    "firstSeenAt": 1784874132
+    "firstSeenAt": 1784874132,
+    "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
+    "displayName": "OpenPetition",
+    "description": "Petitions signed by real people: one signature per person, verifiable by anyone.",
+    "iconCid": "bafybeibsnisp6zaggzpccx6o2z6i7skk7qsmbu7wovtcft3bwjrkhu5iym",
+    "contenthash": "bafybeiabdnu72feciocx2mbehhbog2xsf3e5nfgtuv5izq64t53grxmaaq",
+    "hasExecutable": false,
+    "tier": 0
   },
   "contribnet01": {
     "label": "contribnet01",
     "domain": "contribnet01.dot",
     "url": "https://contribnet01.dev-dot.li",
     "firstSeenBlock": 11345090,
-    "lastSeenBlock": 11345090,
-    "firstSeenAt": 1784874228
+    "firstSeenAt": 1784874228,
+    "owner": "0xFD597C340A56beCb8193d9194204D7b8C1207CaD",
+    "contenthash": "bafybeidmvmczoqyle3bsoo6a5pnnbbghrq5orpem5cx6t2do42xg47k5qa",
+    "hasExecutable": false,
+    "tier": 2
   },
   "contribnet02": {
     "label": "contribnet02",
     "domain": "contribnet02.dot",
     "url": "https://contribnet02.dev-dot.li",
     "firstSeenBlock": 11345384,
-    "lastSeenBlock": 11345384,
-    "firstSeenAt": 1784874816
+    "firstSeenAt": 1784874816,
+    "owner": "0xFD597C340A56beCb8193d9194204D7b8C1207CaD",
+    "contenthash": "bafybeifrm2q6cbfbrcg2q7widyxo3czla3csnckuhbcuh576wisz2tvq7e",
+    "hasExecutable": false,
+    "tier": 2
   },
   "handshake": {
     "label": "handshake",
     "domain": "handshake.dot",
     "url": "https://handshake.dev-dot.li",
     "firstSeenBlock": 11347677,
-    "lastSeenBlock": 11347677,
-    "firstSeenAt": 1784879424
+    "firstSeenAt": 1784879424,
+    "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
+    "hasExecutable": false,
+    "tier": 3
   },
   "polkaportal01": {
     "label": "polkaportal01",
     "domain": "polkaportal01.dot",
     "url": "https://polkaportal01.dev-dot.li",
     "firstSeenBlock": 11348086,
-    "lastSeenBlock": 11348086,
-    "firstSeenAt": 1784880240
+    "firstSeenAt": 1784880240,
+    "owner": "0xFD74F727861902B1f9f179fA451200194A091876",
+    "hasExecutable": false,
+    "tier": 3
   },
   "polkaportal02": {
     "label": "polkaportal02",
     "domain": "polkaportal02.dot",
     "url": "https://polkaportal02.dev-dot.li",
     "firstSeenBlock": 11349460,
-    "lastSeenBlock": 11349460,
-    "firstSeenAt": 1784883000
+    "firstSeenAt": 1784883000,
+    "owner": "0xFD74F727861902B1f9f179fA451200194A091876",
+    "hasExecutable": false,
+    "tier": 3
   },
   "polkaportal03": {
     "label": "polkaportal03",
     "domain": "polkaportal03.dot",
     "url": "https://polkaportal03.dev-dot.li",
     "firstSeenBlock": 11349521,
-    "lastSeenBlock": 11349521,
-    "firstSeenAt": 1784883120
+    "firstSeenAt": 1784883120,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeig6w7ujpvvaiugrzluhs75d7wn3n3ooocqnbpideffwihfa2sky7q",
+    "hasExecutable": false,
+    "tier": 2
   },
   "dotmetrics": {
     "label": "dotmetrics",
     "domain": "dotmetrics.dot",
     "url": "https://dotmetrics.dev-dot.li",
     "firstSeenBlock": 11350580,
-    "lastSeenBlock": 11350580,
-    "firstSeenAt": 1784885256
+    "firstSeenAt": 1784885256,
+    "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
+    "displayName": "dotmetrics",
+    "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
+    "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
+    "contenthash": "bafybeicbp4shs6nghkdtah6bppz2bpua56uzox5bbqdsijo7ymswd23zei",
+    "hasExecutable": false,
+    "tier": 1
   },
   "eternalize-notary": {
     "label": "eternalize-notary",
     "domain": "eternalize-notary.dot",
     "url": "https://eternalize-notary.dev-dot.li",
     "firstSeenBlock": 11351090,
-    "lastSeenBlock": 11351090,
-    "firstSeenAt": 1784886276
+    "firstSeenAt": 1784886276,
+    "owner": "0x9621DDe636dE098B43Efb0fA9b61fAcFE328F99D",
+    "contenthash": "bafybeibh62tcwdrhxwfv5ujk2zv4stqymn643kswjijt7sb64vnwtyx7sm",
+    "hasExecutable": false,
+    "tier": 2
   },
   "hermes-agent-test": {
     "label": "hermes-agent-test",
     "domain": "hermes-agent-test.dot",
     "url": "https://hermes-agent-test.dev-dot.li",
     "firstSeenBlock": 11352600,
-    "lastSeenBlock": 11352600,
-    "firstSeenAt": 1784889324
+    "firstSeenAt": 1784889324,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeicxkhkbpgh74pu5hfge4pgspinfqwcafm36qa5ynx64vssvswtluu",
+    "hasExecutable": false,
+    "tier": 2
   },
   "eternalise-notary": {
     "label": "eternalise-notary",
     "domain": "eternalise-notary.dot",
     "url": "https://eternalise-notary.dev-dot.li",
     "firstSeenBlock": 11353251,
-    "lastSeenBlock": 11353251,
-    "firstSeenAt": 1784890620
-  },
-  "gxby": {
-    "label": "gxby",
-    "domain": "gxby.dot",
-    "url": "https://gxby.dev-dot.li",
-    "firstSeenBlock": 11353545,
-    "lastSeenBlock": 11353545,
-    "firstSeenAt": 1784891208
+    "firstSeenAt": 1784890620,
+    "owner": "0x9621DDe636dE098B43Efb0fA9b61fAcFE328F99D",
+    "contenthash": "bafybeia3vou57nyykzko433z2gf4aj6onmssf2uxav67rfa6k6uv5w3lam",
+    "hasExecutable": false,
+    "tier": 2
   },
   "hello-world-app": {
     "label": "hello-world-app",
     "domain": "hello-world-app.dot",
     "url": "https://hello-world-app.dev-dot.li",
     "firstSeenBlock": 11353545,
-    "lastSeenBlock": 11353545,
-    "firstSeenAt": 1784891208
+    "firstSeenAt": 1784891208,
+    "owner": "0xB0c63f4656bBfa8f3cbb86d8BDda5926eEF074f2",
+    "hasExecutable": false,
+    "tier": 3
   },
   "hello-world-bernar": {
     "label": "hello-world-bernar",
     "domain": "hello-world-bernar.dot",
     "url": "https://hello-world-bernar.dev-dot.li",
     "firstSeenBlock": 11354336,
-    "lastSeenBlock": 11354336,
-    "firstSeenAt": 1784892816
+    "firstSeenAt": 1784892816,
+    "owner": "0xB0c63f4656bBfa8f3cbb86d8BDda5926eEF074f2",
+    "contenthash": "bafybeictyugpqe7xpvbuh2plmhuxwqix6wpsjjd2ilrtvqmxchga2el5ee",
+    "hasExecutable": false,
+    "tier": 2
   },
   "thebutton": {
     "label": "thebutton",
     "domain": "thebutton.dot",
     "url": "https://thebutton.dev-dot.li",
     "firstSeenBlock": 11330545,
-    "lastSeenBlock": 11330545,
-    "firstSeenAt": 1784844996
-  },
-  "fwqb": {
-    "label": "fwqb",
-    "domain": "fwqb.dot",
-    "url": "https://fwqb.dev-dot.li",
-    "firstSeenBlock": 11335495,
-    "lastSeenBlock": 11356735,
-    "firstSeenAt": 1784854932
+    "firstSeenAt": 1784844996,
+    "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
+    "displayName": "The Button",
+    "description": "One button. One press per human, ever. A proof-of-personhood experiment.",
+    "iconCid": "bafybeidw2eymucu2nex5x32swt7tgjokyicmtcby7l6xlotprzklhcjs2u",
+    "contenthash": "bafybeidag4c22xlc2obilwxk7ldagdjc523jau43vyajy6qrvpgzfm27zq",
+    "hasExecutable": false,
+    "tier": 0
   },
   "chatgpt-guide": {
     "label": "chatgpt-guide",
     "domain": "chatgpt-guide.dot",
     "url": "https://chatgpt-guide.dev-dot.li",
     "firstSeenBlock": 11335495,
-    "lastSeenBlock": 11335630,
-    "firstSeenAt": 1784854932
-  },
-  "mrkd": {
-    "label": "mrkd",
-    "domain": "mrkd.dot",
-    "url": "https://mrkd.dev-dot.li",
-    "firstSeenBlock": 11335596,
-    "lastSeenBlock": 11335596,
-    "firstSeenAt": 1784855136
+    "firstSeenAt": 1784854932,
+    "owner": "0x88cf5a50E4ad68F5C81abD4bF49aDBd6AB2eeA24",
+    "displayName": "ChatGPT 学习指南",
+    "description": "Interactive Chinese guide to Wolfram's 'What Is ChatGPT Doing' — 10 stops, 9 hands-on demos.",
+    "iconCid": "bafk2bzacecux37si5is7vw5zek6o532rnzscgc7xllm53sjur6an2cgskm4ow",
+    "contenthash": "bafybeif5dqrhtrjq6yzkqq2ern7te5axjc4ghkgdsgrx42yeuzolko66ni",
+    "hasExecutable": true,
+    "tier": 1
   },
   "wudcommunity": {
     "label": "wudcommunity",
     "domain": "wudcommunity.dot",
     "url": "https://wudcommunity.dev-dot.li",
     "firstSeenBlock": 11356135,
-    "lastSeenBlock": 11356135,
-    "firstSeenAt": 1784896428
+    "firstSeenAt": 1784896428,
+    "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
+    "displayName": "WUD Community",
+    "description": "Unofficial WUD dashboard: live supply, holders, whale-to-plankton leaderboard.",
+    "iconCid": "bafybeibvvsaqjl3upr6yari35yscsgbkifjkorkghfmjpptysnp343v5zm",
+    "contenthash": "bafybeieq77o7brumaipwfnmi636bsomzmzvkaim76t22lwi5jzfoj3v6vy",
+    "hasExecutable": false,
+    "tier": 1
   },
   "devnet-atlas": {
     "label": "devnet-atlas",
     "domain": "devnet-atlas.dot",
     "url": "https://devnet-atlas.dev-dot.li",
     "firstSeenBlock": 11356465,
-    "lastSeenBlock": 11356735,
-    "firstSeenAt": 1784897088
-  },
-  "v944": {
-    "label": "v944",
-    "domain": "v944.dot",
-    "url": "https://v944.dev-dot.li",
-    "firstSeenBlock": 11356536,
-    "lastSeenBlock": 11356536,
-    "firstSeenAt": 1784897232
+    "firstSeenAt": 1784897088,
+    "owner": "0x6D1E97263a067DA01571CD66775142Ea55844dcD",
+    "displayName": "Products Devnet Atlas 全景",
+    "description": "Bilingual (中/EN) illustrated map of the Polkadot Products Devnet: 3 chains, publish pipeline, commit-reveal, ring VRF & KZG.",
+    "iconCid": "bafk2bzacedsweqjwzhnuzb5o46h6cju6yq3mbrmskgxqwfdpn263fgcwzwks4",
+    "contenthash": "bafybeihvvpmjumatlux4jihjx25vflnxpux6sck5hvttyocdc7b3vskpru",
+    "hasExecutable": true,
+    "tier": 1
   },
   "pactprotocol": {
     "label": "pactprotocol",
     "domain": "pactprotocol.dot",
     "url": "https://pactprotocol.dev-dot.li",
     "firstSeenBlock": 11356536,
-    "lastSeenBlock": 11356536,
-    "firstSeenAt": 1784897232
-  },
-  "mlgxcw": {
-    "label": "mlgxcw",
-    "domain": "mlgxcw.dot",
-    "url": "https://mlgxcw.dev-dot.li",
-    "firstSeenBlock": 11356709,
-    "lastSeenBlock": 11356735,
-    "firstSeenAt": 1784897580
+    "firstSeenAt": 1784897232,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeieuzfznfhryopq4vbqsk6aqityp3dcxjf3ypczbngaf2brxe3fkse",
+    "hasExecutable": false,
+    "tier": 2
   },
   "dot-pages": {
     "label": "dot-pages",
     "domain": "dot-pages.dot",
     "url": "https://dot-pages.dev-dot.li",
     "firstSeenBlock": 11357760,
-    "lastSeenBlock": 11360863,
-    "firstSeenAt": 1784899692
+    "firstSeenAt": 1784899692,
+    "owner": "0x3A2Ce7e9889946ceF9a2de00dD6051344eCb4457",
+    "displayName": "dotpages",
+    "description": "Tap-to-build websites, published to a .dot name — no backend, no build step.",
+    "iconCid": "bafk2bzacebcoo2ony2o2ls7elsxhpjfvyfhzht4cepre6a7gwoe4tepddly34",
+    "contenthash": "bafybeiafrmrhlx7elvz3qkrlt4bsujrz3j2gazpnfdjscvj22nrbdgftha",
+    "hasExecutable": true,
+    "tier": 1
   },
   "parlement-populaire": {
     "label": "parlement-populaire",
     "domain": "parlement-populaire.dot",
     "url": "https://parlement-populaire.dev-dot.li",
     "firstSeenBlock": 11361337,
-    "lastSeenBlock": 11361400,
-    "firstSeenAt": 1784906892
-  },
-  "mplj": {
-    "label": "mplj",
-    "domain": "mplj.dot",
-    "url": "https://mplj.dev-dot.li",
-    "firstSeenBlock": 11361400,
-    "lastSeenBlock": 11361400,
-    "firstSeenAt": 1784907024
+    "firstSeenAt": 1784906892,
+    "owner": "0xe3e3a0916d27c5174313f16E1507a286985a8Ac8",
+    "displayName": "Parlement Populaire",
+    "description": "Comprendre les mesures, voter, débattre et vérifier les résultats sur Polkadot.",
+    "iconCid": "bafk2bzaceafowz5ddqutupeimqmjvkwh5tedjqsixxhj6tvwih3gwazbtvc2o",
+    "contenthash": "bafybeigvtnalzogfadc23fi527atmqaejupilspblowln7abqthg62kqlm",
+    "hasExecutable": true,
+    "tier": 1
   },
   "ajedreztest01": {
     "label": "ajedreztest01",
     "domain": "ajedreztest01.dot",
     "url": "https://ajedreztest01.dev-dot.li",
     "firstSeenBlock": 11362653,
-    "lastSeenBlock": 11362653,
-    "firstSeenAt": 1784909532
+    "firstSeenAt": 1784909532,
+    "owner": "0xE510Df763d6F8B1545987ced0407EB1b52FD9cA2",
+    "contenthash": "bafybeidgx4gm7muninnatw6zv6ecscp6ft5eig2kn3znybg6hn2s3ln7wi",
+    "hasExecutable": false,
+    "tier": 2
   },
   "hellodotworld": {
     "label": "hellodotworld",
     "domain": "hellodotworld.dot",
     "url": "https://hellodotworld.dev-dot.li",
     "firstSeenBlock": 11367496,
-    "lastSeenBlock": 11367496,
-    "firstSeenAt": 1784919264
-  },
-  "zluj": {
-    "label": "zluj",
-    "domain": "zluj.dot",
-    "url": "https://zluj.dev-dot.li",
-    "firstSeenBlock": 11367496,
-    "lastSeenBlock": 11367496,
-    "firstSeenAt": 1784919264
-  },
-  "mnmd": {
-    "label": "mnmd",
-    "domain": "mnmd.dot",
-    "url": "https://mnmd.dev-dot.li",
-    "firstSeenBlock": 11368075,
-    "lastSeenBlock": 11368075,
-    "firstSeenAt": 1784920416
+    "firstSeenAt": 1784919264,
+    "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
+    "contenthash": "bafybeihfc5hr5bkjyhkmxc35toqqgbayudcmefgh37licprsylamapf4ga",
+    "hasExecutable": false,
+    "tier": 2
   },
   "cosmicteapot": {
     "label": "cosmicteapot",
     "domain": "cosmicteapot.dot",
     "url": "https://cosmicteapot.dev-dot.li",
     "firstSeenBlock": 11368075,
-    "lastSeenBlock": 11368075,
-    "firstSeenAt": 1784920416
+    "firstSeenAt": 1784920416,
+    "owner": "0xD63Bd0a5CE4a7306DBb6BDF5A0bd628c684C423F",
+    "contenthash": "bafybeifsfedviexj5srcsekw5phbja2qchfdqd33v2mcij7jjfc2sgl4wy",
+    "hasExecutable": false,
+    "tier": 2
   },
   "yologuestbook": {
     "label": "yologuestbook",
     "domain": "yologuestbook.dot",
     "url": "https://yologuestbook.dev-dot.li",
     "firstSeenBlock": 11368493,
-    "lastSeenBlock": 11368493,
-    "firstSeenAt": 1784921268
-  },
-  "bfyi": {
-    "label": "bfyi",
-    "domain": "bfyi.dot",
-    "url": "https://bfyi.dev-dot.li",
-    "firstSeenBlock": 11368493,
-    "lastSeenBlock": 11414980,
-    "firstSeenAt": 1784921268
-  },
-  "ik4j": {
-    "label": "ik4j",
-    "domain": "ik4j.dot",
-    "url": "https://ik4j.dev-dot.li",
-    "firstSeenBlock": 11368493,
-    "lastSeenBlock": 11368493,
-    "firstSeenAt": 1784921268
+    "firstSeenAt": 1784921268,
+    "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
+    "contenthash": "bafybeigbru3aq6vpid7p43c72ed3jnuh5v6zyrbi7b4gwq5xullc5fcpae",
+    "hasExecutable": false,
+    "tier": 2
   },
   "guestbook": {
     "label": "guestbook",
     "domain": "guestbook.dot",
     "url": "https://guestbook.dev-dot.li",
     "firstSeenBlock": 11368925,
-    "lastSeenBlock": 11368925,
-    "firstSeenAt": 1784922132
+    "firstSeenAt": 1784922132,
+    "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
+    "contenthash": "bafybeihspvi2xdwrpaxt2qupfktco2yvvtxct3vl7vjbbuspeappldceja",
+    "hasExecutable": false,
+    "tier": 2
   },
   "plaza-social": {
     "label": "plaza-social",
     "domain": "plaza-social.dot",
     "url": "https://plaza-social.dev-dot.li",
     "firstSeenBlock": 11369180,
-    "lastSeenBlock": 11369180,
-    "firstSeenAt": 1784922660
+    "firstSeenAt": 1784922660,
+    "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
+    "contenthash": "bafybeiaseuirlbqvl42lu67i4msqhgyo7jak366ruvukycay26wwh2vuou",
+    "hasExecutable": false,
+    "tier": 2
   },
   "italiarovente": {
     "label": "italiarovente",
     "domain": "italiarovente.dot",
     "url": "https://italiarovente.dev-dot.li",
     "firstSeenBlock": 11375584,
-    "lastSeenBlock": 11375584,
-    "firstSeenAt": 1784935872
+    "firstSeenAt": 1784935872,
+    "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
+    "displayName": "Italia Rovente",
+    "description": "How much hotter Italy has become since 1940: stripes, records, seas, 107 cities.",
+    "iconCid": "bafybeifh6ar4ukh4kxp5znfrce3bissnpnqdbhdpfczvgcjbfxk6pb6wpq",
+    "contenthash": "bafybeihbulfm6cc3auwlvux2pjakicwrn5achwbcnum2276ydpiijum22q",
+    "hasExecutable": false,
+    "tier": 1
   },
   "truereviews": {
     "label": "truereviews",
     "domain": "truereviews.dot",
     "url": "https://truereviews.dev-dot.li",
     "firstSeenBlock": 11376975,
-    "lastSeenBlock": 11376975,
-    "firstSeenAt": 1784938668
+    "firstSeenAt": 1784938668,
+    "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
+    "displayName": "TrueReviews",
+    "description": "Reviews you can trust: one verified human, one review per place, on real map businesses.",
+    "iconCid": "bafybeifofgztfjpqeolrlll3rzlzirsostuf2nqhk3fjoyzkkgbubqvqz4",
+    "contenthash": "bafybeiatpudib2daxx4xreehv2euvwa7r5p2ocw25mpe4zgepvhavz2bfy",
+    "hasExecutable": false,
+    "tier": 0
   },
   "hahamingx00": {
     "label": "hahamingx00",
     "domain": "hahamingx00.dot",
     "url": "https://hahamingx00.dev-dot.li",
     "firstSeenBlock": 11379347,
-    "lastSeenBlock": 11379432,
-    "firstSeenAt": 1784943432
-  },
-  "etxv4": {
-    "label": "etxv4",
-    "domain": "etxv4.dot",
-    "url": "https://etxv4.dev-dot.li",
-    "firstSeenBlock": 11379402,
-    "lastSeenBlock": 11379402,
-    "firstSeenAt": 1784943540
-  },
-  "e9cz": {
-    "label": "e9cz",
-    "domain": "e9cz.dot",
-    "url": "https://e9cz.dev-dot.li",
-    "firstSeenBlock": 11379432,
-    "lastSeenBlock": 11379432,
-    "firstSeenAt": 1784943600
+    "firstSeenAt": 1784943432,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "displayName": "hahaming.dot",
+    "description": "The decentralized web, in your browser — powered by .dot Web ID.",
+    "iconCid": "bafk2bzaceblddggq2fr72dlrcccs53pln7mqbokt2t2f5g4zpuw43vs4af5kc",
+    "contenthash": "bafybeigt3lza7b2pyfbnqaje4b3fg7z5r6bdr7coj64t5sh4xcaj25lvoi",
+    "hasExecutable": true,
+    "tier": 1
   },
   "polkadot-builders-hackademy": {
     "label": "polkadot-builders-hackademy",
     "domain": "polkadot-builders-hackademy.dot",
     "url": "https://polkadot-builders-hackademy.dev-dot.li",
     "firstSeenBlock": 11381034,
-    "lastSeenBlock": 11381034,
-    "firstSeenAt": 1784946816
+    "firstSeenAt": 1784946816,
+    "owner": "0xe3e3a0916d27c5174313f16E1507a286985a8Ac8",
+    "contenthash": "bafybeibndit5pcpro6mhfolzny4egpemb7pia75xrkl2kmyx7g7jp6725u",
+    "hasExecutable": false,
+    "tier": 2
   },
   "na87u9srwgblr61": {
     "label": "na87u9srwgblr61",
     "domain": "na87u9srwgblr61.dot",
     "url": "https://na87u9srwgblr61.dev-dot.li",
     "firstSeenBlock": 11392155,
-    "lastSeenBlock": 11392155,
-    "firstSeenAt": 1784969568
+    "firstSeenAt": 1784969568,
+    "owner": "0x50AFf5a51BE03d5914D9b5A42c548Dc35A73f7D8",
+    "hasExecutable": false,
+    "tier": 3
   },
   "helloworld": {
     "label": "helloworld",
     "domain": "helloworld.dot",
     "url": "https://helloworld.dev-dot.li",
     "firstSeenBlock": 11393801,
-    "lastSeenBlock": 11393801,
-    "firstSeenAt": 1784972880
+    "firstSeenAt": 1784972880,
+    "owner": "0xD63Bd0a5CE4a7306DBb6BDF5A0bd628c684C423F",
+    "contenthash": "bafybeiapwo3ftvf6cnp6o5ry7mc7qaxy7gpr373gnymmcppeeuxe4xzqdq",
+    "hasExecutable": false,
+    "tier": 2
   },
   "torrent-otp": {
     "label": "torrent-otp",
     "domain": "torrent-otp.dot",
     "url": "https://torrent-otp.dev-dot.li",
     "firstSeenBlock": 11400589,
-    "lastSeenBlock": 11400848,
-    "firstSeenAt": 1784986512
-  },
-  "tujzv": {
-    "label": "tujzv",
-    "domain": "tujzv.dot",
-    "url": "https://tujzv.dev-dot.li",
-    "firstSeenBlock": 11400848,
-    "lastSeenBlock": 11400848,
-    "firstSeenAt": 1784987040
+    "firstSeenAt": 1784986512,
+    "owner": "0x478c0615B5047e8542b039412eD0EEb551e5D80c",
+    "displayName": "OTP Tracker",
+    "description": "A serverless BitTorrent tracker. Announces are signed statements, not requests to a server.",
+    "iconCid": "bafk2bzacedziz4zfca6oja2ltbq37gtqv2b4i4oqtockhto7sdo4meoju7f2m",
+    "contenthash": "bafybeieboha25da5quecdoz6rwnk7zashcmryjp5xibzhltom33wcuipse",
+    "hasExecutable": true,
+    "tier": 1
   },
   "sybildrop": {
     "label": "sybildrop",
     "domain": "sybildrop.dot",
     "url": "https://sybildrop.dev-dot.li",
     "firstSeenBlock": 11401346,
-    "lastSeenBlock": 11401346,
-    "firstSeenAt": 1784988036
-  },
-  "g8mx": {
-    "label": "g8mx",
-    "domain": "g8mx.dot",
-    "url": "https://g8mx.dev-dot.li",
-    "firstSeenBlock": 11403577,
-    "lastSeenBlock": 11403577,
-    "firstSeenAt": 1784992512
+    "firstSeenAt": 1784988036,
+    "owner": "0xEA0C3bB39a1eE74dF70f1F07D87A0e58fEA5BA99",
+    "contenthash": "bafybeih5dsc22klk3po7ykhhkbzqxannf3lrazjo4pfhs5jg3bwgq7l4xm",
+    "hasExecutable": false,
+    "tier": 2
   },
   "my-dotkit": {
     "label": "my-dotkit",
     "domain": "my-dotkit.dot",
     "url": "https://my-dotkit.dev-dot.li",
     "firstSeenBlock": 11403577,
-    "lastSeenBlock": 11403577,
-    "firstSeenAt": 1784992512
-  },
-  "l6qrt": {
-    "label": "l6qrt",
-    "domain": "l6qrt.dot",
-    "url": "https://l6qrt.dev-dot.li",
-    "firstSeenBlock": 11409522,
-    "lastSeenBlock": 11409522,
-    "firstSeenAt": 1785004740
+    "firstSeenAt": 1784992512,
+    "owner": "0xb77aF3Dd31D8CbFab24FAB23CB28b1583dC0BC91",
+    "contenthash": "bafybeiftwhwr7yl4ap7ya7iaf3gbw4dxa663aedi7qcmea3otl5calnz6q",
+    "hasExecutable": false,
+    "tier": 2
   },
   "doomarcade00": {
     "label": "doomarcade00",
     "domain": "doomarcade00.dot",
     "url": "https://doomarcade00.dev-dot.li",
     "firstSeenBlock": 11409522,
-    "lastSeenBlock": 11409522,
-    "firstSeenAt": 1785004740
+    "firstSeenAt": 1785004740,
+    "owner": "0xE510Df763d6F8B1545987ced0407EB1b52FD9cA2",
+    "contenthash": "bafybeia3hqdxuleam3pd3qcdyxgdsnywm4tfj7trskuhxpnyy65742scs4",
+    "hasExecutable": false,
+    "tier": 2
   },
   "discreetly": {
     "label": "discreetly",
     "domain": "discreetly.dot",
     "url": "https://discreetly.dev-dot.li",
     "firstSeenBlock": 11414980,
-    "lastSeenBlock": 11414980,
-    "firstSeenAt": 1785016164
+    "firstSeenAt": 1785016164,
+    "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
+    "displayName": "Discreet",
+    "description": "Private bookings for real people: anonymous verified humans, escrow deposits, kept-word reputation.",
+    "iconCid": "bafybeiephmlsnmaym2rgxb3enx5uaxxlt5brjhqtsu6zk6cnsoam2qwt3q",
+    "contenthash": "bafybeidafh6q3tkp76cek2yukvxgywmqlz7bt276wkapcb27axmaaea6d4",
+    "hasExecutable": false,
+    "tier": 0
   },
   "tetris-bulletin": {
     "label": "tetris-bulletin",
     "domain": "tetris-bulletin.dot",
     "url": "https://tetris-bulletin.dev-dot.li",
     "firstSeenBlock": 11425464,
-    "lastSeenBlock": 11425464,
-    "firstSeenAt": 1785037284
+    "firstSeenAt": 1785037284,
+    "owner": "0xE510Df763d6F8B1545987ced0407EB1b52FD9cA2",
+    "contenthash": "bafybeidf6v4a55s22g3kbmucoqfw6n3svgm6d4tdjb4kuuf6mmtld25ahu",
+    "hasExecutable": false,
+    "tier": 2
   },
   "docs": {
     "label": "docs",
     "domain": "docs.dot",
     "url": "https://docs.dev-dot.li",
     "firstSeenBlock": 11433475,
-    "lastSeenBlock": 11433475,
-    "firstSeenAt": 1785053724
+    "firstSeenAt": 1785053724,
+    "owner": "0xF8d186c352e2ea0B9C02c211525A20DdcB8CD2dD",
+    "contenthash": "bafybeicdsjsbdysiljckx67rwaww2mugorykptxaghjmnr2vwkxx2jsapm",
+    "hasExecutable": false,
+    "tier": 2
   },
   "oblv-widgets": {
     "label": "oblv-widgets",
     "domain": "oblv-widgets.dot",
     "url": "https://oblv-widgets.dev-dot.li",
     "firstSeenBlock": 11441714,
-    "lastSeenBlock": 11441987,
-    "firstSeenAt": 1785070512
-  },
-  "vf5sy": {
-    "label": "vf5sy",
-    "domain": "vf5sy.dot",
-    "url": "https://vf5sy.dev-dot.li",
-    "firstSeenBlock": 11441932,
-    "lastSeenBlock": 11441932,
-    "firstSeenAt": 1785070956
-  },
-  "widget": {
-    "label": "widget",
-    "domain": "widget.dot",
-    "url": "https://widget.dev-dot.li",
-    "firstSeenBlock": 11441987,
-    "lastSeenBlock": 11441987,
-    "firstSeenAt": 1785071064
+    "firstSeenAt": 1785070512,
+    "owner": "0x4DB5aaC6c67bd9d152650242EBE50d1aAF0db6F6",
+    "displayName": "Oblv Widgets",
+    "description": "Widgets pour le dashboard : solde des comptes, et plus à venir.",
+    "iconCid": "bafk2bzaceacenpz6vvsdra4y3ecaecagcwqatmh6hrfjre4i3bbekmlkrmxcu",
+    "contenthash": "bafybeiee3h227jpjenz3vgm3j62hg7bx6jjdnrzs6o3iyzvuighyak4egu",
+    "hasExecutable": true,
+    "tier": 1
   },
   "dotify-test01": {
     "label": "dotify-test01",
     "domain": "dotify-test01.dot",
     "url": "https://dotify-test01.dev-dot.li",
     "firstSeenBlock": 11455254,
-    "lastSeenBlock": 11455254,
-    "firstSeenAt": 1785097908
-  }
+    "firstSeenAt": 1785097908,
+    "owner": "0xe3e3a0916d27c5174313f16E1507a286985a8Ac8",
+    "contenthash": "bafybeiamsq2nvjre64x5pc2v6dfefbgmlha7xbwgmhufdw7yo2b77oc7x4",
+    "hasExecutable": false,
+    "tier": 2
+  },
+  "excluded": [
+    "bfyi",
+    "btcusd",
+    "dotusd",
+    "dqrwx",
+    "e9cz",
+    "ethusd",
+    "etxv4",
+    "fwqb",
+    "g8mx",
+    "gxby",
+    "ik4j",
+    "l6qrt",
+    "mlgxcw",
+    "mnmd",
+    "mplj",
+    "mrkd",
+    "tujzv",
+    "v944",
+    "vf5sy",
+    "widget",
+    "zluj"
+  ]
 }

@@ -1,4 +1,4 @@
-import { buildApps, type Discovered } from './registry';
+import { buildApps, excludedFrom, type Discovered } from './registry';
 import type { AppEntry } from './types';
 
 /**
@@ -39,21 +39,43 @@ export interface DirectoryResult {
   apps: AppEntry[];
   source: DirectorySource;
   cid: string | null;
+  /**
+   * Labels the indexer's calldata scan proposed and `registry.owner()` rejected.
+   * Disclosed, not hidden: they are the difference between what a byte scan can
+   * see and what the registry actually holds.
+   */
+  excluded: string[];
 }
 
-/** A value is a plausible discovered-app map: non-empty, every entry shaped right. */
+/**
+ * A value is a plausible discovered-app map: non-empty, every entry shaped
+ * right, and every entry carrying the `owner` the registry confirmed.
+ *
+ * That last condition is deliberate. Directories published before the ghost
+ * filter existed listed a third more names than the registry actually holds,
+ * and they are still out there under their old CIDs. Without an owner on every
+ * entry a directory is unverified data, and the baked snapshot — which is
+ * verified — is the better answer.
+ *
+ * `excluded` sits beside the entries as a list of rejected labels, so it is
+ * skipped rather than validated as one.
+ */
 function isDiscoveredMap(value: unknown): value is Record<string, Discovered> {
   if (!value || typeof value !== 'object') return false;
-  const entries = Object.values(value as Record<string, unknown>);
+  const entries = Object.entries(value as Record<string, unknown>).filter(
+    ([key]) => key !== 'excluded',
+  );
   if (entries.length === 0) return false;
-  return entries.every((e) => {
+  return entries.every(([, e]) => {
     if (!e || typeof e !== 'object') return false;
     const d = e as Record<string, unknown>;
     return (
       typeof d.label === 'string' &&
       typeof d.domain === 'string' &&
       typeof d.url === 'string' &&
-      typeof d.firstSeenBlock === 'number'
+      typeof d.firstSeenBlock === 'number' &&
+      typeof d.owner === 'string' &&
+      d.owner.length > 0
     );
   });
 }
@@ -83,15 +105,22 @@ function fetchJsonRace(cid: string): Promise<Record<string, Discovered>> {
 export async function loadDirectory(): Promise<DirectoryResult> {
   try {
     const map = await fetchJsonRace(DIRECTORY_CID);
-    return { apps: buildApps(map), source: 'bulletin', cid: DIRECTORY_CID };
+    return {
+      apps: buildApps(map),
+      source: 'bulletin',
+      cid: DIRECTORY_CID,
+      excluded: excludedFrom(map),
+    };
   } catch {
     // Fall through to the baked copy — imported lazily so a fetch success never
     // pays for parsing it.
     const { default: baked } = await import('./discovered.json');
+    const map = baked as unknown as Record<string, Discovered>;
     return {
-      apps: buildApps(baked as Record<string, Discovered>),
+      apps: buildApps(map),
       source: 'baked',
       cid: null,
+      excluded: excludedFrom(map),
     };
   }
 }
