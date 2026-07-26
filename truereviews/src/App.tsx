@@ -6,6 +6,7 @@ import { openAppChat } from './lib/host-chat';
 import { readContractStatus, readOnChainReviews } from './lib/chain';
 import { REVIEW_REGISTRY } from './lib/config';
 import { osmLink, mapsLink } from './lib/osm';
+import { openExternal } from './lib/host-nav';
 import { Stars, RatePicker } from './Stars';
 import {
   pseudonym,
@@ -580,10 +581,28 @@ function PlaceView({
       </div>
 
       <div className="linkchips">
-        <a className="chip" href={osmLink(place)} target="_blank" rel="noreferrer">
+        <a
+          className="chip"
+          href={osmLink(place)}
+          target="_blank"
+          rel="noreferrer"
+          onClick={(e) => {
+            e.preventDefault();
+            void openExternal(osmLink(place));
+          }}
+        >
           {I.map} OpenStreetMap
         </a>
-        <a className="chip" href={mapsLink(place)} target="_blank" rel="noreferrer">
+        <a
+          className="chip"
+          href={mapsLink(place)}
+          target="_blank"
+          rel="noreferrer"
+          onClick={(e) => {
+            e.preventDefault();
+            void openExternal(mapsLink(place));
+          }}
+        >
           {I.map} Google Maps
         </a>
         <button className="chip" onClick={share}>
@@ -678,7 +697,19 @@ function MapCard({ place }: { place: Place }) {
     for (let dx = 0; dx < GRID_W; dx += 1) tiles.push({ x: x0 + dx, y: y0 + dy });
 
   return (
-    <a className="map-card" href={osmLink(place)} target="_blank" rel="noreferrer" aria-label={`Map of ${place.name}`}>
+    <a
+      className="map-card"
+      href={mapsLink(place)}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`Map of ${place.name}`}
+      onClick={(e) => {
+        // Sandboxed anchors never leave the shell — route through the host,
+        // which opens https:// in the system browser (Google Maps).
+        e.preventDefault();
+        void openExternal(mapsLink(place));
+      }}
+    >
       <span
         className="tile-grid"
         style={{ aspectRatio: `${GRID_W * TILE} / ${GRID_H * TILE}` }}
