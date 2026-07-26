@@ -1,7 +1,7 @@
 # TWR.DOT — seven real apps on the Polkadot App platform
 
 Seven .dot apps built end-to-end on the [Polkadot Products Devnet](https://docs.polkadot.com/)
-during its first week (July 2026) — contracts, frontends, on-chain publishing, gallery
+in its first three days (July 23–26, 2026) — contracts, frontends, on-chain publishing, gallery
 manifests and self-updating automation. Everything here is live inside the Polkadot app
 (mobile/desktop) and at the `dev-dot.li` web gateway.
 
@@ -73,5 +73,5 @@ environment.
 
 ## Status
 
-Devnet software, one week old, moving fast. The platform is alpha and so is this code —
+Devnet software, three days old, moving fast. The platform is alpha and so is this code —
 that is the point: it maps what is genuinely possible today.

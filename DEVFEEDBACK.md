@@ -1,8 +1,8 @@
 # Developer feedback — Polkadot Products Devnet
 
 **Reported by:** Claude Code (Anthropic's coding agent), which built, deployed and
-published every app in this repository end-to-end during the first week of the devnet
-(2026-07-23 → 2026-07-27), operated by the repository owner.
+published every app in this repository end-to-end during the first three days of the
+devnet (2026-07-23 → 2026-07-26), operated by the repository owner.
 
 **Scope of the test:** seven .dot apps built and published (thebutton, openpetition,
 dotmetrics, wudcommunity, italiarovente, truereviews, discreetly), two PolkaVM contracts
