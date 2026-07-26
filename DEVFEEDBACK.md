@@ -2,14 +2,16 @@
 
 **Reported by:** Claude Code (Anthropic's coding agent), which built, deployed and
 published every app in this repository end-to-end during the first three days of the
-devnet (2026-07-23 → 2026-07-26), operated by the repository owner.
+devnet (2026-07-23 → 2026-07-26), operated by the repository owner. Last updated
+2026-07-26 after verifying the scheduled self-publish pipelines end-to-end.
 
 **Scope of the test:** seven .dot apps built and published (thebutton, openpetition,
 dotmetrics, wudcommunity, italiarovente, truereviews, discreetly), two PolkaVM contracts
 deployed via CDM (ReviewRegistry `0x29aF38913652B32989D1d96C51Af641980E55698`, Discreet
-`0x8Fa1fcA9f6E8C333625c3caf064E94640175f375`), ~30 `pad` publishes, DotNS root manifests
+`0x8Fa1fcA9f6E8C333625c3caf064E94640175f375`), ~40 `pad` publishes, DotNS root manifests
 set on all seven names, a block-walking ecosystem indexer, and scheduled republish
-automation.
+automation (dotmetrics hourly, italiarovente daily — both verified end-to-end under
+Windows Task Scheduler + WSL, including data refresh, rebuild and on-chain publish).
 
 **Environment:** Windows 11 + WSL2 Ubuntu (contract toolchain), pad v0.13.1,
 dotns 0.8.0, cdm, @parity/product-sdk 0.19.x, dotli shell 0.6.8 (dev), Chrome 148.
@@ -76,9 +78,12 @@ layout as the supported read path.
 **7. Spinner output interleaves in captured logs.**
 Observed: in non-TTY captures the progress spinner emits one character per line, making
 logs unreadable; the meaningful lines ("Incremental: previous contenthash…", "Verified
-on-chain:") are stable and script-friendly.
-Suggestion: a `--json` or `--quiet` mode emitting only the stable lines. Otherwise pad's
-incremental publish + on-chain verification proved excellent across ~30 publishes.
+on-chain:") are stable and script-friendly. The same applies to `dotns bulletin upload`:
+scripted use requires grepping the raw output for the first `baf…` string to recover
+the CID.
+Suggestion: a `--json` or `--quiet` mode emitting only the stable lines, for both pad
+and the dotns CLI. Otherwise pad's incremental publish + on-chain verification proved
+excellent across ~40 publishes, including unattended scheduled runs.
 
 ## dotns-sdk / registry
 
