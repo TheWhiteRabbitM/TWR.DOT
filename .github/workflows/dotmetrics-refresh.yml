@@ -1,0 +1,101 @@
+name: dotmetrics self-refresh
+
+# Keeps dotmetrics.dot current without anyone's PC: re-index the .dot registry,
+# re-measure ecosystem activity, publish the fresh directory + site to Bulletin,
+# and commit the growing history back to the repo so every run builds on the last.
+#
+# The devnet publish key lives ONLY in the DEVNET_MNEMONIC repo secret
+# (devnet tokens carry no value; do not reuse this pattern with real keys).
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: dotmetrics-refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: dotmetrics
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dotmetrics/package-lock.json
+
+      - name: Install app dependencies
+        run: npm ci
+
+      - name: Install publish CLIs
+        run: npm install -g @polkadot-community-foundation/polkadot-app-deploy@0.13.1 @polkadot-community-foundation/dotns-cli@0.8.0
+
+      - name: Re-index registry, timestamps and activity
+        run: |
+          set -euo pipefail
+          node indexer/index-apps.mjs
+          node indexer/enrich-times.mjs
+          WINDOW=150 node indexer/measure-activity.mjs
+
+      - name: Copy fresh data into the app
+        run: |
+          set -euo pipefail
+          cp indexer/apps.json src/lib/discovered.json
+          cp indexer/ecosystem.json src/lib/ecosystem.json
+          node -e '
+          const fs = require("fs");
+          const lines = fs.readFileSync("indexer/history.jsonl", "utf8").trim().split("\n").filter(Boolean);
+          const arr = lines.slice(-240).map((l) => JSON.parse(l));
+          fs.writeFileSync("src/lib/history.json", JSON.stringify(arr) + "\n");
+          console.log("history points:", arr.length);
+          '
+
+      - name: Upload directory to Bulletin and pin the CID
+        env:
+          MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+          DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+        run: |
+          set -euo pipefail
+          CID=$(dotns bulletin upload src/lib/discovered.json --env devnet 2>&1 | tr -d '\r' | grep -aoE 'baf[a-z0-9]{50,}' | head -1)
+          [ -z "$CID" ] && { echo "bulletin upload failed" >&2; exit 1; }
+          echo "new directory CID: $CID"
+          sed -i "s|export const DIRECTORY_CID = '[a-z0-9]*'|export const DIRECTORY_CID = '$CID'|" src/lib/directory.ts
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to dotmetrics.dot
+        env:
+          MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+          DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+        run: |
+          set -euo pipefail
+          pad ./dist dotmetrics.dot --env devnet 2>&1 | tee /tmp/pad.log | grep -aE 'Setting contenthash|Verified on-chain|Files:' | tail -4
+          grep -aq 'Verified on-chain' /tmp/pad.log || { echo "publish not verified on-chain" >&2; exit 1; }
+
+      - name: Commit the grown history back to the repo
+        working-directory: .
+        run: |
+          set -euo pipefail
+          git config user.name "dotmetrics-refresh[bot]"
+          git config user.email "noreply@github.com"
+          git add dotmetrics/indexer dotmetrics/src/lib/discovered.json dotmetrics/src/lib/ecosystem.json dotmetrics/src/lib/history.json dotmetrics/src/lib/directory.ts
+          if git diff --cached --quiet; then
+            echo "nothing new to commit"
+          else
+            git commit -m "dotmetrics: hourly index snapshot (GitHub Actions)"
+            git pull --rebase origin master
+            git push
+          fi
