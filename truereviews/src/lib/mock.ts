@@ -12,11 +12,13 @@ import seedBaked from './seed.json';
  * a CID and fetched at runtime, so refreshing the demo dataset is "upload a new
  * seed, bump the CID" — the pattern every app in this workspace uses for data.
  */
-const KEY = 'truereviews:demo:v2';
+// v3: seed places moved to their real OSM refs + precise coordinates — the
+// version bump discards stale v2 state so old keys don't linger as duplicates.
+const KEY = 'truereviews:demo:v3';
 const YOU = 'demo-you-alias';
 
 /** Bulletin CID of the seed dataset (see scratchpad/upload-seed.sh). */
-export const SEED_CID = 'bafybeigaxbuhre6u3b773lbrkeuiltbqvnn3xgihxw53bis4qqgjm2ggbm';
+export const SEED_CID = 'bafybeia7lz5mztghgmltrqq4plt6xxjxknxytwcwec7ob3wrga4lo5zrje';
 
 const GATEWAYS = [
   (cid: string) => `https://dweb.link/ipfs/${cid}`,

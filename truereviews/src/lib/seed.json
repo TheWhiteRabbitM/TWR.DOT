@@ -2,13 +2,13 @@
   "version": 1,
   "places": [
     {
-      "key": "node/2891910953",
-      "osmRef": "node/2891910953",
+      "key": "node/3123151652",
+      "osmRef": "node/3123151652",
       "name": "Pizzeria Da Michele",
       "category": "Pizza",
       "address": "Via Cesare Sersale, Napoli",
-      "lat": 40.849,
-      "lon": 14.263,
+      "lat": 40.8497493,
+      "lon": 14.263352,
       "reviews": [
         { "alias": "a1", "rating": 5, "tier": 2, "daysAgo": 2, "body": "The Margherita is everything. Two euros of pure joy, worth the queue." },
         { "alias": "a2", "rating": 5, "tier": 2, "daysAgo": 6, "body": "Only two pizzas on the menu and they nailed both. A pilgrimage." },
@@ -18,13 +18,13 @@
       ]
     },
     {
-      "key": "node/1401903456",
-      "osmRef": "node/1401903456",
+      "key": "node/2246354459",
+      "osmRef": "node/2246354459",
       "name": "Gelateria dei Gracchi",
       "category": "Ice Cream",
       "address": "Via dei Gracchi, Roma",
-      "lat": 41.907,
-      "lon": 12.462,
+      "lat": 41.9091879,
+      "lon": 12.46687,
       "reviews": [
         { "alias": "b1", "rating": 5, "tier": 2, "daysAgo": 1, "body": "The pistachio tastes like actual pistachios. Rare and wonderful." },
         { "alias": "b2", "rating": 5, "tier": 2, "daysAgo": 9, "body": "Natural ingredients, no fake colours. You can taste the difference." },
@@ -32,13 +32,13 @@
       ]
     },
     {
-      "key": "node/302985663",
-      "osmRef": "node/302985663",
+      "key": "node/676820117",
+      "osmRef": "node/676820117",
       "name": "Libreria Acqua Alta",
       "category": "Bookshop",
       "address": "Calle Longa, Venezia",
-      "lat": 45.437,
-      "lon": 12.341,
+      "lat": 45.4380556,
+      "lon": 12.3422689,
       "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Libreria_Acqua_Alta_04.jpg/640px-Libreria_Acqua_Alta_04.jpg",
       "reviews": [
         { "alias": "c1", "rating": 5, "tier": 2, "daysAgo": 3, "body": "Books in a gondola. The most beautiful, chaotic bookshop anywhere." },
@@ -47,13 +47,13 @@
       ]
     },
     {
-      "key": "node/998877665",
-      "osmRef": "node/998877665",
+      "key": "node/619783817",
+      "osmRef": "node/619783817",
       "name": "Antico Caffè Greco",
       "category": "Cafe",
-      "address": "Via dei Condotti, Roma",
-      "lat": 41.905,
-      "lon": 12.481,
+      "address": "Via dei Condotti 86, Roma",
+      "lat": 41.9056653,
+      "lon": 12.4816137,
       "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Caff%C3%A8_Greco._Roma.jpg/640px-Caff%C3%A8_Greco._Roma.jpg",
       "reviews": [
         { "alias": "d1", "rating": 4, "tier": 2, "daysAgo": 5, "body": "History in every corner. Coffee is good; you pay for the room." },
@@ -61,13 +61,13 @@
       ]
     },
     {
-      "key": "node/553311228",
-      "osmRef": "node/553311228",
+      "key": "node/1833917665",
+      "osmRef": "node/1833917665",
       "name": "Trattoria da Enzo",
       "category": "Restaurant",
-      "address": "Via dei Vascellari, Roma",
-      "lat": 41.887,
-      "lon": 12.476,
+      "address": "Via dei Vascellari 29, Roma",
+      "lat": 41.8880864,
+      "lon": 12.477807,
       "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Santa_Maria_in_Trastevere_fountain.jpg/640px-Santa_Maria_in_Trastevere_fountain.jpg",
       "reviews": [
         { "alias": "e1", "rating": 5, "tier": 2, "daysAgo": 4, "body": "Cacio e pepe done right. Tiny place, huge flavour." },
@@ -76,13 +76,13 @@
       ]
     },
     {
-      "key": "way/138121600",
-      "osmRef": "way/138121600",
+      "key": "node/3450499385",
+      "osmRef": "node/3450499385",
       "name": "Mercato di Ballarò",
       "category": "Market",
-      "address": "Via Ballarò, Palermo",
-      "lat": 38.111,
-      "lon": 13.359,
+      "address": "Piazza del Carmine, Palermo",
+      "lat": 38.1113556,
+      "lon": 13.3615778,
       "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Ballar%C3%B2_Palermo.JPG/640px-Ballar%C3%B2_Palermo.JPG",
       "reviews": [
         { "alias": "f1", "rating": 5, "tier": 2, "daysAgo": 7, "body": "Loud, alive, delicious. The panelle alone are worth the trip." },
@@ -90,13 +90,13 @@
       ]
     },
     {
-      "key": "node/4113166188",
-      "osmRef": "node/4113166188",
+      "key": "node/2700446956",
+      "osmRef": "node/2700446956",
       "name": "Caffè Al Bicerin",
       "category": "Cafe",
       "address": "Piazza della Consolata, Torino",
-      "lat": 45.076,
-      "lon": 7.679,
+      "lat": 45.0762364,
+      "lon": 7.678984,
       "reviews": [
         { "alias": "g1", "rating": 5, "tier": 2, "daysAgo": 11, "body": "The bicerin is dessert, coffee and history in one glass. Since 1763." },
         { "alias": "g2", "rating": 5, "tier": 2, "daysAgo": 29, "body": "Tiny marble tables, zero rush. This is how coffee should feel." }
