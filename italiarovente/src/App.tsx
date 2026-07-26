@@ -116,6 +116,9 @@ export function App() {
   const warmestYear = records.warmestYear as Yearly | undefined;
   const lastFull = yearly[yearly.length - 1];
   const baselineHd = yearly.slice(0, 30).reduce((s, y) => s + y.hd, 0) / 30;
+  // Cities without daily extremes report hd=0 for every year — that zero means
+  // "no data", not "no hot days", so the hot-days tile is hidden for them.
+  const hasExtremes = hottest != null && hottest.value != null;
 
   return (
     <div className="page">
@@ -162,22 +165,28 @@ export function App() {
           value={warmestYear ? String(warmestYear.year) : '—'}
           sub={warmestYear && warmestYear.mean != null ? `${warmestYear.mean.toFixed(1)}°C average` : ''}
         />
-        <Tile
-          label="Hottest day ever"
-          value={hottest && hottest.value != null ? `${hottest.value.toFixed(1)}°C` : '—'}
-          sub={hottest && hottest.value != null ? fmtDate(hottest.date) : ''}
-        />
-        <Tile
-          label="Longest heatwave"
-          value={heatwave ? `${heatwave.days} days` : '—'}
-          sub={heatwave && heatwave.peak != null ? `peak ${heatwave.peak.toFixed(1)}°C · ${fmtDate(heatwave.start)}` : ''}
-        />
-        <Tile
-          label="Hot days last year"
-          value={`${lastFull.hd}`}
-          sub={`≥30°C · was ~${Math.round(baselineHd)}/yr in 1940–69`}
-          hot={lastFull.hd > baselineHd * 1.5}
-        />
+        {hasExtremes && (
+          <Tile
+            label="Hottest day ever"
+            value={hottest && hottest.value != null ? `${hottest.value.toFixed(1)}°C` : '—'}
+            sub={hottest && hottest.value != null ? fmtDate(hottest.date) : ''}
+          />
+        )}
+        {hasExtremes && (
+          <Tile
+            label="Longest heatwave"
+            value={heatwave ? `${heatwave.days} days` : '—'}
+            sub={heatwave && heatwave.peak != null ? `peak ${heatwave.peak.toFixed(1)}°C · ${fmtDate(heatwave.start)}` : ''}
+          />
+        )}
+        {hasExtremes && (
+          <Tile
+            label="Hot days last year"
+            value={`${lastFull.hd}`}
+            sub={`≥30°C · was ~${Math.round(baselineHd)}/yr in 1940–69`}
+            hot={lastFull.hd > baselineHd * 1.5}
+          />
+        )}
       </section>
 
       <section className="chart-panel">
