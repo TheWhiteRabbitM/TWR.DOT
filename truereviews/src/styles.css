@@ -1278,3 +1278,65 @@ button, select, a, input, textarea, [role='button'] {
   touch-action: manipulation;
 }
 
+
+/* --- link sheet: the guaranteed escape when the host can't open a link --- */
+.ls-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  animation: ls-fade 0.18s ease-out;
+}
+.ls-panel {
+  width: min(100%, 520px);
+  background: var(--card, #fff);
+  border-radius: 22px 22px 0 0;
+  padding: 22px 20px calc(20px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.28);
+  animation: ls-rise 0.22s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.ls-title {
+  margin: 0 0 6px;
+  font-size: 19px;
+  font-weight: 700;
+}
+.ls-lede {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--muted, #6b7280);
+}
+.ls-url {
+  display: block;
+  word-break: break-all;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-2, #f3f4f6);
+  color: var(--accent, #0a84ff);
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+.ls-actions {
+  display: grid;
+  gap: 8px;
+}
+.ls-trail {
+  margin: 14px 0 0;
+  font-size: 11px;
+  text-align: center;
+  color: var(--muted, #9ca3af);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+@keyframes ls-fade {
+  from { opacity: 0; }
+}
+@keyframes ls-rise {
+  from { transform: translateY(18px); opacity: 0; }
+}

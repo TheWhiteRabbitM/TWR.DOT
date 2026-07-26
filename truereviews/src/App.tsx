@@ -6,7 +6,7 @@ import { openAppChat } from './lib/host-chat';
 import { readContractStatus, readOnChainReviews } from './lib/chain';
 import { REVIEW_REGISTRY } from './lib/config';
 import { osmLink, mapsLink } from './lib/osm';
-import { openExternal } from './lib/host-nav';
+import { openExternal, copyText, type OpenResult } from './lib/host-nav';
 import { Stars, RatePicker } from './Stars';
 import {
   pseudonym,
@@ -388,16 +388,56 @@ function Home({ driver, onOpen }: { driver: ReviewsDriver; onOpen: (p: Place) =>
   );
 }
 
+/**
+ * Shown when a link could not be opened for the user — inside the Polkadot
+ * shell that happens when the host channel is wedged or the sandbox blocks
+ * popups. The link is never lost: it is readable, copyable, and tappable as a
+ * real anchor (a genuine user gesture is the most permissive path a browser
+ * offers). The trail line is what turns "it does nothing" into a cause.
+ */
+function LinkSheet({ result, onClose }: { result: OpenResult; onClose: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    setCopied(await copyText(result.url));
+    window.setTimeout(() => setCopied(false), 1800);
+  };
+  return (
+    <div className="ls-backdrop" onClick={onClose} role="presentation">
+      <div className="ls-panel" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <h3 className="ls-title">Open this link</h3>
+        <p className="ls-lede">
+          The app couldn&apos;t hand this to your browser by itself. Tap it below, or copy it.
+        </p>
+        <a className="ls-url" href={result.url} target="_blank" rel="noreferrer" onClick={onClose}>
+          {result.url}
+        </a>
+        <div className="ls-actions">
+          <button type="button" className="btn filled block" onClick={copy}>
+            {copied ? 'Copied ✓' : 'Copy link'}
+          </button>
+          <button type="button" className="btn tonal block" onClick={onClose}>
+            Close
+          </button>
+        </div>
+        <p className="ls-trail">couldn&apos;t open automatically · {result.trail}</p>
+      </div>
+    </div>
+  );
+}
+
 /** One-tap link into the Polkadot app's built-in chat (community room). */
 function ChatButton({ roomId, name }: { roomId: string; name: string }) {
   const [label, setLabel] = useState('💬 Community chat');
   const go = async () => {
     setLabel('Opening…');
     const r = await openAppChat(roomId, name);
-    if (r === 'outside') setLabel('Chat lives inside the Polkadot app');
-    else if (r === 'failed') setLabel('Chat unavailable right now');
-    else setLabel('Room added to your Polkadot chat ✓');
-    window.setTimeout(() => setLabel('💬 Community chat'), 2600);
+    // "registered" is a real outcome, not a failure: the room exists in the
+    // user's chat list even when the host refuses to jump there for us.
+    if (r.status === 'outside') setLabel('Chat lives inside the Polkadot app');
+    else if (r.status === 'failed') setLabel('Chat unavailable right now');
+    else if (r.status === 'registered') setLabel('Room added — open the Chat tab');
+    else setLabel('Opened in chat ✓');
+    window.setTimeout(() => setLabel('💬 Community chat'), 3200);
   };
   return (
     <button type="button" className="chat-cta" onClick={go}>
@@ -477,12 +517,14 @@ function PlaceView({
   place,
   onBack,
   onWrite,
+  onLink,
   detail,
 }: {
   driver: ReviewsDriver;
   place: Place;
   onBack: () => void;
   onWrite: (p: Place) => void;
+  onLink: (url: string) => void;
   detail: PlaceDetail | null;
 }) {
   const [onChain, setOnChain] = useState<number | null>(null);
@@ -549,7 +591,7 @@ function PlaceView({
         )}
       </div>
 
-      <MapCard place={place} />
+      <MapCard place={place} onLink={onLink} />
 
       {d && total > 0 && (
         <div className="dist">
@@ -588,7 +630,7 @@ function PlaceView({
           rel="noreferrer"
           onClick={(e) => {
             e.preventDefault();
-            void openExternal(osmLink(place));
+            onLink(osmLink(place));
           }}
         >
           {I.map} OpenStreetMap
@@ -600,7 +642,7 @@ function PlaceView({
           rel="noreferrer"
           onClick={(e) => {
             e.preventDefault();
-            void openExternal(mapsLink(place));
+            onLink(mapsLink(place));
           }}
         >
           {I.map} Google Maps
@@ -678,7 +720,7 @@ const TILE = 256;
 const GRID_W = 3;
 const GRID_H = 2;
 
-function MapCard({ place }: { place: Place }) {
+function MapCard({ place, onLink }: { place: Place; onLink: (url: string) => void }) {
   const [broken, setBroken] = useState(false);
   if (!place.lat || !place.lon || broken) return null;
 
@@ -707,7 +749,7 @@ function MapCard({ place }: { place: Place }) {
         // Sandboxed anchors never leave the shell — route through the host,
         // which opens https:// in the system browser (Google Maps).
         e.preventDefault();
-        void openExternal(mapsLink(place));
+        onLink(mapsLink(place));
       }}
     >
       <span
@@ -931,6 +973,7 @@ export function App() {
   const [detail, setDetail] = useState<PlaceDetail | null>(null);
   const [sheet, setSheet] = useState<{ place: Place; initial: number } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [linkSheet, setLinkSheet] = useState<OpenResult | null>(null);
 
   const openPlace = useCallback(
     (p: Place) => {
@@ -974,11 +1017,36 @@ export function App() {
     [detail],
   );
 
+  /**
+   * Leave the app for a map. Inside the shell this hands the URL to the host;
+   * if the host is wedged, refuses, or the popup is blocked, the link sheet
+   * opens so the user always ends up with a usable link instead of a dead tap.
+   */
+  const openLink = useCallback(
+    (url: string) => {
+      void openExternal(url, {
+        onFallback: (r) => setLinkSheet(r),
+        onLate: () => setLinkSheet(null),
+      }).then((r) => {
+        if (r.via === 'host') showToast('Opened in your browser');
+        else if (r.via === 'popup') showToast('Opened in a new tab');
+      });
+    },
+    [showToast],
+  );
+
   return (
     <div className="app">
       {splash && <Splash onDone={() => setSplash(false)} />}
       {place ? (
-        <PlaceView driver={driver} place={place} detail={detail} onBack={back} onWrite={openSheet} />
+        <PlaceView
+          driver={driver}
+          place={place}
+          detail={detail}
+          onBack={back}
+          onWrite={openSheet}
+          onLink={openLink}
+        />
       ) : tab === 'discover' ? (
         <Home driver={driver} onOpen={openPlace} />
       ) : tab === 'mine' ? (
@@ -1003,6 +1071,7 @@ export function App() {
       )}
 
       {toast && <div className="toast">{toast}</div>}
+      {linkSheet && <LinkSheet result={linkSheet} onClose={() => setLinkSheet(null)} />}
 
       {!place && (
         <nav className="tabbar">
