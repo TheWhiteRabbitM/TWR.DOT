@@ -19,7 +19,7 @@
     "displayName": "OpenPetition",
     "description": "Petitions signed by real people: one signature per person, verifiable by anyone.",
     "iconCid": "bafybeibsnisp6zaggzpccx6o2z6i7skk7qsmbu7wovtcft3bwjrkhu5iym",
-    "contenthash": "bafybeiahhg5wux3la54rivdowe2225hxdptfalhb3xvaoxuvscwt62cdvu",
+    "contenthash": "bafybeiczpjc43qplz7q7dmy5p5rhbukxigaqg3fi752dzndmtxwmg3pmry",
     "hasExecutable": false,
     "tier": 0
   },
@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeiciw56muokolqg5essgqhdqcaf443mn4dh5l2d5ahokkammprpcam",
+    "contenthash": "bafybeia5osr4dcsm5is3prsvweqgl22v62mzwfg6bb22mhrs67vya5teju",
     "hasExecutable": false,
     "tier": 1
   },
@@ -192,7 +192,7 @@
     "displayName": "WUD Community",
     "description": "Unofficial WUD dashboard: live supply, holders, whale-to-plankton leaderboard.",
     "iconCid": "bafybeibvvsaqjl3upr6yari35yscsgbkifjkorkghfmjpptysnp343v5zm",
-    "contenthash": "bafybeidou4asnoahn6ikmy2cxq5ncub2pyb26xtslsfoaoi3qmzwuf5xda",
+    "contenthash": "bafybeihjphnnscpytg6h2h6bwjqrrfxpfhlkspzx6rnqyl27dylgatkizi",
     "hasExecutable": false,
     "tier": 1
   },
@@ -325,7 +325,7 @@
     "displayName": "Italia Rovente",
     "description": "How much hotter Italy has become since 1940: stripes, records, seas, 107 cities.",
     "iconCid": "bafybeifh6ar4ukh4kxp5znfrce3bissnpnqdbhdpfczvgcjbfxk6pb6wpq",
-    "contenthash": "bafybeicoqtmflafwiqhqyshahqgdlwcxi6eqbh6wbxqlxt3tg5kdw6a7pq",
+    "contenthash": "bafybeidkwwpk74wrhnvfdkincmhglphj5e7fnuvompaeroa6afxbpy6kp4",
     "hasExecutable": false,
     "tier": 1
   },
@@ -446,7 +446,7 @@
     "displayName": "Discreet",
     "description": "Private bookings for real people: anonymous verified humans, escrow deposits, kept-word reputation.",
     "iconCid": "bafybeiephmlsnmaym2rgxb3enx5uaxxlt5brjhqtsu6zk6cnsoam2qwt3q",
-    "contenthash": "bafybeidrrurldcy6gu5ggeg4d7ow4jqnzdhya33ji4uhzbarh3vd6tw2ui",
+    "contenthash": "bafybeiasj3rsdja3sddfqd3qvhbk7kcaciciqrlybpjttmtztugij65bvu",
     "hasExecutable": false,
     "tier": 0
   },
