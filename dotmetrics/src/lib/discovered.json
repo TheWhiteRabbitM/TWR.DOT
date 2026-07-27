@@ -19,7 +19,7 @@
     "displayName": "OpenPetition",
     "description": "Petitions signed by real people: one signature per person, verifiable by anyone.",
     "iconCid": "bafybeibsnisp6zaggzpccx6o2z6i7skk7qsmbu7wovtcft3bwjrkhu5iym",
-    "contenthash": "bafybeigy532wwlrxeh3h34pvttneidu6wwy2dnsu2w72jcno6s52etuhue",
+    "contenthash": "bafybeidkprdcg3n2hpxjxvx2jcij3fv5nvwvwxz4cqxdghabmf7gn4qx5m",
     "hasExecutable": false,
     "tier": 0
   },
@@ -41,7 +41,7 @@
     "firstSeenBlock": 11345384,
     "firstSeenAt": 1784874816,
     "owner": "0xFD597C340A56beCb8193d9194204D7b8C1207CaD",
-    "contenthash": "bafybeifrm2q6cbfbrcg2q7widyxo3czla3csnckuhbcuh576wisz2tvq7e",
+    "contenthash": "bafybeibxyje4tqts7v7oyi64nvhxwv4ha3inytkhq3a5gmifxjq5m7oxt4",
     "hasExecutable": false,
     "tier": 1
   },
@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeiglh5ohk5cz5mdsgfphw7ewlvvd7psv25kjb7i2t67bsvdf5fbcdu",
+    "contenthash": "bafybeigh6h5fcu66uk5tdsgm6vrlywofjuzbsgeqvnyvkep6dz6ma2hnmq",
     "hasExecutable": false,
     "tier": 0
   },
@@ -164,7 +164,7 @@
     "displayName": "The Button",
     "description": "One button. One press per human, ever. A proof-of-personhood experiment.",
     "iconCid": "bafybeidw2eymucu2nex5x32swt7tgjokyicmtcby7l6xlotprzklhcjs2u",
-    "contenthash": "bafybeidag4c22xlc2obilwxk7ldagdjc523jau43vyajy6qrvpgzfm27zq",
+    "contenthash": "bafybeigkxakhdwl4tmirqp6sumrcfqyn7nadyjlfe7rk6m4cx4hj2n6cr4",
     "hasExecutable": false,
     "tier": 0
   },
@@ -192,7 +192,7 @@
     "displayName": "WUD Community",
     "description": "Unofficial WUD dashboard: live supply, holders, whale-to-plankton leaderboard.",
     "iconCid": "bafybeibvvsaqjl3upr6yari35yscsgbkifjkorkghfmjpptysnp343v5zm",
-    "contenthash": "bafybeidpsqn7aqhzdmfhvy3ukjmn55p4powyp4htqam6dfbaon4pdxjrva",
+    "contenthash": "bafybeigzppcnnzon6zfebv2i5in2zzpncktpsid5aerbqfbb4xkzy6ilfa",
     "hasExecutable": false,
     "tier": 0
   },
@@ -217,7 +217,7 @@
     "firstSeenBlock": 11356536,
     "firstSeenAt": 1784897232,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
-    "contenthash": "bafybeibjyjalbsdkmcws6phhrqpm25zjse45mbd554cnxvvw5o2r5twnfy",
+    "contenthash": "bafybeigwxokck2irdd3pbtuxwg4xgjod7plaf5wx5iudx5bxgatimi34eq",
     "hasExecutable": false,
     "tier": 1
   },
@@ -311,7 +311,7 @@
     "firstSeenBlock": 11369180,
     "firstSeenAt": 1784922660,
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
-    "contenthash": "bafybeiaseuirlbqvl42lu67i4msqhgyo7jak366ruvukycay26wwh2vuou",
+    "contenthash": "bafybeif7buqldeiaeeubaha6cjnb7wf2h7wcqacuujxf6rcigho6wznhbe",
     "hasExecutable": false,
     "tier": 1
   },
@@ -339,7 +339,7 @@
     "displayName": "TrueReviews",
     "description": "Reviews you can trust: one verified human, one review per place, on real map businesses.",
     "iconCid": "bafybeifofgztfjpqeolrlll3rzlzirsostuf2nqhk3fjoyzkkgbubqvqz4",
-    "contenthash": "bafybeicfreu22l36sd66ezbamfsx7gkugmmau5pl5nq352j2cwyib3im5q",
+    "contenthash": "bafybeig62oqtvgjuubjpw5aea3yomxjsspbw4qawaqxp33vrdqjkpcizkq",
     "hasExecutable": false,
     "tier": 0,
     "contract": "0x29af38913652b32989d1d96c51af641980e55698"
@@ -447,7 +447,7 @@
     "displayName": "Discreet",
     "description": "Private bookings for real people: anonymous verified humans, escrow deposits, kept-word reputation.",
     "iconCid": "bafybeiephmlsnmaym2rgxb3enx5uaxxlt5brjhqtsu6zk6cnsoam2qwt3q",
-    "contenthash": "bafybeigddtl2scx5mzvk6346amd4khw7kwbl4x3jpmodbt3tqr6wf6opja",
+    "contenthash": "bafybeigzzwnord2jasqkpeeaz3rwdbpf22rxfe23bb3ahqbdjxxwldfceq",
     "hasExecutable": false,
     "tier": 0
   },
