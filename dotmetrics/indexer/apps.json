@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeidfgqzsuzolmjhbfwjnlz7ccxzfkrgxfmf5ck2kwbgznlvptlotm4",
+    "contenthash": "bafybeihvulgphdjojgjtxaw3xmuw7kkxtvyf6ovszkxvfjptuwnygkhbmm",
     "hasExecutable": false,
     "tier": 0
   },
@@ -231,7 +231,7 @@
     "displayName": "dotpages",
     "description": "Tap-to-build websites, published to a .dot name — no backend, no build step.",
     "iconCid": "bafk2bzacebcoo2ony2o2ls7elsxhpjfvyfhzht4cepre6a7gwoe4tepddly34",
-    "contenthash": "bafybeiafrmrhlx7elvz3qkrlt4bsujrz3j2gazpnfdjscvj22nrbdgftha",
+    "contenthash": "bafybeicqlz66q434oxwoc2re4avr2eb3ink42lhq23nowbvw3dxfium4wq",
     "hasExecutable": true,
     "tier": 0
   },
@@ -620,6 +620,39 @@
     "tier": 0,
     "firstSeenAt": 1785142344
   },
+  "pennypixel": {
+    "label": "pennypixel",
+    "domain": "pennypixel.dot",
+    "url": "https://pennypixel.dev-dot.li",
+    "firstSeenBlock": 11491863,
+    "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
+    "contenthash": "bafybeifampaestngp4pjyrb2w2rp53mhipavecqiqjyrcygxyu4see7gaq",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1785172608
+  },
+  "proofoftake": {
+    "label": "proofoftake",
+    "domain": "proofoftake.dot",
+    "url": "https://proofoftake.dev-dot.li",
+    "firstSeenBlock": 11491943,
+    "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
+    "contenthash": "bafybeie7t6b7ayf7mseo6ex7xialciy346ftldnhhimqovnusjw45yqpyi",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1785172776
+  },
+  "stealcrown": {
+    "label": "stealcrown",
+    "domain": "stealcrown.dot",
+    "url": "https://stealcrown.dev-dot.li",
+    "firstSeenBlock": 11491790,
+    "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
+    "contenthash": "bafybeiesh3yklqo3ffhwf67txsa3c25eakpfgxaomm4f2mghgoclouodfi",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1785172452
+  },
   "excluded": [
     "bfyi",
     "btcusd",
@@ -637,6 +670,7 @@
     "g6t1",
     "g8mx",
     "gxby",
+    "hwefsp2",
     "ik4j",
     "kwzy",
     "l6qrt",
