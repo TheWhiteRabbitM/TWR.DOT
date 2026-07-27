@@ -55,16 +55,24 @@ function fmt(n: number): string {
  *
  * `.panel` clips its overflow, so the sheet's default "float above the point"
  * transform puts a tooltip on the top row of a grid outside the card and out of
- * sight. Every tip here therefore hangs BELOW its anchor, and near a left or
- * right edge it stops centring and pins to that edge instead — a tooltip that
- * runs off the side of a phone is no tooltip at all.
+ * sight. Tips therefore hang BELOW their anchor — except near the bottom of the
+ * chart, where below is just as far outside the card: the last row of a heatmap
+ * is exactly the case where hanging down runs past the panel's edge. There the
+ * tip flips back above. Near a left or right edge it stops centring and pins to
+ * that edge instead — a tooltip that runs off the side of a phone is no tooltip
+ * at all.
  */
 const TIP_MARGIN = 96;
 
-function tipAlign(left: number, wrapWidth: number): string {
-  if (left < TIP_MARGIN) return ' tip-below tip-l';
-  if (left > wrapWidth - TIP_MARGIN) return ' tip-below tip-r';
-  return ' tip-below';
+/** Roughly how tall a tip gets: three short lines plus padding and border. */
+const TIP_HEIGHT = 78;
+
+function tipAlign(left: number, wrapWidth: number, top = 0, wrapHeight = Infinity): string {
+  // Not enough room underneath — the bottom row of a grid — so flip it up.
+  const side = wrapHeight - top < TIP_HEIGHT ? ' tip-above' : ' tip-below';
+  if (left < TIP_MARGIN) return `${side} tip-l`;
+  if (left > wrapWidth - TIP_MARGIN) return `${side} tip-r`;
+  return side;
 }
 
 /* ============================================================ A. pulse strip */
@@ -248,7 +256,7 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [cell, setCell] = useState<{ row: number; col: number } | null>(null);
-  const [tipXY, setTipXY] = useState<{ left: number; top: number; wrap: number } | null>(null);
+  const [tipXY, setTipXY] = useState<{ left: number; top: number; wrap: number; wrapH: number } | null>(null);
 
   const { rows, max, total } = useMemo(() => {
     const dated = points.filter((p) => Number.isFinite(p.at) && p.at > 0);
@@ -316,6 +324,7 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
         left: r.left - wr.left + (HEAT_LEFT + col * STRIDE + CELL / 2) * scale,
         top: r.top - wr.top + (row * STRIDE + CELL) * scale,
         wrap: wr.width,
+        wrapH: wr.height,
       });
     },
     [rows.length, H],
@@ -338,6 +347,7 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
           left: r.left - wr.left + (HEAT_LEFT + col * STRIDE + CELL / 2) * scale,
           top: r.top - wr.top + (row * STRIDE + CELL) * scale,
           wrap: wr.width,
+          wrapH: wr.height,
         });
       }
       return { row, col };
@@ -490,7 +500,7 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
 
       {cell && tipXY && hovered && hoveredRow && (
         <div
-          className={`chart-tip${tipAlign(tipXY.left, tipXY.wrap)}`}
+          className={`chart-tip${tipAlign(tipXY.left, tipXY.wrap, tipXY.top, tipXY.wrapH)}`}
           style={{ left: `${tipXY.left}px`, top: `${tipXY.top}px` }}
         >
           <strong>
@@ -595,7 +605,7 @@ function shortAddr(a: string): string {
  */
 export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [tipXY, setTipXY] = useState<{ left: number; top: number; wrap: number } | null>(null);
+  const [tipXY, setTipXY] = useState<{ left: number; top: number; wrap: number; wrapH: number } | null>(null);
 
   const measured = eco.windowBlocks > 0;
   const calls = eco.contractEvents + eco.reverts;
@@ -608,7 +618,7 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
   const onMove = (e: ReactPointerEvent<HTMLDivElement>) => {
     const r = wrapRef.current?.getBoundingClientRect();
     if (!r) return;
-    setTipXY({ left: e.clientX - r.left, top: e.clientY - r.top + 8, wrap: r.width });
+    setTipXY({ left: e.clientX - r.left, top: e.clientY - r.top + 8, wrap: r.width, wrapH: r.height });
   };
 
   return (
@@ -672,7 +682,7 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
 
       {tipXY && measured && (
         <div
-          className={`chart-tip${tipAlign(tipXY.left, tipXY.wrap)}`}
+          className={`chart-tip${tipAlign(tipXY.left, tipXY.wrap, tipXY.top, tipXY.wrapH)}`}
           style={{ left: `${tipXY.left}px`, top: `${tipXY.top}px` }}
         >
           <strong>

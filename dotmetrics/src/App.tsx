@@ -166,6 +166,11 @@ const LAYOUT_CSS = `
 .chart-tip.tip-below { transform: translate(-50%, var(--sp-2)); white-space: normal; max-width: 17rem; }
 .chart-tip.tip-below.tip-l { transform: translate(0, var(--sp-2)); }
 .chart-tip.tip-below.tip-r { transform: translate(-100%, var(--sp-2)); }
+/* Bottom row of a grid: below would be outside the card, so it sits above the
+   cell instead — the offset clears the cell rather than covering it. */
+.chart-tip.tip-above { transform: translate(-50%, calc(-100% - var(--sp-6))); white-space: normal; max-width: 17rem; }
+.chart-tip.tip-above.tip-l { transform: translate(0, calc(-100% - var(--sp-6))); }
+.chart-tip.tip-above.tip-r { transform: translate(-100%, calc(-100% - var(--sp-6))); }
 
 /* ---- method + footer ---- */
 .method p + p { padding-top: 0; }
