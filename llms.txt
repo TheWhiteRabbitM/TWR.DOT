@@ -221,6 +221,23 @@ The gallery manifest is a text record named `manifest`:
 This is also your only "SEO": it is the sole machine-readable description of an app.
 14 of 42 registered names have one. If you publish an app, write it.
 
+**If your app has a contract, publish its address too:**
+
+```bash
+dotns text set <name>.dot contract 0xYourContract --env devnet
+```
+
+There is no official field for this (see `DEVFEEDBACK.md` #8) — it is a convention
+dotmetrics reads, because without a name→contract mapping the only per-app metrics
+possible are ones whose ABI the index author hand-coded, which in practice means the
+index author's own apps. Event counts per address need no ABI, so a published address is
+enough to be measured on the same footing as everyone else.
+
+**Design note worth stealing:** if you build anything that ranks apps, check whether your
+top tier is reachable by apps other than your own. Ours was not, at first: "live data"
+required a reader we had written, and we had only written ours. Disclosure did not fix
+it — changing the ranking to use only universally measurable facts did.
+
 ### T9 — Labels scraped from calldata are ~1/3 garbage
 
 **Symptom:** your index lists names that do not exist.

@@ -197,6 +197,24 @@ Suggestion: an enumeration view over registrations (label, block) and/or a manif
 field for an app's contract address. This would enable per-app analytics for the whole
 ecosystem.
 
+*Why this one is worth more than it looks, from operating an index for three days:*
+without a name→contract mapping, per-app numbers can only be produced by hand-writing a
+reader for each contract's ABI. We did that for four apps — our own, because they are the
+only ones whose ABIs we have. The result was an index whose top tier was reachable only by
+the operator's own apps: not dishonest, since it was disclosed, but a ranking that
+structurally favours whoever runs the index. That is what a missing mapping costs an
+ecosystem, and no amount of disclosure fixes it.
+
+There is a generic metric that needs no ABI at all: the count of `revive.ContractEmitted`
+events for an address. It is measurable today for every contract on the chain. The only
+missing link is which address belongs to which name. Pending a platform answer, dotmetrics
+now reads a **`contract` text record** on `<name>.dot` (same content resolver as
+`manifest`) and, when present, shows that name's on-chain event count — the same metric,
+computed the same way, for anyone who publishes the record. This is our convention, not a
+standard; it exists only because the platform has no field for it, and we would drop it
+gladly in favour of an official one.
+Suggestion: add `contract` (or an array of addresses) to the documented manifest schema.
+
 **8a. The official directory cannot name most of its own entries, and nothing else can
 index the ecosystem either.**
 Observed: the Browse registry (`0xaab42efbe8ea4d4228c3a11e973f94c17b9a0f2c`) holds 19
