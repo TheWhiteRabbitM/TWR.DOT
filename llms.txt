@@ -10,6 +10,7 @@ same ground stated as a report for the platform's engineers is in `DEVFEEDBACK.m
 this file is the practical half. Where a claim is unverified, it says so.
 
 **The one rule that matters:** on this platform, *the normal failure mode is silence*.
+The most expensive bug in this file was a permission nobody told us to ask for (T0).
 Blocked fetches, blocked popups, wedged host calls and clipped tooltips all present as
 "the button does nothing". Assume nothing worked until you have evidence it did, and
 never write a code path whose failure is invisible.
@@ -36,6 +37,54 @@ Shell page is `<name>.dev-dot.li`; the app itself runs in a cross-origin iframe 
 ---
 
 ## 2. The traps
+
+### T0 — Ask for the permission the API you are calling never mentions
+
+**Read this before anything else.** It is the trap that cost the most, and the
+cheapest to avoid.
+
+**Symptom:** an SDK call does nothing on one shell and works on another. Most often:
+external links open on desktop and are dead on mobile.
+
+**Cause:** capabilities are gated by **device permissions**, and the API that uses them
+does not say so. The full set:
+
+```ts
+type HostDevicePermissionRequest =
+  | 'Notifications' | 'Camera' | 'Microphone' | 'Bluetooth' | 'NFC'
+  | 'Location' | 'Clipboard' | 'OpenUrl' | 'Biometrics';
+```
+
+`OpenUrl` gates **leaving the app for a link** — the thing `navigateTo` does — and
+`navigateTo`'s own documentation never mentions it. `Clipboard` gates the copy button
+you probably built as your fallback, so a missing permission can take out the escape
+hatch and the escape hatch's escape hatch at once. Some shells grant these implicitly
+(the web one appears to), which is exactly what makes the bug so expensive: it works
+everywhere you test until it silently does not.
+
+**Fix:** request them at startup, next to your network origins, and again lazily before
+first use.
+
+```ts
+await host.requestPermission({ tag: 'Remote', value: { domains: ORIGINS } });
+for (const kind of ['OpenUrl', 'Clipboard'] as const) {
+  await host.requestDevicePermission(kind).catch(() => undefined);
+}
+```
+
+Two rules that are not obvious:
+
+- **Bound them.** A permission request is a host call and can hang like any other (T1).
+  Race it; never let app startup depend on one resolving.
+- **A failed *request* is not a *denial*.** On a host that does not implement a
+  permission, the request itself errors. If you treat that as "denied" and refuse to
+  act, you have written a new bug on top of the platform's. Default to attempting the
+  action, and record which happened.
+
+**General principle for this platform:** when a capability is silently unavailable, ask
+whether it has a name in `HostDevicePermissionRequest` before concluding the platform is
+broken. Camera, microphone, location, clipboard, notifications, biometrics, NFC,
+Bluetooth and opening a URL are all gated. Nothing warns you.
 
 ### T1 — Host calls can hang forever, so your fallback never runs
 
@@ -73,10 +122,13 @@ const w = window.open(url, '_blank');
 if (w) { try { w.opener = null; } catch {} }
 ```
 
-### T3 — In the mobile shell, no documented route opens an external link
+### T3 — When the mobile shell still will not open a link
 
 **Symptom:** external links work in the desktop shell and do nothing in the mobile app,
 from the same published bundle.
+
+**First check T0** — the `OpenUrl` permission is the likely cause and the cheap fix.
+What follows is the belt-and-braces layer for when a shell refuses anyway.
 
 **Cause:** `navigateTo` does not answer (T1) and `window.open` produces no visible window.
 
@@ -261,6 +313,7 @@ real value in it.
 
 ## 3. Checklist before you ship
 
+- [ ] `OpenUrl` and `Clipboard` device permissions requested at startup (T0)
 - [ ] Every host call raced against a deadline; no bare `await` on the SDK
 - [ ] Every external link has a visible fallback that cannot fail (copy the URL)
 - [ ] Views push history; `popstate`/`hashchange` restore them
@@ -274,7 +327,9 @@ real value in it.
 
 ## 4. If you are debugging "it does nothing"
 
-1. Is it silent-failure by design? Check T1 (hang), T2 (null handle), T5 (permission).
+1. Is the capability permission-gated? Check T0 first — `OpenUrl`, `Clipboard`, Camera,
+   Location and five others are gated, and the APIs that use them do not say so.
+   Then T1 (hang), T2 (null handle), T5 (network origins).
 2. Reproduce **inside the shell**, not just locally: load `https://<name>.dev-dot.li`, and
    read the app iframe's `sandbox` attribute from the parent page. Desktop and mobile
    shells behave differently — a fix verified on desktop proves nothing about mobile.

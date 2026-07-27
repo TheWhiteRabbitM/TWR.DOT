@@ -34,7 +34,7 @@ Ranked by what it costs a developer, not by how hard it looks to fix.
 | # | Finding | Impact |
 |---|---|---|
 | 12 | Personhood write paths cannot be exercised without a granted account | **Blocks every app's real purpose.** Everything here ships demo-first because of it |
-| 4a | External links do nothing in the mobile shell (`navigateTo` never settles, `window.open` shows nothing) — same build works on desktop | **Silent dead end.** Cost us a full day across three wrong diagnoses |
+| 4a | External links do nothing in the mobile shell. Root cause is likely an `OpenUrl` device permission we never requested — but it fails as an unresolved promise, not a refusal | **Silent dead end.** Cost us a day and three wrong diagnoses; a named refusal would have cost minutes |
 | 6 | `registry.resolver(node)` points at a resolver that reverts; records are readable only by calling the content resolver directly | **Breaks standard ENS-style resolution.** Once known, it is the unlock for all app metadata |
 | 8 / 8a | No supported enumeration; the official directory stores labelhashes only, emits no events, and cannot name 15 of its 19 entries | **The ecosystem cannot be indexed** by anyone who is not walking raw calldata |
 | 3 | Fetches to non-approved origins fail indistinguishably from network errors | Controls that appear to do nothing until you find `requestPermission` |
@@ -93,25 +93,48 @@ sandboxed iframe; if constrained, document it so developers design around it up 
 opens it fine on desktop.**
 Observed: tapping a link to an external `https://` URL (a place on Google Maps)
 works in the desktop shell and does nothing at all in the mobile app, from the
-same published bundle. Both documented routes fail there:
-- `navigateTo(url)` from `@parity/product-sdk-host` never settles. There is no
-  request timeout in the TrUAPI client, and its iframe transport queues frames
-  while the channel is not established (`@parity/truapi/dist/sandbox.js`:
-  `postMessage` pushes to `queued` with no timer), so `await navigateTo(url)`
-  can hang indefinitely rather than rejecting. Any fallback written after that
-  `await` is unreachable, which presents to the user as a dead button.
-- `window.open` produces no visible window. The web gateway's app iframe is
-  served with `sandbox="allow-scripts allow-same-origin allow-forms
-  allow-pointer-lock allow-popups"`, so popups are granted there and the desktop
-  path works; the mobile wrapper does not appear to honour them.
-As a workaround these apps now race every host call against a 1.5s deadline,
-remember for the session that the host did not answer, fall back to
-`window.open` (without `noopener`, which makes the call return `null` even on
-success and so hides whether it worked), hand `maps:`/`geo:` URLs to the OS on
-mobile, and finally show the URL in a sheet the user can copy.
-Suggestion: reject `navigateTo` with an error instead of hanging when the
-channel is not established, and document (or implement) how a sandboxed app is
-expected to open an external URL from the mobile shell.
+same published bundle.
+
+*Partly our own bug, and worth stating first.* `OpenUrl` is a device permission
+in the SDK — `HostDevicePermissionRequest = "Notifications" | "Camera" |
+"Microphone" | "Bluetooth" | "NFC" | "Location" | "Clipboard" | "OpenUrl" |
+"Biometrics"` (`@parity/truapi/dist/generated/types.d.ts:2491`) — and none of
+these apps ever called `requestDevicePermission("OpenUrl")`. The web shell
+appears to grant it implicitly, which is why the desktop path always worked. The
+apps now request it at startup, alongside the `Remote` origins; whether that
+alone fixes the mobile case is being confirmed. `Clipboard` was missing for the
+same reason, so the copy-the-link fallback would have failed silently too.
+
+What remains platform-side, regardless of that omission:
+- **The failure is silent and indistinguishable from a hang.** `navigateTo(url)`
+  never settles. There is no request timeout in the TrUAPI client, and its iframe
+  transport queues frames while the channel is not established
+  (`@parity/truapi/dist/sandbox.js`: `postMessage` pushes to `queued` with no
+  timer), so `await navigateTo(url)` can hang indefinitely rather than rejecting.
+  Any fallback written after that `await` is unreachable code, which presents to
+  the user as a dead button. A missing permission should produce a refusal that
+  names itself, not an unresolved promise.
+- **The permission is not discoverable from the API you are told to use.** The
+  docblock for `navigateTo` documents that an `https://` URL "opens externally"
+  and says nothing about `OpenUrl` being required; `permissions.ts` documents
+  `requestDevicePermission` with a `Camera` example. Nothing connects the two.
+- `window.open` produces no visible window in the mobile wrapper. The web
+  gateway's app iframe is served with `sandbox="allow-scripts allow-same-origin
+  allow-forms allow-pointer-lock allow-popups"`, so popups are granted there.
+
+As a workaround these apps now request `OpenUrl` and `Clipboard` up front, race
+every host call against a 1.5s deadline, remember for the session that the host
+did not answer, fall back to `window.open` (without `noopener`, which makes the
+call return `null` even on success and so hides whether it worked), hand
+`maps:`/`geo:` URLs to the OS on mobile, and finally show the URL in a sheet the
+user can copy. Each attempt appends to a breadcrumb
+(`perm:ok>host:timeout>popup:blocked>manual`) shown in that sheet, so a user who
+reports "the button does nothing" hands over the cause with it.
+
+Suggestion: reject `navigateTo` with `PermissionDenied` when `OpenUrl` has not
+been granted, instead of hanging; and cross-reference the permission from the
+`navigateTo` documentation, since an app author following the navigation API has
+no reason to look in the device-permission list for it.
 
 **4b. Apps that do not use the History API make the back gesture close the app.**
 Observed: an app that changes view via internal state, without pushing a history

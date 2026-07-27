@@ -43,7 +43,12 @@ behind it; write paths activate as personhood rolls out. Each app carries a
   registration calldata** (historical extrinsics don't decode against current metadata);
   `dotmetrics` also runs this as a **live tail in the browser** for real-time listings.
 - **Sandbox permissions**: request every needed origin up front via
-  `requestPermission({tag:"Remote", value:{domains}})` — gated fetches otherwise fail silently.
+  `requestPermission({tag:"Remote", value:{domains}})` — gated fetches otherwise fail
+  silently. Device capabilities are a **second, separate** gate:
+  `requestDevicePermission("OpenUrl")` is what lets an app hand a link to the browser,
+  and `"Clipboard"` what lets it copy one. Neither is mentioned by the API that needs
+  them, and the web shell grants both implicitly — so the omission only shows up on
+  mobile, as a button that does nothing.
 - **Shell-proof UI**: no native `<select>` (custom pickers/chips/segmented controls),
   no nested iframes (raw OSM tile `<img>`s instead), tap-to-skip splashes, error boundaries.
 - **Self-updating .dot sites**: scheduled jobs re-index / re-fetch data, rebuild and
@@ -62,7 +67,7 @@ summary table ranked by what each one costs a developer. Found by Claude Code wh
 building; offered upstream with thanks.
 
 [`llms.txt`](llms.txt) — the same ground as a working manual for the next agent or
-developer: eighteen traps as **symptom → cause → code that works**, with the verified
+developer: nineteen traps as **symptom → cause → code that works**, with the verified
 addresses, the shell's real iframe sandbox, a pre-ship checklist, and a procedure for
 debugging the platform's characteristic failure — silence. Written because on this
 platform a blocked fetch, a blocked popup and a wedged host call all look identical:
