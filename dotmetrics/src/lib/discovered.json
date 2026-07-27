@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeihvulgphdjojgjtxaw3xmuw7kkxtvyf6ovszkxvfjptuwnygkhbmm",
+    "contenthash": "bafybeibz47huroeusbmlqibntkvf4alqvl2mmhqjpbhrrh6sfvjpzubcci",
     "hasExecutable": false,
     "tier": 0
   },
@@ -231,7 +231,7 @@
     "displayName": "dotpages",
     "description": "Tap-to-build websites, published to a .dot name — no backend, no build step.",
     "iconCid": "bafk2bzacebcoo2ony2o2ls7elsxhpjfvyfhzht4cepre6a7gwoe4tepddly34",
-    "contenthash": "bafybeicqlz66q434oxwoc2re4avr2eb3ink42lhq23nowbvw3dxfium4wq",
+    "contenthash": "bafybeicvikt7ej2palbbz35ciiwhtm755t4xja75ef4dfmrdeugtgsbgq4",
     "hasExecutable": true,
     "tier": 0
   },
@@ -626,7 +626,7 @@
     "url": "https://pennypixel.dev-dot.li",
     "firstSeenBlock": 11491863,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeifampaestngp4pjyrb2w2rp53mhipavecqiqjyrcygxyu4see7gaq",
+    "contenthash": "bafybeibybbe2gadktszdhy7dynd3cxshhtlf3cdlieis6wkytatbycybhy",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172608
@@ -637,7 +637,7 @@
     "url": "https://proofoftake.dev-dot.li",
     "firstSeenBlock": 11491943,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeie7t6b7ayf7mseo6ex7xialciy346ftldnhhimqovnusjw45yqpyi",
+    "contenthash": "bafybeig4kyqy246gfsbb7fx3a5duq74cirk3blr4p3cburptw7h4cbmye4",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172776
@@ -648,10 +648,45 @@
     "url": "https://stealcrown.dev-dot.li",
     "firstSeenBlock": 11491790,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeiesh3yklqo3ffhwf67txsa3c25eakpfgxaomm4f2mghgoclouodfi",
+    "contenthash": "bafybeifw4hbup7buptgoaw5fin65vqw32vzdkcapq3u72idxaxe44ox7r4",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172452
+  },
+  "dotcheckapp": {
+    "label": "dotcheckapp",
+    "domain": "dotcheckapp.dot",
+    "url": "https://dotcheckapp.dev-dot.li",
+    "firstSeenBlock": 11497317,
+    "owner": "0x8FF79E5341F0388Cd777FAa54e459296F05E3e8e",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785185004
+  },
+  "hello-devnet-ynrc46": {
+    "label": "hello-devnet-ynrc46",
+    "domain": "hello-devnet-ynrc46.dot",
+    "url": "https://hello-devnet-ynrc46.dev-dot.li",
+    "firstSeenBlock": 11496942,
+    "owner": "0x2ff874Da45DE81c47526a795BeE14d2e5AD27074",
+    "contenthash": "bafk2bzaced5m6hyrpfyodu3cqrcpwmxrz5rgenf4n6lgtgmcktgfuud5y7dek",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1785184260
+  },
+  "quizzlergame": {
+    "label": "quizzlergame",
+    "domain": "quizzlergame.dot",
+    "url": "https://quizzlergame.dev-dot.li",
+    "firstSeenBlock": 11495531,
+    "owner": "0x3A2Ce7e9889946ceF9a2de00dD6051344eCb4457",
+    "displayName": "Quizzler",
+    "description": "A live social trivia game for friends.",
+    "iconCid": "bafk2bzacebvt43s6jpklusyq52bll7s6z22rpbg62n3a7lzuitljjxww2bwpi",
+    "contenthash": "bafybeicygjin6tjzrwnxwuesuhiy2pac6ovxckrss356pqvugybnd4xtae",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1785180780
   },
   "excluded": [
     "bfyi",
