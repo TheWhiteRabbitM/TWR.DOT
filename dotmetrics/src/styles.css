@@ -52,13 +52,13 @@
   --warn: #e8a13a; /* reverts, stalls, stale data */
 
   /* ------------------------------------------- type scale (7 steps) */
-  --fs-0: 11px; /* micro: axis ticks, uppercase eyebrows */
-  --fs-1: 12px; /* caption, table head, chip */
-  --fs-2: 13px; /* dense secondary */
-  --fs-3: 14px; /* base body */
+  --fs-0: 12px; /* micro: axis ticks, uppercase eyebrows */
+  --fs-1: 13px; /* caption, table head, chip */
+  --fs-2: 14px; /* dense secondary */
+  --fs-3: 15px; /* base body */
   --fs-4: 17px; /* emphasised value, panel title */
   --fs-5: 21px; /* section number */
-  --fs-6: 28px; /* scorecard display */
+  --fs-6: 32px; /* scorecard display */
 
   /* ------------------------------ spacing grid: --sp-n === n * 4px */
   --sp-1: 4px;
@@ -1068,7 +1068,7 @@ tr.idx-row.is-open td:first-child {
 .chart-wrap {
   position: relative;
   padding: var(--sp-1) var(--sp-3) var(--sp-3);
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .chart-svg {

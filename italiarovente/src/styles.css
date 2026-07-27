@@ -379,7 +379,7 @@ body {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: var(--shadow);
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .stripes-svg {
@@ -506,7 +506,7 @@ body {
 
 .yc-wrap {
   position: relative;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .yc-svg {

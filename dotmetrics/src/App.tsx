@@ -68,7 +68,7 @@ const LAYOUT_CSS = `
 .find-clear:hover { background: var(--bg-4); color: var(--tx-hi); }
 
 /* ---- status line: one hero number, one step spark, one 12px line ---- */
-.lede { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; padding: var(--sp-4) 0 var(--sp-1); }
+.lede { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; padding: var(--sp-5) 0 var(--sp-2); }
 .lede-n { font-size: var(--fs-6); font-weight: 600; line-height: 1; letter-spacing: -0.02em; color: var(--tx-hi); }
 .lede-t { font-size: var(--fs-1); line-height: 1.4; color: var(--tx-mid); }
 .lede-t b { font-weight: 500; color: var(--tx-hi); }
@@ -82,11 +82,11 @@ const LAYOUT_CSS = `
 .facet { flex: none; }
 
 /* ---- the index ---- */
-.idx { margin-bottom: var(--sp-3); }
+.idx { margin-bottom: var(--sp-6); }
 /* 72px exactly: 8+8 padding around three fixed line boxes (20 + 14 + 18) and
    two 2px gaps. The line-heights are pinned rather than inherited so a long
    display name cannot silently grow every row in the index. */
-.idx-row { align-items: flex-start; min-height: 72px; gap: var(--sp-3); padding: var(--sp-2) var(--sp-4); }
+.idx-row { align-items: flex-start; min-height: 88px; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); }
 .idx-ico {
   width: var(--sp-6); height: var(--sp-6); flex: none; margin-top: 2px; overflow: hidden;
   display: inline-flex; align-items: center; justify-content: center;
@@ -94,12 +94,14 @@ const LAYOUT_CSS = `
   font-size: var(--fs-1); font-weight: 600; text-transform: uppercase;
 }
 .idx-ico img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.idx-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-.idx-l1 { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); height: var(--sp-5); }
-.idx-title { font-size: var(--fs-3); font-weight: 500; line-height: var(--sp-5); color: var(--tx-hi); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.idx-l2 { display: flex; align-items: baseline; gap: var(--sp-2); height: 14px; font-family: var(--mono); font-size: var(--fs-0); line-height: 14px; color: var(--tx-low); min-width: 0; }
+.idx-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+.idx-l1 { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); height: var(--sp-6); }
+.idx-title { font-size: var(--fs-3); font-weight: 500; line-height: var(--sp-6); color: var(--tx-hi); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.idx-l2 { display: flex; align-items: baseline; gap: var(--sp-2); height: 16px; font-family: var(--mono); font-size: var(--fs-0); line-height: 16px; color: var(--tx-low); min-width: 0; }
 .idx-l2 i { font-style: normal; white-space: nowrap; }
-.idx-l3 { height: 18px; font-size: var(--fs-2); line-height: 18px; color: var(--tx-mid); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* min-height, not height: a fixed height plus wrapping text cut descriptions
+   mid-line with no ellipsis. The clamp is what limits the lines. */
+.idx-l3 { min-height: 20px; font-size: var(--fs-2); line-height: 20px; color: var(--tx-mid); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 .idx-val { flex: none; align-self: center; text-align: right; }
 .idx-val b { display: block; font-size: var(--fs-4); font-weight: 600; color: var(--tx-hi); }
 .idx-val i { display: block; font-style: normal; font-size: var(--fs-0); color: var(--tx-low); }
@@ -162,7 +164,10 @@ const LAYOUT_CSS = `
 
 @media (max-width: 720px) {
   .pulsestrip-ticks { display: none; }
-  .idx-l3 { white-space: normal; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+  /* Two lines on a phone: one line of 14px text truncates most of these
+     descriptions to uselessness, and the extra row height is what stops the
+     list reading as a wall. */
+  .idx-l3 { -webkit-line-clamp: 2; }
 }
 `;
 

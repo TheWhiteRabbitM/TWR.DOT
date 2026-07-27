@@ -92,19 +92,18 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
         return settle('host');
       }
 
-      trail.push(outcome);
+      trail.push(outcome === 'timeout' ? 'host:timeout' : outcome);
 
       if (outcome === 'timeout') {
-        // Ambiguous: the host may be prompting the user right now. Opening a
-        // popup here could navigate twice, so go straight to the sheet — and
-        // dismiss it if the host answers late.
+        // The host is not answering. Fall through to the popup: the shell's
+        // iframe is sandboxed WITH allow-popups (verified), so this is the one
+        // route it actually grants us. A late "ok" from the host can produce a
+        // second tab — a duplicate is a far smaller failure than a dead button.
         void pending
           .then((r) => {
             if (r.ok) opts.onLate?.();
           })
           .catch(() => undefined);
-        trail.push('manual');
-        return settle('manual');
       }
     } catch {
       trail.push('host:threw');
@@ -114,10 +113,20 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
   }
 
   // A blocked popup returns null and throws nothing — checking the handle is
-  // what turns a silent no-op into a diagnosable state.
+  // what turns a silent no-op into a diagnosable state. Note the missing
+  // 'noopener': per spec that feature makes window.open return null even when
+  // the popup DID open, so passing it makes success indistinguishable from a
+  // block. The opener reference is severed on the handle instead.
   let opened: Window | null = null;
   try {
-    opened = window.open(url, '_blank', 'noopener');
+    opened = window.open(url, '_blank');
+    if (opened) {
+      try {
+        opened.opener = null;
+      } catch {
+        /* cross-origin already isolated it */
+      }
+    }
   } catch {
     trail.push('popup:threw');
   }
