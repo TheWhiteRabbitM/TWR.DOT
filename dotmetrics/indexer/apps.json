@@ -19,7 +19,7 @@
     "displayName": "OpenPetition",
     "description": "Petitions signed by real people: one signature per person, verifiable by anyone.",
     "iconCid": "bafybeibsnisp6zaggzpccx6o2z6i7skk7qsmbu7wovtcft3bwjrkhu5iym",
-    "contenthash": "bafybeiabdnu72feciocx2mbehhbog2xsf3e5nfgtuv5izq64t53grxmaaq",
+    "contenthash": "bafybeicucepapah5tblmgszeiqghc6i76ll4lf6gyq5eotaq47kvlhvpnm",
     "hasExecutable": false,
     "tier": 0
   },
@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeid34j6yp4wni476ioskafydzqrg7khh6ev3w5fd2pryacf2nr2bqi",
+    "contenthash": "bafybeihj54litjlnjejjj37ozysuvhkx46k7dbalwkd4xp7pbrx3oy7ygu",
     "hasExecutable": false,
     "tier": 1
   },
@@ -192,7 +192,7 @@
     "displayName": "WUD Community",
     "description": "Unofficial WUD dashboard: live supply, holders, whale-to-plankton leaderboard.",
     "iconCid": "bafybeibvvsaqjl3upr6yari35yscsgbkifjkorkghfmjpptysnp343v5zm",
-    "contenthash": "bafybeieq77o7brumaipwfnmi636bsomzmzvkaim76t22lwi5jzfoj3v6vy",
+    "contenthash": "bafybeicyhehyew3jp3dvyycoolmhbsithbz4qoqwgerhivqf73ssw67wm4",
     "hasExecutable": false,
     "tier": 1
   },
@@ -217,7 +217,7 @@
     "firstSeenBlock": 11356536,
     "firstSeenAt": 1784897232,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
-    "contenthash": "bafybeie6qjeuxr37a2dl4vv3mfzhkcg6pgvpuekrtdqsvzxtzdwe4wdm34",
+    "contenthash": "bafybeig7r7jylgy3wy6gabyyqk5ylj5br6lzbx6m2rudvzp4skk5jcl4p4",
     "hasExecutable": false,
     "tier": 2
   },
@@ -325,7 +325,7 @@
     "displayName": "Italia Rovente",
     "description": "How much hotter Italy has become since 1940: stripes, records, seas, 107 cities.",
     "iconCid": "bafybeifh6ar4ukh4kxp5znfrce3bissnpnqdbhdpfczvgcjbfxk6pb6wpq",
-    "contenthash": "bafybeihbulfm6cc3auwlvux2pjakicwrn5achwbcnum2276ydpiijum22q",
+    "contenthash": "bafybeihiqolg5zur46skrr3myzwpg4ah4kdwrmt4fgizyjtb3vyqplgtfm",
     "hasExecutable": false,
     "tier": 1
   },
@@ -446,7 +446,7 @@
     "displayName": "Discreet",
     "description": "Private bookings for real people: anonymous verified humans, escrow deposits, kept-word reputation.",
     "iconCid": "bafybeiephmlsnmaym2rgxb3enx5uaxxlt5brjhqtsu6zk6cnsoam2qwt3q",
-    "contenthash": "bafybeidafh6q3tkp76cek2yukvxgywmqlz7bt276wkapcb27axmaaea6d4",
+    "contenthash": "bafybeigcz74vcvp4cbglux4qiaslgqtln6h3pchoxhv2rfyi3byadccwsu",
     "hasExecutable": false,
     "tier": 0
   },
