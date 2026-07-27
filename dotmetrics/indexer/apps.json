@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeia5osr4dcsm5is3prsvweqgl22v62mzwfg6bb22mhrs67vya5teju",
+    "contenthash": "bafybeiaz7wjlryj2h7xjz42u5rrw5tfcp4g4aoqenrdqkgixeaab7gycvi",
     "hasExecutable": false,
     "tier": 1
   },
@@ -562,6 +562,17 @@
     "hasExecutable": true,
     "tier": 1,
     "firstSeenAt": 1785137520
+  },
+  "oblv-wg-todo": {
+    "label": "oblv-wg-todo",
+    "domain": "oblv-wg-todo.dot",
+    "url": "https://oblv-wg-todo.dev-dot.li",
+    "firstSeenBlock": 11476559,
+    "owner": "0x5B2C33bCD86f341d3f09D17cee117469337B169A",
+    "contenthash": "bafybeih42ygvyqrzjcb467qm2wc7lzoj2haketz2khicj6vd2w5moo7bk4",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785141768
   },
   "excluded": [
     "bfyi",
