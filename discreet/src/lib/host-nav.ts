@@ -37,6 +37,53 @@ export interface OpenOptions {
 const HOST_DEADLINE_MS = 1500;
 
 /**
+ * Remember, for this session, that the host never answered. It matters because
+ * a popup is only allowed while the user's tap is still "transiently active" —
+ * a window some engines keep for seconds and others close almost immediately.
+ * Waiting on a wedged host burns that window, so once we have learned the host
+ * is not answering we stop asking and open the popup synchronously, before the
+ * first await, while the tap is unambiguously ours.
+ */
+const WEDGED_KEY = 'twr.host.wedged';
+
+function hostIsKnownWedged(): boolean {
+  try {
+    return sessionStorage.getItem(WEDGED_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function rememberHostWedged(): void {
+  try {
+    sessionStorage.setItem(WEDGED_KEY, '1');
+  } catch {
+    /* private mode: we simply pay the deadline again next time */
+  }
+}
+
+/**
+ * `noopener` is deliberately absent: per spec it makes window.open return null
+ * even on success, which would make a working popup indistinguishable from a
+ * blocked one. The opener is severed on the handle instead.
+ */
+function openPopup(url: string): Window | null {
+  try {
+    const w = window.open(url, '_blank');
+    if (w) {
+      try {
+        w.opener = null;
+      } catch {
+        /* cross-origin already isolated it */
+      }
+    }
+    return w;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Name the host's refusal from the wire payload rather than the message text.
  * `CallErrorValue` carries a transport tag, and `Domain` wraps the versioned
  * domain error (`PermissionDenied` / `Unknown`).
@@ -65,6 +112,19 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
     if (via === 'manual') (opts.onFallback ?? showLinkFallback)(r);
     return r;
   };
+
+  // Synchronous fast path: still inside the tap, no await has run yet.
+  if (hostIsKnownWedged()) {
+    trail.push('host:skipped');
+    const early = openPopup(url);
+    if (early) {
+      trail.push('popup:ok');
+      return settle('popup');
+    }
+    trail.push('popup:blocked');
+    trail.push('manual');
+    return settle('manual');
+  }
 
   let host: typeof import('@parity/product-sdk-host') | null = null;
   try {
@@ -99,6 +159,7 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
         // iframe is sandboxed WITH allow-popups (verified), so this is the one
         // route it actually grants us. A late "ok" from the host can produce a
         // second tab — a duplicate is a far smaller failure than a dead button.
+        rememberHostWedged();
         void pending
           .then((r) => {
             if (r.ok) opts.onLate?.();
@@ -113,23 +174,8 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
   }
 
   // A blocked popup returns null and throws nothing — checking the handle is
-  // what turns a silent no-op into a diagnosable state. Note the missing
-  // 'noopener': per spec that feature makes window.open return null even when
-  // the popup DID open, so passing it makes success indistinguishable from a
-  // block. The opener reference is severed on the handle instead.
-  let opened: Window | null = null;
-  try {
-    opened = window.open(url, '_blank');
-    if (opened) {
-      try {
-        opened.opener = null;
-      } catch {
-        /* cross-origin already isolated it */
-      }
-    }
-  } catch {
-    trail.push('popup:threw');
-  }
+  // what turns a silent no-op into a diagnosable state.
+  const opened = openPopup(url);
   if (opened) {
     trail.push('popup:ok');
     return settle('popup');
