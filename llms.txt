@@ -326,6 +326,42 @@ refreshes its own data needs an external runner (GitHub Actions works; free tier
 and therefore a publish key in a secret store. Budget for that, and never put a key with
 real value in it.
 
+### T19 — Your published site expires. So does your permission to renew it
+
+**This one is silent, delayed, and total.** Nothing fails at publish time; the site simply
+stops existing a fortnight later, most likely on the day someone finally clicks your link.
+
+**Cause:** storage is a *retention window*, not permanence. Parity's write-up on Levity —
+the layer Bulletin belongs to — states the window is "approximately fourteen days" and
+that without renewal data "falls off the network automatically". Renewal means publishing
+again; there is no renew verb in the CLI. Separately, your **write authorization** has its
+own expiry, and when it lapses you can neither publish nor renew:
+
+```bash
+dotns bulletin status --env devnet --json
+# {"authorized":true,"expired":false,"transactions":200,"bytes":"59768832",
+#  "expiresAt":"2026-08-07T00:27:13.488Z"}
+```
+
+**Fix:** a scheduled republish at **half the retention window or less**, so one failed run
+cannot expire anything, plus a check that reports how many days of authorization remain
+before it becomes urgent. `pad` is incremental, so republishing unchanged files is cheap.
+An app that already refreshes its own data on a schedule renews itself for free — the ones
+that need this are the finished, stable apps nobody has touched in a while, which is
+exactly the set you would never think to check.
+
+**Also verify where your content is actually reachable.** `dotns bulletin verify <cid>`
+checks a CID across gateways, and the honest answer today can be one gateway out of four:
+
+```
+✓ https://devnet-ipfs.api.polkadotcommunity.foundation/ipfs
+✗ https://dweb.link   ✗ https://cloudflare-ipfs.com   ✗ https://w3s.link
+```
+
+If your app fetches its own data by CID through a public gateway (a common pattern for
+mutable data), test the gateway you chose rather than assuming IPFS-compatible means
+IPFS-reachable.
+
 ---
 
 ## 3. Checklist before you ship
@@ -340,6 +376,7 @@ real value in it.
 - [ ] Write paths gated → demo path that works for everyone, with reads live from chain
 - [ ] `manifest` text record written, icon uploaded to Bulletin
 - [ ] Publish gated on `Verified on-chain`
+- [ ] A scheduled republish exists, at half the retention window or less (T19)
 - [ ] Failure states say what failed, in words a non-developer can repeat back to you
 
 ## 4. If you are debugging "it does nothing"

@@ -1,0 +1,108 @@
+name: keep the published sites alive
+
+# Levity/Bulletin retention is a window, not forever: Parity's own write-up puts
+# it at "approximately fourteen days", after which unrenewed data "falls off the
+# network automatically". Renewing means re-publishing — there is no renew verb
+# in the CLI — and `pad` is incremental, so a republish of unchanged files is
+# cheap.
+#
+# dotmetrics republishes hourly and italiarovente daily, so both renew
+# themselves. The other five only get published when someone changes them, which
+# means a quiet fortnight would silently take them off the network. This job is
+# the difference between "still up" and "was up when we last looked".
+#
+# Runs weekly — half the retention window, so a single failed run cannot expire
+# anything before the next one.
+
+on:
+  schedule:
+    - cron: '23 4 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: bulletin-keepalive
+  cancel-in-progress: false
+
+jobs:
+  republish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      # Sequential on purpose: every publish signs from the same account, and
+      # concurrent jobs would race the same transaction nonce.
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        include:
+          - dir: truereviews
+            name: truereviews.dot
+          - dir: thebutton
+            name: thebutton.dot
+          - dir: openpetition
+            name: openpetition.dot
+          - dir: wudcommunity
+            name: wudcommunity.dot
+          - dir: discreet
+            name: discreetly.dot
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ matrix.dir }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.dir }}
+        run: npm ci
+
+      - name: Install publish CLI
+        run: npm install -g @polkadot-community-foundation/polkadot-app-deploy@0.13.1
+
+      - name: Build
+        working-directory: ${{ matrix.dir }}
+        run: npm run build
+
+      - name: Republish ${{ matrix.name }}
+        working-directory: ${{ matrix.dir }}
+        env:
+          MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+          DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+        run: |
+          set -euo pipefail
+          pad ./dist ${{ matrix.name }} --env devnet 2>&1 | tee /tmp/pad.log \
+            | grep -aE 'Setting contenthash|Verified on-chain|Files:' | tail -4
+          # A publish that did not verify on chain is a publish that did not
+          # happen — fail loudly rather than reporting a green renewal.
+          grep -aq 'Verified on-chain' /tmp/pad.log || {
+            echo "::error::${{ matrix.name }} did not verify on chain"; exit 1; }
+
+  authorization:
+    # The write authorization itself expires. Without it nothing can be renewed,
+    # so surface how long is left on every run rather than discovering it the
+    # week everything goes dark.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dotns
+        run: npm install -g @polkadot-community-foundation/dotns-cli@0.8.0
+
+      - name: Report days of write authorization left
+        env:
+          MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+          DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+        run: |
+          set -euo pipefail
+          dotns bulletin status --env devnet --json 2>/dev/null | tr -d '\r' | tail -1 > /tmp/auth.json
+          node -e '
+            const a = JSON.parse(require("fs").readFileSync("/tmp/auth.json", "utf8"));
+            const days = (Date.parse(a.expiresAt) - Date.now()) / 86400000;
+            console.log(`authorized: ${a.authorized} · expires ${a.expiresAt} · ${days.toFixed(1)} days left`);
+            console.log(`quota left: ${a.transactions} transactions · ${(Number(a.bytes)/1048576).toFixed(1)} MiB`);
+            if (!a.authorized || a.expired) { console.log("::error::Bulletin write authorization is gone — nothing can be renewed"); process.exit(1); }
+            if (days < 7) console.log(`::warning::Bulletin authorization expires in ${days.toFixed(1)} days`);
+          '

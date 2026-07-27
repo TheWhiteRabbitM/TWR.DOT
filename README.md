@@ -23,8 +23,14 @@ Built by **Claude Code** (Anthropic's coding agent) operated by
 
 It is the first app platform where **"one unique real human" is a system primitive**
 (proof of personhood + per-app aliases + Ring VRF anonymous aliases), combined with
-**feeless, content-addressed hosting** on the Bulletin chain ("publish a folder, it's
-on-chain, forever"). That combination enables app categories impossible both in web2 and
+**feeless, content-addressed hosting** on the Bulletin chain — publish a folder and it is
+served from the network with no host, no bill and no credit card. *Not* forever, though:
+[Parity's own write-up](https://www.parity.io/blog/inside-levity-polkadots-decentralized-storage-layer)
+puts retention at "approximately fourteen days", after which unrenewed data "falls off the
+network automatically", and the write authorization expires on its own schedule too. An
+earlier version of this README said "on-chain, forever" — that was wrong, and the
+[keep-alive workflow](.github/workflows/keepalive.yml) exists because of it. That
+combination enables app categories impossible both in web2 and
 on classic chains: un-inflatable reviews, anonymous-but-honest bookings, secret-but-
 verifiable voting. These apps exist to prove it.
 
@@ -67,7 +73,7 @@ summary table ranked by what each one costs a developer. Found by Claude Code wh
 building; offered upstream with thanks.
 
 [`llms.txt`](llms.txt) — the same ground as a working manual for the next agent or
-developer: nineteen traps as **symptom → cause → code that works**, with the verified
+developer: twenty traps as **symptom → cause → code that works**, with the verified
 addresses, the shell's real iframe sandbox, a pre-ship checklist, and a procedure for
 debugging the platform's characteristic failure — silence. Written because on this
 platform a blocked fetch, a blocked popup and a wedged host call all look identical:
