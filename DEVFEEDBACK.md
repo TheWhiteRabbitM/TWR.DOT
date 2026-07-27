@@ -60,6 +60,41 @@ pickers as a workaround.
 Suggestion: confirm whether popup form controls are expected to work inside the
 sandboxed iframe; if constrained, document it so developers design around it up front.
 
+**4a. An app cannot open an external link from the mobile shell; the same build
+opens it fine on desktop.**
+Observed: tapping a link to an external `https://` URL (a place on Google Maps)
+works in the desktop shell and does nothing at all in the mobile app, from the
+same published bundle. Both documented routes fail there:
+- `navigateTo(url)` from `@parity/product-sdk-host` never settles. There is no
+  request timeout in the TrUAPI client, and its iframe transport queues frames
+  while the channel is not established (`@parity/truapi/dist/sandbox.js`:
+  `postMessage` pushes to `queued` with no timer), so `await navigateTo(url)`
+  can hang indefinitely rather than rejecting. Any fallback written after that
+  `await` is unreachable, which presents to the user as a dead button.
+- `window.open` produces no visible window. The web gateway's app iframe is
+  served with `sandbox="allow-scripts allow-same-origin allow-forms
+  allow-pointer-lock allow-popups"`, so popups are granted there and the desktop
+  path works; the mobile wrapper does not appear to honour them.
+As a workaround these apps now race every host call against a 1.5s deadline,
+remember for the session that the host did not answer, fall back to
+`window.open` (without `noopener`, which makes the call return `null` even on
+success and so hides whether it worked), hand `maps:`/`geo:` URLs to the OS on
+mobile, and finally show the URL in a sheet the user can copy.
+Suggestion: reject `navigateTo` with an error instead of hanging when the
+channel is not established, and document (or implement) how a sandboxed app is
+expected to open an external URL from the mobile shell.
+
+**4b. Apps that do not use the History API make the back gesture close the app.**
+Observed: an app that changes view via internal state, without pushing a history
+entry, gives the shell nothing to pop — a back swipe exits to the gallery from
+the middle of the app. An app that pushes entries but does not listen for
+`popstate`/`hashchange` is worse: the first swipe silently rewinds the URL while
+the view stays put, and the second closes the app. Both were our bug and are
+fixed app-side.
+Suggestion: state the contract in the app-developer docs (push a history entry
+per view, listen for `popstate`), since the failure looks like a shell bug and
+is invisible on desktop where there is no back gesture.
+
 **5. The root-manifest contract is only documented in source code.**
 Observed: the gallery metadata mechanism (text record `manifest` on `<id>.dot` with
 `{"$v":1, displayName, description, icon:{cid, format:"png"|"jpeg"}}`, and `executable`
