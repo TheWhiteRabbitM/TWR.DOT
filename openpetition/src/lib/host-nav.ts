@@ -63,6 +63,36 @@ function rememberHostWedged(): void {
 }
 
 /**
+ * Ask the host for permission to open a URL, once per session.
+ *
+ * `OpenUrl` is a device permission in its own right, alongside Camera and
+ * Location. The web shell grants it silently, which is why external links have
+ * always worked there — but a shell that actually prompts will refuse a
+ * navigation that was never requested, and refuse it without saying so. This is
+ * the request that was missing.
+ *
+ * Raced like every other host call (see the module docblock), and a failure to
+ * ask is never treated as a refusal: we still try, because on hosts that do not
+ * implement the permission at all the call itself is what fails.
+ */
+let openUrlAsked: Promise<boolean> | null = null;
+
+async function ensureOpenUrlPermission(
+  host: typeof import('@parity/product-sdk-host'),
+): Promise<boolean> {
+  if (!openUrlAsked) {
+    openUrlAsked = Promise.race([
+      host
+        .requestDevicePermission('OpenUrl')
+        .then((r) => (r.ok ? r.value : true))
+        .catch(() => true),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(true), HOST_DEADLINE_MS)),
+    ]);
+  }
+  return openUrlAsked;
+}
+
+/**
  * `noopener` is deliberately absent: per spec it makes window.open return null
  * even on success, which would make a working popup indistinguishable from a
  * blocked one. The opener is severed on the handle instead.
@@ -139,6 +169,12 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
 
   if (host && inside) {
     try {
+      // Ask before navigating: a host that prompts will otherwise refuse a
+      // navigation nobody requested, silently. Recorded in the trail either way
+      // so a denial is visible instead of looking like a dead button.
+      const allowed = await ensureOpenUrlPermission(host);
+      trail.push(allowed ? 'perm:ok' : 'perm:denied');
+
       const pending = host.navigateTo(url);
       const outcome = await Promise.race([
         pending.then((r) => (r.ok ? 'ok' : classify(r.error))),
