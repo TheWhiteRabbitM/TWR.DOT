@@ -341,7 +341,8 @@
     "iconCid": "bafybeifofgztfjpqeolrlll3rzlzirsostuf2nqhk3fjoyzkkgbubqvqz4",
     "contenthash": "bafybeicfreu22l36sd66ezbamfsx7gkugmmau5pl5nq352j2cwyib3im5q",
     "hasExecutable": false,
-    "tier": 0
+    "tier": 0,
+    "contract": "0x29af38913652b32989d1d96c51af641980e55698"
   },
   "hahamingx00": {
     "label": "hahamingx00",
