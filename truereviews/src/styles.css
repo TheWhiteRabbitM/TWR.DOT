@@ -1365,3 +1365,18 @@ button, select, a, input, textarea, [role='button'] {
   opacity: 0.55;
   margin-top: 6px;
 }
+
+/* The tappable "did it actually open?" confirmation. */
+.toast-action {
+  border: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  max-width: calc(100% - 32px);
+  text-align: center;
+}
+.toast-action b {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

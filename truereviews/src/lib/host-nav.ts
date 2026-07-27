@@ -178,7 +178,23 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
   const opened = openPopup(url);
   if (opened) {
     trail.push('popup:ok');
-    return settle('popup');
+    const result = settle('popup');
+    // A handle is not proof a window appeared. Native wrappers can hand one
+    // back and close it immediately — or never show anything. If it is gone a
+    // moment later, that was not an opened link, so surface the sheet after
+    // all rather than leaving the user looking at an unchanged screen.
+    window.setTimeout(() => {
+      try {
+        if (opened.closed) {
+          const late: OpenResult = { via: 'manual', trail: `${result.trail}>popup:closed`, url };
+          console.warn('[open-external]', late.trail, url);
+          (opts.onFallback ?? showLinkFallback)(late);
+        }
+      } catch {
+        /* cross-origin handles can throw on .closed; treat as opened */
+      }
+    }, 700);
+    return result;
   }
   trail.push('popup:blocked');
   trail.push('manual');

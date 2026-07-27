@@ -987,6 +987,15 @@ export function App() {
   const [sheet, setSheet] = useState<{ place: Place; initial: number } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [linkSheet, setLinkSheet] = useState<OpenResult | null>(null);
+  const [nudge, setNudge] = useState<OpenResult | null>(null);
+
+  // The "didn't open?" offer is short-lived: if the link did open, the user is
+  // in another app and will never see it expire.
+  useEffect(() => {
+    if (!nudge) return;
+    const t = window.setTimeout(() => setNudge(null), 6000);
+    return () => window.clearTimeout(t);
+  }, [nudge]);
 
   const openPlace = useCallback(
     (p: Place) => {
@@ -1000,11 +1009,51 @@ export function App() {
     [driver],
   );
 
+  // Unwind the history entry rather than pushing a new one, so the in-app back
+  // button and the shell's back gesture leave the stack in the same state.
   const back = useCallback(() => {
-    setPlace(null);
-    setDetail(null);
-    window.location.hash = '#/';
+    if (window.location.hash.startsWith('#/p/')) window.history.back();
+    else {
+      setPlace(null);
+      setDetail(null);
+    }
   }, []);
+
+  /**
+   * Follow the address bar, don't just write to it.
+   *
+   * Opening a place pushes a history entry, but nothing here listened for it
+   * being popped: a back gesture rewound the hash while the view stayed put, so
+   * it read as "nothing happened" — and the next swipe, with our entry already
+   * gone, closed the whole app instead of going back.
+   */
+  useEffect(() => {
+    const sync = () => {
+      const m = /^#\/p\/(.+)$/.exec(window.location.hash);
+      if (!m) {
+        setPlace(null);
+        setDetail(null);
+        return;
+      }
+      const ref = decodeURIComponent(m[1]);
+      setPlace((cur) => {
+        if (cur && cur.osmRef === ref) return cur;
+        void driver.detail(ref).then((d) => {
+          if (d.place.name !== 'Place') {
+            setPlace(d.place);
+            setDetail(d);
+          }
+        });
+        return cur;
+      });
+    };
+    window.addEventListener('hashchange', sync);
+    window.addEventListener('popstate', sync);
+    return () => {
+      window.removeEventListener('hashchange', sync);
+      window.removeEventListener('popstate', sync);
+    };
+  }, [driver]);
 
   // Open a place directly when arriving on a #/p/<osmRef> share link.
   useEffect(() => {
@@ -1042,7 +1091,10 @@ export function App() {
         onLate: () => setLinkSheet(null),
       }).then((r) => {
         if (r.via === 'host') showToast('Opened in your browser');
-        else if (r.via === 'popup') showToast('Opened in a new tab');
+        // "It says it opened" is not the same as "it opened": some shells hand
+        // back a window that never appears. The confirmation is tappable, so
+        // the link is one touch away instead of gone.
+        else if (r.via === 'popup') setNudge({ ...r, via: 'manual' });
       });
     },
     [showToast],
@@ -1084,6 +1136,18 @@ export function App() {
       )}
 
       {toast && <div className="toast">{toast}</div>}
+      {nudge && (
+        <button
+          type="button"
+          className="toast toast-action"
+          onClick={() => {
+            setLinkSheet(nudge);
+            setNudge(null);
+          }}
+        >
+          Opened in a new tab · <b>not there? tap for the link</b>
+        </button>
+      )}
       {linkSheet && <LinkSheet result={linkSheet} onClose={() => setLinkSheet(null)} />}
 
       {!place && (
