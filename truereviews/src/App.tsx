@@ -6,6 +6,7 @@ import { openAppChat } from './lib/host-chat';
 import { readContractStatus, readOnChainReviews } from './lib/chain';
 import { REVIEW_REGISTRY } from './lib/config';
 import { osmLink, mapsLink } from './lib/osm';
+import { hasNativeMaps, tryNativeMaps } from './lib/maps';
 import { openExternal, copyText, type OpenResult } from './lib/host-nav';
 import { Stars, RatePicker } from './Stars';
 import { usePlacePhoto } from './usePlacePhoto';
@@ -531,6 +532,7 @@ function PlaceView({
   onBack,
   onWrite,
   onLink,
+  onMap,
   detail,
 }: {
   driver: ReviewsDriver;
@@ -538,6 +540,7 @@ function PlaceView({
   onBack: () => void;
   onWrite: (p: Place) => void;
   onLink: (url: string) => void;
+  onMap: (p: Place, url: string) => void;
   detail: PlaceDetail | null;
 }) {
   const [onChain, setOnChain] = useState<number | null>(null);
@@ -604,7 +607,7 @@ function PlaceView({
         )}
       </div>
 
-      <MapCard place={place} onLink={onLink} />
+      <MapCard place={place} onMap={onMap} />
 
       {d && total > 0 && (
         <div className="dist">
@@ -655,7 +658,7 @@ function PlaceView({
           rel="noreferrer"
           onClick={(e) => {
             e.preventDefault();
-            onLink(mapsLink(place));
+            onMap(place, mapsLink(place));
           }}
         >
           {I.map} Google Maps
@@ -733,7 +736,7 @@ const TILE = 256;
 const GRID_W = 3;
 const GRID_H = 2;
 
-function MapCard({ place, onLink }: { place: Place; onLink: (url: string) => void }) {
+function MapCard({ place, onMap }: { place: Place; onMap: (p: Place, url: string) => void }) {
   const [broken, setBroken] = useState(false);
   if (!place.lat || !place.lon || broken) return null;
 
@@ -762,7 +765,7 @@ function MapCard({ place, onLink }: { place: Place; onLink: (url: string) => voi
         // Sandboxed anchors never leave the shell — route through the host,
         // which opens https:// in the system browser (Google Maps).
         e.preventDefault();
-        onLink(mapsLink(place));
+        onMap(place, mapsLink(place));
       }}
     >
       <span
@@ -1080,7 +1083,7 @@ export function App() {
   );
 
   /**
-   * Leave the app for a map. Inside the shell this hands the URL to the host;
+   * Leave the app for a link. Inside the shell this hands the URL to the host;
    * if the host is wedged, refuses, or the popup is blocked, the link sheet
    * opens so the user always ends up with a usable link instead of a dead tap.
    */
@@ -1100,6 +1103,25 @@ export function App() {
     [showToast],
   );
 
+  /**
+   * A place on a map. On a phone the operating system is asked first: inside
+   * the mobile shell neither the host nor a popup reaches anything, while a
+   * platform map scheme is handed straight to the OS. Everywhere else this
+   * falls through to the ordinary web link.
+   */
+  const openMap = useCallback(
+    (p: Place, url: string) => {
+      if (hasNativeMaps() && tryNativeMaps({ lat: p.lat, lon: p.lon, label: p.name })) {
+        // No signal comes back from a scheme handoff, so offer the web link
+        // alongside it rather than claiming success.
+        setNudge({ via: 'manual', trail: 'native-maps', url });
+        return;
+      }
+      openLink(url);
+    },
+    [openLink],
+  );
+
   return (
     <div className="app">
       {splash && <Splash onDone={() => setSplash(false)} />}
@@ -1111,6 +1133,7 @@ export function App() {
           onBack={back}
           onWrite={openSheet}
           onLink={openLink}
+          onMap={openMap}
         />
       ) : tab === 'discover' ? (
         <Home driver={driver} onOpen={openPlace} />
