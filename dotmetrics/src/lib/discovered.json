@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeiebvieg2lphcf73fempebohw6gpoo5hz7ztif6ijnjo7wgz6oyuty",
+    "contenthash": "bafybeiglh5ohk5cz5mdsgfphw7ewlvvd7psv25kjb7i2t67bsvdf5fbcdu",
     "hasExecutable": false,
     "tier": 0
   },
@@ -589,7 +589,8 @@
     "iconCid": "bafk2bzacedvhbtlwzpk37j6tmqtcpgwviq7apg7rzjj7ppcg2rakd2vjlnifc",
     "contenthash": "bafybeiert4uhagj5id5cilekqintjxz3e65gvl3gnew74c2y2zs6ie2vmq",
     "hasExecutable": true,
-    "tier": 0
+    "tier": 0,
+    "firstSeenAt": 1785145152
   },
   "oblv-wg-opengov": {
     "label": "oblv-wg-opengov",
@@ -602,7 +603,8 @@
     "iconCid": "bafk2bzaceawkeutggbmsr2jfrkxw4oxszvihofpg5kxbdkcm6xehj3yphhln2",
     "contenthash": "bafybeihsqf32krrfmbczbdtascq26ni52gahre3qoub6n2z7w5qzr2de34",
     "hasExecutable": true,
-    "tier": 0
+    "tier": 0,
+    "firstSeenAt": 1785142428
   },
   "oblv-wg-rss": {
     "label": "oblv-wg-rss",
@@ -615,7 +617,8 @@
     "iconCid": "bafk2bzaceav6e2sdkiyovopfypylnut3k4qesca57wukuzfwh74k627kqg7ym",
     "contenthash": "bafybeif34n46a3c6jbrnker3hkmzbecn3vc3fljnjipdpax2acbpcjjxsi",
     "hasExecutable": true,
-    "tier": 0
+    "tier": 0,
+    "firstSeenAt": 1785142344
   },
   "excluded": [
     "bfyi",
