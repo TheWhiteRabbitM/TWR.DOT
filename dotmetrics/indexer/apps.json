@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeibz47huroeusbmlqibntkvf4alqvl2mmhqjpbhrrh6sfvjpzubcci",
+    "contenthash": "bafybeiclsartlwubgfss6ktps2537t5jzxcmjwrbyynf5j77idafnstk74",
     "hasExecutable": false,
     "tier": 0
   },
@@ -660,8 +660,9 @@
     "firstSeenBlock": 11497317,
     "owner": "0x8FF79E5341F0388Cd777FAa54e459296F05E3e8e",
     "hasExecutable": false,
-    "tier": 2,
-    "firstSeenAt": 1785185004
+    "tier": 1,
+    "firstSeenAt": 1785185004,
+    "contenthash": "bafybeieqlumgamwlj623oj4qp3qml6xzko4i47dbvblxksf2ifealbdid4"
   },
   "hello-devnet-ynrc46": {
     "label": "hello-devnet-ynrc46",
@@ -687,6 +688,16 @@
     "hasExecutable": true,
     "tier": 0,
     "firstSeenAt": 1785180780
+  },
+  "provenveil": {
+    "label": "provenveil",
+    "domain": "provenveil.dot",
+    "url": "https://provenveil.dev-dot.li",
+    "firstSeenBlock": 11499074,
+    "owner": "0xbC3410e4681EA643027Cd6fE15551a33b3AbDA26",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785188868
   },
   "excluded": [
     "bfyi",
