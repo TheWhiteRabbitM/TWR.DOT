@@ -68,11 +68,24 @@ const LAYOUT_CSS = `
 .find-clear:hover { background: var(--bg-4); color: var(--tx-hi); }
 
 /* ---- status line: one hero number, one step spark, one 12px line ---- */
-.lede { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; padding: var(--sp-5) 0 var(--sp-2); }
-.lede-n { font-size: var(--fs-6); font-weight: 600; line-height: 1; letter-spacing: -0.02em; color: var(--tx-hi); }
-.lede-t { font-size: var(--fs-1); line-height: 1.4; color: var(--tx-mid); }
-.lede-t b { font-weight: 500; color: var(--tx-hi); }
-.lede-t .is-stale { color: var(--warn); }
+/* The headline pair. Two panels of equal standing: the count is narrow and
+   fixed, the heatmap takes the rest, because its width carries 24 hours of
+   meaning while the number's does not. Below 900px they stack, count first. */
+.hero { display: grid; grid-template-columns: minmax(260px, 22rem) 1fr; gap: var(--sp-4); align-items: stretch; margin: var(--sp-5) 0 var(--sp-4); }
+.hero-count { display: flex; flex-direction: column; justify-content: center; gap: var(--sp-3); padding: var(--sp-5); }
+.hero-top { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); }
+.hero-n { font-size: 56px; font-weight: 600; line-height: 0.9; letter-spacing: -0.03em; color: var(--tx-hi); }
+.hero-t { margin: 0; font-size: var(--fs-2); line-height: 1.5; color: var(--tx-mid); }
+.hero-t b { font-weight: 500; color: var(--tx-hi); }
+.hero-t .is-stale { color: var(--warn); }
+.hero-heat { display: flex; flex-direction: column; }
+.hero-heat .heatwrap { flex: 1; display: flex; align-items: center; }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-n { font-size: 44px; }
+  .hero-count { padding: var(--sp-4); }
+}
 .spark-step { flex: none; display: block; }
 .spark-step-line { fill: none; stroke: var(--pink); stroke-width: 1.5; stroke-linecap: butt; stroke-linejoin: miter; }
 
@@ -635,22 +648,45 @@ export function App() {
         )}
       </div>
 
-      {/* 3 ---------------------------------------------------- status line */}
-      <div className="lede">
-        <span className="lede-n">{fmt(counts.all)}</span>
-        <StepSparkline points={regPoints} />
-        <span className="lede-t">
-          apps indexed · <b>{fmt(counts.deployed)}</b> deployed · <b>{fmt(counts.published)}</b>{' '}
-          published · <b>{fmt(counts.live)}</b> with live data ·{' '}
-          <span className={indexAge > 6 * 3600 ? 'is-stale' : undefined}>
-            updated {ago(eco.measuredAt)}
-          </span>
-          {/* No manual refresh control: the contract reads re-run every 20s on
-              their own and the pulse strip above already shows whether the
-              chain is answering. A button here would only be a second way to
-              do what the page is already doing. */}
-          {online === false && <span className="is-stale"> · rpc unreachable</span>}
-        </span>
+      {/* 3 ------------------------------------------------- headline pair */}
+      {/* The size of the ecosystem and the shape of how it got there are the
+          two facts worth the top of the page, so they sit side by side at full
+          weight rather than one above the fold and one buried under the list. */}
+      <div className="hero">
+        <div className="panel hero-count">
+          <div className="hero-top">
+            <span className="hero-n">{fmt(counts.all)}</span>
+            <StepSparkline points={regPoints} />
+          </div>
+          <p className="hero-t">
+            apps indexed · <b>{fmt(counts.deployed)}</b> deployed · <b>{fmt(counts.published)}</b>{' '}
+            published · <b>{fmt(counts.live)}</b> with live data ·{' '}
+            <span className={indexAge > 6 * 3600 ? 'is-stale' : undefined}>
+              updated {ago(eco.measuredAt)}
+            </span>
+            {/* No manual refresh control: the contract reads re-run every 20s on
+                their own and the pulse strip above already shows whether the
+                chain is answering. A button here would only be a second way to
+                do what the page is already doing. */}
+            {online === false && <span className="is-stale"> · rpc unreachable</span>}
+          </p>
+        </div>
+
+        <div className="panel hero-heat">
+          <div className="panel-head">
+            <div>
+              <h2 className="panel-title">Registrations</h2>
+              <span className="panel-note">
+                one cell per UTC hour · one row per UTC day · day total in the right gutter
+              </span>
+            </div>
+            <span className="chart-legend">
+              <span className="chart-swatch" aria-hidden="true" />
+              names registered
+            </span>
+          </div>
+          <RegistrationHeatmap points={regPoints} />
+        </div>
       </div>
 
       {/* 4 ---------------------------------------------------------- facets */}
@@ -706,22 +742,8 @@ export function App() {
       </div>
 
       {/* 6 -------------------------------------------------------- ecosystem */}
-      <div className="panel">
-        <div className="panel-head">
-          <div>
-            <h2 className="panel-title">Registrations</h2>
-            <span className="panel-note">
-              one cell per UTC hour · one row per UTC day · day total in the right gutter
-            </span>
-          </div>
-          <span className="chart-legend">
-            <span className="chart-swatch" aria-hidden="true" />
-            names registered
-          </span>
-        </div>
-        <RegistrationHeatmap points={regPoints} />
-      </div>
-
+      {/* Registrations moved up into the headline pair; chain vitals stay here,
+          where they belong: supporting evidence, not the headline. */}
       <div className="panel">
         <div className="panel-head">
           <div>

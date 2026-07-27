@@ -216,14 +216,14 @@ export interface RegPoint {
   at: number;
 }
 
-const CELL = 12;
-const GAP = 3;
+const CELL = 16;
+const GAP = 4;
 const STRIDE = CELL + GAP;
 const COLS = 24;
 const GRID_W = COLS * STRIDE - GAP; // 357
-const HEAT_LEFT = 54;
-const HEAT_RIGHT = 44;
-const HEAT_FOOT = 20;
+const HEAT_LEFT = 58;
+const HEAT_RIGHT = 48;
+const HEAT_FOOT = 24;
 const HEAT_W = HEAT_LEFT + GRID_W + HEAT_RIGHT;
 /** Never more than a week of rows: beyond that a day-grid stops being readable. */
 const HEAT_MAX_ROWS = 7;
@@ -376,9 +376,15 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
       <svg
         ref={svgRef}
         className="heat-svg"
-        width={HEAT_W}
+        /* Scales down to fit a phone instead of scrolling: the day totals live
+           in the right gutter, and a chart whose headline numbers sit past the
+           edge of the screen has buried its own point. The pointer maths below
+           already derives its scale from the rendered width. */
+        width="100%"
         height={H}
+        style={{ maxWidth: HEAT_W }}
         viewBox={`0 0 ${HEAT_W} ${H}`}
+        preserveAspectRatio="xMidYMid meet"
         role="img"
         tabIndex={0}
         onKeyDown={onKey}
@@ -507,8 +513,8 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
 
 /* ========================================================== C. step sparkline */
 
-const SPARK_W = 120;
-const SPARK_H = 32;
+const SPARK_W = 210;
+const SPARK_H = 56;
 
 /**
  * Cumulative registrations beside the hero count, as a STEP line.
