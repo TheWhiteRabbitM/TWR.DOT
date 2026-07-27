@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeicburqgoiyrpn3ngknx556wp5ahhyvnov4mt7f4doffm4z4gfylvm",
+    "contenthash": "bafybeid34j6yp4wni476ioskafydzqrg7khh6ev3w5fd2pryacf2nr2bqi",
     "hasExecutable": false,
     "tier": 1
   },
@@ -217,7 +217,7 @@
     "firstSeenBlock": 11356536,
     "firstSeenAt": 1784897232,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
-    "contenthash": "bafybeieuzfznfhryopq4vbqsk6aqityp3dcxjf3ypczbngaf2brxe3fkse",
+    "contenthash": "bafybeie6qjeuxr37a2dl4vv3mfzhkcg6pgvpuekrtdqsvzxtzdwe4wdm34",
     "hasExecutable": false,
     "tier": 2
   },
@@ -339,7 +339,7 @@
     "displayName": "TrueReviews",
     "description": "Reviews you can trust: one verified human, one review per place, on real map businesses.",
     "iconCid": "bafybeifofgztfjpqeolrlll3rzlzirsostuf2nqhk3fjoyzkkgbubqvqz4",
-    "contenthash": "bafybeiatpudib2daxx4xreehv2euvwa7r5p2ocw25mpe4zgepvhavz2bfy",
+    "contenthash": "bafybeicop5ysse4dntq6h3tobxcxgoelvkha5njsrhiodxwbclbxsmydbe",
     "hasExecutable": false,
     "tier": 0
   },
@@ -496,6 +496,16 @@
     "contenthash": "bafybeiamsq2nvjre64x5pc2v6dfefbgmlha7xbwgmhufdw7yo2b77oc7x4",
     "hasExecutable": false,
     "tier": 2
+  },
+  "giganetwork": {
+    "label": "giganetwork",
+    "domain": "giganetwork.dot",
+    "url": "https://giganetwork.dev-dot.li",
+    "firstSeenBlock": 11468828,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "hasExecutable": false,
+    "tier": 3,
+    "firstSeenAt": 1785126216
   },
   "excluded": [
     "bfyi",
