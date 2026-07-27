@@ -19,7 +19,7 @@
     "displayName": "OpenPetition",
     "description": "Petitions signed by real people: one signature per person, verifiable by anyone.",
     "iconCid": "bafybeibsnisp6zaggzpccx6o2z6i7skk7qsmbu7wovtcft3bwjrkhu5iym",
-    "contenthash": "bafybeicucepapah5tblmgszeiqghc6i76ll4lf6gyq5eotaq47kvlhvpnm",
+    "contenthash": "bafybeiahhg5wux3la54rivdowe2225hxdptfalhb3xvaoxuvscwt62cdvu",
     "hasExecutable": false,
     "tier": 0
   },
@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeihj54litjlnjejjj37ozysuvhkx46k7dbalwkd4xp7pbrx3oy7ygu",
+    "contenthash": "bafybeiehsdkha6dmyrpvjpxxblcqj7g7gasesmtyedocjs4ndlipqxxbz4",
     "hasExecutable": false,
     "tier": 1
   },
@@ -192,7 +192,7 @@
     "displayName": "WUD Community",
     "description": "Unofficial WUD dashboard: live supply, holders, whale-to-plankton leaderboard.",
     "iconCid": "bafybeibvvsaqjl3upr6yari35yscsgbkifjkorkghfmjpptysnp343v5zm",
-    "contenthash": "bafybeicyhehyew3jp3dvyycoolmhbsithbz4qoqwgerhivqf73ssw67wm4",
+    "contenthash": "bafybeigro56s43iy2qtkslpapo55rinnj2xseanp7jy7kr4ryvpshms23m",
     "hasExecutable": false,
     "tier": 1
   },
@@ -325,7 +325,7 @@
     "displayName": "Italia Rovente",
     "description": "How much hotter Italy has become since 1940: stripes, records, seas, 107 cities.",
     "iconCid": "bafybeifh6ar4ukh4kxp5znfrce3bissnpnqdbhdpfczvgcjbfxk6pb6wpq",
-    "contenthash": "bafybeihiqolg5zur46skrr3myzwpg4ah4kdwrmt4fgizyjtb3vyqplgtfm",
+    "contenthash": "bafybeibvaw7w77pfxzzkn376emgzlriq446u4r673iksqhgh7yjt2doscq",
     "hasExecutable": false,
     "tier": 1
   },
@@ -339,7 +339,7 @@
     "displayName": "TrueReviews",
     "description": "Reviews you can trust: one verified human, one review per place, on real map businesses.",
     "iconCid": "bafybeifofgztfjpqeolrlll3rzlzirsostuf2nqhk3fjoyzkkgbubqvqz4",
-    "contenthash": "bafybeicop5ysse4dntq6h3tobxcxgoelvkha5njsrhiodxwbclbxsmydbe",
+    "contenthash": "bafybeia3eupkzxqvkkyzasxzrhcexlhdudn5huu4pqhi326cxvgsedjdia",
     "hasExecutable": false,
     "tier": 0
   },
@@ -446,7 +446,7 @@
     "displayName": "Discreet",
     "description": "Private bookings for real people: anonymous verified humans, escrow deposits, kept-word reputation.",
     "iconCid": "bafybeiephmlsnmaym2rgxb3enx5uaxxlt5brjhqtsu6zk6cnsoam2qwt3q",
-    "contenthash": "bafybeigcz74vcvp4cbglux4qiaslgqtln6h3pchoxhv2rfyi3byadccwsu",
+    "contenthash": "bafybeidrrurldcy6gu5ggeg4d7ow4jqnzdhya33ji4uhzbarh3vd6tw2ui",
     "hasExecutable": false,
     "tier": 0
   },
@@ -507,14 +507,58 @@
     "tier": 3,
     "firstSeenAt": 1785126216
   },
+  "oblv-wg-calc": {
+    "label": "oblv-wg-calc",
+    "domain": "oblv-wg-calc.dot",
+    "url": "https://oblv-wg-calc.dev-dot.li",
+    "firstSeenBlock": 11474322,
+    "owner": "0x8f9d43A2210C73B3978e229817213CFFec4B9812",
+    "displayName": "Oblv Calc",
+    "description": "Calculatrice sur le dashboard : expression complète, scientifique, historique réutilisable. Aucun réseau.",
+    "iconCid": "bafk2bzaceds7nl5tpypqlbqg2fvbelzyss7ukimjhoyvc54vaix3y67in4t22",
+    "contenthash": "bafybeihalahyx7ovyjnrzldvbk647innt6b5wgl73vcvg2wfaffnq43uva",
+    "hasExecutable": true,
+    "tier": 1,
+    "firstSeenAt": 1785137280
+  },
+  "oblv-wg-crypto": {
+    "label": "oblv-wg-crypto",
+    "domain": "oblv-wg-crypto.dot",
+    "url": "https://oblv-wg-crypto.dev-dot.li",
+    "firstSeenBlock": 11474187,
+    "owner": "0x1C157CBb1fb499Fc8DC1FD440D35ff1a1784DAe6",
+    "displayName": "Oblv Crypto",
+    "description": "Suivi de prix crypto sur le dashboard : watchlist personnalisable, variation 24 h et tendance 7 jours.",
+    "iconCid": "bafk2bzacedau7eiw7w4ytqpuuqczttp7bqtugmtfnp2bpnwjip6qkf6v5mlyg",
+    "contenthash": "bafybeievsytmwxsyvnkx2kex4qy7pgpy6sip5i57ufhtk7it4nnzhoobdq",
+    "hasExecutable": true,
+    "tier": 1,
+    "firstSeenAt": 1785137004
+  },
+  "oblv-wg-weather": {
+    "label": "oblv-wg-weather",
+    "domain": "oblv-wg-weather.dot",
+    "url": "https://oblv-wg-weather.dev-dot.li",
+    "firstSeenBlock": 11473535,
+    "owner": "0xcD565D71d2e8b551663E4a861f108F68c7e0423e",
+    "displayName": "Oblv Weather",
+    "description": "Météo sur le dashboard : conditions actuelles, heures à venir et prévisions 7 jours.",
+    "iconCid": "bafk2bzacedufebmcldngv5wpokehpdohsr4giokimgdyez444ivrdvc3pymmi",
+    "contenthash": "bafybeiddrfkdolvavs7dr2pkrr5hvc7x7gbaaastliupczihobg66a3rkm",
+    "hasExecutable": true,
+    "tier": 1,
+    "firstSeenAt": 1785135684
+  },
   "excluded": [
     "bfyi",
     "btcusd",
+    "cig6",
     "dotusd",
     "dqrwx",
     "e9cz",
     "ethusd",
     "etxv4",
+    "fvsm",
     "fwqb",
     "g8mx",
     "gxby",
@@ -524,10 +568,13 @@
     "mnmd",
     "mplj",
     "mrkd",
+    "ts0l",
     "tujzv",
+    "uta4f",
     "v944",
     "vf5sy",
     "widget",
+    "z0m9",
     "zluj"
   ]
 }
