@@ -53,6 +53,8 @@ for (let n = from; n <= head; n += 1) {
 }
 
 const spanSec = firstTs != null && lastTs != null ? Math.round((lastTs - firstTs) / 1000) : 0;
+const byAddress = [...contracts.entries()].sort((a, b) => b[1] - a[1]);
+
 const out = {
   measuredAt: Math.floor((lastTs ?? Date.now()) / 1000),
   headBlock: head,
@@ -61,10 +63,30 @@ const out = {
   contractEvents,
   activeContracts: contracts.size,
   reverts,
-  topContracts: [...contracts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 8)
-    .map(([address, events]) => ({ address, events })),
+  topContracts: byAddress.slice(0, 8).map(([address, events]) => ({ address, events })),
+
+  /**
+   * Every address that emitted in this window, with its count — the metric that
+   * needs no ABI, and therefore the one metric ANY app can have measured. A name
+   * that declares a `contract` text record (see enrich-onchain.mjs) is looked up
+   * here by that address; addresses are lowercased on both sides so the join is
+   * exact.
+   *
+   * The window travels WITH the numbers rather than being inferred from the
+   * fields above. "3 events" is not a measurement — 3 over what? A caller that
+   * only ever sees this object can still state the denominator, and it cannot
+   * accidentally pair a count with the wrong window.
+   *
+   * The map is COMPLETE for the window, not a top-N. That completeness is what
+   * lets a reader treat a declared address that is absent here as a measured
+   * zero rather than as "not measured".
+   */
+  perContract: {
+    headBlock: head,
+    windowBlocks: scanned,
+    windowSeconds: spanSec,
+    events: Object.fromEntries(byAddress),
+  },
 };
 
 fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n');

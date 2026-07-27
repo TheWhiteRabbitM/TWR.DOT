@@ -9,6 +9,12 @@ const ORIGINS = [
   'asset-hub-paseo-rpc.n.dwellir.com', // live registry tail (WebSocket)
   'dweb.link', // Bulletin directory
   'ipfs.io',
+  // On-demand machine translation of third-party app descriptions. Reached
+  // ONLY after the reader taps "translate" on one description — never on load,
+  // never in the background. Declared here anyway because the sandbox decides
+  // at startup, and a permission asked for mid-gesture is a permission that
+  // fails silently. See lib/translate.ts for why this host and no other.
+  'api.mymemory.translated.net',
 ];
 
 /**

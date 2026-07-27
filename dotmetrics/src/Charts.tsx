@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent, KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { locale, t, useLang, type Lang } from './lib/i18n';
 
 /**
  * Four marks, hand-rolled. No charting library — the bundle is already 1.4MB and
@@ -38,16 +39,25 @@ function useReducedMotion(): boolean {
   return reduced;
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-/** Unix seconds → "Jul 24" in UTC. */
-function utcDay(unix: number): string {
-  const d = new Date(unix * 1000);
-  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
+/**
+ * Unix seconds → "Jul 24" / "24 lug", in UTC.
+ *
+ * The month name and the day/month order both follow the reader's locale; the
+ * time zone never does. Every date on this page is a UTC block timestamp, and a
+ * heatmap whose rows silently shifted by a day for a reader in Auckland would
+ * be a different chart, not a translated one — hence the explicit `timeZone`.
+ */
+function utcDay(unix: number, lang: Lang): string {
+  return new Date(unix * 1000).toLocaleDateString(locale(lang), {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
 }
 
-function fmt(n: number): string {
-  return n.toLocaleString('en-US');
+/** Thousands separators follow the reader. Tabular figures still don't jitter. */
+function fmt(n: number, lang: Lang): string {
+  return n.toLocaleString(locale(lang));
 }
 
 /**
@@ -115,6 +125,7 @@ export function PulseStrip({
   /** `false` once the tail has given up on the socket. `null` while it tries. */
   connected?: boolean | null;
 }) {
+  const lang = useLang();
   const reduced = useReducedMotion();
   const [slots, setSlots] = useState<number[]>(() => new Array<number>(PULSE_TICKS).fill(0));
   const [head, setHead] = useState<number | null>(null);
@@ -169,20 +180,26 @@ export function PulseStrip({
   // already failed must not go on implying that heads are still on their way.
   const dead = head == null && connected === false;
 
+  const stalledFor = Math.round(silence / 1000);
+  const avg = mean != null ? mean.toFixed(1) : null;
+
   let readout: string;
-  if (dead) readout = 'no block feed';
-  else if (head == null) readout = 'waiting for heads';
-  else if (stalled) readout = `stalled ${Math.round(silence / 1000)}s`;
-  else readout = `#${fmt(head)}${mean != null ? ` · ${mean.toFixed(1)}s avg` : ''}`;
+  if (dead) readout = t('pulse.dead');
+  else if (head == null) readout = t('pulse.waiting');
+  else if (stalled) readout = t('pulse.stalled', { n: stalledFor });
+  else if (avg != null) readout = t('pulse.head.avg', { head: fmt(head, lang), avg });
+  else readout = t('pulse.head', { head: fmt(head, lang) });
 
   const label =
     head == null
       ? dead
-        ? 'Block pulse: the block feed could not be reached'
-        : 'Block pulse: no heads received yet'
+        ? t('pulse.aria.dead')
+        : t('pulse.aria.waiting')
       : stalled
-        ? `Block pulse stalled: no new head for ${Math.round(silence / 1000)} seconds, last was ${head}`
-        : `Block pulse: head ${head}${mean != null ? `, ${mean.toFixed(1)} second mean interval over the last ${gaps.length} blocks` : ''}`;
+        ? t('pulse.aria.stalled', { n: stalledFor, head })
+        : avg != null
+          ? t('pulse.aria.ok.avg', { head, avg, n: gaps.length })
+          : t('pulse.aria.ok', { head });
 
   return (
     <div
@@ -253,6 +270,7 @@ interface HeatRow {
  * say "twenty-seven names landed here in a day".
  */
 export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
+  const lang = useLang();
   const wrapRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [cell, setCell] = useState<{ row: number; col: number } | null>(null);
@@ -267,7 +285,7 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
       if (!row) {
         row = {
           dayIndex,
-          label: utcDay(dayIndex * 86_400),
+          label: utcDay(dayIndex * 86_400, lang),
           total: 0,
           hours: Array.from({ length: COLS }, () => [] as string[]),
         };
@@ -289,7 +307,7 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
       out.push(
         byDay.get(d) ?? {
           dayIndex: d,
-          label: utcDay(d * 86_400),
+          label: utcDay(d * 86_400, lang),
           total: 0,
           hours: Array.from({ length: COLS }, () => [] as string[]),
         },
@@ -298,7 +316,8 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
     let peak = 0;
     for (const r of out) for (const h of r.hours) peak = Math.max(peak, h.length);
     return { rows: out, max: peak, total: dated.length };
-  }, [points]);
+    // `lang` is a dependency because the row labels are localised month names.
+  }, [points, lang]);
 
   const H = rows.length * STRIDE - GAP + HEAT_FOOT;
 
@@ -401,8 +420,8 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
         onBlur={() => setCell(null)}
         aria-label={
           total === 0
-            ? 'Registration heatmap: no registrations in the indexed range'
-            : `Registration heatmap: ${total} registrations across ${rows.length} UTC days, peak ${max} in one hour. Arrow keys move between cells.`
+            ? t('heat.aria.empty')
+            : t('heat.aria', { total, days: rows.length, max })
         }
       >
         {rows.map((row, ri) => (
@@ -471,7 +490,7 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
           </text>
         ))}
         <text x={HEAT_LEFT + GRID_W} y={H - 6} className="chart-axis" textAnchor="end">
-          UTC
+          {t('heat.utc')}
         </text>
 
         {/* The grid still renders when there is nothing in it: an empty
@@ -491,7 +510,7 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
               className="chart-axis heat-empty"
               textAnchor="middle"
             >
-              0 registrations in the indexed range — the grid fills as names arrive.
+              {t('heat.empty')}
             </text>
           </>
         )}
@@ -504,15 +523,18 @@ export function RegistrationHeatmap({ points }: { points: RegPoint[] }) {
           style={{ left: `${tipXY.left}px`, top: `${tipXY.top}px` }}
         >
           <strong>
-            {hovered.length} name{hovered.length === 1 ? '' : 's'} registered
+            {hovered.length === 1 ? t('heat.tip.one') : t('heat.tip.n', { n: hovered.length })}
           </strong>
           <span>
-            {hoveredRow.label}, {String(cell.col).padStart(2, '0')}:00 UTC
+            {t('heat.tip.when', {
+              day: hoveredRow.label,
+              hour: String(cell.col).padStart(2, '0'),
+            })}
           </span>
           {hovered.length > 0 && (
             <span>
               {hovered.slice(0, 4).join(', ')}
-              {hovered.length > 4 ? ` +${hovered.length - 4} more` : ''}
+              {hovered.length > 4 ? ` ${t('heat.tip.more', { n: hovered.length - 4 })}` : ''}
             </span>
           )}
         </div>
@@ -539,6 +561,7 @@ const SPARK_H = 56;
  * "no data". The frame stays, so nothing reflows when the second name lands.
  */
 export function StepSparkline({ points }: { points: RegPoint[] }) {
+  const lang = useLang();
   const geom = useMemo(() => {
     const dated = points.filter((p) => Number.isFinite(p.at) && p.at > 0).sort((a, b) => a.at - b.at);
     if (dated.length < 2) return null;
@@ -552,8 +575,8 @@ export function StepSparkline({ points }: { points: RegPoint[] }) {
       d += ` H${x(p.at).toFixed(1)} V${y(i + 1).toFixed(1)}`;
     });
     d += ` H${SPARK_W - 1}`;
-    return { d, n, first: utcDay(t0), last: utcDay(dated[dated.length - 1].at) };
-  }, [points]);
+    return { d, n, first: utcDay(t0, lang), last: utcDay(dated[dated.length - 1].at, lang) };
+  }, [points, lang]);
 
   return (
     <svg
@@ -564,8 +587,8 @@ export function StepSparkline({ points }: { points: RegPoint[] }) {
       role="img"
       aria-label={
         geom
-          ? `Cumulative registrations, ${geom.first} to ${geom.last}, rising to ${geom.n}`
-          : 'Cumulative registrations: fewer than two dated registrations, nothing to plot'
+          ? t('spark.aria', { first: geom.first, last: geom.last, n: geom.n })
+          : t('spark.aria.empty')
       }
     >
       {geom && <path d={geom.d} className="spark-step-line" />}
@@ -585,6 +608,22 @@ export interface EcoSnapshot {
   activeContracts: number;
   reverts: number;
   topContracts: { address: string; events: number }[];
+  /**
+   * Every address that emitted in the window, with its count — complete, not a
+   * top-N. Optional only because a snapshot written before this field existed
+   * must still parse; a reader that finds it missing shows no per-app figure at
+   * all rather than inventing one.
+   *
+   * The window is repeated inside on purpose. A per-app count is meaningless
+   * without its denominator, and carrying it here makes it impossible to render
+   * the number beside the wrong one.
+   */
+  perContract?: {
+    headBlock: number;
+    windowBlocks: number;
+    windowSeconds: number;
+    events: Record<string, number>;
+  };
 }
 
 function shortAddr(a: string): string {
@@ -604,6 +643,7 @@ function shortAddr(a: string): string {
  * both, which is all you see before the first measurement lands.
  */
 export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
+  const lang = useLang();
   const wrapRef = useRef<HTMLDivElement>(null);
   const [tipXY, setTipXY] = useState<{ left: number; top: number; wrap: number; wrapH: number } | null>(null);
 
@@ -631,8 +671,13 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
         role="img"
         aria-label={
           measured
-            ? `Call outcomes over the last ${eco.windowBlocks} blocks: ${eco.reverts} reverted and ${eco.contractEvents} emitted, of ${calls} calls`
-            : 'Call outcomes: not measured yet'
+            ? t('vitals.aria', {
+                blocks: eco.windowBlocks,
+                reverts: eco.reverts,
+                events: eco.contractEvents,
+                calls,
+              })
+            : t('vitals.aria.none')
         }
       >
         {measured && calls > 0 && (
@@ -651,31 +696,55 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
 
       <div className="vitals-reads">
         <span className="vitals-read">
-          <b className="mono">{measured ? `${blockSec.toFixed(1)}s blocks` : 'measuring…'}</b>
+          <b className="mono">
+            {measured
+              ? t('vitals.blockTime', { s: blockSec.toFixed(1) })
+              : t('vitals.measuring')}
+          </b>
           <i>
             {measured
-              ? `${fmt(eco.windowBlocks)} blocks in ${fmt(eco.windowSeconds)}s (~${windowMin} min)`
-              : 'no window measured yet'}
+              ? t('vitals.blockTime.sub', {
+                  blocks: fmt(eco.windowBlocks, lang),
+                  secs: fmt(eco.windowSeconds, lang),
+                  minutes: windowMin,
+                })
+              : t('vitals.blockTime.none')}
           </i>
         </span>
         <span className="vitals-read">
           <b className="mono">
-            {measured ? `${Math.round(perK)} events / 1k blocks` : 'measuring…'}
+            {measured ? t('vitals.events', { n: Math.round(perK) }) : t('vitals.measuring')}
           </b>
           <i>
             {measured
-              ? `${fmt(eco.contractEvents)} events from ${fmt(eco.activeContracts)} contract${eco.activeContracts === 1 ? '' : 's'} · last ${fmt(eco.windowBlocks)} blocks`
-              : 'no events counted yet'}
+              ? eco.activeContracts === 1
+                ? t('vitals.events.sub.one', {
+                    events: fmt(eco.contractEvents, lang),
+                    blocks: fmt(eco.windowBlocks, lang),
+                  })
+                : t('vitals.events.sub', {
+                    events: fmt(eco.contractEvents, lang),
+                    contracts: fmt(eco.activeContracts, lang),
+                    blocks: fmt(eco.windowBlocks, lang),
+                  })
+              : t('vitals.events.none')}
           </i>
         </span>
         <span className="vitals-read">
           <b className={`mono${calls > 0 ? ' is-warn' : ''}`}>
-            {calls > 0 ? `${Math.round(revertPct)}% reverted` : 'measuring…'}
+            {calls > 0
+              ? t('vitals.reverts', { pct: Math.round(revertPct) })
+              : t('vitals.measuring')}
           </b>
           <i>
             {calls > 0
-              ? `${fmt(eco.reverts)} of ${fmt(calls)} calls · last ${fmt(eco.windowBlocks)} blocks (~${windowMin} min)`
-              : 'no calls seen in the window'}
+              ? t('vitals.reverts.sub', {
+                  reverts: fmt(eco.reverts, lang),
+                  calls: fmt(calls, lang),
+                  blocks: fmt(eco.windowBlocks, lang),
+                  minutes: windowMin,
+                })
+              : t('vitals.reverts.none')}
           </i>
         </span>
       </div>
@@ -686,19 +755,29 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
           style={{ left: `${tipXY.left}px`, top: `${tipXY.top}px` }}
         >
           <strong>
-            {fmt(calls)} contract calls in {fmt(eco.windowBlocks)} blocks
+            {t('vitals.tip.calls', {
+              calls: fmt(calls, lang),
+              blocks: fmt(eco.windowBlocks, lang),
+            })}
           </strong>
           <span>
-            {fmt(eco.reverts)} reverted · {fmt(eco.contractEvents)} emitted{' '}
+            {t('vitals.tip.split', {
+              reverts: fmt(eco.reverts, lang),
+              events: fmt(eco.contractEvents, lang),
+            })}{' '}
+            {/* The event name is an identifier from the chain, not prose. */}
             <code>revive.ContractEmitted</code>
           </span>
           {top && (
             <span>
-              busiest {shortAddr(top.address)} · {fmt(top.events)} of {fmt(eco.contractEvents)}{' '}
-              events
+              {t('vitals.tip.busiest', {
+                address: shortAddr(top.address),
+                events: fmt(top.events, lang),
+                total: fmt(eco.contractEvents, lang),
+              })}
             </span>
           )}
-          <span>measured at head #{fmt(eco.headBlock)}</span>
+          <span>{t('vitals.tip.head', { head: fmt(eco.headBlock, lang) })}</span>
         </div>
       )}
     </div>

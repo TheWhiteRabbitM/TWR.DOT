@@ -69,8 +69,15 @@ export interface NameRecords {
   iconCid?: string;
   contenthash?: string;
   hasExecutable: boolean;
-  /** 1 published · 2 deployed · 3 name only. Tier 0 is decided by the reader map. */
-  tier: 1 | 2 | 3;
+  /**
+   * The address the name declares in a `contract` text record, lowercased —
+   * dotmetrics' convention for attributing a per-app event count to a name.
+   * Absent when the name declares none, or declares something that is not an
+   * address.
+   */
+  contract?: string;
+  /** 0 published · 1 deployed · 2 name only. Chain facts only, no score. */
+  tier: 0 | 1 | 2;
 }
 
 /**
@@ -111,6 +118,17 @@ export async function readName(label: string): Promise<NameRecords | null> {
     /* no executable record */
   }
 
+  // Same rule and same normalisation as indexer/enrich-onchain.mjs: exactly 20
+  // hex bytes or nothing, and lowercased, because the event addresses it is
+  // joined against are lowercased too.
+  let contract = '';
+  try {
+    const declared = String((await r.text(node, 'contract')) ?? '').trim();
+    if (/^0x[0-9a-fA-F]{40}$/.test(declared)) contract = declared.toLowerCase();
+  } catch {
+    /* no contract record */
+  }
+
   const displayName = typeof manifest?.displayName === 'string' ? manifest.displayName : undefined;
   const description = typeof manifest?.description === 'string' ? manifest.description : undefined;
   const iconCid = typeof manifest?.icon?.cid === 'string' ? manifest.icon.cid : undefined;
@@ -122,6 +140,7 @@ export async function readName(label: string): Promise<NameRecords | null> {
     iconCid,
     contenthash: contenthash || undefined,
     hasExecutable,
-    tier: displayName || description ? 1 : contenthash ? 2 : 3,
+    contract: contract || undefined,
+    tier: displayName || description ? 0 : contenthash ? 1 : 2,
   };
 }

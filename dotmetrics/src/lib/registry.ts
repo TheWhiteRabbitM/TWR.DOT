@@ -1,4 +1,5 @@
-import type { AppEntry, Activity, ReadContract } from './types';
+import type { AppEntry, Activity, ReadContract, Tier } from './types';
+import type { MsgKey } from './i18n';
 import discovered from './discovered.json';
 
 /**
@@ -9,8 +10,11 @@ import discovered from './discovered.json';
  *    (indexer/index-apps.mjs). This is the real ecosystem, third-party apps
  *    included — the registry can't be enumerated by a contract call, so the
  *    names come from registration calldata.
- *  - Readers below: for apps whose contract we know, live on-chain metrics.
- *    Everything else is listed with its domain and link only.
+ *  - Readers below: four apps whose ABI dotmetrics hard-codes. Their figures are
+ *    presented as OUR reading of a contract, never as a rank — see READERS.
+ *
+ * Ranking uses chain facts only, and the per-app number any name can obtain is
+ * the event count for the address it declares in a `contract` record.
  */
 
 function num(value: unknown): number {
@@ -52,38 +56,61 @@ export interface Discovered {
   contenthash?: string;
   /** An `executable` record exists on `app.<label>.dot`. */
   hasExecutable?: boolean;
-  /** 0 live data · 1 published · 2 deployed · 3 name only. Never a score. */
-  tier?: 0 | 1 | 2 | 3;
+  /**
+   * From the `contract` text record: the address this name declares as its own,
+   * lowercased. dotmetrics' convention, open to anyone — see AppEntry.contract.
+   */
+  contract?: string;
+  /**
+   * What the indexer wrote at the time this file was published. NOT what the
+   * page renders: {@link buildApps} recomputes the tier from the records above,
+   * so a directory published under the older four-tier numbering still shows
+   * correctly. Typed loosely for exactly that reason — old files hold a 3.
+   */
+  tier?: number;
 }
 
 /** The directory baked into the bundle at build time — the always-available fallback. */
 const DISCOVERED = discovered as unknown as Record<string, Discovered>;
 
 /**
- * Presentation for the apps dotmetrics reads live contract metrics for. These
- * four are the only names the dashboard claims to know anything extra about;
- * every other name is described by its own on-chain manifest, or not at all.
+ * Presentation for the four apps dotmetrics hand-codes a contract reader for.
+ * Every other name is described by its own on-chain manifest, or not at all.
+ *
+ * A tagline is a FALLBACK for a name that publishes no description of its own.
+ * It is not a rank and it no longer buys any position in the index: these four
+ * are sorted, badged and counted by exactly the same chain facts as everybody
+ * else.
  */
-const KNOWN: Record<string, { name: string; tagline: string }> = {
+const KNOWN: Record<string, { name: string; tagline: MsgKey }> = {
   openpetition: {
     name: 'OpenPetition',
-    tagline: 'Petitions signed by real people — one signature per person.',
+    tagline: 'app.tagline.openpetition',
   },
   thebutton: {
     name: 'The Button',
-    tagline: 'One button, one press per human, ever.',
+    tagline: 'app.tagline.thebutton',
   },
   truereviews: {
     name: 'TrueReviews',
-    tagline: 'One verified human, one review per place.',
+    tagline: 'app.tagline.truereviews',
   },
   discreetly: {
     name: 'Discreet',
-    tagline: 'Private bookings for real people — anonymous, sybil-proof, escrowed.',
+    tagline: 'app.tagline.discreetly',
   },
 };
 
-/** Live readers, keyed by label. Only apps whose contract we know. */
+/**
+ * Contract readers dotmetrics hard-codes, keyed by label.
+ *
+ * These are real numbers off real contracts, and they stay. What they no longer
+ * do is RANK anything. Hand-coding an ABI is work only the index's operator can
+ * do, so anything derived from it is a property of dotmetrics, not of the app —
+ * and a directory that puts its own author's apps on top is not a directory.
+ * The figures below are rendered as our reading, under our name, in a secondary
+ * line; the ranking is decided entirely by {@link Discovered.tier}.
+ */
 const READERS: Record<string, AppEntry['read']> = {
   async openpetition(readContract: ReadContract) {
     const c = readContract('0x9e195eeca2E3BAB0ffC236f51Fd6c4a0330C38E1', [
@@ -107,10 +134,10 @@ const READERS: Record<string, AppEntry['read']> = {
     activity.reverse();
 
     return {
-      headline: { label: 'petitions', value: total },
+      headline: { label: 'metric.petitions', value: total },
       metrics: [
-        { label: 'verified signatures', value: verified },
-        { label: 'unverified', value: unverified },
+        { label: 'metric.verifiedSignatures', value: verified },
+        { label: 'metric.unverified', value: unverified },
       ],
       activity: activity.slice(0, 5),
     };
@@ -122,7 +149,7 @@ const READERS: Record<string, AppEntry['read']> = {
     ]);
     const places = num(await c.placeCount());
     return {
-      headline: { label: 'places reviewed', value: places },
+      headline: { label: 'metric.placesReviewed', value: places },
       metrics: [],
       activity: [],
     };
@@ -135,8 +162,8 @@ const READERS: Record<string, AppEntry['read']> = {
     ]);
     const [servicesN, bookingsN] = await Promise.all([c.serviceCount(), c.bookingCount()]);
     return {
-      headline: { label: 'services listed', value: num(servicesN) },
-      metrics: [{ label: 'bookings', value: num(bookingsN) }],
+      headline: { label: 'metric.servicesListed', value: num(servicesN) },
+      metrics: [{ label: 'metric.bookings', value: num(bookingsN) }],
       activity: [],
     };
   },
@@ -149,8 +176,8 @@ const READERS: Record<string, AppEntry['read']> = {
     const presses = num(await c.totalPresses());
     const roll = num(await c.rollLength().catch(() => presses));
     return {
-      headline: { label: 'presses', value: presses },
-      metrics: [{ label: 'humans on the register', value: roll }],
+      headline: { label: 'metric.presses', value: presses },
+      metrics: [{ label: 'metric.humansRegistered', value: roll }],
       activity: [],
     };
   },
@@ -185,6 +212,28 @@ const ALWAYS: Discovered[] = [
     firstSeenBlock: 11413600,
   },
 ];
+
+/**
+ * The tier, computed here from the entry's own records rather than read out of
+ * its `tier` field.
+ *
+ * The directory is fetched at runtime from a Bulletin CID, and CIDs are
+ * immutable: every directory ever published is still out there, numbered by
+ * whatever scheme was current when it was written. This renumbering (0 live
+ * data / 1 published / 2 deployed / 3 name only → 0 published / 1 deployed /
+ * 2 name only) would otherwise make an old file render one tier off across the
+ * board, and its old tier 3 would index past the end of the label table.
+ *
+ * Deriving it costs nothing — the inputs are the same records the indexer used —
+ * and it means the numbering can never drift between the file and the UI again.
+ * The indexer still writes `tier`, for its own run summary and for anything else
+ * reading apps.json; this is simply not the copy the page trusts.
+ */
+function tierOf(d: Discovered): Tier {
+  if (d.displayName || d.description) return 0; // published: a readable manifest
+  if (d.contenthash) return 1; // deployed: a bundle, nothing describing it
+  return 2; // name only
+}
 
 /** An entry in the directory file, as opposed to the `excluded` list beside them. */
 function isEntry(value: unknown): value is Discovered {
@@ -226,8 +275,8 @@ export function buildApps(map: Record<string, Discovered>): AppEntry[] {
         id: d.label,
         name: known?.name ?? d.displayName ?? d.label,
         domain: d.domain,
-        tagline: known?.tagline ?? d.description ?? 'Registered on the .dot network.',
-        contract: '',
+        tagline: known?.tagline ?? 'app.tagline.generic',
+        contract: d.contract ?? '',
         url: d.url,
         firstSeenBlock: d.firstSeenBlock,
         firstSeenAt: d.firstSeenAt,
@@ -237,10 +286,12 @@ export function buildApps(map: Record<string, Discovered>): AppEntry[] {
         iconCid: d.iconCid,
         contenthash: d.contenthash,
         hasExecutable: d.hasExecutable ?? false,
-        // A reader is live data by definition; otherwise the tier the indexer
-        // computed from chain facts stands, and an un-enriched entry is
-        // name-only until proven otherwise.
-        tier: read ? 0 : d.tier ?? 3,
+        // Chain facts, and nothing else. An entry with no records is name-only
+        // until one proves otherwise. Note what does NOT appear in tierOf():
+        // `read`. Holding a hand-coded reader for an app used to promote it to
+        // the top tier, which made the highest rank in a public directory
+        // reachable only by the person running the index.
+        tier: tierOf(d),
         read,
       };
     });

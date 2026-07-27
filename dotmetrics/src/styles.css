@@ -708,8 +708,10 @@ tr.idx-row.is-open td:first-child {
 
 /* ------------------------------------------------------- .badge (new) */
 
-/* Status differentiated by value, not hue. Only "live" — the state the whole
-   page is measuring — takes the accent. */
+/* Status differentiated by value, not hue. No tier badge takes the accent any
+   more: the one that did was "live data", and it was awarded for holding a
+   hand-coded reader — i.e. only ever to the index operator's own apps. Its rule
+   is deleted rather than left orphaned, so it cannot quietly come back. */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -725,20 +727,6 @@ tr.idx-row.is-open td:first-child {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
-}
-
-.badge.is-live {
-  border-color: var(--pink);
-  color: var(--pink);
-  background: transparent;
-}
-
-.badge.is-live::before {
-  content: '';
-  width: var(--sp-1);
-  height: var(--sp-1);
-  border-radius: 50%;
-  background: var(--pink);
 }
 
 .badge.is-published {

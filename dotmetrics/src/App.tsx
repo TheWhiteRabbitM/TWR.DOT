@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { MouseEvent as ReactMouseEvent } from 'react';
 import { APPS, buildApps, type Discovered } from './lib/registry';
 import { loadDirectory, type DirectorySource } from './lib/directory';
 import { startLiveTail } from './lib/livetail';
@@ -17,6 +18,19 @@ import { openAppChat } from './lib/host-chat';
 import { openExternal } from './lib/host-nav';
 import ecosystemSnapshot from './lib/ecosystem.json';
 import type { AppEntry, AppStats } from './lib/types';
+import {
+  LANGS,
+  getLang,
+  languageName,
+  locale,
+  setLang,
+  t,
+  tSplit,
+  useLang,
+  type Lang,
+} from './lib/i18n';
+import { detectLang } from './lib/detect-lang';
+import { ENDPOINT, SERVICE_LABEL, TranslateError, translate } from './lib/translate';
 
 /**
  * dotmetrics — the index of the .dot ecosystem.
@@ -33,6 +47,15 @@ import type { AppEntry, AppStats } from './lib/types';
  * window. There is no quality score anywhere — a "tier" says what exists on
  * chain (a manifest, a contenthash, nothing), never how good an app is, and
  * every row can be expanded to read its tier back in words.
+ *
+ * And every tier is a fact ANY name can produce. That was not true until this
+ * pass: the top tier, "live data", was awarded to the four apps whose contract
+ * ABI dotmetrics had hand-coded, and all four belong to the person running the
+ * index — so the highest rank in a public directory was reachable only by its
+ * owner. Disclosing it in the Method block did not fix it. The tier is gone;
+ * what dotmetrics reads through its own ABIs is still shown, labelled as ours
+ * and ranking nothing; and the per-app number every app can obtain is the event
+ * count for an address the NAME declares in a `contract` record.
  */
 
 const eco = ecosystemSnapshot as EcoSnapshot;
@@ -47,6 +70,50 @@ const eco = ecosystemSnapshot as EcoSnapshot;
  * a single contiguous block for exactly that reason.
  */
 const LAYOUT_CSS = `
+/* ---- language control: two labels, one segmented chip ----
+   Not a <select>. A native dropdown does not open inside the Polkadot shell's
+   webview — that is a bug this codebase has already paid for once — and with
+   exactly two options a segmented control is fewer taps anyway. It reuses the
+   .facet vocabulary: same height, same radius, same accent-on-active rule. */
+.langsw { display: inline-flex; flex: none; align-items: center; padding: 2px; gap: 2px;
+  border: 1px solid var(--line); border-radius: var(--r-1); background: var(--bg-1); }
+.langsw button {
+  min-width: var(--sp-7); height: var(--sp-6); padding: 0 var(--sp-2);
+  border: 0; border-radius: 4px; background: transparent; color: var(--tx-low);
+  font: inherit; font-size: var(--fs-0); font-weight: 600; letter-spacing: 0.04em;
+  line-height: 1; cursor: pointer; transition: background 100ms ease, color 100ms ease;
+}
+.langsw button:hover { color: var(--tx-hi); }
+.langsw button[aria-pressed='true'] { background: var(--bg-3); color: var(--pink); }
+.langsw button:focus-visible { outline: 2px solid var(--pink); outline-offset: 1px; }
+
+/* ---- third-party description: marker, translate control, MT disclosure ----
+   These style OUR annotations around an author's words. They are deliberately
+   quiet: the accent belongs to the measured data, not to a language tag. */
+.lang-tag {
+  flex: none; align-self: center; padding: 0 4px; height: 15px;
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--line); border-radius: 3px; background: var(--bg-3);
+  color: var(--tx-low); font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.06em; line-height: 1;
+}
+.lang-do {
+  flex: none; align-self: center; padding: 0 var(--sp-1); height: 16px;
+  border: 0; background: transparent; color: var(--tx-low);
+  font: inherit; font-size: var(--fs-0); line-height: 1; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px; white-space: nowrap;
+}
+.lang-do:hover:not(:disabled) { color: var(--tx-hi); }
+.lang-do:disabled { cursor: default; opacity: 0.7; }
+.lang-do:focus-visible { outline: 2px solid var(--pink); outline-offset: 1px; border-radius: 3px; }
+/* The machine-translation disclosure. It sits UNDER the text it applies to and
+   is never abbreviated to an icon: a reader has to be able to tell, without
+   hovering anything, that these are not the author's words. */
+.idx-mt { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 var(--sp-2);
+  font-size: var(--fs-0); line-height: 16px; color: var(--tx-low); }
+.idx-mt b { font-weight: 600; color: var(--tx-mid); text-transform: uppercase; letter-spacing: 0.04em; }
+.idx-mt.is-err, .idx-mt.is-err b { color: var(--warn); }
+
 /* ---- search: the first interactive element on the page ---- */
 .find { position: relative; display: flex; align-items: center; margin-top: var(--sp-4); }
 .find-in {
@@ -113,11 +180,34 @@ const LAYOUT_CSS = `
 .idx-l2 { display: flex; align-items: baseline; gap: var(--sp-2); height: 16px; font-family: var(--mono); font-size: var(--fs-0); line-height: 16px; color: var(--tx-low); min-width: 0; }
 .idx-l2 i { font-style: normal; white-space: nowrap; }
 /* min-height, not height: a fixed height plus wrapping text cut descriptions
-   mid-line with no ellipsis. The clamp is what limits the lines. */
-.idx-l3 { min-height: 20px; font-size: var(--fs-2); line-height: 20px; color: var(--tx-mid); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+   mid-line with no ellipsis. The clamp is what limits the lines.
+   The line is a flex row because the description can now carry a language
+   marker and a translate control beside it — those stay put at full size while
+   only the author's text clamps. */
+.idx-l3 { min-height: 20px; display: flex; align-items: baseline; gap: var(--sp-2); font-size: var(--fs-2); line-height: 20px; color: var(--tx-mid); }
+.idx-l3-t { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 .idx-val { flex: none; align-self: center; text-align: right; }
 .idx-val b { display: block; font-size: var(--fs-4); font-weight: 600; color: var(--tx-hi); }
 .idx-val i { display: block; font-style: normal; font-size: var(--fs-0); color: var(--tx-low); }
+/* The measured-events cell carries its own window — "events · last 151 blocks
+   (~5 min)" — which is longer than a bare metric label ever was. It gets a cap
+   and permission to wrap onto a second line rather than pushing the title out
+   of the row; the number above it stays on one line at full size. */
+.idx-val-ev { max-width: 11rem; }
+.idx-val-ev i { white-space: normal; line-height: 14px; }
+
+/* ---- "read by dotmetrics": our instrumentation, marked as ours ----
+   Deliberately the quietest block in an expanded row, and below every chain
+   fact in it. It carries no accent and no badge vocabulary: a reader must not
+   be able to mistake a number WE went to the trouble of reading for a
+   distinction the app earned. */
+.ours { margin-top: var(--sp-4); padding-top: var(--sp-3); border-top: 1px solid var(--line); }
+.ours-h { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 var(--sp-2);
+  font-size: var(--fs-2); line-height: 1.45; }
+.ours-h b { font-weight: 600; font-size: var(--fs-0); letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--tx-low); }
+.ours-figs { color: var(--tx-mid); }
+.ours-note { margin: 2px 0 0; font-size: var(--fs-0); line-height: 1.45; color: var(--tx-low); }
 .idx-detail {
   padding: 0 var(--sp-4) var(--sp-4) calc(var(--sp-4) + var(--sp-6) + var(--sp-3));
   background: var(--bg-2); border-bottom: 1px solid var(--line);
@@ -182,10 +272,41 @@ const LAYOUT_CSS = `
 
 @media (max-width: 720px) {
   .pulsestrip-ticks { display: none; }
+  /* The bar gained a language control, and on a 375px phone the four fixed
+     items no longer fit: the row pushed ~67px past the viewport and took the
+     whole page's horizontal scroll with it. The block readout is the one item
+     here that degrades gracefully, so it is the one that gives way — it keeps
+     its head number and drops the "· 6.0s avg" tail rather than shoving the
+     language buttons off-screen. Everything else stays at full size. */
+  .bar { gap: var(--sp-2); }
+  .pulsestrip { min-width: 0; flex: 0 1 auto; }
+  /* Keep enough width for the head number itself: "#11.481.862" is the claim
+     that this page is live, and a readout clipped to "#11.4…" makes it. */
+  .pulsestrip-read { overflow: hidden; text-overflow: ellipsis; min-width: 6rem; }
   /* Two lines on a phone: one line of 14px text truncates most of these
      descriptions to uselessness, and the extra row height is what stops the
      list reading as a wall. */
-  .idx-l3 { -webkit-line-clamp: 2; }
+  .idx-l3-t { -webkit-line-clamp: 2; }
+  /* The measured figure keeps every word of its window on a phone — the
+     denominator is the point of it, and "3 events" without one is not a
+     measurement. What gives way is the COLUMN: at 375px a name, a tier badge
+     and a wrapped window phrase in one row left "TrueReviews" rendering as
+     "Tru…", so the figure drops onto its own full-width line underneath and
+     reads as the single sentence it is. */
+  .idx-row { flex-wrap: wrap; }
+  .idx-val-ev {
+    flex-basis: 100%; max-width: none; margin-top: 2px;
+    display: flex; justify-content: flex-end; align-items: baseline; gap: var(--sp-1);
+  }
+  .idx-val-ev b { font-size: var(--fs-2); }
+}
+
+/* Below ~420px even the shrunk readout does not fit. The bar then sheds the one
+   item that is neither live data nor a control: the static "devnet" badge,
+   whose fact the footer states in words anyway. The block height and the
+   language buttons both stay. */
+@media (max-width: 420px) {
+  .bar > .badge { display: none; }
 }
 `;
 
@@ -193,51 +314,83 @@ const REFRESH_MS = 20_000;
 
 /* ------------------------------------------------------------- formatting */
 
-function fmt(n: number): string {
-  return n.toLocaleString('en-US');
+/**
+ * Thousands separators follow the reader — 1,234 in English, 1.234 in Italian.
+ *
+ * The digits themselves do not move: `font-variant-numeric: tabular-nums` is
+ * set globally in styles.css, so a figure ticking from 999 to 1,000 still does
+ * not shift the column it sits in.
+ */
+function fmt(n: number, lang: Lang = getLang()): string {
+  return n.toLocaleString(locale(lang));
 }
 
 function ago(unixSeconds: number | null): string {
-  if (!unixSeconds) return '—';
+  if (!unixSeconds) return t('ago.none');
   const s = Math.max(0, Math.floor(Date.now() / 1000) - unixSeconds);
-  if (s < 5) return 'just now';
-  if (s < 60) return `${s}s ago`;
+  if (s < 5) return t('ago.now');
+  if (s < 60) return t('ago.s', { n: s });
   const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m ago`;
+  if (m < 60) return t('ago.m', { n: m });
   const h = Math.floor(m / 60);
-  if (h < 48) return h === 1 ? '1h ago' : `${h}h ago`;
-  return `${Math.floor(h / 24)}d ago`;
+  if (h < 48) return h === 1 ? t('ago.h1') : t('ago.h', { n: h });
+  return t('ago.d', { n: Math.floor(h / 24) });
 }
 
+/**
+ * An absolute UTC timestamp, deliberately NOT localised.
+ *
+ * This is the one date on the page that stays ISO-8601 in both languages: it is
+ * the exact block time, quoted so a reader can check it against a block
+ * explorer, and reformatting it per locale would make it harder to match.
+ */
 function exactUtc(unixSeconds: number): string {
   return new Date(unixSeconds * 1000).toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
 }
 
 /* --------------------------------------------------------------- the tiers */
 
-const TIER_NAME = ['live data', 'published', 'deployed', 'name only'] as const;
-const TIER_CLASS = ['is-live', 'is-published', 'is-deployed', 'is-name'] as const;
+const TIER_KEY = ['tier.0', 'tier.1', 'tier.2'] as const;
+const TIER_CLASS = ['is-published', 'is-deployed', 'is-name'] as const;
 
 /**
  * Why this name sits where it sits, in words.
  *
  * A ranking nobody can inspect is a ranking nobody should trust, so every
  * expanded row states the chain fact that produced its tier. None of these
- * sentences is a judgement: they describe records that either exist or do not.
+ * sentences is a judgement: they describe records that either exist or do not —
+ * and, since this pass, records that any name can publish. The tier that used
+ * to sit above these three said "dotmetrics holds a reader for this app", which
+ * is a fact about dotmetrics; it is gone.
  */
 function tierReason(e: AppEntry): string {
   switch (e.tier) {
     case 0:
-      return 'Live data — dotmetrics holds a reader for this app’s own contract, so the figure on its row is measured from chain state, not reported by the app.';
+      return e.contenthash ? t('tier.reason.0.hash') : t('tier.reason.0.nohash');
     case 1:
-      return e.contenthash
-        ? 'Published — a manifest record on the content resolver names and describes it, and a contenthash points at the deployed bundle.'
-        : 'Published — a manifest record names and describes it, but there is no contenthash: nothing is deployed behind the name yet.';
-    case 2:
-      return 'Deployed — a contenthash points at a bundle, but no manifest record describes it, so the name and the bundle are all the chain will tell us.';
+      return t('tier.reason.1');
     default:
-      return 'No contenthash — name registered, nothing deployed.';
+      return t('tier.reason.2');
   }
+}
+
+/**
+ * The event count for the address a name declares, over the measured window.
+ *
+ * `null` means "this name declares no contract" and must render as NOTHING. A
+ * zero here is a real measurement — the address exists and emitted nothing —
+ * and the two must never look alike: an app that has told us nothing would
+ * otherwise be shown as an app we measured and found idle.
+ */
+function declaredEvents(entry: AppEntry): { events: number; blocks: number; minutes: number } | null {
+  const per = eco.perContract;
+  if (!entry.contract || !per || per.windowBlocks <= 0) return null;
+  return {
+    // Absent from a COMPLETE map of the window means zero events, not unknown.
+    events: per.events[entry.contract] ?? 0,
+    blocks: per.windowBlocks,
+    minutes: Math.max(1, Math.round(per.windowSeconds / 60)),
+  };
 }
 
 /* ------------------------------------------------------------------- data */
@@ -353,6 +506,155 @@ async function openEntry(entry: AppEntry): Promise<void> {
   await openExternal(url);
 }
 
+/* --------------------------------------------------- the language control */
+
+/**
+ * EN / IT, as a two-segment chip in the top bar.
+ *
+ * Not a `<select>`: a native dropdown does not open inside the Polkadot shell's
+ * webview, which this codebase has already been bitten by once. Two buttons in
+ * a `radiogroup`-shaped chip cost one tap instead of two anyway.
+ */
+function LanguageSwitch() {
+  const lang = useLang();
+  return (
+    <div className="langsw" role="group" aria-label={t('lang.aria')}>
+      {LANGS.map((code) => (
+        <button
+          key={code}
+          type="button"
+          aria-pressed={lang === code}
+          aria-label={t(code === 'en' ? 'lang.en.aria' : 'lang.it.aria')}
+          onClick={() => setLang(code)}
+        >
+          {code.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ------------------------------------------- third-party app descriptions */
+
+/**
+ * An app author's own description, in the author's own language.
+ *
+ * This is the one block of text on the page that dotmetrics did not write. It
+ * comes out of a third party's on-chain manifest, and the rules it follows are
+ * different from the rest of the UI:
+ *
+ *   · THE ORIGINAL IS THE DEFAULT. Always, on every load. The "showing a
+ *     translation" state lives in this component and nowhere else — nothing
+ *     persists it, so a reload always returns the author's words.
+ *   · NOTHING IS TRANSLATED UNPROMPTED. The network is touched only after an
+ *     explicit tap, and only for the one description tapped.
+ *   · A TRANSLATION IS LABELLED AS ONE. Not with an icon, not with a
+ *     hover-only title — with the words "machine translation", the language
+ *     pair, and who produced it, on a line under the text.
+ *   · A FAILURE IS VISIBLE. Falling back to the original silently would leave a
+ *     reader who tapped "translate" with no way to know anything went wrong.
+ *
+ * When {@link detectLang} is not confident, or the text is already in the
+ * reader's language, this renders exactly what it always rendered: the text,
+ * with no marker and no controls.
+ */
+function Description({ text, muted }: { text: string; muted?: boolean }) {
+  const lang = useLang();
+  const detected = useMemo(() => detectLang(text), [text]);
+
+  const [shown, setShown] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<TranslateError | Error | null>(null);
+
+  // A new language, or a new description, invalidates a translation on screen:
+  // an Italian rendering must not survive a switch back to English.
+  useEffect(() => {
+    setShown(null);
+    setError(null);
+  }, [text, lang]);
+
+  const foreign = detected != null && detected.lang !== lang;
+  // The affordance exists only when an endpoint was actually probed and wired.
+  // With `ENDPOINT` null the marker still shows and this never appears.
+  const offerTranslate = foreign && ENDPOINT != null;
+
+  const run = async (e: ReactMouseEvent) => {
+    // The whole row is a button that expands the entry; translating is not that.
+    e.stopPropagation();
+    if (!detected || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      setShown(await translate(text, detected.lang, lang));
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error(String(err)));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const reason =
+    error instanceof TranslateError ? t(error.key, error.vars) : (error?.message ?? '');
+
+  return (
+    <>
+      <span className="idx-l3" style={muted ? { color: 'var(--tx-low)' } : undefined}>
+        {foreign && detected && (
+          <b
+            className="lang-tag"
+            aria-label={t('desc.marker.aria', { language: languageName(detected.lang) })}
+          >
+            {detected.lang.toUpperCase()}
+          </b>
+        )}
+        <span className="idx-l3-t" lang={shown ? lang : (detected?.lang ?? undefined)}>
+          {shown ?? text}
+        </span>
+        {offerTranslate && !shown && (
+          <button
+            type="button"
+            className="lang-do"
+            disabled={busy}
+            aria-label={t('desc.translate.aria', { language: languageName(lang) })}
+            onClick={run}
+          >
+            {busy ? t('desc.translating') : error ? t('desc.retry') : t('desc.translate')}
+          </button>
+        )}
+      </span>
+
+      {shown && detected && (
+        <span className="idx-mt">
+          <b>{t('desc.mt')}</b>
+          <span>
+            {t('desc.mt.via', {
+              from: languageName(detected.lang),
+              to: languageName(lang),
+              service: SERVICE_LABEL,
+            })}
+          </span>
+          <button
+            type="button"
+            className="lang-do"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShown(null);
+            }}
+          >
+            {t('desc.original')}
+          </button>
+        </span>
+      )}
+
+      {error && !shown && (
+        <span className="idx-mt is-err" role="status">
+          <span>{t('desc.error', { reason })}</span>
+        </span>
+      )}
+    </>
+  );
+}
+
 /* ------------------------------------------------------------- index row */
 
 function AppIcon({ entry }: { entry: AppEntry }) {
@@ -389,6 +691,7 @@ function IndexRow({
   const title = entry.displayName ?? entry.name ?? entry.id;
   const tier = entry.tier;
   const detailId = `d-${entry.id}`;
+  const measured = declaredEvents(entry);
   return (
     <>
       <div
@@ -411,28 +714,54 @@ function IndexRow({
         <span className="idx-main">
           <span className="idx-l1">
             <span className="idx-title">{title}</span>
-            <span className={`badge ${TIER_CLASS[tier]}`}>{TIER_NAME[tier]}</span>
+            <span className={`badge ${TIER_CLASS[tier]}`}>{t(TIER_KEY[tier])}</span>
           </span>
           <span className="idx-l2">
             {entry.domain}
             <i>
-              {entry.firstSeenAt ? `registered ${ago(entry.firstSeenAt)}` : 'before the indexed range'}
+              {entry.firstSeenAt
+                ? t('row.registered', { ago: ago(entry.firstSeenAt) })
+                : t('row.beforeRange')}
             </i>
           </span>
-          <span className="idx-l3">
-            {entry.description ?? (tier === 0 ? entry.tagline : 'No manifest record — the chain does not describe this name.')}
-          </span>
+          {/* Three different kinds of text end up on this line, and only the
+              first is the author's: a manifest description, our own tagline for
+              an app we read directly, or our sentence about the absence of a
+              record. Only the manifest description goes through the language
+              marker — the other two are already in the reader's language. */}
+          {entry.description ? (
+            <Description text={entry.description} />
+          ) : (
+            <span className="idx-l3">
+              <span className="idx-l3-t">
+                {entry.read ? t(entry.tagline) : t('row.noManifest')}
+              </span>
+            </span>
+          )}
         </span>
-        {tier === 0 && (
-          <span className="idx-val">
-            {stats ? (
-              <>
-                <b>{fmt(stats.headline.value)}</b>
-                <i>{stats.headline.label}</i>
-              </>
-            ) : (
-              <i>reading…</i>
-            )}
+        {/* The one number a row can carry, and the one every app can obtain:
+            events emitted by the address the NAME declares, over the window
+            that produced it. It used to be whatever our hard-coded reader
+            returned, which meant only our own four apps had a number at all.
+            A name with no `contract` record shows nothing here — not a zero,
+            which would read as "measured and idle" rather than "never said". */}
+        {measured && (
+          <span
+            className="idx-val idx-val-ev"
+            aria-label={t('row.events.aria', {
+              events: fmt(measured.events),
+              name: entry.domain,
+              blocks: fmt(measured.blocks),
+              minutes: measured.minutes,
+            })}
+          >
+            <b>{fmt(measured.events)}</b>
+            <i>
+              {t(measured.events === 1 ? 'row.events.one' : 'row.events', {
+                blocks: fmt(measured.blocks),
+                minutes: measured.minutes,
+              })}
+            </i>
           </span>
         )}
       </div>
@@ -442,34 +771,63 @@ function IndexRow({
           <p className="idx-why">{tierReason(entry)}</p>
           <div className="detail-grid">
             <div>
-              <span className="detail-l">Owner</span>
-              <span className="detail-v mono">{entry.owner || 'not recorded in this snapshot'}</span>
+              <span className="detail-l">{t('detail.owner')}</span>
+              <span className="detail-v mono">{entry.owner || t('detail.owner.none')}</span>
             </div>
             <div>
-              <span className="detail-l">Contenthash</span>
-              <span className="detail-v mono">{entry.contenthash ?? 'none'}</span>
-            </div>
-            <div>
-              <span className="detail-l">Executable record</span>
-              <span className="detail-v">
-                {entry.hasExecutable
-                  ? `present on app.${entry.id}.dot`
-                  : `none on app.${entry.id}.dot`}
+              <span className="detail-l">{t('detail.contenthash')}</span>
+              <span className="detail-v mono">
+                {entry.contenthash ?? t('detail.contenthash.none')}
               </span>
             </div>
             <div>
-              <span className="detail-l">Registered</span>
+              <span className="detail-l">{t('detail.executable')}</span>
+              <span className="detail-v">
+                {entry.hasExecutable
+                  ? t('detail.executable.yes', { id: entry.id })
+                  : t('detail.executable.no', { id: entry.id })}
+              </span>
+            </div>
+            <div>
+              <span className="detail-l">{t('detail.registered')}</span>
               <span className="detail-v mono">
-                {entry.firstSeenBlock ? `#${fmt(entry.firstSeenBlock)}` : '—'}
+                {entry.firstSeenBlock ? `#${fmt(entry.firstSeenBlock)}` : t('ago.none')}
                 {entry.firstSeenAt ? ` · ${exactUtc(entry.firstSeenAt)}` : ''}
+              </span>
+            </div>
+            {/* Stated as an absence, like the contenthash and executable
+                records beside it — "this name publishes no contract record" is
+                a fact about the name, and the Method block says how to change
+                it. */}
+            <div>
+              <span className="detail-l">{t('detail.contract')}</span>
+              <span className={`detail-v${entry.contract ? ' mono' : ''}`}>
+                {entry.contract || t('detail.contract.none')}
               </span>
             </div>
           </div>
 
-          {stats && stats.metrics.length > 0 && (
-            <p className="detail-tag">
-              {stats.metrics.map((m) => `${fmt(m.value)} ${m.label}`).join(' · ')}
-            </p>
+          {/* OUR instrumentation, under our name, below every chain fact on
+              this row. These figures are real, but reading them took an ABI
+              only the index's operator can hand-code, so they are presented as
+              a reading dotmetrics performs — never as something the app earned,
+              and never anywhere it could be mistaken for the tier or the rank. */}
+          {entry.read && (
+            <div className="ours">
+              <p className="ours-h">
+                <b>{t('ours.title')}</b>
+                {stats ? (
+                  <span className="ours-figs">
+                    {[stats.headline, ...stats.metrics]
+                      .map((m) => `${fmt(m.value)} ${t(m.label)}`)
+                      .join(' · ')}
+                  </span>
+                ) : (
+                  <span className="ours-figs">{t('row.reading')}</span>
+                )}
+              </p>
+              <p className="ours-note">{t('ours.note')}</p>
+            </div>
           )}
 
           {/* The old page carried a global "Recent activity" feed. Only one app
@@ -480,7 +838,7 @@ function IndexRow({
               <ol>
                 {stats.activity.map((item, i) => (
                   <li key={i}>
-                    <span className="feed-app">{item.at ? ago(item.at) : 'recent'}</span>
+                    <span className="feed-app">{item.at ? ago(item.at) : t('feed.recent')}</span>
                     <span className="feed-text">{item.text}</span>
                   </li>
                 ))}
@@ -499,7 +857,7 @@ function IndexRow({
                 void openEntry(entry);
               }}
             >
-              Open {entry.domain} ↗
+              {t('detail.open', { domain: entry.domain })}
             </a>
           </p>
         </div>
@@ -512,30 +870,49 @@ function IndexRow({
 
 /** One-tap link into the Polkadot app's built-in chat. Footer, not masthead. */
 function ChatButton() {
-  const [label, setLabel] = useState('Chat');
+  const lang = useLang();
+  // The outcome is held as a key, not as a finished string: the button can sit
+  // showing "Room added" for three seconds, and if the reader flips language in
+  // that window the message has to flip with it.
+  const [state, setState] = useState<
+    'idle' | 'busy' | 'outside' | 'failed' | 'registered' | 'opened'
+  >('idle');
   const go = async () => {
-    setLabel('…');
+    setState('busy');
     const r = await openAppChat('dotmetrics', 'dotmetrics community');
     // "registered" is a real outcome, not a failure: the room exists in the
     // user's chat list even when the host refuses to jump there for us.
-    if (r.status === 'outside') setLabel('Chat lives inside the Polkadot app');
-    else if (r.status === 'failed') setLabel('Chat unavailable right now');
-    else if (r.status === 'registered') setLabel('Room added — open the Chat tab');
-    else setLabel('Opened in chat ✓');
-    window.setTimeout(() => setLabel('Chat'), 3200);
+    if (r.status === 'outside') setState('outside');
+    else if (r.status === 'failed') setState('failed');
+    else if (r.status === 'registered') setState('registered');
+    else setState('opened');
+    window.setTimeout(() => setState('idle'), 3200);
   };
   return (
-    <button type="button" className="chat-cta" onClick={go}>
-      {label}
+    <button type="button" className="chat-cta" onClick={go} lang={lang}>
+      {t(`chat.${state}` as const)}
     </button>
   );
 }
 
 /* ------------------------------------------------------------------- page */
 
-type Facet = 'all' | 'live' | 'published' | 'deployed' | 'name' | 'new';
+/**
+ * The facets.
+ *
+ * `published` / `deployed` / `name` PARTITION the index — every name is in
+ * exactly one, and the three counts sum to `all`, which is what makes them
+ * checkable at a glance. `declared` and `new` cut across them.
+ *
+ * There used to be a `live` facet for the tier only our own apps could reach.
+ * `declared` replaces it in the same position: also about a per-app number, but
+ * about a record any name can publish rather than about which ABIs we happened
+ * to hand-code.
+ */
+type Facet = 'all' | 'published' | 'deployed' | 'name' | 'declared' | 'new';
 
 export function App() {
+  const lang = useLang();
   const { apps, stats, online, source, directoryCid, excluded, beat, tailUp } = useEcosystem();
 
   const [query, setQuery] = useState('');
@@ -548,19 +925,23 @@ export function App() {
   }, []);
 
   const counts = useMemo(() => {
-    let live = 0;
     let published = 0;
     let deployed = 0;
     let nameOnly = 0;
+    let declared = 0;
     let today = 0;
     for (const a of apps) {
-      if (a.tier === 0) live += 1;
-      if (a.tier <= 1) published += 1;
-      if (a.tier <= 2) deployed += 1;
-      if (a.tier === 3) nameOnly += 1;
+      // One tier each, so these three add up to `all`. The old counts were
+      // cumulative (`tier <= 1`), which meant "published" and "deployed"
+      // overlapped and neither chip's number could be verified against the list
+      // it opened.
+      if (a.tier === 0) published += 1;
+      else if (a.tier === 1) deployed += 1;
+      else nameOnly += 1;
+      if (a.contract) declared += 1;
       if ((a.firstSeenAt ?? 0) >= startOfTodayUtc) today += 1;
     }
-    return { all: apps.length, live, published, deployed, nameOnly, today };
+    return { all: apps.length, published, deployed, nameOnly, declared, today };
   }, [apps, startOfTodayUtc]);
 
   /** Registrations, for the heatmap and the step spark. Undated names cannot be plotted. */
@@ -586,34 +967,38 @@ export function App() {
         )
       : apps.filter((a) => {
           switch (facet) {
-            case 'live':
-              return a.tier === 0;
             case 'published':
-              return a.tier <= 1;
+              return a.tier === 0;
             case 'deployed':
-              return a.tier <= 2;
+              return a.tier === 1;
             case 'name':
-              return a.tier === 3;
+              return a.tier === 2;
+            case 'declared':
+              return Boolean(a.contract);
             case 'new':
               return (a.firstSeenAt ?? 0) >= startOfTodayUtc;
             default:
               return true;
           }
         });
-    // Tier first, then newest. Nothing here is a score: tier 0 leads because we
-    // can show a measured number for it, not because it is "better".
+    // Tier first, then newest. Nothing here is a score: tier 0 leads because a
+    // name that publishes a manifest has said more about itself on chain than
+    // one that has not — a fact about the name, available to every name.
     return [...pool].sort(
       (a, b) => a.tier - b.tier || (b.firstSeenAt ?? 0) - (a.firstSeenAt ?? 0),
     );
   }, [apps, query, facet, startOfTodayUtc]);
 
   const facets: { key: Facet; label: string; n: number }[] = [
-    { key: 'all', label: 'All', n: counts.all },
-    { key: 'live', label: 'Live data', n: counts.live },
-    { key: 'published', label: 'Published', n: counts.published },
-    { key: 'deployed', label: 'Deployed', n: counts.deployed },
-    { key: 'name', label: 'Name only', n: counts.nameOnly },
-    { key: 'new', label: 'New today', n: counts.today },
+    { key: 'all', label: t('facet.all'), n: counts.all },
+    { key: 'published', label: t('facet.published'), n: counts.published },
+    { key: 'deployed', label: t('facet.deployed'), n: counts.deployed },
+    { key: 'name', label: t('facet.name'), n: counts.nameOnly },
+    // Zero today, and shown as zero. A chip whose count is honestly 0 opens an
+    // empty list with a sentence saying so, which is the correct state for a
+    // convention nobody has adopted yet — including us.
+    { key: 'declared', label: t('facet.declared'), n: counts.declared },
+    { key: 'new', label: t('facet.new'), n: counts.today },
   ];
 
   const scanned = counts.all + excluded.length;
@@ -625,10 +1010,12 @@ export function App() {
 
       {/* 1 ------------------------------------------------------------ bar */}
       <header className="bar">
+        {/* The app's name is a name, not a word: it is not translated. */}
         <h1>dotmetrics</h1>
-        <span className="badge">devnet</span>
+        <span className="badge">{t('bar.devnet')}</span>
         <span className="bar-spacer" />
         <PulseStrip beat={beat} connected={tailUp} />
+        <LanguageSwitch />
       </header>
 
       {/* 2 --------------------------------------------------------- search */}
@@ -638,15 +1025,15 @@ export function App() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={`Search ${fmt(counts.all)} .dot apps by name or description`}
-          aria-label="Search every indexed .dot name, display name and description"
+          placeholder={t('search.placeholder', { n: fmt(counts.all, lang) })}
+          aria-label={t('search.aria')}
         />
         {searching && (
           <button
             type="button"
             className="find-clear"
             onClick={() => setQuery('')}
-            aria-label="Clear search"
+            aria-label={t('search.clear')}
           >
             ×
           </button>
@@ -663,31 +1050,37 @@ export function App() {
             <span className="hero-n">{fmt(counts.all)}</span>
             <StepSparkline points={regPoints} />
           </div>
+          {/* One sentence, one translatable string. The bold figures and the
+              staleness colour are dropped into named slots, so Italian is free
+              to put "distribuite" after its number instead of before it. */}
           <p className="hero-t">
-            apps indexed · <b>{fmt(counts.deployed)}</b> deployed · <b>{fmt(counts.published)}</b>{' '}
-            published · <b>{fmt(counts.live)}</b> with live data ·{' '}
-            <span className={indexAge > 6 * 3600 ? 'is-stale' : undefined}>
-              updated {ago(eco.measuredAt)}
-            </span>
+            {tSplit('hero.line', {
+              published: <b key="p">{fmt(counts.published, lang)}</b>,
+              deployed: <b key="d">{fmt(counts.deployed, lang)}</b>,
+              declared: <b key="c">{fmt(counts.declared, lang)}</b>,
+              updated: (
+                <span key="u" className={indexAge > 6 * 3600 ? 'is-stale' : undefined}>
+                  {t('hero.updated', { ago: ago(eco.measuredAt) })}
+                </span>
+              ),
+            })}
             {/* No manual refresh control: the contract reads re-run every 20s on
                 their own and the pulse strip above already shows whether the
                 chain is answering. A button here would only be a second way to
                 do what the page is already doing. */}
-            {online === false && <span className="is-stale"> · rpc unreachable</span>}
+            {online === false && <span className="is-stale"> · {t('hero.rpcDown')}</span>}
           </p>
         </div>
 
         <div className="panel hero-heat">
           <div className="panel-head">
             <div>
-              <h2 className="panel-title">Registrations</h2>
-              <span className="panel-note">
-                one cell per UTC hour · one row per UTC day · day total in the right gutter
-              </span>
+              <h2 className="panel-title">{t('reg.title')}</h2>
+              <span className="panel-note">{t('reg.note')}</span>
             </div>
             <span className="chart-legend">
               <span className="chart-swatch" aria-hidden="true" />
-              names registered
+              {t('reg.legend')}
             </span>
           </div>
           <RegistrationHeatmap points={regPoints} />
@@ -695,7 +1088,7 @@ export function App() {
       </div>
 
       {/* 4 ---------------------------------------------------------- facets */}
-      <div className="facets" role="group" aria-label="Filter the index by what exists on chain">
+      <div className="facets" role="group" aria-label={t('facets.aria')}>
         {facets.map((f) => (
           <button
             key={f.key}
@@ -708,23 +1101,20 @@ export function App() {
             }}
           >
             {f.label}
-            <span className="facet-n">{fmt(f.n)}</span>
+            <span className="facet-n">{fmt(f.n, lang)}</span>
           </button>
         ))}
       </div>
 
       {/* 5 ----------------------------------------------------- the index */}
       <div className="idx-count">
-        {searching ? (
-          <>
-            {fmt(shown.length)} of {fmt(counts.all)} names match “{query.trim()}” — search covers
-            the whole index, not the selected filter.
-          </>
-        ) : (
-          <>
-            {fmt(shown.length)} names · ranked by what exists on chain, then newest first
-          </>
-        )}
+        {searching
+          ? t('idx.count.search', {
+              shown: fmt(shown.length, lang),
+              all: fmt(counts.all, lang),
+              q: query.trim(),
+            })
+          : t('idx.count.plain', { n: fmt(shown.length, lang) })}
       </div>
 
       <div className="idx">
@@ -740,8 +1130,8 @@ export function App() {
         {shown.length === 0 && (
           <div className="idx-empty">
             {searching
-              ? `No name, display name or description in the index contains “${query.trim()}”.`
-              : 'No name in the index matches this filter yet.'}
+              ? t('idx.empty.search', { q: query.trim() })
+              : t('idx.empty.filter')}
           </div>
         )}
       </div>
@@ -752,98 +1142,159 @@ export function App() {
       <div className="panel">
         <div className="panel-head">
           <div>
-            <h2 className="panel-title">Chain vitals</h2>
+            <h2 className="panel-title">{t('vitals.title')}</h2>
             <span className="panel-note">
-              chain-wide, not per-app · measured {ago(eco.measuredAt)} at head #
-              {fmt(eco.headBlock)}
+              {t('vitals.note', {
+                ago: ago(eco.measuredAt),
+                head: fmt(eco.headBlock, lang),
+              })}
             </span>
           </div>
           <span className="chart-legend">
             <span className="chart-swatch is-warn" aria-hidden="true" />
-            reverted
+            {t('vitals.legend.reverted')}
             <span className="chart-swatch" aria-hidden="true" />
-            emitted
+            {t('vitals.legend.emitted')}
           </span>
         </div>
         <ChainVitals eco={eco} />
       </div>
 
       {/* 7 ----------------------------------------------------------- method */}
+      {/* Each paragraph is ONE translatable string with named slots, not a
+          chain of fragments around the JSX. These four paragraphs are the page
+          admitting what its own numbers cannot show, and they have to read like
+          Italian rather than like English word order with Italian words in it —
+          which is exactly what splitting them at every <b> and <code> would
+          have forced. */}
       <details className="method">
-        <summary>Method — how these names were found, and what was thrown away</summary>
+        <summary>{t('method.summary')}</summary>
+        <p>{t('method.p1')}</p>
         <p>
-          Names are discovered by walking Asset Hub blocks — the registry can't be listed by a
-          contract call, so the plaintext comes from registration calldata. Per-app usage can't be
-          shown honestly: apps don't publish their contract address on-chain, so activity isn't
-          attributable to a name. What's real is here — when each name was registered, and the
-          ecosystem-wide contract events measured live. The four apps whose contract we do know
-          also report their own on-chain reads.
+          {tSplit('method.p2', {
+            scanned: <b key="s">{fmt(scanned, lang)}</b>,
+            rejected: <b key="r">{fmt(excluded.length, lang)}</b>,
+            kept: <b key="k">{fmt(counts.all, lang)}</b>,
+            call: (
+              <code key="c" className="mono">
+                registry.owner(namehash(label + '.dot'))
+              </code>
+            ),
+          })}
+        </p>
+        <p className="mono">
+          {excluded.length > 0 ? excluded.join(' · ') : t('method.excluded.none')}
         </p>
         <p>
-          An ascii run in calldata is a lead, not a name. This scan proposed{' '}
-          <b>{fmt(scanned)}</b> labels; <b>{fmt(excluded.length)}</b> of them returned a zero owner
-          from <code className="mono">registry.owner(namehash(label + '.dot'))</code> and were
-          never registrations at all, so <b>{fmt(counts.all)}</b> names remain. The rejected labels
-          are listed rather than quietly dropped, because the gap between them is the difference
-          between what a byte scan can see and what the registry actually holds:
+          {tSplit('method.p3', {
+            resolver: (
+              <code key="a" className="mono">
+                {CONTENT_RESOLVER}
+              </code>
+            ),
+            lookup: (
+              <code key="b" className="mono">
+                registry.resolver(node)
+              </code>
+            ),
+            text: (
+              <code key="c" className="mono">
+                text()
+              </code>
+            ),
+            contenthash: (
+              <code key="d" className="mono">
+                contenthash()
+              </code>
+            ),
+            registry: (
+              <code key="e" className="mono">
+                {REGISTRY}
+              </code>
+            ),
+          })}
         </p>
-        <p className="mono">{excluded.length > 0 ? excluded.join(' · ') : 'none in this snapshot'}</p>
         <p>
-          Records are read from the content resolver at{' '}
-          <code className="mono">{CONTENT_RESOLVER}</code> directly, never by following{' '}
-          <code className="mono">registry.resolver(node)</code> — that returns a dead resolver on
-          this devnet whose <code className="mono">text()</code> and{' '}
-          <code className="mono">contenthash()</code> revert for every name. Ownership comes from
-          the registry at <code className="mono">{REGISTRY}</code>.
-        </p>
-        <p>
-          Chain vitals count <code className="mono">revive.ContractEmitted</code> over the last{' '}
-          {fmt(eco.windowBlocks)} blocks (~{Math.max(1, Math.round(eco.windowSeconds / 60))} min).
-          Contracts are not attributable to .dot names, so this is ecosystem-wide. The busiest
-          addresses in that window:
+          {tSplit('method.p4', {
+            event: (
+              <code key="e" className="mono">
+                revive.ContractEmitted
+              </code>
+            ),
+            record: (
+              <code key="r" className="mono">
+                contract
+              </code>
+            ),
+            blocks: fmt(eco.windowBlocks, lang),
+            minutes: String(Math.max(1, Math.round(eco.windowSeconds / 60))),
+          })}
         </p>
         <ul>
           {eco.topContracts.length > 0 ? (
-            eco.topContracts.map((t) => (
-              <li key={t.address}>
-                <span className="mono">{t.address}</span> — {fmt(t.events)} of{' '}
-                {fmt(eco.contractEvents)} events
+            eco.topContracts.map((c) => (
+              <li key={c.address}>
+                {tSplit('method.top.item', {
+                  address: (
+                    <span key="a" className="mono">
+                      {c.address}
+                    </span>
+                  ),
+                  events: fmt(c.events, lang),
+                  total: fmt(eco.contractEvents, lang),
+                })}
               </li>
             ))
           ) : (
-            <li>no contract emitted an event in the measured window</li>
+            <li>{t('method.top.none')}</li>
           )}
         </ul>
+        {/* The page saying what it got wrong, in the same voice as the rest of
+            the block. It names the flaw, says who it favoured, and gives the
+            one command that puts every app on the same footing. */}
+        <p>
+          {tSplit('method.p5', {
+            cmd: (
+              <code key="c" className="mono">
+                dotns text set &lt;name&gt;.dot contract 0xYourContract --env devnet
+              </code>
+            ),
+            event: (
+              <code key="e" className="mono">
+                revive.ContractEmitted
+              </code>
+            ),
+            declared: <b key="d">{fmt(counts.declared, lang)}</b>,
+            all: <b key="a">{fmt(counts.all, lang)}</b>,
+          })}
+        </p>
       </details>
 
       {/* 8 ----------------------------------------------------------- footer */}
       <div className="foot-row">
         <span className="foot-prov">
-          {source === 'bulletin' && directoryCid ? (
-            <>
-              index live from Bulletin ·{' '}
-              <a
-                href={`https://dweb.link/ipfs/${directoryCid}`}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  void openExternal(`https://dweb.link/ipfs/${directoryCid}`);
-                }}
-              >
-                {directoryCid}
-              </a>
-            </>
-          ) : (
-            'index from the snapshot baked into this build — Bulletin unreachable'
-          )}
+          {source === 'bulletin' && directoryCid
+            ? tSplit('foot.prov.live', {
+                cid: (
+                  <a
+                    key="cid"
+                    href={`https://dweb.link/ipfs/${directoryCid}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      void openExternal(`https://dweb.link/ipfs/${directoryCid}`);
+                    }}
+                  >
+                    {directoryCid}
+                  </a>
+                ),
+              })
+            : t('foot.prov.baked')}
         </span>
         <ChatButton />
       </div>
-      <footer className="foot">
-        Every figure is read live from Polkadot devnet Asset Hub over a public Ethereum RPC — no
-        wallet, no sign-in, no personhood. Test network: tokens carry no value.
-      </footer>
+      <footer className="foot">{t('foot.note')}</footer>
     </div>
   );
 }

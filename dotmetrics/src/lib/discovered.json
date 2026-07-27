@@ -7,7 +7,7 @@
     "firstSeenAt": 1784873532,
     "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
     "hasExecutable": false,
-    "tier": 3
+    "tier": 2
   },
   "openpetition": {
     "label": "openpetition",
@@ -32,7 +32,7 @@
     "owner": "0xFD597C340A56beCb8193d9194204D7b8C1207CaD",
     "contenthash": "bafybeidmvmczoqyle3bsoo6a5pnnbbghrq5orpem5cx6t2do42xg47k5qa",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "contribnet02": {
     "label": "contribnet02",
@@ -43,7 +43,7 @@
     "owner": "0xFD597C340A56beCb8193d9194204D7b8C1207CaD",
     "contenthash": "bafybeifrm2q6cbfbrcg2q7widyxo3czla3csnckuhbcuh576wisz2tvq7e",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "handshake": {
     "label": "handshake",
@@ -53,7 +53,7 @@
     "firstSeenAt": 1784879424,
     "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
     "hasExecutable": false,
-    "tier": 3
+    "tier": 2
   },
   "polkaportal01": {
     "label": "polkaportal01",
@@ -63,7 +63,7 @@
     "firstSeenAt": 1784880240,
     "owner": "0xFD74F727861902B1f9f179fA451200194A091876",
     "hasExecutable": false,
-    "tier": 3
+    "tier": 2
   },
   "polkaportal02": {
     "label": "polkaportal02",
@@ -73,7 +73,7 @@
     "firstSeenAt": 1784883000,
     "owner": "0xFD74F727861902B1f9f179fA451200194A091876",
     "hasExecutable": false,
-    "tier": 3
+    "tier": 2
   },
   "polkaportal03": {
     "label": "polkaportal03",
@@ -84,7 +84,7 @@
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
     "contenthash": "bafybeig6w7ujpvvaiugrzluhs75d7wn3n3ooocqnbpideffwihfa2sky7q",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "dotmetrics": {
     "label": "dotmetrics",
@@ -96,9 +96,9 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeid5g5rnno42cmmc3rj3yr67xvtoda4ctlcljbccutwj4nqsbqgrlq",
+    "contenthash": "bafybeiebvieg2lphcf73fempebohw6gpoo5hz7ztif6ijnjo7wgz6oyuty",
     "hasExecutable": false,
-    "tier": 1
+    "tier": 0
   },
   "eternalize-notary": {
     "label": "eternalize-notary",
@@ -109,7 +109,7 @@
     "owner": "0x9621DDe636dE098B43Efb0fA9b61fAcFE328F99D",
     "contenthash": "bafybeibh62tcwdrhxwfv5ujk2zv4stqymn643kswjijt7sb64vnwtyx7sm",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "hermes-agent-test": {
     "label": "hermes-agent-test",
@@ -120,7 +120,7 @@
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
     "contenthash": "bafybeicxkhkbpgh74pu5hfge4pgspinfqwcafm36qa5ynx64vssvswtluu",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "eternalise-notary": {
     "label": "eternalise-notary",
@@ -131,7 +131,7 @@
     "owner": "0x9621DDe636dE098B43Efb0fA9b61fAcFE328F99D",
     "contenthash": "bafybeia3vou57nyykzko433z2gf4aj6onmssf2uxav67rfa6k6uv5w3lam",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "hello-world-app": {
     "label": "hello-world-app",
@@ -141,7 +141,7 @@
     "firstSeenAt": 1784891208,
     "owner": "0xB0c63f4656bBfa8f3cbb86d8BDda5926eEF074f2",
     "hasExecutable": false,
-    "tier": 3
+    "tier": 2
   },
   "hello-world-bernar": {
     "label": "hello-world-bernar",
@@ -152,7 +152,7 @@
     "owner": "0xB0c63f4656bBfa8f3cbb86d8BDda5926eEF074f2",
     "contenthash": "bafybeictyugpqe7xpvbuh2plmhuxwqix6wpsjjd2ilrtvqmxchga2el5ee",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "thebutton": {
     "label": "thebutton",
@@ -180,7 +180,7 @@
     "iconCid": "bafk2bzacecux37si5is7vw5zek6o532rnzscgc7xllm53sjur6an2cgskm4ow",
     "contenthash": "bafybeif5dqrhtrjq6yzkqq2ern7te5axjc4ghkgdsgrx42yeuzolko66ni",
     "hasExecutable": true,
-    "tier": 1
+    "tier": 0
   },
   "wudcommunity": {
     "label": "wudcommunity",
@@ -194,7 +194,7 @@
     "iconCid": "bafybeibvvsaqjl3upr6yari35yscsgbkifjkorkghfmjpptysnp343v5zm",
     "contenthash": "bafybeidpsqn7aqhzdmfhvy3ukjmn55p4powyp4htqam6dfbaon4pdxjrva",
     "hasExecutable": false,
-    "tier": 1
+    "tier": 0
   },
   "devnet-atlas": {
     "label": "devnet-atlas",
@@ -208,7 +208,7 @@
     "iconCid": "bafk2bzacedsweqjwzhnuzb5o46h6cju6yq3mbrmskgxqwfdpn263fgcwzwks4",
     "contenthash": "bafybeihvvpmjumatlux4jihjx25vflnxpux6sck5hvttyocdc7b3vskpru",
     "hasExecutable": true,
-    "tier": 1
+    "tier": 0
   },
   "pactprotocol": {
     "label": "pactprotocol",
@@ -219,7 +219,7 @@
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
     "contenthash": "bafybeibjyjalbsdkmcws6phhrqpm25zjse45mbd554cnxvvw5o2r5twnfy",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "dot-pages": {
     "label": "dot-pages",
@@ -233,7 +233,7 @@
     "iconCid": "bafk2bzacebcoo2ony2o2ls7elsxhpjfvyfhzht4cepre6a7gwoe4tepddly34",
     "contenthash": "bafybeiafrmrhlx7elvz3qkrlt4bsujrz3j2gazpnfdjscvj22nrbdgftha",
     "hasExecutable": true,
-    "tier": 1
+    "tier": 0
   },
   "parlement-populaire": {
     "label": "parlement-populaire",
@@ -247,7 +247,7 @@
     "iconCid": "bafk2bzaceafowz5ddqutupeimqmjvkwh5tedjqsixxhj6tvwih3gwazbtvc2o",
     "contenthash": "bafybeigvtnalzogfadc23fi527atmqaejupilspblowln7abqthg62kqlm",
     "hasExecutable": true,
-    "tier": 1
+    "tier": 0
   },
   "ajedreztest01": {
     "label": "ajedreztest01",
@@ -258,7 +258,7 @@
     "owner": "0xE510Df763d6F8B1545987ced0407EB1b52FD9cA2",
     "contenthash": "bafybeidgx4gm7muninnatw6zv6ecscp6ft5eig2kn3znybg6hn2s3ln7wi",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "hellodotworld": {
     "label": "hellodotworld",
@@ -269,7 +269,7 @@
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
     "contenthash": "bafybeihfc5hr5bkjyhkmxc35toqqgbayudcmefgh37licprsylamapf4ga",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "cosmicteapot": {
     "label": "cosmicteapot",
@@ -280,7 +280,7 @@
     "owner": "0xD63Bd0a5CE4a7306DBb6BDF5A0bd628c684C423F",
     "contenthash": "bafybeifsfedviexj5srcsekw5phbja2qchfdqd33v2mcij7jjfc2sgl4wy",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "yologuestbook": {
     "label": "yologuestbook",
@@ -291,7 +291,7 @@
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
     "contenthash": "bafybeigbru3aq6vpid7p43c72ed3jnuh5v6zyrbi7b4gwq5xullc5fcpae",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "guestbook": {
     "label": "guestbook",
@@ -302,7 +302,7 @@
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
     "contenthash": "bafybeihspvi2xdwrpaxt2qupfktco2yvvtxct3vl7vjbbuspeappldceja",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "plaza-social": {
     "label": "plaza-social",
@@ -313,7 +313,7 @@
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
     "contenthash": "bafybeiaseuirlbqvl42lu67i4msqhgyo7jak366ruvukycay26wwh2vuou",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "italiarovente": {
     "label": "italiarovente",
@@ -327,7 +327,7 @@
     "iconCid": "bafybeifh6ar4ukh4kxp5znfrce3bissnpnqdbhdpfczvgcjbfxk6pb6wpq",
     "contenthash": "bafybeicg7whif2oothvijywtkw73ovfxxr7b2j7na2cxqcdjikpcuznknm",
     "hasExecutable": false,
-    "tier": 1
+    "tier": 0
   },
   "truereviews": {
     "label": "truereviews",
@@ -355,7 +355,7 @@
     "iconCid": "bafk2bzaceblddggq2fr72dlrcccs53pln7mqbokt2t2f5g4zpuw43vs4af5kc",
     "contenthash": "bafybeigt3lza7b2pyfbnqaje4b3fg7z5r6bdr7coj64t5sh4xcaj25lvoi",
     "hasExecutable": true,
-    "tier": 1
+    "tier": 0
   },
   "polkadot-builders-hackademy": {
     "label": "polkadot-builders-hackademy",
@@ -366,7 +366,7 @@
     "owner": "0xe3e3a0916d27c5174313f16E1507a286985a8Ac8",
     "contenthash": "bafybeibndit5pcpro6mhfolzny4egpemb7pia75xrkl2kmyx7g7jp6725u",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "na87u9srwgblr61": {
     "label": "na87u9srwgblr61",
@@ -376,7 +376,7 @@
     "firstSeenAt": 1784969568,
     "owner": "0x50AFf5a51BE03d5914D9b5A42c548Dc35A73f7D8",
     "hasExecutable": false,
-    "tier": 3
+    "tier": 2
   },
   "helloworld": {
     "label": "helloworld",
@@ -387,7 +387,7 @@
     "owner": "0xD63Bd0a5CE4a7306DBb6BDF5A0bd628c684C423F",
     "contenthash": "bafybeiapwo3ftvf6cnp6o5ry7mc7qaxy7gpr373gnymmcppeeuxe4xzqdq",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "torrent-otp": {
     "label": "torrent-otp",
@@ -401,7 +401,7 @@
     "iconCid": "bafk2bzacedziz4zfca6oja2ltbq37gtqv2b4i4oqtockhto7sdo4meoju7f2m",
     "contenthash": "bafybeieboha25da5quecdoz6rwnk7zashcmryjp5xibzhltom33wcuipse",
     "hasExecutable": true,
-    "tier": 1
+    "tier": 0
   },
   "sybildrop": {
     "label": "sybildrop",
@@ -412,7 +412,7 @@
     "owner": "0xEA0C3bB39a1eE74dF70f1F07D87A0e58fEA5BA99",
     "contenthash": "bafybeih5dsc22klk3po7ykhhkbzqxannf3lrazjo4pfhs5jg3bwgq7l4xm",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "my-dotkit": {
     "label": "my-dotkit",
@@ -423,7 +423,7 @@
     "owner": "0xb77aF3Dd31D8CbFab24FAB23CB28b1583dC0BC91",
     "contenthash": "bafybeiftwhwr7yl4ap7ya7iaf3gbw4dxa663aedi7qcmea3otl5calnz6q",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "doomarcade00": {
     "label": "doomarcade00",
@@ -434,7 +434,7 @@
     "owner": "0xE510Df763d6F8B1545987ced0407EB1b52FD9cA2",
     "contenthash": "bafybeia3hqdxuleam3pd3qcdyxgdsnywm4tfj7trskuhxpnyy65742scs4",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "discreetly": {
     "label": "discreetly",
@@ -459,7 +459,7 @@
     "owner": "0xE510Df763d6F8B1545987ced0407EB1b52FD9cA2",
     "contenthash": "bafybeidf6v4a55s22g3kbmucoqfw6n3svgm6d4tdjb4kuuf6mmtld25ahu",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "docs": {
     "label": "docs",
@@ -470,7 +470,7 @@
     "owner": "0xF8d186c352e2ea0B9C02c211525A20DdcB8CD2dD",
     "contenthash": "bafybeigimgfrxz7wwvzs6cctz4zfsao2qlgn3bma7bliofwyid4mhwieli",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "oblv-widgets": {
     "label": "oblv-widgets",
@@ -484,7 +484,7 @@
     "iconCid": "bafk2bzaceacenpz6vvsdra4y3ecaecagcwqatmh6hrfjre4i3bbekmlkrmxcu",
     "contenthash": "bafybeiee3h227jpjenz3vgm3j62hg7bx6jjdnrzs6o3iyzvuighyak4egu",
     "hasExecutable": true,
-    "tier": 1
+    "tier": 0
   },
   "dotify-test01": {
     "label": "dotify-test01",
@@ -495,7 +495,7 @@
     "owner": "0xe3e3a0916d27c5174313f16E1507a286985a8Ac8",
     "contenthash": "bafybeiamsq2nvjre64x5pc2v6dfefbgmlha7xbwgmhufdw7yo2b77oc7x4",
     "hasExecutable": false,
-    "tier": 2
+    "tier": 1
   },
   "giganetwork": {
     "label": "giganetwork",
@@ -504,7 +504,7 @@
     "firstSeenBlock": 11468828,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
     "hasExecutable": false,
-    "tier": 3,
+    "tier": 2,
     "firstSeenAt": 1785126216
   },
   "oblv-wg-calc": {
@@ -518,7 +518,7 @@
     "iconCid": "bafk2bzaceds7nl5tpypqlbqg2fvbelzyss7ukimjhoyvc54vaix3y67in4t22",
     "contenthash": "bafybeihalahyx7ovyjnrzldvbk647innt6b5wgl73vcvg2wfaffnq43uva",
     "hasExecutable": true,
-    "tier": 1,
+    "tier": 0,
     "firstSeenAt": 1785137280
   },
   "oblv-wg-crypto": {
@@ -532,7 +532,7 @@
     "iconCid": "bafk2bzacedau7eiw7w4ytqpuuqczttp7bqtugmtfnp2bpnwjip6qkf6v5mlyg",
     "contenthash": "bafybeievsytmwxsyvnkx2kex4qy7pgpy6sip5i57ufhtk7it4nnzhoobdq",
     "hasExecutable": true,
-    "tier": 1,
+    "tier": 0,
     "firstSeenAt": 1785137004
   },
   "oblv-wg-weather": {
@@ -546,7 +546,7 @@
     "iconCid": "bafk2bzacedufebmcldngv5wpokehpdohsr4giokimgdyez444ivrdvc3pymmi",
     "contenthash": "bafybeiddrfkdolvavs7dr2pkrr5hvc7x7gbaaastliupczihobg66a3rkm",
     "hasExecutable": true,
-    "tier": 1,
+    "tier": 0,
     "firstSeenAt": 1785135684
   },
   "oblv-wg-clock": {
@@ -560,7 +560,7 @@
     "iconCid": "bafk2bzacebtrbj6cthxslnbk3isffl767jspkksw66l3pr3wcimnguu5s2cgk",
     "contenthash": "bafybeicei2jh5mbtwk4qukntm2jgt3su2svzb4zbemsxyj2khleowdltoq",
     "hasExecutable": true,
-    "tier": 1,
+    "tier": 0,
     "firstSeenAt": 1785137520
   },
   "oblv-wg-todo": {
@@ -571,7 +571,7 @@
     "owner": "0x5B2C33bCD86f341d3f09D17cee117469337B169A",
     "contenthash": "bafybeih42ygvyqrzjcb467qm2wc7lzoj2haketz2khicj6vd2w5moo7bk4",
     "hasExecutable": true,
-    "tier": 1,
+    "tier": 0,
     "firstSeenAt": 1785141768,
     "displayName": "Oblv Todo",
     "description": "Liste de tâches sur le dashboard : saisie rapide (échéance, priorité, tags), tri par urgence, tout en local.",
@@ -588,8 +588,7 @@
     "iconCid": "bafk2bzacedvhbtlwzpk37j6tmqtcpgwviq7apg7rzjj7ppcg2rakd2vjlnifc",
     "contenthash": "bafybeiert4uhagj5id5cilekqintjxz3e65gvl3gnew74c2y2zs6ie2vmq",
     "hasExecutable": true,
-    "tier": 1,
-    "firstSeenAt": 1785145152
+    "tier": 0
   },
   "oblv-wg-opengov": {
     "label": "oblv-wg-opengov",
@@ -602,8 +601,7 @@
     "iconCid": "bafk2bzaceawkeutggbmsr2jfrkxw4oxszvihofpg5kxbdkcm6xehj3yphhln2",
     "contenthash": "bafybeihsqf32krrfmbczbdtascq26ni52gahre3qoub6n2z7w5qzr2de34",
     "hasExecutable": true,
-    "tier": 1,
-    "firstSeenAt": 1785142428
+    "tier": 0
   },
   "oblv-wg-rss": {
     "label": "oblv-wg-rss",
@@ -616,8 +614,7 @@
     "iconCid": "bafk2bzaceav6e2sdkiyovopfypylnut3k4qesca57wukuzfwh74k627kqg7ym",
     "contenthash": "bafybeif34n46a3c6jbrnker3hkmzbecn3vc3fljnjipdpax2acbpcjjxsi",
     "hasExecutable": true,
-    "tier": 1,
-    "firstSeenAt": 1785142344
+    "tier": 0
   },
   "excluded": [
     "bfyi",
