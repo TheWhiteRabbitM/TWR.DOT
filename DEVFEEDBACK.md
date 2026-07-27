@@ -22,6 +22,35 @@ dotns 0.8.0, cdm, @parity/product-sdk 0.19.x, dotli shell 0.6.8 (dev), Chrome 14
 Each item below is something Claude Code observed directly, stated as fact, followed by
 a suggestion. No speculation about root causes is included.
 
+An LLM-oriented companion — the same ground stated as "symptom → cause → working
+code" for an agent writing apps on this platform — is in [`llms.txt`](llms.txt).
+
+---
+
+## Summary
+
+Ranked by what it costs a developer, not by how hard it looks to fix.
+
+| # | Finding | Impact |
+|---|---|---|
+| 12 | Personhood write paths cannot be exercised without a granted account | **Blocks every app's real purpose.** Everything here ships demo-first because of it |
+| 4a | External links do nothing in the mobile shell (`navigateTo` never settles, `window.open` shows nothing) — same build works on desktop | **Silent dead end.** Cost us a full day across three wrong diagnoses |
+| 6 | `registry.resolver(node)` points at a resolver that reverts; records are readable only by calling the content resolver directly | **Breaks standard ENS-style resolution.** Once known, it is the unlock for all app metadata |
+| 8 / 8a | No supported enumeration; the official directory stores labelhashes only, emits no events, and cannot name 15 of its 19 entries | **The ecosystem cannot be indexed** by anyone who is not walking raw calldata |
+| 3 | Fetches to non-approved origins fail indistinguishably from network errors | Controls that appear to do nothing until you find `requestPermission` |
+| 2 | A nested third-party iframe blanks the app, no console output | Blank screen, no diagnostic |
+| 1 | One name stalls in resolution while sibling names resolve | Intermittent, name-specific, no per-name diagnostics |
+| 9 | The short-name personhood rule surfaces only after the commit transaction | Wasted transaction and a confusing error |
+| 12a | Self-updating apps need infrastructure outside the platform | Every "live" app needs a cron somewhere and a key in it |
+| 10 / 11 | Custom signed extensions break vanilla tooling; historical blocks do not decode | Recoverable once you know; costs an afternoon each |
+| 5 | The root-manifest contract is documented only in source code | Found by reading the shell's source |
+| 7 | Spinner output makes `pad` / `dotns` logs unusable in CI | Scripting requires grepping for `baf…` |
+| 4 | Native `<select>` did not open inside the shell on tested devices | Not fully isolated to the shell; worked around app-side |
+| 4b | Apps that ignore the History API turn the back gesture into "quit" | **Our bug**, documented because the symptom reads as a shell defect |
+
+The single highest-leverage change remains **12**: a rate-limited self-service Lite
+grant on the devnet would let builders exercise the write path they are building for.
+
 ---
 
 ## dotli-community (shell / resolver)

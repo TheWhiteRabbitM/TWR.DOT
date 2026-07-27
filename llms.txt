@@ -1,0 +1,285 @@
+# Building .dot apps on the Polkadot Products Devnet — notes for an LLM
+
+You are probably here because you are writing or debugging an app that runs inside the
+Polkadot app (the "shell"), published to a `.dot` name. This file is the shortest path
+between "it does nothing and there is no error" and working code.
+
+Everything below was established by building, publishing and operating seven apps on the
+devnet between 2026-07-23 and 2026-07-27, and re-verified against the live chain. The
+same ground stated as a report for the platform's engineers is in `DEVFEEDBACK.md`;
+this file is the practical half. Where a claim is unverified, it says so.
+
+**The one rule that matters:** on this platform, *the normal failure mode is silence*.
+Blocked fetches, blocked popups, wedged host calls and clipped tooltips all present as
+"the button does nothing". Assume nothing worked until you have evidence it did, and
+never write a code path whose failure is invisible.
+
+---
+
+## 1. Verified constants
+
+```
+EVM RPC (public, no key)   https://paseo-assethub-rpc.laissez-faire.trade
+Substrate RPC             wss://asset-hub-paseo-rpc.n.dwellir.com
+DotNS registry            0x527b08a640b527a3dae0C4BE04D7344E430B6E50
+Content resolver          0x326bdE29315199c814B1c58b431D84D16EA5cE41   <- call this directly
+Browse (official listing)  0xaab42efbe8ea4d4228c3a11e973f94c17b9a0f2c
+Personhood precompile     0x000000000000000000000000000000000a010000
+App iframe sandbox (web gateway, read from the live DOM):
+  allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups
+  (no allow-downloads, no allow-top-navigation)
+```
+
+Shell page is `<name>.dev-dot.li`; the app itself runs in a cross-origin iframe at
+`<name>.app.dev-dot.li/?chainBackend=…&cid=…`.
+
+---
+
+## 2. The traps
+
+### T1 — Host calls can hang forever, so your fallback never runs
+
+**Symptom:** a button that calls the SDK does nothing, with no error and no console output.
+
+**Cause:** the TrUAPI client has **no request timeout**, and its iframe transport queues
+frames while the channel to the host is not established (`@parity/truapi/dist/sandbox.js`,
+`postMessage` pushes to `queued` with no timer). `await navigateTo(url)` can therefore
+never settle. Any fallback written after that `await` is unreachable code.
+
+**Fix:** race every host call against a deadline. Never `await` a host call bare.
+
+```ts
+const outcome = await Promise.race([
+  host.navigateTo(url).then((r) => (r.ok ? 'ok' : 'refused')),
+  new Promise<'timeout'>((res) => setTimeout(() => res('timeout'), 1500)),
+]);
+```
+
+Also: `isInsideContainer()` is **not** a health check — it resolves `window !== window.top`.
+Use it to choose an order, never to skip a fallback. Prefer the sync
+`isInsideContainerSync()`; the async one only wraps it and adds a failure point.
+
+### T2 — `window.open(url, '_blank', 'noopener')` returns null even when it works
+
+**Symptom:** you check the return value, always get `null`, and conclude popups are blocked.
+
+**Cause:** per spec, the `noopener` feature makes `window.open` return `null`. Success and
+blockage become indistinguishable.
+
+**Fix:** drop the feature and sever the opener on the handle.
+
+```ts
+const w = window.open(url, '_blank');
+if (w) { try { w.opener = null; } catch {} }
+```
+
+### T3 — In the mobile shell, no documented route opens an external link
+
+**Symptom:** external links work in the desktop shell and do nothing in the mobile app,
+from the same published bundle.
+
+**Cause:** `navigateTo` does not answer (T1) and `window.open` produces no visible window.
+
+**Fix:** hand the URL to the operating system instead. Mobile web views honour platform
+schemes even when they refuse popups. Use a detached iframe, not `location.href`: an
+unclaimed scheme then fails silently instead of stranding the app on an error page.
+
+```ts
+const url = isIOS()
+  ? `maps://?q=${encodeURIComponent(name)}&ll=${lat},${lon}`
+  : `geo:${lat},${lon}?q=${lat},${lon}(${encodeURIComponent(name)})`;
+const f = document.createElement('iframe');
+f.style.cssText = 'position:absolute;width:0;height:0;border:0;visibility:hidden';
+f.src = url;
+document.body.appendChild(f);
+setTimeout(() => f.remove(), 1500);
+```
+
+A scheme handoff returns **no signal**. Never report success from it — keep a visible
+"didn't open? here is the link" affordance either way.
+
+**Practical strategy that survives all three engines:** try the host (raced), then the
+popup, then a sheet showing the URL with a copy button and a real `<a>` the *user* taps.
+Remember in `sessionStorage` that the host did not answer, and skip it on later taps —
+a popup is only allowed while the tap is still "transiently active", and waiting on a
+wedged host spends exactly that window. Keep a breadcrumb (`host:timeout>popup:blocked>manual`)
+and show it: it converts "it does nothing" into a diagnosis.
+
+### T4 — Ignoring the History API turns the back gesture into "quit"
+
+**Symptom:** a back swipe exits the app instead of returning to the previous view. Or
+worse: the first swipe appears to do nothing and the second closes the app.
+
+**Cause:** the shell pops history. An app that navigates by internal state pushes nothing,
+so there is nothing to pop. An app that pushes (e.g. by setting `location.hash`) but does
+not listen for `popstate`/`hashchange` rewinds the URL while the view stays put.
+
+**Fix:** push on navigate, and *follow* the URL back.
+
+```ts
+useEffect(() => {
+  const sync = () => setView(parse(window.location.hash));
+  addEventListener('hashchange', sync);
+  addEventListener('popstate', sync);
+  return () => { removeEventListener('hashchange', sync); removeEventListener('popstate', sync); };
+}, []);
+```
+In-app back buttons should call `history.back()`, not push another entry.
+
+### T5 — Outbound fetches fail silently until you ask for the origin
+
+**Symptom:** `fetch()` fails exactly like a network error; controls appear inert.
+
+**Fix:** request every origin **once, at startup**, as hostnames (not URLs).
+
+```ts
+await host.requestPermission({ tag: 'Remote', value: { domains: ['nominatim.openstreetmap.org', 'tile.openstreetmap.org'] } });
+```
+
+### T6 — A nested third-party iframe blanks the whole app
+
+No console output, no error. Do not embed iframes (map embeds, widgets). For maps, use
+raw tile `<img>` elements; they load fine once the tile host is permitted (T5).
+
+### T7 — Native `<select>` did not open on tested devices
+
+Replace every `<select>` with a custom control: chips, a segmented control, a bottom sheet,
+or a range input. (Not fully isolated to the shell — but the workaround costs an hour and
+removes the question.)
+
+### T8 — `registry.resolver(node)` points at a resolver that reverts
+
+**Symptom:** `text()` / `contenthash()` revert; you conclude records are unreadable and
+start reading raw storage slots.
+
+**Cause:** the registry's resolver pointer returns a dead address for most names (36 of 66
+checked; 8 point at the working resolver, `browse.dot` among them; 22 have no record).
+
+**Fix:** ignore the pointer and call the content resolver directly at
+`0x326bdE29315199c814B1c58b431D84D16EA5cE41`. `text(node,'manifest')`,
+`contenthash(node)` and `text(namehash('app.'+label+'.dot'),'executable')` all work over
+plain `eth_call`, no host and no personhood required.
+
+The gallery manifest is a text record named `manifest`:
+
+```json
+{"$v":1,"displayName":"…","description":"…","icon":{"cid":"baf…","format":"png"}}
+```
+
+This is also your only "SEO": it is the sole machine-readable description of an app.
+14 of 42 registered names have one. If you publish an app, write it.
+
+### T9 — Labels scraped from calldata are ~1/3 garbage
+
+**Symptom:** your index lists names that do not exist.
+
+**Cause:** registry events carry only hashed names, so enumeration means walking blocks and
+extracting ascii runs from raw registration calldata. That admits noise.
+
+**Fix:** verify every candidate before admitting it.
+
+```
+registry.owner(namehash(label + '.dot')) != 0x0
+```
+On our data this removed 21 of 63 candidates. Also: any `lastSeenBlock`-style field derived
+from that scan is meaningless — never build a metric on it.
+
+### T10 — Every write is personhood-gated, and you probably do not have it
+
+`press()`, `sign()`, `review()`, `book()` revert with `NotHuman(0, …)` for an ordinary
+devnet account. Design **demo-first**: a fully usable local/demo path, with the real
+contract deployed and *read* live behind it, and a single flag to switch the demo off.
+Reads are permissionless — use them, they are what makes the demo honest.
+
+Names shorter than 9 characters additionally require **Full** personhood to register, and
+the CLI only tells you *after* the commit transaction.
+
+### T11 — `pad` / `dotns` output is unusable in scripts
+
+The progress spinner emits one character per line in non-TTY captures. The stable lines
+are `Incremental: previous contenthash…`, `Setting contenthash:`, `Verified on-chain:`.
+For a CID, grep the raw output:
+
+```bash
+CID=$(dotns bulletin upload file.json --env devnet 2>&1 | tr -d '\r' | grep -aoE 'baf[a-z0-9]{50,}' | head -1)
+```
+Always gate a publish on `Verified on-chain` actually appearing, or a failed publish looks
+like a successful one.
+
+### T12 — Build on the OS that owns `node_modules`
+
+If `node_modules` was installed on Windows, a WSL build fails on missing native binaries —
+and a scheduled job that ignores the failure will happily republish the *old* `dist` and
+report success. From WSL, build through interop and abort on failure:
+
+```bash
+cmd.exe /c "npm run build" || { echo "build failed — not publishing"; exit 1; }
+```
+
+### T13 — `touch-action: none` eats the shell's gestures
+
+Set on a chart or canvas so pointer tracking works, it swallows every swipe that begins
+there — including the shell's back gesture. Use `touch-action: pan-y`. Likewise
+`overscroll-behavior: none` on the document disables gestures app-wide.
+
+### T14 — Fixed-width SVG is clipped on a phone
+
+A chart with `width={800}` inside a 342px container hides its right-hand side, and a
+horizontal scroller for it fights the shell's swipe. Use `width="100%"` with a `viewBox`
+and cap it with `style={{ maxWidth: NATURAL_W }}`. Derive any pointer maths from the
+*rendered* width: `scale = rect.width / VIEWBOX_W`.
+
+### T15 — Tooltips get clipped by their own card
+
+Cards clip overflow, so a tip above the top row and a tip below the bottom row both leave
+the card. Choose the side from the available space, and pin to the left/right edge near
+the sides.
+
+### T16 — Historical blocks do not decode; custom signed extensions break vanilla tooling
+
+Decoding old extrinsics via `@polkadot/api` fails with `findMetaCall: Unable to find Call
+with index` after a runtime upgrade — use **events** plus raw block bytes. And transactions
+built with vanilla polkadot.js/PAPI fail against this chain's signed-extension set
+(`AsPgas`, `AsPerson`, …): sign through the Product SDK.
+
+### T17 — Nothing indexes .dot apps, including the official directory
+
+Browse holds 19 entries storing only labelhashes, emits zero logs, and `labelOf()` returns
+empty — 4 of 19 names are recoverable by brute force. The web gateway serves a byte-identical
+shell for every name, so no web crawler sees any app. If discoverability matters to your
+app, you cannot rely on being found: write your `manifest` record (T8) and expect to be
+indexed only by someone walking the chain.
+
+### T18 — "Self-updating" needs a cron outside the platform
+
+Bulletin hosting is static and there is no platform-native scheduled compute. A site that
+refreshes its own data needs an external runner (GitHub Actions works; free tier is enough)
+and therefore a publish key in a secret store. Budget for that, and never put a key with
+real value in it.
+
+---
+
+## 3. Checklist before you ship
+
+- [ ] Every host call raced against a deadline; no bare `await` on the SDK
+- [ ] Every external link has a visible fallback that cannot fail (copy the URL)
+- [ ] Views push history; `popstate`/`hashchange` restore them
+- [ ] All outbound origins requested at startup, as hostnames
+- [ ] No `<select>`, no nested iframes, no `touch-action: none` on large surfaces
+- [ ] Charts responsive by `viewBox`, tooltips side-aware
+- [ ] Write paths gated → demo path that works for everyone, with reads live from chain
+- [ ] `manifest` text record written, icon uploaded to Bulletin
+- [ ] Publish gated on `Verified on-chain`
+- [ ] Failure states say what failed, in words a non-developer can repeat back to you
+
+## 4. If you are debugging "it does nothing"
+
+1. Is it silent-failure by design? Check T1 (hang), T2 (null handle), T5 (permission).
+2. Reproduce **inside the shell**, not just locally: load `https://<name>.dev-dot.li`, and
+   read the app iframe's `sandbox` attribute from the parent page. Desktop and mobile
+   shells behave differently — a fix verified on desktop proves nothing about mobile.
+3. Verify what is actually published: compare the on-chain contenthash
+   (`dotns content view <name>.dot --env devnet`) with your local build. Vite's asset
+   filenames are content hashes — same name means same bytes.
+4. Instrument before you guess. A breadcrumb string in the UI turned three wrong theories
+   into one measurement, in the work that produced this file.
