@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeifjjzrcgopql7z62ipmbkncnrsilsxi3nbu4su6qslckun7pwnfqi",
+    "contenthash": "bafybeic4kqug7izvmk32drcswrjysra4yy246wskhlkmjzqxpisxy3ayvu",
     "hasExecutable": false,
     "tier": 0
   },
@@ -217,7 +217,7 @@
     "firstSeenBlock": 11356536,
     "firstSeenAt": 1784897232,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
-    "contenthash": "bafybeihhl7yb5enljp2v2nddlxufx24a5nv6wlhgv5qxfh3lzqkb533oba",
+    "contenthash": "bafybeigke5mk5decwjbzomujp5umdx76p3hyvz3qjhnvdziavikttt4byq",
     "hasExecutable": false,
     "tier": 1
   },
@@ -325,7 +325,7 @@
     "displayName": "Italia Rovente",
     "description": "How much hotter Italy has become since 1940: stripes, records, seas, 107 cities.",
     "iconCid": "bafybeifh6ar4ukh4kxp5znfrce3bissnpnqdbhdpfczvgcjbfxk6pb6wpq",
-    "contenthash": "bafybeicg7whif2oothvijywtkw73ovfxxr7b2j7na2cxqcdjikpcuznknm",
+    "contenthash": "bafybeidopbatje6l44kwtu4ylptnqspilln7cxapdub2tyek7xslt5zawe",
     "hasExecutable": false,
     "tier": 0
   },
@@ -626,7 +626,7 @@
     "url": "https://pennypixel.dev-dot.li",
     "firstSeenBlock": 11491863,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeics336o36ccmabvugye5yaardrqnlu7sqsvaonyx5wqdmxzvh3ibq",
+    "contenthash": "bafybeiakohrukzlvyrnx7g4soye3oktkbghd4ylmepoeblfumob6ykimqm",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172608
@@ -637,7 +637,7 @@
     "url": "https://proofoftake.dev-dot.li",
     "firstSeenBlock": 11491943,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeidzvrvp32b5x5kx6ca7karlyb2ccwksjavmain3ug2rhbmqby4aym",
+    "contenthash": "bafybeiealely5bnvorvwxumgjvd64k6qcdozt5luykxehwmffvlglkan24",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172776
@@ -648,7 +648,7 @@
     "url": "https://stealcrown.dev-dot.li",
     "firstSeenBlock": 11491790,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeidhxjbygf63jl57uvrs5tyd2u2sveyre5ushahuh2vf23ohpyas3m",
+    "contenthash": "bafybeiahe5a7wvxmwatxaxdnfr7g6vpb4rdbdjq3vtjlyz4hqlmjqtsbpu",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172452
