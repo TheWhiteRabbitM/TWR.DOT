@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeiclsartlwubgfss6ktps2537t5jzxcmjwrbyynf5j77idafnstk74",
+    "contenthash": "bafybeihzlv2fd6q2kza7qjtsqio4etdoz54pabpqc6vea77j6lf76ayl74",
     "hasExecutable": false,
     "tier": 0
   },
@@ -217,7 +217,7 @@
     "firstSeenBlock": 11356536,
     "firstSeenAt": 1784897232,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
-    "contenthash": "bafybeigwxokck2irdd3pbtuxwg4xgjod7plaf5wx5iudx5bxgatimi34eq",
+    "contenthash": "bafybeihoemhbaeog2gq337odt3j33jpzlko67ozlnknvjvffuhva2m5a6y",
     "hasExecutable": false,
     "tier": 1
   },
