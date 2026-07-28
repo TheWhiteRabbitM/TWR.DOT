@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeihlcvpzkschzoxo4qv2hguvz2gzyyx2lpnxuomus3wni7egy3fzz4",
+    "contenthash": "bafybeie45jt2m4ognv2iyxkl5q3337skjvmvkkvjv6pkzlyrxeyleogbvi",
     "hasExecutable": false,
     "tier": 0
   },
@@ -311,7 +311,7 @@
     "firstSeenBlock": 11369180,
     "firstSeenAt": 1784922660,
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
-    "contenthash": "bafybeiegq4okfus3cm46kjpbo54w6dsyp5g3ybdq2rqxnpjcqae5zjpwnq",
+    "contenthash": "bafybeiblkr2aipaqumyot5a6ljmgo3tey63hc454qliobrfzplrjrym47m",
     "hasExecutable": false,
     "tier": 1
   },
@@ -626,7 +626,7 @@
     "url": "https://pennypixel.dev-dot.li",
     "firstSeenBlock": 11491863,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeiakohrukzlvyrnx7g4soye3oktkbghd4ylmepoeblfumob6ykimqm",
+    "contenthash": "bafybeif6kzcxjqs67bxo52tcqdnmmucfmidxsc5csvf5tvppzau6wd2wxy",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172608
@@ -637,7 +637,7 @@
     "url": "https://proofoftake.dev-dot.li",
     "firstSeenBlock": 11491943,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeiealely5bnvorvwxumgjvd64k6qcdozt5luykxehwmffvlglkan24",
+    "contenthash": "bafybeifqkrainp5dei7y7g2vbpcq7hhdnkvumixonirpwlpzy4az7bualq",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172776
@@ -648,7 +648,7 @@
     "url": "https://stealcrown.dev-dot.li",
     "firstSeenBlock": 11491790,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeiahe5a7wvxmwatxaxdnfr7g6vpb4rdbdjq3vtjlyz4hqlmjqtsbpu",
+    "contenthash": "bafybeifbhll32bcc6sxphaqq4igajcp3dsngk67mh34omfhmlhh45y3jfu",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172452
@@ -727,8 +727,9 @@
     "firstSeenBlock": 11518722,
     "owner": "0x40C862e3C61B4c62BA0B04668167E9006e900b3B",
     "hasExecutable": false,
-    "tier": 2,
-    "firstSeenAt": 1785229452
+    "tier": 1,
+    "firstSeenAt": 1785229452,
+    "contenthash": "bafybeieeuoxhzy345gdli75cqax7po4gide2knz6hubkdw5dcu6i655xn4"
   },
   "ip-assets": {
     "label": "ip-assets",
@@ -739,6 +740,16 @@
     "hasExecutable": false,
     "tier": 2,
     "firstSeenAt": 1785245088
+  },
+  "oblv-vault": {
+    "label": "oblv-vault",
+    "domain": "oblv-vault.dot",
+    "url": "https://oblv-vault.dev-dot.li",
+    "firstSeenBlock": 11529418,
+    "owner": "0xcB8A478dC95aC8F39168f41CD5dBEC789e6722dd",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785253944
   },
   "excluded": [
     "bfyi",
