@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeibhx43ffpvexevq2tbdejmqqevlvjtjd5iqxcy7cfkez6alhyqksu",
+    "contenthash": "bafybeihlcvpzkschzoxo4qv2hguvz2gzyyx2lpnxuomus3wni7egy3fzz4",
     "hasExecutable": false,
     "tier": 0
   },
@@ -311,7 +311,7 @@
     "firstSeenBlock": 11369180,
     "firstSeenAt": 1784922660,
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
-    "contenthash": "bafybeif7buqldeiaeeubaha6cjnb7wf2h7wcqacuujxf6rcigho6wznhbe",
+    "contenthash": "bafybeiegq4okfus3cm46kjpbo54w6dsyp5g3ybdq2rqxnpjcqae5zjpwnq",
     "hasExecutable": false,
     "tier": 1
   },
@@ -716,8 +716,9 @@
     "firstSeenBlock": 11518345,
     "owner": "0x65109534F24535EF49d755C4b67472Dc21237dc3",
     "hasExecutable": false,
-    "tier": 2,
-    "firstSeenAt": 1785228360
+    "tier": 1,
+    "firstSeenAt": 1785228360,
+    "contenthash": "bafybeifg4wzhgrcfft2pjg6fyjm3jlwp5p22p4pu2q5aflifz3iu7txm3a"
   },
   "yechops-preview": {
     "label": "yechops-preview",
@@ -729,10 +730,21 @@
     "tier": 2,
     "firstSeenAt": 1785229452
   },
+  "ip-assets": {
+    "label": "ip-assets",
+    "domain": "ip-assets.dot",
+    "url": "https://ip-assets.dev-dot.li",
+    "firstSeenBlock": 11525214,
+    "owner": "0x63aa82aF16018686D0160a00c17dd0e342ef78FF",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785245088
+  },
   "excluded": [
     "bfyi",
     "btcusd",
     "cig6",
+    "codqx",
     "ctvz",
     "dotusd",
     "dqrwx",
@@ -750,6 +762,7 @@
     "ik4j",
     "kwzy",
     "l6qrt",
+    "lvfry",
     "mlgxcw",
     "mnmd",
     "mplj",
@@ -763,6 +776,7 @@
     "v944",
     "vf5sy",
     "widget",
+    "yj2jxd",
     "z0m9",
     "zluj"
   ]
