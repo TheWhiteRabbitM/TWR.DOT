@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeie45jt2m4ognv2iyxkl5q3337skjvmvkkvjv6pkzlyrxeyleogbvi",
+    "contenthash": "bafybeib47eudgxbbyk3luyrj6uws5cdw2i3nyu7v57a76y2zm246mqbxqm",
     "hasExecutable": false,
     "tier": 0
   },
@@ -626,7 +626,7 @@
     "url": "https://pennypixel.dev-dot.li",
     "firstSeenBlock": 11491863,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeif6kzcxjqs67bxo52tcqdnmmucfmidxsc5csvf5tvppzau6wd2wxy",
+    "contenthash": "bafybeigs4mkljusoqy6x4jggw7hzeomb26slb6c7nwvgf4ul4zkomduiqu",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172608
@@ -637,7 +637,7 @@
     "url": "https://proofoftake.dev-dot.li",
     "firstSeenBlock": 11491943,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeifqkrainp5dei7y7g2vbpcq7hhdnkvumixonirpwlpzy4az7bualq",
+    "contenthash": "bafybeifpum4czsmjqa53xla74y7ipvf3vjnd7vh2uo7mez77ys63t72g3m",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172776
@@ -648,7 +648,7 @@
     "url": "https://stealcrown.dev-dot.li",
     "firstSeenBlock": 11491790,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeifbhll32bcc6sxphaqq4igajcp3dsngk67mh34omfhmlhh45y3jfu",
+    "contenthash": "bafybeibzojyeqei3frb7xj2ndsnqehnbkulf6igb6cxk2qz5qfcxwr45za",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172452
@@ -705,9 +705,13 @@
     "url": "https://tintaprotocol.dev-dot.li",
     "firstSeenBlock": 11503499,
     "owner": "0xbC3410e4681EA643027Cd6fE15551a33b3AbDA26",
-    "hasExecutable": false,
-    "tier": 2,
-    "firstSeenAt": 1785197808
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1785197808,
+    "displayName": "Tinta",
+    "description": "Sella lo que escribes. Cualquiera puede comprobar que no cambió.",
+    "iconCid": "bafk2bzaceblh5g66gxuveikvhntjbg24yugjmr3qgclfmihcizdfpgnv4tf36",
+    "contenthash": "bafybeid5pu7u4zjhujjj34grlmer2tmq6zwm7k3gezxlrx7rro7qwjfmi4"
   },
   "buy-or-sell": {
     "label": "buy-or-sell",
@@ -751,6 +755,38 @@
     "tier": 2,
     "firstSeenAt": 1785253944
   },
+  "bulletin-explorer": {
+    "label": "bulletin-explorer",
+    "domain": "bulletin-explorer.dot",
+    "url": "https://bulletin-explorer.dev-dot.li",
+    "firstSeenBlock": 11532594,
+    "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785261840
+  },
+  "mini-lucky-smoke": {
+    "label": "mini-lucky-smoke",
+    "domain": "mini-lucky-smoke.dot",
+    "url": "https://mini-lucky-smoke.dev-dot.li",
+    "firstSeenBlock": 11531089,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeigkxuo47vkt4o2mjr2cfinswytrdo4yom3wobx75lan7gcczxkfke",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1785258336
+  },
+  "pilliodot": {
+    "label": "pilliodot",
+    "domain": "pilliodot.dot",
+    "url": "https://pilliodot.dev-dot.li",
+    "firstSeenBlock": 11532679,
+    "owner": "0xE854AcF95A9129FceFE544ABA791689A8252F7b7",
+    "contenthash": "bafybeibzwwfzifdqbrbxuvrwnvwi2coiaoyxgdryqwlkkbdnzahfhtn5ay",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1785262020
+  },
   "excluded": [
     "bfyi",
     "btcusd",
@@ -787,6 +823,7 @@
     "v944",
     "vf5sy",
     "widget",
+    "xqdb",
     "yj2jxd",
     "z0m9",
     "zluj"
