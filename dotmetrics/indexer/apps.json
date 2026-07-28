@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeic4kqug7izvmk32drcswrjysra4yy246wskhlkmjzqxpisxy3ayvu",
+    "contenthash": "bafybeiggjcnc2dsgnsjjdlk63sdd27jgbfwt6in2objn4op3le2vxp2nye",
     "hasExecutable": false,
     "tier": 0
   },
@@ -217,7 +217,7 @@
     "firstSeenBlock": 11356536,
     "firstSeenAt": 1784897232,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
-    "contenthash": "bafybeigke5mk5decwjbzomujp5umdx76p3hyvz3qjhnvdziavikttt4byq",
+    "contenthash": "bafybeihvlvikojsdu467372lplchc252drzdl26dw5vdfqo5wc77kx7keu",
     "hasExecutable": false,
     "tier": 1
   },
@@ -469,7 +469,7 @@
     "firstSeenBlock": 11433475,
     "firstSeenAt": 1785053724,
     "owner": "0xF8d186c352e2ea0B9C02c211525A20DdcB8CD2dD",
-    "contenthash": "bafybeigimgfrxz7wwvzs6cctz4zfsao2qlgn3bma7bliofwyid4mhwieli",
+    "contenthash": "bafybeiboit23mgalz7y2j2aii23ekve2ex52wdunbefbe3gqnofvsgz3a4",
     "hasExecutable": false,
     "tier": 1
   },
@@ -662,7 +662,7 @@
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785185004,
-    "contenthash": "bafybeieqlumgamwlj623oj4qp3qml6xzko4i47dbvblxksf2ifealbdid4"
+    "contenthash": "bafybeie4atsvecq24ljajlhjcmadrnlrhfmirtb6t3xb6aufyicxptbyxy"
   },
   "hello-devnet-ynrc46": {
     "label": "hello-devnet-ynrc46",
@@ -708,6 +708,26 @@
     "hasExecutable": false,
     "tier": 2,
     "firstSeenAt": 1785197808
+  },
+  "buy-or-sell": {
+    "label": "buy-or-sell",
+    "domain": "buy-or-sell.dot",
+    "url": "https://buy-or-sell.dev-dot.li",
+    "firstSeenBlock": 11518345,
+    "owner": "0x65109534F24535EF49d755C4b67472Dc21237dc3",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785228360
+  },
+  "yechops-preview": {
+    "label": "yechops-preview",
+    "domain": "yechops-preview.dot",
+    "url": "https://yechops-preview.dev-dot.li",
+    "firstSeenBlock": 11518722,
+    "owner": "0x40C862e3C61B4c62BA0B04668167E9006e900b3B",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785229452
   },
   "excluded": [
     "bfyi",
