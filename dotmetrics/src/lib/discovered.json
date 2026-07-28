@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeihzlv2fd6q2kza7qjtsqio4etdoz54pabpqc6vea77j6lf76ayl74",
+    "contenthash": "bafybeifjjzrcgopql7z62ipmbkncnrsilsxi3nbu4su6qslckun7pwnfqi",
     "hasExecutable": false,
     "tier": 0
   },
@@ -217,7 +217,7 @@
     "firstSeenBlock": 11356536,
     "firstSeenAt": 1784897232,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
-    "contenthash": "bafybeihoemhbaeog2gq337odt3j33jpzlko67ozlnknvjvffuhva2m5a6y",
+    "contenthash": "bafybeihhl7yb5enljp2v2nddlxufx24a5nv6wlhgv5qxfh3lzqkb533oba",
     "hasExecutable": false,
     "tier": 1
   },
@@ -626,7 +626,7 @@
     "url": "https://pennypixel.dev-dot.li",
     "firstSeenBlock": 11491863,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeibybbe2gadktszdhy7dynd3cxshhtlf3cdlieis6wkytatbycybhy",
+    "contenthash": "bafybeics336o36ccmabvugye5yaardrqnlu7sqsvaonyx5wqdmxzvh3ibq",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172608
@@ -637,7 +637,7 @@
     "url": "https://proofoftake.dev-dot.li",
     "firstSeenBlock": 11491943,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeig4kyqy246gfsbb7fx3a5duq74cirk3blr4p3cburptw7h4cbmye4",
+    "contenthash": "bafybeidzvrvp32b5x5kx6ca7karlyb2ccwksjavmain3ug2rhbmqby4aym",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172776
@@ -648,7 +648,7 @@
     "url": "https://stealcrown.dev-dot.li",
     "firstSeenBlock": 11491790,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeifw4hbup7buptgoaw5fin65vqw32vzdkcapq3u72idxaxe44ox7r4",
+    "contenthash": "bafybeidhxjbygf63jl57uvrs5tyd2u2sveyre5ushahuh2vf23ohpyas3m",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172452
@@ -698,6 +698,16 @@
     "hasExecutable": false,
     "tier": 2,
     "firstSeenAt": 1785188868
+  },
+  "tintaprotocol": {
+    "label": "tintaprotocol",
+    "domain": "tintaprotocol.dot",
+    "url": "https://tintaprotocol.dev-dot.li",
+    "firstSeenBlock": 11503499,
+    "owner": "0xbC3410e4681EA643027Cd6fE15551a33b3AbDA26",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785197808
   },
   "excluded": [
     "bfyi",
