@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeib47eudgxbbyk3luyrj6uws5cdw2i3nyu7v57a76y2zm246mqbxqm",
+    "contenthash": "bafybeiglomv54r4bpvjwg6au6f7hdii2n7box5cmobkzhgcinvcvdmvfca",
     "hasExecutable": false,
     "tier": 0
   },
@@ -311,7 +311,7 @@
     "firstSeenBlock": 11369180,
     "firstSeenAt": 1784922660,
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
-    "contenthash": "bafybeiblkr2aipaqumyot5a6ljmgo3tey63hc454qliobrfzplrjrym47m",
+    "contenthash": "bafybeiboigg52cqndjonb3l5cy63bwxotbcglvbrfiuhseycxfkm4hrbuy",
     "hasExecutable": false,
     "tier": 1
   },
@@ -711,7 +711,7 @@
     "displayName": "Tinta",
     "description": "Sella lo que escribes. Cualquiera puede comprobar que no cambió.",
     "iconCid": "bafk2bzaceblh5g66gxuveikvhntjbg24yugjmr3qgclfmihcizdfpgnv4tf36",
-    "contenthash": "bafybeid5pu7u4zjhujjj34grlmer2tmq6zwm7k3gezxlrx7rro7qwjfmi4"
+    "contenthash": "bafybeiff6dr75wzm24pedafwyab73mbglgymfs3fpg3k5ao3rvkfdx27x4"
   },
   "buy-or-sell": {
     "label": "buy-or-sell",
@@ -762,8 +762,9 @@
     "firstSeenBlock": 11532594,
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
     "hasExecutable": false,
-    "tier": 2,
-    "firstSeenAt": 1785261840
+    "tier": 1,
+    "firstSeenAt": 1785261840,
+    "contenthash": "bafybeihgwiqp6xpvuw775p375rknfmdy5jwkk74oyiq4dbobl3y3dawd6e"
   },
   "mini-lucky-smoke": {
     "label": "mini-lucky-smoke",
@@ -786,6 +787,16 @@
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785262020
+  },
+  "dotexplorer": {
+    "label": "dotexplorer",
+    "domain": "dotexplorer.dot",
+    "url": "https://dotexplorer.dev-dot.li",
+    "firstSeenBlock": 11536431,
+    "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1785270060
   },
   "excluded": [
     "bfyi",
