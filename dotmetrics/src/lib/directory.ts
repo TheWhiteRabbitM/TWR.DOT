@@ -17,7 +17,7 @@ import type { AppEntry } from './types';
  * record at the latest CID and resolve that first. Until then the baked
  * snapshot is always the fallback, so the page never depends on a fetch.
  */
-export const DIRECTORY_CID = 'bafybeidfc3i27js237wkpmdg76iwh2wftj2r3i2crwqwtvpcohxj5pflcy';
+export const DIRECTORY_CID = 'bafybeicuxtsmedvfzs3d2cs52uwzj2igoswomqznirwxxrzu5ks4i2sn2e';
 
 /**
  * Public IPFS gateways that bridge the devnet Bulletin bitswap network. Raced,

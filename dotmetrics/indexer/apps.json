@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeiglomv54r4bpvjwg6au6f7hdii2n7box5cmobkzhgcinvcvdmvfca",
+    "contenthash": "bafybeigoa3luwic3s2uhloenqxh5rw4xyunxwiz2q5qywp2isg5bdjmeta",
     "hasExecutable": false,
     "tier": 0
   },
@@ -311,7 +311,7 @@
     "firstSeenBlock": 11369180,
     "firstSeenAt": 1784922660,
     "owner": "0x82A06d576eEDC077F3dE3Fe350767D9d068Ab345",
-    "contenthash": "bafybeiboigg52cqndjonb3l5cy63bwxotbcglvbrfiuhseycxfkm4hrbuy",
+    "contenthash": "bafybeid57rs2jcvyny3vfbryye6unkzg4winpidkugt27h4yzqchipku5y",
     "hasExecutable": false,
     "tier": 1
   },
@@ -458,7 +458,7 @@
     "firstSeenBlock": 11425464,
     "firstSeenAt": 1785037284,
     "owner": "0xE510Df763d6F8B1545987ced0407EB1b52FD9cA2",
-    "contenthash": "bafybeidf6v4a55s22g3kbmucoqfw6n3svgm6d4tdjb4kuuf6mmtld25ahu",
+    "contenthash": "bafybeieszbj357ghwxcztejciiolhmyavlcggwfrqozzdamnbglchrfzqq",
     "hasExecutable": false,
     "tier": 1
   },
@@ -764,7 +764,7 @@
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785261840,
-    "contenthash": "bafybeihgwiqp6xpvuw775p375rknfmdy5jwkk74oyiq4dbobl3y3dawd6e"
+    "contenthash": "bafybeihagbwtxmh77vkttxiez3crmsdw3mo4cvys3gmuzgzd4mndx2di7e"
   },
   "mini-lucky-smoke": {
     "label": "mini-lucky-smoke",
@@ -797,6 +797,31 @@
     "hasExecutable": false,
     "tier": 2,
     "firstSeenAt": 1785270060
+  },
+  "chainpulse": {
+    "label": "chainpulse",
+    "domain": "chainpulse.dot",
+    "url": "https://chainpulse.dev-dot.li",
+    "firstSeenBlock": 11537618,
+    "owner": "0xA336eCCc3Cc0272c29DFB5f69c128Ea0eBC0731B",
+    "displayName": "Chain Pulse",
+    "description": "Live vitals for the Products Devnet system chains — blocks, finality lag, block times.",
+    "iconCid": "bafk2bzacecyo45vqvokhw2ezpdc755fevrvsosfjqnppiuv42prziaug4xs64",
+    "contenthash": "bafybeifzfhbqptxj4w2sb6msqzo2ndlawrrocugpzfmvd7wush4zb4zgee",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1785272448
+  },
+  "dotcheckhub": {
+    "label": "dotcheckhub",
+    "domain": "dotcheckhub.dot",
+    "url": "https://dotcheckhub.dev-dot.li",
+    "firstSeenBlock": 11538250,
+    "owner": "0xD1348964Fc8250C1840f859CD2e0AB50f8149fA0",
+    "contenthash": "bafybeigo5krcte6xqzawixfajtixrv3quqklskja62xxlo2mbekesq65cu",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1785273720
   },
   "excluded": [
     "bfyi",
