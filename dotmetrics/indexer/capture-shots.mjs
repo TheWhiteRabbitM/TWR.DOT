@@ -100,6 +100,12 @@ const VIEWPORT = { width: 390, height: 844 }; // an iPhone-ish phone frame
 // the resolve screen still at 6%. Generous, because a captured spinner is worse
 // than a skipped app.
 const RESOLVE_BUDGET_MS = int('SHOT_RESOLVE_BUDGET_MS', 45_000);
+
+// How long to keep re-shooting a still-blank app iframe, and how often. The
+// iframe is cross-origin, so there is no load event we can listen to — the
+// screenshot itself is the only readiness signal available.
+const PAINT_BUDGET_MS = int('SHOT_PAINT_BUDGET_MS', 30_000);
+const PAINT_POLL_MS = int('SHOT_PAINT_POLL_MS', 2_500);
 const DEVICE_SCALE = 2; // capture at 2x (780px wide) so 480px downscale is crisp
 const FLAT_STDEV = 3; // per-channel stdev below this == a blank/uniform render
 const QUALITY_LADDER = [80, 68, 55, 42, 30, 22]; // WebP quality, walked down to hit target
@@ -126,6 +132,31 @@ const readJson = (file, fallback) => {
     return fallback;
   }
 };
+
+/**
+ * Click away any consent modal the shell has raised, choosing the refusing
+ * option every time.
+ *
+ * Four languages because the shell follows the browser locale and a missed
+ * dialog is a ruined thumbnail. Everything is best-effort: no dialog is the
+ * normal case, and a failed click must never fail a capture.
+ */
+async function dismissConsent(page) {
+  const refuse = /^(deny|nega|rifiuta|denegar|rechazar|refuser|refuse|not now|non ora)$/i;
+  try {
+    const buttons = await page.$$('button, [role="button"]');
+    for (const b of buttons) {
+      const label = ((await b.textContent().catch(() => '')) ?? '').trim();
+      if (refuse.test(label)) {
+        await b.click({ timeout: 1_500 }).catch(() => {});
+        return true;
+      }
+    }
+  } catch {
+    /* no dialog, or the page navigated under us */
+  }
+  return false;
+}
 
 /** Compress one PNG screenshot to a WebP thumbnail no wider than THUMB_WIDTH. */
 async function toWebp(png, label) {
@@ -189,8 +220,39 @@ async function main() {
         (b.firstSeenAt ?? 0) - (a.firstSeenAt ?? 0) ||
         (b.firstSeenBlock ?? 0) - (a.firstSeenBlock ?? 0),
     );
-  const selected = byRecency.slice(0, MAX_SHOTS);
-  const cappedOut = byRecency.slice(MAX_SHOTS);
+
+  // Two ways to narrow the run, both for the same reason: most of the wall clock
+  // goes on apps that never resolve, and re-shooting the ones that already work
+  // buys nothing. SHOT_ONLY takes an explicit label list; SHOT_ONLY_MISSING
+  // retries just the gaps. Neither can lose an existing thumbnail — `shots` is
+  // seeded from the prior file below, so an unattempted name keeps what it had.
+  const only = (process.env.SHOT_ONLY ?? '')
+    .split(/[\s,]+/)
+    .filter(Boolean);
+  const onlyMissing = /^(1|true|yes)$/i.test(process.env.SHOT_ONLY_MISSING ?? '');
+
+  let pool = byRecency;
+  if (only.length) {
+    const wanted = new Set(only);
+    pool = byRecency.filter((e) => wanted.has(e.label));
+    const unknown = only.filter((l) => !captureable.some((e) => e.label === l));
+    if (unknown.length) warn(`SHOT_ONLY names with no bundle to capture: ${unknown.join(', ')}`);
+    console.log(`SHOT_ONLY: restricted to ${pool.length} of ${byRecency.length} names.`);
+  } else if (onlyMissing) {
+    pool = byRecency.filter((e) => {
+      const meta = existing[e.label];
+      return !meta || typeof meta.file !== 'string'
+        ? true
+        : !fs.existsSync(path.join(SHOTS_DIR, path.basename(meta.file)));
+    });
+    console.log(
+      `SHOT_ONLY_MISSING: ${pool.length} of ${byRecency.length} names have no thumbnail yet; ` +
+        `the other ${byRecency.length - pool.length} keep theirs untouched.`,
+    );
+  }
+
+  const selected = pool.slice(0, MAX_SHOTS);
+  const cappedOut = pool.slice(MAX_SHOTS);
   console.log(
     `${captureable.length} names have a bundle; capturing ${selected.length} ` +
       `(cap ${MAX_SHOTS}, newest-first) at ${VIEWPORT.width}x${VIEWPORT.height}@${DEVICE_SCALE}x ` +
@@ -231,7 +293,15 @@ async function main() {
     isMobile: true,
     hasTouch: true,
     userAgent: MOBILE_UA,
-    serviceWorkers: 'block',
+    // Service workers MUST be allowed. The shell registers host-sw.js and that
+    // worker is what serves the app's bundle into the <label>.app.dev-dot.li
+    // iframe — it is the transport, not an optimisation. Blocking it (the
+    // default this script shipped with) produced two failure modes we spent a
+    // run diagnosing: a wholly blank iframe, and — worse because it passed the
+    // flat-render check — the app's HTML with none of its CSS, captured as an
+    // unstyled serif page. Verified in a real browser: navigator.serviceWorker
+    // .getRegistrations() on chainpulse.dev-dot.li returns host-sw.js, active.
+    serviceWorkers: 'allow',
   });
   context.setDefaultTimeout(NAV_TIMEOUT_MS);
 
@@ -334,18 +404,52 @@ async function main() {
         .catch(() => {});
       await page.waitForTimeout(SETTLE_MS);
 
-      // Shoot the app iframe itself when we can find it, so the thumbnail is the
-      // app and not the shell chrome around it; fall back to the viewport.
-      const appFrame = await page.$('iframe[src*=".app.dev-dot.li"]');
-      const shot =
-        (appFrame && (await appFrame.screenshot({ type: 'png' }).catch(() => null))) ||
-        (await page.screenshot({ type: 'png', fullPage: false }));
+      // Shoot the app iframe itself, so the thumbnail is the app and not the
+      // shell chrome around it. Then keep shooting until it stops being blank:
+      // the top document's loading text clears well before the iframe has
+      // painted, and there is no cross-origin signal we can read to know when
+      // it has. So the picture IS the readiness check — re-shoot on a cadence
+      // and take the first frame with real variance in it. A fixed settle was
+      // what shipped before, and it was simply too short for slower apps.
+      let shot = null;
+      let flat = true;
+      const shootUntil = Date.now() + PAINT_BUDGET_MS;
+      for (;;) {
+        // Once the bundle actually loads (which it only started doing when we
+        // stopped blocking the service worker), apps reach the point of asking
+        // the shell for permissions — and the shell's modal lands on top of the
+        // app, so the thumbnail became a screenshot of a consent dialog.
+        //
+        // Dismiss it, and dismiss it with DENY: this is a throwaway headless
+        // browser with no user behind it, and the permission on offer is
+        // "sign and submit on-chain transactions on your behalf". Granting that
+        // to get a prettier picture would be indefensible even here. Apps show
+        // their interface anyway and only need signing when someone acts.
+        await dismissConsent(page);
 
-      // Skip anything that painted essentially one flat colour: a blank SPA, an
-      // error page, an app that needs the shell. Near-zero variance == nothing.
-      const stats = await sharp(shot).stats();
-      if (stats.channels.every((c) => c.stdev < FLAT_STDEV)) {
-        skip(label, 'rendered blank/flat (likely needs the shell, or errored)');
+        const appFrame = await page.$('iframe[src*=".app.dev-dot.li"]');
+        const frame =
+          (appFrame && (await appFrame.screenshot({ type: 'png' }).catch(() => null))) ||
+          (await page.screenshot({ type: 'png', fullPage: false }));
+        const stats = await sharp(frame).stats();
+        flat = stats.channels.every((c) => c.stdev < FLAT_STDEV);
+        // Keep the latest frame either way: if it never clears, the log says so
+        // and nothing is written, but a later frame is never worse than an
+        // earlier one.
+        shot = frame;
+        if (!flat || Date.now() >= shootUntil) break;
+        await page.waitForTimeout(PAINT_POLL_MS);
+      }
+
+      // Never write a blank thumbnail. An app that needs more than the shell —
+      // a wallet, a permission, an account — genuinely has nothing to show, and
+      // the monogram is the honest fallback.
+      if (flat) {
+        skip(
+          label,
+          `still blank after ${((PAINT_BUDGET_MS + SETTLE_MS) / 1000) | 0}s of painting ` +
+            `(likely needs more than the shell, or errored)`,
+        );
         continue;
       }
 

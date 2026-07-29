@@ -63,6 +63,42 @@ function contractOf(text) {
   return ADDRESS_RE.test(value) ? value.toLowerCase() : '';
 }
 
+/**
+ * A `screenshots` text record: artwork the app's OWNER supplied.
+ *
+ * Second convention of ours, same shape as `contract`, and the reason it works
+ * is that the registry already enforces ownership — a write to a name you do
+ * not own is rejected with an explicit owner check. So the key that holds the
+ * name IS the authorisation, and dot-store needs no accounts, no uploads and no
+ * "prove this app is yours" flow:
+ *
+ *   dotns text set <name>.dot screenshots bafy...,bafy... --env devnet
+ *
+ * Comma-separated Bulletin CIDs, in the order they should be shown. Up to
+ * MAX_SHOTS_DECLARED of them, so one record can never make the store fetch an
+ * unbounded number of images.
+ *
+ * Two honesty constraints ride along, both enforced in the store rather than
+ * here. First, owner-supplied artwork is LABELLED as such: we cannot review
+ * submissions the way an app store does, so a reader has to be able to tell who
+ * made the picture. Second, Bulletin retention is about 14 days — an owner who
+ * stops republishing loses the CID, so the store falls back to its own capture
+ * and then to the monogram. A missing CID is expected, not an error.
+ *
+ * Only the CID shape is validated. We are not fetching them here: the indexer's
+ * job is to report what the chain says, and a CID that no longer resolves is a
+ * fact the store discovers at render time.
+ */
+const CID_RE = /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|b[a-z2-7]{58,})$/;
+const MAX_SHOTS_DECLARED = 6;
+function screenshotsOf(text) {
+  return String(text ?? '')
+    .split(/[\s,]+/)
+    .map((s) => s.trim())
+    .filter((s) => CID_RE.test(s))
+    .slice(0, MAX_SHOTS_DECLARED);
+}
+
 const file = JSON.parse(fs.readFileSync(FILE, 'utf8'));
 const excluded = Array.isArray(file.excluded) ? [...file.excluded] : [];
 delete file.excluded;
@@ -75,6 +111,7 @@ let manifests = 0;
 let contenthashes = 0;
 let executables = 0;
 let declared = 0;
+let ownerArt = 0;
 let unowned = 0;
 let failures = 0;
 
@@ -146,6 +183,16 @@ await mapLimit(labels, CONCURRENCY, async (label) => {
     /* read failed: keep whatever the last successful run recorded */
   }
 
+  // Owner-supplied artwork, same read-or-keep rule. An empty answer removes the
+  // declaration, so an owner can take their screenshots down again.
+  try {
+    const declaredShots = screenshotsOf(await resolver.text(node, 'screenshots'));
+    if (declaredShots.length) next.screenshots = declaredShots;
+    else delete next.screenshots;
+  } catch {
+    /* read failed: keep whatever the last successful run recorded */
+  }
+
   try {
     next.hasExecutable = Boolean(await resolver.text(nodeOf(`app.${label}.dot`), 'executable'));
   } catch {
@@ -165,6 +212,7 @@ await mapLimit(labels, CONCURRENCY, async (label) => {
   if (next.contenthash) contenthashes += 1;
   if (next.hasExecutable) executables += 1;
   if (next.contract) declared += 1;
+  if (next.screenshots?.length) ownerArt += 1;
 });
 
 const out = {};
@@ -177,7 +225,8 @@ const owners = new Set(Object.values(file).map((a) => a.owner).filter(Boolean));
 const byTier = [0, 1, 2].map((t) => Object.values(file).filter((a) => a.tier === t).length);
 console.log(
   `enriched ${enriched}/${labels.length} names · ${manifests} manifests · ${contenthashes} contenthashes · ` +
-    `${executables} executables · ${declared} contract records · ${owners.size} distinct owners · ` +
+    `${executables} executables · ${declared} contract records · ${ownerArt} owner screenshots · ` +
+    `${owners.size} distinct owners · ` +
     `tiers ${byTier.join('/')} · ` +
     `${excluded.length} excluded${unowned ? ` (+${unowned} newly unowned)` : ''}` +
     `${failures ? ` · ${failures} owner reads failed` : ''}`,

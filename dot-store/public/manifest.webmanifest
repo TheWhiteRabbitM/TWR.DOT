@@ -1,0 +1,17 @@
+{
+  "name": "dot-store",
+  "short_name": "dot-store",
+  "description": "Every app registered on the Polkadot Products devnet, with real screenshots and on-chain reviews.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#08080b",
+  "theme_color": "#08080b",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='120' fill='%23e6007a'/%3E%3Ccircle cx='256' cy='256' r='74' fill='%23fff'/%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,356 @@
+{
+  "ajedreztest01": {
+    "file": "shots/ajedreztest01.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364758
+  },
+  "buildboard01": {
+    "file": "shots/buildboard01.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785365083
+  },
+  "bulletin-explorer": {
+    "file": "shots/bulletin-explorer.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364164
+  },
+  "buy-or-sell": {
+    "file": "shots/buy-or-sell.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364230
+  },
+  "chainpulse": {
+    "file": "shots/chainpulse.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785365093
+  },
+  "chatgpt-guide": {
+    "file": "shots/chatgpt-guide.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364997
+  },
+  "contribnet01": {
+    "file": "shots/contribnet01.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364968
+  },
+  "contribnet02": {
+    "file": "shots/contribnet02.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364956
+  },
+  "cosmicteapot": {
+    "file": "shots/cosmicteapot.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364737
+  },
+  "devnet-atlas": {
+    "file": "shots/devnet-atlas.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364834
+  },
+  "discreetly": {
+    "file": "shots/discreetly.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364535
+  },
+  "docs": {
+    "file": "shots/docs.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364511
+  },
+  "doomarcade00": {
+    "file": "shots/doomarcade00.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364558
+  },
+  "dot-pages": {
+    "file": "shots/dot-pages.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364805
+  },
+  "dotcheckapp": {
+    "file": "shots/dotcheckapp.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364268
+  },
+  "dotcheckhub": {
+    "file": "shots/dotcheckhub.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364115
+  },
+  "dotify-test01": {
+    "file": "shots/dotify-test01.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364464
+  },
+  "eternalise-notary": {
+    "file": "shots/eternalise-notary.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364874
+  },
+  "eternalize-notary": {
+    "file": "shots/eternalize-notary.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364899
+  },
+  "guestbook": {
+    "file": "shots/guestbook.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364714
+  },
+  "hahamingx00": {
+    "file": "shots/hahamingx00.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364664
+  },
+  "hello-devnet-ynrc46": {
+    "file": "shots/hello-devnet-ynrc46.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364289
+  },
+  "hello-world-bernar": {
+    "file": "shots/hello-world-bernar.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364862
+  },
+  "hellodotworld": {
+    "file": "shots/hellodotworld.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364748
+  },
+  "helloworld": {
+    "file": "shots/helloworld.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364632
+  },
+  "hermes-agent-test": {
+    "file": "shots/hermes-agent-test.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364886
+  },
+  "ip-assets": {
+    "file": "shots/ip-assets.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364189
+  },
+  "italiarovente": {
+    "file": "shots/italiarovente.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364687
+  },
+  "mini-lucky-smoke": {
+    "file": "shots/mini-lucky-smoke.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364177
+  },
+  "my-dotkit": {
+    "file": "shots/my-dotkit.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364579
+  },
+  "oblv-wg-calc": {
+    "file": "shots/oblv-wg-calc.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364425
+  },
+  "oblv-wg-calendar": {
+    "file": "shots/oblv-wg-calendar.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364360
+  },
+  "oblv-wg-clock": {
+    "file": "shots/oblv-wg-clock.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364414
+  },
+  "oblv-wg-crypto": {
+    "file": "shots/oblv-wg-crypto.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364436
+  },
+  "oblv-wg-opengov": {
+    "file": "shots/oblv-wg-opengov.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364376
+  },
+  "oblv-wg-rss": {
+    "file": "shots/oblv-wg-rss.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364387
+  },
+  "oblv-wg-todo": {
+    "file": "shots/oblv-wg-todo.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364399
+  },
+  "oblv-wg-weather": {
+    "file": "shots/oblv-wg-weather.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364447
+  },
+  "oblv-widgets": {
+    "file": "shots/oblv-widgets.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364486
+  },
+  "openpetition": {
+    "file": "shots/openpetition.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364985
+  },
+  "pactprotocol": {
+    "file": "shots/pactprotocol.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364816
+  },
+  "parlement-populaire": {
+    "file": "shots/parlement-populaire.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364784
+  },
+  "pennypixel": {
+    "file": "shots/pennypixel.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364337
+  },
+  "pilliodot": {
+    "file": "shots/pilliodot.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364152
+  },
+  "plaza-social": {
+    "file": "shots/plaza-social.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364701
+  },
+  "polkaportal03": {
+    "file": "shots/polkaportal03.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364935
+  },
+  "proofoftake": {
+    "file": "shots/proofoftake.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364325
+  },
+  "quizzlergame": {
+    "file": "shots/quizzlergame.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364313
+  },
+  "rainbowprobe": {
+    "file": "shots/rainbowprobe.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364078
+  },
+  "stealcrown": {
+    "file": "shots/stealcrown.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364349
+  },
+  "sybildrop": {
+    "file": "shots/sybildrop.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364598
+  },
+  "tetris-bulletin": {
+    "file": "shots/tetris-bulletin.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364522
+  },
+  "thebutton": {
+    "file": "shots/thebutton.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785365017
+  },
+  "tintaprotocol": {
+    "file": "shots/tintaprotocol.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364244
+  },
+  "torrent-otp": {
+    "file": "shots/torrent-otp.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364610
+  },
+  "truereviews": {
+    "file": "shots/truereviews.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364675
+  },
+  "wudcommunity": {
+    "file": "shots/wudcommunity.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364846
+  },
+  "yechops-preview": {
+    "file": "shots/yechops-preview.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364210
+  },
+  "yologuestbook": {
+    "file": "shots/yologuestbook.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785364725
+  }
+}
