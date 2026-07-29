@@ -280,30 +280,39 @@ async function main() {
         continue;
       }
 
-      // Poll for the app to actually appear: the resolve marker gone AND some
-      // real painted content. Bulletin fetches are slow, so give it up to
-      // RESOLVE_BUDGET_MS. A page that never clears the resolve screen is a
-      // slow/unavailable bundle, not a screenshot — skip it, do not ship the
-      // spinner.
+      // The app renders inside a cross-origin iframe (<label>.app.dev-dot.li)
+      // that the shell embeds after resolving the name and fetching the bundle
+      // from Bulletin. We can't read across that origin, and the top document's
+      // text is the shell chrome, not the app — reading it caught the spinner.
+      // The clean cross-origin-safe signal, observed in a real browser: the shell
+      // sets document.title to the app's own title once it loads (the tab goes
+      // from "Polkadot — …" to e.g. "TrueReviews"). Wait for that.
       const ready = await page
         .waitForFunction(
           () => {
-            const t = (document.body?.innerText || '').trim();
-            const resolving = /resolving|loading…|loading\.\.\.|caricamento/i.test(t);
-            const painted = t.length > 40 || document.querySelectorAll('img,svg,canvas,button').length > 3;
-            return !resolving && painted;
+            const title = (document.title || '').trim();
+            const titled = title.length > 0 && !/^polkadot\b/i.test(title);
+            const hasAppFrame = !!document.querySelector('iframe[src*=".app.dev-dot.li"]');
+            return titled && hasAppFrame;
           },
           { timeout: RESOLVE_BUDGET_MS, polling: 500 },
         )
         .then(() => true)
         .catch(() => false);
       if (!ready) {
-        skip(label, 'never cleared the resolving screen within budget');
+        skip(label, 'shell never finished resolving the app within budget');
         continue;
       }
-      await page.waitForTimeout(SETTLE_MS);
+      // The title flips slightly before the iframe has painted; give the app
+      // frame time to render its first screen.
+      await page.waitForTimeout(SETTLE_MS * 2);
 
-      const shot = await page.screenshot({ type: 'png', fullPage: false });
+      // Shoot the app iframe itself when we can find it, so the thumbnail is the
+      // app and not the shell chrome around it; fall back to the viewport.
+      const appFrame = await page.$('iframe[src*=".app.dev-dot.li"]');
+      const shot =
+        (appFrame && (await appFrame.screenshot({ type: 'png' }).catch(() => null))) ||
+        (await page.screenshot({ type: 'png', fullPage: false }));
 
       // Skip anything that painted essentially one flat colour: a blank SPA, an
       // error page, an app that needs the shell. Near-zero variance == nothing.
