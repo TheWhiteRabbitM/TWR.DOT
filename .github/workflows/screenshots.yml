@@ -1,0 +1,94 @@
+name: dotmetrics app screenshots
+
+# Weekly thumbnail capture for the dotmetrics directory.
+#
+# Reads dotmetrics/src/lib/discovered.json for every .dot name that has a
+# contenthash (a bundle actually exists), loads each app in headless Chromium at
+# a phone size, downscales the viewport to a small WebP, and commits the results
+# under dotmetrics/public/shots/ plus the map in dotmetrics/src/lib/shots.json.
+#
+# WHY THIS IS QUOTA-SAFE. The thumbnails are committed into the repo, so the
+# EXISTING single dotmetrics site publish bundles them. Nothing here writes to
+# Bulletin — there is no MNEMONIC in this workflow at all. A screenshot costs
+# zero transactions against the ~200-write, 2026-08-07 quota.
+#
+# WHY PLAYWRIGHT/SHARP DON'T POLLUTE THE APP. They are installed with
+# `npm install --no-save`, which leaves dotmetrics/package.json and its lockfile
+# untouched, and this job never runs `vite build`, so they can never enter the
+# app's dependency set or the built bundle. They are CI tools for this job only.
+#
+# WHY IT NEVER FAILS ON A BAD RENDER. Most standalone app loads will not render
+# (they expect the product shell), will error, or will time out. capture-shots.mjs
+# skips each of those cleanly with a stated reason and still writes whatever
+# partial set succeeded. The job goes red only on a real infrastructure failure
+# (discovered.json unreadable, or Chromium refusing to launch).
+
+on:
+  schedule:
+    # Mondays 05:41 UTC — off the hour, and clear of keepalive.yml (04:23 Mon)
+    # and dotmetrics-refresh.yml (:17 hourly) so signing/commit races are avoided.
+    - cron: '41 5 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: dotmetrics-shots
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: dotmetrics
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dotmetrics/package-lock.json
+
+      - name: Install capture tools (CI-only, never saved to package.json)
+        run: |
+          set -euo pipefail
+          # --no-save + --no-package-lock: the app's manifest is not touched, so
+          # these two never enter the bundle. They land in dotmetrics/node_modules
+          # (gitignored), which is where capture-shots.mjs resolves them from.
+          npm install --no-save --no-package-lock --no-audit --no-fund \
+            playwright@^1.49.0 sharp@^0.33.5
+          # Download the Chromium build matching the installed Playwright, plus
+          # the OS libraries it needs on the runner.
+          npx playwright install --with-deps chromium
+
+      - name: Capture thumbnails
+        env:
+          # Whole-run wall clock, per-nav timeout, and cap — all defaulted in the
+          # script; set here so the budget is visible next to the 25-min job cap.
+          SHOT_RUN_BUDGET_MS: '900000'
+          SHOT_NAV_TIMEOUT_MS: '15000'
+          MAX_SHOTS: '100'
+        run: node indexer/capture-shots.mjs
+
+      - name: Commit thumbnails back to the repo
+        if: always() # even a partial run should land the shots it managed to take
+        working-directory: .
+        run: |
+          set -euo pipefail
+          git config user.name "dotmetrics-shots[bot]"
+          git config user.email "noreply@github.com"
+          # Only these two paths — never node_modules, never the app source that
+          # other jobs own.
+          git add dotmetrics/public/shots dotmetrics/src/lib/shots.json
+          if git diff --cached --quiet; then
+            echo "no thumbnail changes to commit"
+          else
+            git commit -m "dotmetrics: weekly app screenshots (GitHub Actions)"
+            git pull --rebase origin master
+            git push
+          fi

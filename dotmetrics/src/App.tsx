@@ -10,13 +10,20 @@ import {
   PulseStrip,
   RegistrationHeatmap,
   StepSparkline,
+  SurvivalChart,
+  type Death,
   type EcoSnapshot,
   type HeadBeat,
   type RegPoint,
+  type SurvivalPoint,
 } from './Charts';
 import { openAppChat } from './lib/host-chat';
 import { copyText, openExternal } from './lib/host-nav';
 import ecosystemSnapshot from './lib/ecosystem.json';
+import livenessData from './lib/liveness.json';
+import changelogData from './lib/changelog.json';
+import shotsData from './lib/shots.json';
+import discoveredData from './lib/discovered.json';
 import type { AppEntry, AppStats } from './lib/types';
 import {
   ENDONYM,
@@ -29,7 +36,6 @@ import {
   tSplit,
   useLang,
   type Lang,
-  type Vars,
 } from './lib/i18n';
 import { detectLang } from './lib/detect-lang';
 import { ENDPOINT, SERVICE_LABEL, TranslateError, translate } from './lib/translate';
@@ -360,220 +366,64 @@ const LAYOUT_CSS = `
 `;
 
 const REFRESH_MS = 20_000;
+/* ---------------------------------------------- data written by the indexer
 
-/* ------------------------------------------------------ strings, this pass */
+   Four static files the hourly indexer commits beside the directory. They ship
+   INSIDE this bundle — no per-item Bulletin upload, so the single site publish
+   carries them — and every one degrades to an honest empty state.
 
-/**
- * The strings this pass introduces, under the same lockstep as lib/i18n.ts.
- *
- * They live here for the reason LAYOUT_CSS does: lib/ belongs to another pass
- * and this one owns App.tsx and styles.css, so adding keys to lib/i18n.ts would
- * be two writers in one file. The discipline that actually protects the reader
- * is kept verbatim — EN is the source of truth, IT is declared
- * `Record<ExtraKey, string>`, and a missing, extra or renamed translation is a
- * compile error at `npm run build` rather than a blank label at runtime. Fold
- * this block into lib/i18n.ts when the passes merge; it is one contiguous
- * block, in the same key order, for exactly that.
- *
- * Three of these keys deliberately SHADOW lib/i18n.ts — 'search.placeholder',
- * 'search.aria' and 'idx.empty.search'. Search now also matches an owner
- * address, and a control that says it searches "name or description" while
- * quietly matching something else is the kind of small lie this page does not
- * tell. The shadowing copies are the lib strings plus that clause and nothing
- * else, so folding them back is a one-line replace each.
- */
-const EXTRA_EN = {
-  /* --- search, re-stated because the haystack grew ------------------- */
-  'search.placeholder': 'Search {n} .dot apps by name, description or owner address',
-  'search.aria':
-    'Search every indexed .dot name, display name, description and owner address',
-  'idx.empty.search':
-    'No name, display name, description or owner address in the index contains “{q}”.',
+   discovered.json is re-read here only for the velocity fields buildApps()
+   deliberately drops: they are indexer bookkeeping, not chain facts about a
+   name, so they never reach AppEntry. The row looks them up by label instead. */
 
-  /* --- group by owner ------------------------------------------------
-     A view of data already on every row — the owner the registry returned —
-     and not a new metric. The chip carries no number of its own because "By
-     owner 39" reads as "39 names match"; the count line below the facets says
-     what the mode did, with both figures and their denominator. */
-  'facet.owner': 'Group by owner',
-  'idx.count.owner':
-    '{n} names · {owners} owner addresses · groups ordered by how many names each holds',
-  'owner.group.n': '{n} of {all} names',
-  'owner.group.aria': 'Owner {owner} — {n} of {all} indexed names',
-  /* An absence, worded as one and sorted last however many names it holds: a
-     snapshot that does not record an owner has not found a big one. */
-  'owner.group.none': 'owner not recorded in this snapshot',
-  'owner.group.aria.none':
-    '{n} of {all} indexed names whose owner this snapshot does not record',
-
-  /* --- linking to one row -------------------------------------------- */
-  'link.copy': 'copy link',
-  'link.copied': 'link copied',
-  'link.retry': 'try again',
-  'link.copy.aria': 'Copy a link that opens {domain} in this index',
-  /* The clipboard is refused outright in some shells. Saying "copy failed" and
-     stopping there would leave the reader with no link at all, so the failure
-     hands over the thing the button was for. */
-  'link.failed':
-    'Copy failed — this app could not reach the clipboard. The link is below; select it and copy it by hand.',
-
-  /* --- a shared link that names nothing ------------------------------- */
-  'route.unknown':
-    'The link you opened asks for “{label}.dot”, and the index holds no such name — it may never have been registered, or it may have left the directory since the link was made. The whole index is shown instead.',
-  'route.unknown.dismiss': 'dismiss',
-
-  /* --- the contract-record convention ---------------------------------
-     Shown only in an expanded row, only when the name has a bundle deployed
-     and no contract record. Never a badge and never a collapsed-row marker: a
-     name that declares nothing is not doing anything wrong, so this is an
-     invitation and it is the quietest text in the drawer. */
-  'hint.contract':
-    'This name publishes no {record} record. dotmetrics counts {event} for whatever address a name declares, so running {cmd} makes this app’s own event count appear on its row, over the same window as every other row. This is dotmetrics’ convention and not a platform standard: no manifest field exists for a contract address, so a text record is what we read.',
-} as const;
-
-type ExtraKey = keyof typeof EXTRA_EN;
-
-const EXTRA_IT: Record<ExtraKey, string> = {
-  /* --- search, re-stated because the haystack grew ------------------- */
-  'search.placeholder':
-    'Cerca fra {n} app .dot per nome, descrizione o indirizzo del proprietario',
-  'search.aria':
-    'Cerca in ogni nome .dot indicizzato, nome visualizzato, descrizione e indirizzo del proprietario',
-  'idx.empty.search':
-    'Nessun nome, nome visualizzato, descrizione o indirizzo del proprietario nell’indice contiene “{q}”.',
-
-  /* --- group by owner ------------------------------------------------ */
-  'facet.owner': 'Raggruppa per proprietario',
-  'idx.count.owner':
-    '{n} nomi · {owners} indirizzi proprietari · gruppi ordinati per quanti nomi ciascuno possiede',
-  'owner.group.n': '{n} nomi su {all}',
-  'owner.group.aria': 'Proprietario {owner} — {n} nomi indicizzati su {all}',
-  'owner.group.none': 'proprietario non registrato in questo snapshot',
-  'owner.group.aria.none':
-    '{n} nomi indicizzati su {all} il cui proprietario questo snapshot non registra',
-
-  /* --- linking to one row -------------------------------------------- */
-  'link.copy': 'copia il link',
-  'link.copied': 'link copiato',
-  'link.retry': 'riprova',
-  'link.copy.aria': 'Copia un link che apre {domain} in questo indice',
-  'link.failed':
-    'Copia non riuscita — questa app non è riuscita a raggiungere gli appunti. Il link è qui sotto: selezionalo e copialo a mano.',
-
-  /* --- a shared link that names nothing ------------------------------- */
-  'route.unknown':
-    'Il link che hai aperto chiede «{label}.dot», e l’indice non contiene questo nome — può non essere mai stato registrato, oppure può aver lasciato la directory dopo che il link è stato creato. Viene mostrato invece l’indice completo.',
-  'route.unknown.dismiss': 'chiudi',
-
-  /* --- the contract-record convention -------------------------------- */
-  'hint.contract':
-    'Questo nome non pubblica alcun record {record}. dotmetrics conta {event} per l’indirizzo che un nome dichiara, quindi eseguire {cmd} fa comparire il conteggio degli eventi di questa app sulla sua riga, sulla stessa finestra di ogni altra riga. Questa è una convenzione di dotmetrics e non uno standard della piattaforma: non esiste un campo del manifest per l’indirizzo di un contratto, quindi leggiamo un record di testo.',
+const liveness = livenessData as unknown as {
+  series: SurvivalPoint[];
+  deaths: Death[];
+  medianLifespanDays: number | null;
 };
 
-const EXTRA_ES: Record<ExtraKey, string> = {
-  /* --- search, re-stated because the haystack grew ------------------- */
-  'search.placeholder':
-    'Busca entre {n} apps .dot por nombre, descripción o dirección del propietario',
-  'search.aria':
-    'Busca en cada nombre .dot indexado, nombre visible, descripción y dirección del propietario',
-  'idx.empty.search':
-    'Ningún nombre, nombre visible, descripción o dirección de propietario del índice contiene “{q}”.',
+interface ChangelogEntry {
+  at: number;
+  kind: 'new' | 'updated' | 'unreachable' | 'revived';
+  label: string;
+  displayName?: string;
+}
+const changelog = changelogData as unknown as ChangelogEntry[];
 
-  /* --- group by owner ------------------------------------------------ */
-  'facet.owner': 'Agrupar por propietario',
-  'idx.count.owner':
-    '{n} nombres · {owners} direcciones propietarias · grupos ordenados por cuántos nombres tiene cada una',
-  'owner.group.n': '{n} nombres de {all}',
-  'owner.group.aria': 'Propietario {owner} — {n} de {all} nombres indexados',
-  'owner.group.none': 'propietario no registrado en este snapshot',
-  'owner.group.aria.none':
-    '{n} de {all} nombres indexados cuyo propietario este snapshot no registra',
+interface Shot {
+  file: string;
+  w: number;
+  h: number;
+  capturedAt: number;
+}
+const SHOTS = shotsData as unknown as Record<string, Shot>;
 
-  /* --- linking to one row -------------------------------------------- */
-  'link.copy': 'copiar el enlace',
-  'link.copied': 'enlace copiado',
-  'link.retry': 'reintentar',
-  'link.copy.aria': 'Copia un enlace que abre {domain} en este índice',
-  'link.failed':
-    'Copia fallida — esta app no ha podido alcanzar el portapapeles. El enlace está aquí abajo: selecciónalo y cópialo a mano.',
-
-  /* --- a shared link that names nothing ------------------------------- */
-  'route.unknown':
-    'El enlace que has abierto pide «{label}.dot», y el índice no contiene ese nombre — puede que nunca se registrara, o puede que haya dejado el directory desde que se creó el enlace. En su lugar se muestra el índice completo.',
-  'route.unknown.dismiss': 'cerrar',
-
-  /* --- the contract-record convention -------------------------------- */
-  'hint.contract':
-    'Este nombre no publica ningún record {record}. dotmetrics cuenta {event} para la dirección que un nombre declare, así que ejecutar {cmd} hace aparecer el recuento de eventos de esta app en su fila, sobre la misma ventana que cualquier otra fila. Esta es una convención de dotmetrics y no un estándar de la plataforma: no existe ningún campo del manifest para la dirección de un contrato, así que lo que leemos es un record de texto.',
-};
-
-const EXTRA_FR: Record<ExtraKey, string> = {
-  /* --- search, re-stated because the haystack grew ------------------- */
-  'search.placeholder':
-    'Rechercher parmi {n} apps .dot par nom, description ou adresse du propriétaire',
-  'search.aria':
-    'Recherche dans chaque nom .dot indexé, nom affiché, description et adresse du propriétaire',
-  'idx.empty.search':
-    'Aucun nom, nom affiché, description ou adresse de propriétaire de l’index ne contient “{q}”.',
-
-  /* --- group by owner ------------------------------------------------ */
-  'facet.owner': 'Grouper par propriétaire',
-  'idx.count.owner':
-    '{n} noms · {owners} adresses propriétaires · groupes classés par le nombre de noms détenus',
-  'owner.group.n': '{n} noms sur {all}',
-  'owner.group.aria': 'Propriétaire {owner} — {n} noms indexés sur {all}',
-  'owner.group.none': 'propriétaire non enregistré dans ce snapshot',
-  'owner.group.aria.none':
-    '{n} noms indexés sur {all} dont ce snapshot n’enregistre pas le propriétaire',
-
-  /* --- linking to one row -------------------------------------------- */
-  'link.copy': 'copier le lien',
-  'link.copied': 'lien copié',
-  'link.retry': 'réessayer',
-  'link.copy.aria': 'Copier un lien qui ouvre {domain} dans cet index',
-  'link.failed':
-    'Échec de la copie — cette app n’a pas pu accéder au presse-papiers. Le lien est ci-dessous : sélectionnez-le et copiez-le à la main.',
-
-  /* --- a shared link that names nothing ------------------------------- */
-  'route.unknown':
-    'Le lien que vous avez ouvert demande « {label}.dot », et l’index ne contient pas ce nom — il n’a peut-être jamais été enregistré, ou il a pu quitter le directory depuis la création du lien. L’index complet est affiché à la place.',
-  'route.unknown.dismiss': 'fermer',
-
-  /* --- the contract-record convention -------------------------------- */
-  'hint.contract':
-    'Ce nom ne publie aucun record {record}. dotmetrics compte {event} pour l’adresse qu’un nom déclare : exécuter {cmd} fait donc apparaître le compte d’événements de cette app sur sa ligne, sur la même fenêtre que toutes les autres. C’est une convention propre à dotmetrics et non un standard de la plateforme : aucun champ du manifest n’existe pour une adresse de contrat, ce que nous lisons est donc un record de texte.',
-};
-
-const EXTRA: Record<Lang, Record<ExtraKey, string>> = {
-  en: EXTRA_EN,
-  it: EXTRA_IT,
-  es: EXTRA_ES,
-  fr: EXTRA_FR,
-};
-
-/** `t()` over the block above. Same rule: an unknown `{name}` stays visible. */
-function tx(key: ExtraKey, vars?: Vars): string {
-  const template = EXTRA[getLang()][key];
-  if (!vars) return template;
-  return template.replace(/\{(\w+)\}/g, (whole, name: string) =>
-    name in vars ? String(vars[name]) : whole,
-  );
+interface Velocity {
+  /** Unix seconds the contenthash last changed. Absent = never changed. */
+  contenthashChangedAt?: number;
+  /** Times it changed since first seen. 0 for an app unchanged since birth. */
+  updateCount?: number;
 }
 
-/** `tSplit()` over the block above, so a sentence with `<code>` in it stays one string. */
-function txSplit<T>(key: ExtraKey, nodes: Record<string, T>): (string | T)[] {
-  const template = EXTRA[getLang()][key];
-  const out: (string | T)[] = [];
-  const re = /\{(\w+)\}/g;
-  let last = 0;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(template)) !== null) {
-    if (m.index > last) out.push(template.slice(last, m.index));
-    out.push(m[1] in nodes ? nodes[m[1]] : m[0]);
-    last = m.index + m[0].length;
+/**
+ * Velocity per label, from the baked directory. An entry that has never
+ * republished has no contenthashChangedAt and shows NOTHING on its row — an app
+ * unchanged since birth is not one "updated 0h ago".
+ */
+const VELOCITY: Record<string, Velocity> = (() => {
+  const out: Record<string, Velocity> = {};
+  for (const [key, value] of Object.entries(discoveredData as Record<string, unknown>)) {
+    if (value && typeof value === 'object' && 'label' in (value as object)) {
+      const d = value as Velocity;
+      out[key] = { contenthashChangedAt: d.contenthashChangedAt, updateCount: d.updateCount };
+    }
   }
-  if (last < template.length) out.push(template.slice(last));
   return out;
+})();
+
+/** The committed screenshot thumbnail for a label, or null (→ the monogram). */
+function shotFor(label: string): Shot | null {
+  return SHOTS[label] ?? null;
 }
 
 /* ------------------------------------------------------- the app route */
@@ -1124,11 +974,37 @@ function Description({ text, muted }: { text: string; muted?: boolean }) {
 /* ------------------------------------------------------------- index row */
 
 function AppIcon({ entry }: { entry: AppEntry }) {
-  const [failed, setFailed] = useState(false);
+  // Two independent failures, because the fallback chain is screenshot → icon →
+  // monogram: a broken thumbnail must fall through to the icon, and a broken
+  // icon on to the letter, so a hole is never the outcome of either.
+  const [shotFailed, setShotFailed] = useState(false);
+  const [iconFailed, setIconFailed] = useState(false);
   const mono = (entry.displayName ?? entry.id).trim().slice(0, 1) || '?';
+  const shot = shotFor(entry.id);
+
+  // A committed thumbnail is the richest preview, so it wins when one shipped
+  // and loads. It lives in the bundle (public/shots/) — no per-item Bulletin
+  // upload — and is lazy-loaded because the row is below the fold and must not
+  // cost the first paint. Absent or broken, it falls through exactly like an
+  // icon does: to the icon, then to the monogram, never to a hole.
+  if (shot && !shotFailed) {
+    return (
+      <span className="idx-ico" aria-hidden="true">
+        <img
+          src={`${import.meta.env.BASE_URL}${shot.file}`}
+          alt=""
+          width={shot.w}
+          height={shot.h}
+          loading="lazy"
+          decoding="async"
+          onError={() => setShotFailed(true)}
+        />
+      </span>
+    );
+  }
   return (
     <span className="idx-ico" aria-hidden="true">
-      {entry.iconCid && !failed ? (
+      {entry.iconCid && !iconFailed ? (
         <img
           /* gatewayUrl(), not a gateway written out here. This used to be a
              literal dweb.link URL, and `dotns bulletin verify` measured what
@@ -1141,7 +1017,7 @@ function AppIcon({ entry }: { entry: AppEntry }) {
           alt=""
           loading="lazy"
           decoding="async"
-          onError={() => setFailed(true)}
+          onError={() => setIconFailed(true)}
         />
       ) : (
         mono
@@ -1183,18 +1059,18 @@ function CopyLink({ label, domain }: { label: string; domain: string }) {
       <button
         type="button"
         className="quiet-do"
-        aria-label={tx('link.copy.aria', { domain })}
+        aria-label={t('link.copy.aria', { domain })}
         onClick={go}
       >
         {state === 'copied'
-          ? tx('link.copied')
+          ? t('link.copied')
           : state === 'failed'
-            ? tx('link.retry')
-            : tx('link.copy')}
+            ? t('link.retry')
+            : t('link.copy')}
       </button>
       {state === 'failed' && (
         <span className="idx-mt is-err" role="status">
-          <span>{tx('link.failed')}</span>
+          <span>{t('link.failed')}</span>
           <span className="mono">{link}</span>
         </span>
       )}
@@ -1218,6 +1094,14 @@ function IndexRow({
   const detailId = `d-${entry.id}`;
   const measured = declaredEvents(entry);
   const unreachable = unreachableLine(entry);
+  // Velocity. `updatedAt` is present only once a name has republished its
+  // bundle; an app unchanged since birth has none and shows nothing here — not
+  // "updated 0h ago", which would be a claim it never made. The change count
+  // rides along only when it is more than one, so a single republish reads as a
+  // date, not as "· 1 change".
+  const velocity = VELOCITY[entry.id];
+  const updatedAt = velocity?.contenthashChangedAt;
+  const updateCount = velocity?.updateCount ?? 0;
   return (
     <>
       <div
@@ -1252,6 +1136,15 @@ function IndexRow({
                 ? t('row.registered', { ago: ago(entry.firstSeenAt) })
                 : t('row.beforeRange')}
             </i>
+            {/* Velocity: present only when the bundle has actually changed
+                since we first saw it. Silent otherwise — see the note above. */}
+            {updatedAt && (
+              <i>
+                {updateCount > 1
+                  ? t('row.updated.n', { ago: ago(updatedAt), n: fmt(updateCount) })
+                  : t('row.updated', { ago: ago(updatedAt) })}
+              </i>
+            )}
             {/* Quiet, and only ever present in the failing case: an alive
                 bundle earns no "alive" marker, because reachable is the normal
                 state of a deployed app, not a distinction. */}
@@ -1347,7 +1240,7 @@ function IndexRow({
               said where; a name with nothing deployed would only be nagged. */}
           {!entry.contract && entry.contenthash && (
             <p className="idx-hint">
-              {txSplit('hint.contract', {
+              {tSplit('hint.contract', {
                 record: (
                   <code key="r" className="mono">
                     contract
@@ -1461,6 +1354,88 @@ function ChatButton() {
   );
 }
 
+/* -------------------------------------------------------------- changelog */
+
+/**
+ * "What changed", diffed run to run by the indexer and committed as
+ * changelog.json.
+ *
+ * The strip is always honest, never hidden: its summary states the last 24
+ * hours as three counts, and zeroes are shown as zeroes — a quiet day is a fact
+ * about a young ecosystem, not a reason to disappear. Expanded, it lists the
+ * most recent entries, each naming its app and linking to that app's row, so a
+ * change is one tap from the thing it happened to. The window on the summary is
+ * fixed at 24h and the entry count carries its denominator ("N most recent of
+ * M logged"), because a strip that said "3 changes" without either would be a
+ * number with no evidence.
+ *
+ * A gateway mass-outage does not flood this: the indexer's mass-death guard
+ * suppresses the wave of "unreachable" entries upstream, so nothing here has to
+ * second-guess what it was handed.
+ */
+function ChangelogStrip() {
+  useLang(); // re-render the localized verbs and times when the language flips
+  const since = Math.floor(Date.now() / 1000) - 86_400;
+  const last24 = changelog.filter((e) => e.at >= since);
+  const nNew = last24.filter((e) => e.kind === 'new').length;
+  const nUpd = last24.filter((e) => e.kind === 'updated').length;
+  const nDark = last24.filter((e) => e.kind === 'unreachable').length;
+  // Newest-first already, capped so the strip is a glance and not a log reader.
+  const recent = changelog.slice(0, 30);
+  const verb = (k: ChangelogEntry['kind']) => t(`changelog.kind.${k}` as const);
+
+  return (
+    <details className="chg">
+      <summary aria-label={t('changelog.aria')}>
+        <span className="chg-sum">
+          {t('changelog.summary', {
+            new: fmt(nNew, getLang()),
+            updated: fmt(nUpd, getLang()),
+            dark: fmt(nDark, getLang()),
+          })}
+        </span>
+      </summary>
+      {recent.length === 0 ? (
+        <p className="chg-none">{t('changelog.recent.none')}</p>
+      ) : (
+        <>
+          <ol className="chg-list">
+            {recent.map((e, i) => {
+              const name = e.displayName || e.label;
+              return (
+                <li key={`${e.label}-${e.at}-${i}`}>
+                  {/* An anchor, not a button: it is a real `#/app/<label>` URL,
+                      so it can be opened in a new tab, copied, or followed by
+                      the router exactly like any other row link. */}
+                  <a
+                    className="chg-item"
+                    href={routeHref(e.label)}
+                    aria-label={t('changelog.item.aria', {
+                      name,
+                      verb: verb(e.kind),
+                      ago: ago(e.at),
+                    })}
+                  >
+                    <span className="chg-name">{name}</span>
+                    <span className="chg-verb">{verb(e.kind)}</span>
+                    <span className="chg-when">{ago(e.at)}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+          <p className="chg-count">
+            {t('changelog.recent.count', {
+              shown: fmt(recent.length, getLang()),
+              all: fmt(changelog.length, getLang()),
+            })}
+          </p>
+        </>
+      )}
+    </details>
+  );
+}
+
 /* ------------------------------------------------------------------- page */
 
 /**
@@ -1491,6 +1466,7 @@ type Facet =
   | 'name'
   | 'declared'
   | 'new'
+  | 'updated'
   | 'unreachable'
   | 'owner';
 
@@ -1589,6 +1565,7 @@ export function App() {
     let nameOnly = 0;
     let declared = 0;
     let today = 0;
+    let updated = 0;
     let unreachable = 0;
     // Lowercased: the registry returns checksummed addresses, but two copies of
     // the directory need not agree on the casing, and one owner must never be
@@ -1605,6 +1582,9 @@ export function App() {
       else nameOnly += 1;
       if (a.contract) declared += 1;
       if ((a.firstSeenAt ?? 0) >= startOfTodayUtc) today += 1;
+      // Only a bundle that has actually changed since first-seen counts as
+      // "updated" — the presence of a change time, never a zero updateCount.
+      if (VELOCITY[a.id]?.contenthashChangedAt) updated += 1;
       // A measured failure only: `alive === undefined` is a name never probed
       // (or a directory copy that predates the probe), not one found down.
       if (a.contenthash && a.alive === false) unreachable += 1;
@@ -1616,6 +1596,7 @@ export function App() {
       nameOnly,
       declared,
       today,
+      updated,
       unreachable,
       owners: owners.size,
     };
@@ -1660,6 +1641,10 @@ export function App() {
               return Boolean(a.contract);
             case 'new':
               return (a.firstSeenAt ?? 0) >= startOfTodayUtc;
+            case 'updated':
+              // A name that has republished its bundle at least once — the
+              // change time is the proof, an app unchanged since birth has none.
+              return Boolean(VELOCITY[a.id]?.contenthashChangedAt);
             case 'unreachable':
               return Boolean(a.contenthash) && a.alive === false;
             // 'owner' regroups the index; it does not filter it. Every name is
@@ -1668,9 +1653,18 @@ export function App() {
               return true;
           }
         });
-    // Tier first, then newest. Nothing here is a score: tier 0 leads because a
-    // name that publishes a manifest has said more about itself on chain than
-    // one that has not — a fact about the name, available to every name.
+    // 'Recently updated' is the one facet that reorders rather than ranks: the
+    // reader asked for what changed last, so the newest change leads. Every
+    // other view keeps the index's own order — tier first, then newest — where
+    // tier 0 leads not as a score but because a name that publishes a manifest
+    // has said more about itself on chain than one that has not.
+    if (!q && facet === 'updated') {
+      return [...pool].sort(
+        (a, b) =>
+          (VELOCITY[b.id]?.contenthashChangedAt ?? 0) -
+          (VELOCITY[a.id]?.contenthashChangedAt ?? 0),
+      );
+    }
     return [...pool].sort(
       (a, b) => a.tier - b.tier || (b.firstSeenAt ?? 0) - (a.firstSeenAt ?? 0),
     );
@@ -1756,6 +1750,10 @@ export function App() {
     // convention nobody has adopted yet — including us.
     { key: 'declared', label: t('facet.declared'), n: counts.declared },
     { key: 'new', label: t('facet.new'), n: counts.today },
+    // Also an honest zero, like `declared`: a young ecosystem where nothing has
+    // been republished yet opens an empty list that says exactly that, rather
+    // than hiding a facet the moment the ecosystem is too new to fill it.
+    { key: 'updated', label: t('facet.updated'), n: counts.updated },
   ];
   // Present only while true: zero unreachable bundles is the state this chip
   // must not exist in — unlike `declared`, whose honest zero documents an
@@ -1766,7 +1764,7 @@ export function App() {
   // Last, and countless: the filters above all answer "how many names match",
   // and a number on this chip would be read as the same claim about a different
   // quantity. What it did is stated in the count line under the row instead.
-  facets.push({ key: 'owner', label: tx('facet.owner') });
+  facets.push({ key: 'owner', label: t('facet.owner') });
 
   const scanned = counts.all + excluded.length;
   const indexAge = Math.floor(Date.now() / 1000) - eco.measuredAt;
@@ -1795,8 +1793,8 @@ export function App() {
             narrow();
             setQuery(e.target.value);
           }}
-          placeholder={tx('search.placeholder', { n: fmt(counts.all, lang) })}
-          aria-label={tx('search.aria')}
+          placeholder={t('search.placeholder', { n: fmt(counts.all, lang) })}
+          aria-label={t('search.aria')}
         />
         {searching && (
           <button
@@ -1877,6 +1875,10 @@ export function App() {
         ))}
       </div>
 
+      {/* what changed — diffed run to run by the indexer, sitting just above the
+          list it describes. Always present, zeroes and all. */}
+      <ChangelogStrip />
+
       {/* 5 ----------------------------------------------------- the index */}
       {/* A link someone shared that leads nowhere is a failure, and it says so
           in words rather than quietly showing the plain index as if nothing had
@@ -1884,9 +1886,9 @@ export function App() {
           must not be able to paste a paragraph into the page. */}
       {routedMissing && openApp && (
         <p className="idx-notice" role="status">
-          {tx('route.unknown', { label: openApp.slice(0, 64) })}
+          {t('route.unknown', { label: openApp.slice(0, 64) })}
           <button type="button" className="quiet-do" onClick={clearRoute}>
-            {tx('route.unknown.dismiss')}
+            {t('route.unknown.dismiss')}
           </button>
         </p>
       )}
@@ -1899,11 +1901,16 @@ export function App() {
               q: query.trim(),
             })
           : grouping
-            ? tx('idx.count.owner', {
+            ? t('idx.count.owner', {
                 n: fmt(shown.length, lang),
                 owners: fmt(groups.length, lang),
               })
-            : t('idx.count.plain', { n: fmt(shown.length, lang) })}
+            : facet === 'updated'
+              ? t('idx.count.updated', {
+                  n: fmt(shown.length, lang),
+                  all: fmt(counts.all, lang),
+                })
+              : t('idx.count.plain', { n: fmt(shown.length, lang) })}
       </div>
 
       <div className="idx">
@@ -1919,7 +1926,7 @@ export function App() {
                   aria-level={3}
                   /* The visible address is abbreviated to fit a phone, so the
                      label a screen reader gets is the whole one. */
-                  aria-label={tx(
+                  aria-label={t(
                     group.owner ? 'owner.group.aria' : 'owner.group.aria.none',
                     {
                       owner: group.owner,
@@ -1929,10 +1936,10 @@ export function App() {
                   )}
                 >
                   <span className="idx-group-o" title={group.owner || undefined}>
-                    {group.owner ? shortAddr(group.owner) : tx('owner.group.none')}
+                    {group.owner ? shortAddr(group.owner) : t('owner.group.none')}
                   </span>
                   <span className="idx-group-n">
-                    {tx('owner.group.n', {
+                    {t('owner.group.n', {
                       n: fmt(group.apps.length, lang),
                       all: fmt(counts.all, lang),
                     })}
@@ -1961,8 +1968,10 @@ export function App() {
         {shown.length === 0 && (
           <div className="idx-empty">
             {searching
-              ? tx('idx.empty.search', { q: query.trim() })
-              : t('idx.empty.filter')}
+              ? t('idx.empty.search', { q: query.trim() })
+              : facet === 'updated'
+                ? t('idx.empty.updated')
+                : t('idx.empty.filter')}
           </div>
         )}
       </div>
@@ -1989,6 +1998,30 @@ export function App() {
           </span>
         </div>
         <ChainVitals eco={eco} />
+      </div>
+
+      {/* survival / mortality — the directory's own health over days, fed by the
+          indexer's liveness.json. Ecosystem-level, so it belongs here beside the
+          chain vitals rather than in the headline. Renders its frame and states
+          its case even when nothing has died and only one day has been probed. */}
+      <div className="panel chart-card">
+        <div className="panel-head">
+          <div>
+            <h2 className="panel-title">{t('survival.title')}</h2>
+            <span className="panel-note">{t('survival.note')}</span>
+          </div>
+          <span className="chart-legend">
+            <span className="chart-swatch" aria-hidden="true" />
+            {t('survival.legend.alive')}
+            <span className="chart-swatch is-track" aria-hidden="true" />
+            {t('survival.legend.deployed')}
+          </span>
+        </div>
+        <SurvivalChart
+          series={liveness.series}
+          deaths={liveness.deaths}
+          medianLifespanDays={liveness.medianLifespanDays}
+        />
       </div>
 
       {/* 7 ----------------------------------------------------------- method */}
@@ -2140,6 +2173,32 @@ export function App() {
         </span>
         <ChatButton />
       </div>
+
+      {/* The feed. Quiet, one line, for the audience the rest of the page is not
+          for: not a reader looking up an app, but a program listing them. The
+          index has no other machine-readable discovery surface, so this is it —
+          two static files built into the same publish, linked plainly. */}
+      <p className="feed-links">
+        <b>{t('feed.lead')}</b>
+        <span>{t('feed.blurb')}</span>
+        <a
+          href={`${import.meta.env.BASE_URL}feed.json`}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={t('feed.aria.json')}
+        >
+          feed.json
+        </a>
+        <a
+          href={`${import.meta.env.BASE_URL}feed.xml`}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={t('feed.aria.xml')}
+        >
+          feed.xml
+        </a>
+      </p>
+
       <footer className="foot">{t('foot.note')}</footer>
     </div>
   );

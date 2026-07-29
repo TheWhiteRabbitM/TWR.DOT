@@ -70,6 +70,12 @@ jobs:
           node indexer/enrich-times.mjs
           WINDOW=150 node indexer/measure-activity.mjs
           node indexer/probe-liveness.mjs
+          # track-changes runs after probe-liveness (velocity needs the fresh
+          # contenthash; the changelog reads the CONFIRMED liveness state, so a
+          # gateway wobble never becomes a wave of 'unreachable'). build-feed
+          # writes the static feed into public/ for Vite to bake into dist.
+          node indexer/track-changes.mjs
+          node indexer/build-feed.mjs
 
       - name: Copy fresh data into the app
         run: |
@@ -143,7 +149,11 @@ jobs:
           set -euo pipefail
           git config user.name "dotmetrics-refresh[bot]"
           git config user.email "noreply@github.com"
-          git add dotmetrics/indexer dotmetrics/src/lib/discovered.json dotmetrics/src/lib/ecosystem.json dotmetrics/src/lib/history.json dotmetrics/src/lib/directory.ts
+          # changelog.json is the ONLY store of its own 'updated'/'unreachable'/
+          # 'revived' history, so it MUST be committed or a fresh checkout loses
+          # it. liveness.json and the feed are derivable, but committing them
+          # keeps the checked-out tree build-ready without re-running the indexer.
+          git add dotmetrics/indexer dotmetrics/src/lib/discovered.json dotmetrics/src/lib/ecosystem.json dotmetrics/src/lib/history.json dotmetrics/src/lib/liveness.json dotmetrics/src/lib/changelog.json dotmetrics/src/lib/directory.ts dotmetrics/public/feed.json dotmetrics/public/feed.xml
           if git diff --cached --quiet; then
             echo "nothing new to commit"
           else

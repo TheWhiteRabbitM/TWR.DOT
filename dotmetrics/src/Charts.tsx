@@ -783,3 +783,200 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
     </div>
   );
 }
+
+/* ======================================================= E. survival / mortality */
+
+/** One UTC day of the survival series. Extra fields on the JSON are ignored. */
+export interface SurvivalPoint {
+  /** ISO `YYYY-MM-DD`, the UTC day. */
+  day: string;
+  /** Bundles that answered the probe that day. */
+  alive: number;
+  /** Bundles with a contenthash that day — the denominator. */
+  deployed: number;
+}
+
+/** One app the gateway has stopped serving. */
+export interface Death {
+  label: string;
+  /** Unix seconds since which the bundle has been unreachable. */
+  deadSince: number;
+  /** Unix seconds it was last seen alive. */
+  lastAliveAt: number;
+  /** Whole days from first-seen to death, or null when first-seen is unknown. */
+  lifespanDays: number | null;
+}
+
+const SURV_W = 460;
+const SURV_H = 150;
+const SURV_L = 30; // room for a two-digit y label
+const SURV_R = 10;
+const SURV_T = 10;
+const SURV_B = 22; // room for the day labels
+
+/**
+ * Bundles still answering vs bundles deployed, one point per UTC day, plus the
+ * headline the whole chart exists to earn: a median lifespan WITH the count of
+ * apps it is a median over.
+ *
+ * This obeys the same rules as the four charts above. It never returns null: a
+ * one-point series draws its two dots and says a line needs more days; a zero-
+ * death graveyard is not hidden but stated, because "nothing has died yet" is a
+ * finding about a young ecosystem, not an empty panel. And no number appears
+ * without its denominator — the median carries "over N apps that have gone
+ * dark", the empty case carries "all N deployed bundles answered".
+ */
+export function SurvivalChart({
+  series,
+  deaths,
+  medianLifespanDays,
+}: {
+  series: SurvivalPoint[];
+  deaths: Death[];
+  medianLifespanDays: number | null;
+}) {
+  const lang = useLang();
+
+  const pts = useMemo(
+    () => series.filter((p) => Number.isFinite(p.deployed) && Number.isFinite(p.alive)),
+    [series],
+  );
+  const n = pts.length;
+  const last = n > 0 ? pts[n - 1] : null;
+  const maxY = Math.max(1, ...pts.map((p) => p.deployed));
+
+  const plotW = SURV_W - SURV_L - SURV_R;
+  const plotH = SURV_H - SURV_T - SURV_B;
+  const x = (i: number) => SURV_L + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+  const y = (v: number) => SURV_T + plotH - (v / maxY) * plotH;
+  const path = (sel: (p: SurvivalPoint) => number) =>
+    pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(sel(p)).toFixed(1)}`).join(' ');
+
+  const aria =
+    n === 0
+      ? t('survival.aria.empty')
+      : n === 1
+        ? t('survival.aria.one', { alive: last!.alive, deployed: last!.deployed })
+        : t('survival.aria', { alive: last!.alive, deployed: last!.deployed, days: n });
+
+  const deadCount = deaths.length;
+
+  return (
+    <div className="surv">
+      <svg
+        className="chart-svg surv-svg"
+        width="100%"
+        height={SURV_H}
+        style={{ maxWidth: SURV_W }}
+        viewBox={`0 0 ${SURV_W} ${SURV_H}`}
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label={aria}
+      >
+        {/* Baseline and ceiling only: 0 and the deployed count. Two gridlines,
+            because the gap between the two series is the whole reading and more
+            rules would only crowd it. */}
+        {[0, maxY].map((v) => (
+          <g key={v}>
+            <line x1={SURV_L} y1={y(v)} x2={SURV_W - SURV_R} y2={y(v)} className="chart-grid" />
+            <text x={SURV_L - 6} y={y(v) + 3} className="chart-axis" textAnchor="end">
+              {fmt(v, lang)}
+            </text>
+          </g>
+        ))}
+
+        {/* Two lines only when two days exist to connect. */}
+        {n >= 2 && (
+          <>
+            <path d={path((p) => p.deployed)} className="chart-line is-track" />
+            <path d={path((p) => p.alive)} className="chart-line" />
+          </>
+        )}
+
+        {/* Dots always, so a single day is a visible mark and not a blank. */}
+        {pts.map((p, i) => (
+          <g key={i}>
+            <circle cx={x(i)} cy={y(p.deployed)} r={2.5} className="surv-dot-dep" />
+            <circle cx={x(i)} cy={y(p.alive)} r={2.5} className="surv-dot-alive" />
+          </g>
+        ))}
+
+        {n > 0 && (
+          <text
+            x={x(0)}
+            y={SURV_H - 6}
+            className="chart-axis"
+            textAnchor={n <= 1 ? 'middle' : 'start'}
+          >
+            {pts[0].day}
+          </text>
+        )}
+        {n > 1 && (
+          <text x={x(n - 1)} y={SURV_H - 6} className="chart-axis" textAnchor="end">
+            {pts[n - 1].day}
+          </text>
+        )}
+        {n === 0 && (
+          <text
+            x={SURV_W / 2}
+            y={SURV_H / 2}
+            className="chart-axis heat-empty"
+            textAnchor="middle"
+          >
+            {t('survival.aria.empty')}
+          </text>
+        )}
+      </svg>
+
+      {n === 1 && <p className="surv-hint">{t('survival.day.hint')}</p>}
+
+      {/* The headline. Zero deaths is stated with its denominator, not hidden. */}
+      {deadCount === 0 ? (
+        <p className="surv-median">
+          {t('survival.deaths.none', { deployed: last ? fmt(last.deployed, lang) : '0' })}
+        </p>
+      ) : (
+        <p className="surv-median">
+          <b>
+            {medianLifespanDays == null
+              ? t('survival.median.unknown')
+              : medianLifespanDays === 1
+                ? t('survival.median.one')
+                : t('survival.median', { days: fmt(medianLifespanDays, lang) })}
+          </b>{' '}
+          <span>
+            {deadCount === 1
+              ? t('survival.median.denom.one')
+              : t('survival.median.denom', { n: fmt(deadCount, lang) })}
+          </span>
+        </p>
+      )}
+
+      {/* A short roll of what has gone dark, and for how long each lasted. Only
+          when the graveyard is non-empty; when it is empty the line above has
+          already said so. */}
+      {deadCount > 0 && (
+        <div className="surv-dead">
+          <span className="surv-dead-h">{t('survival.dead.title')}</span>
+          <ul>
+            {deaths.map((d) => (
+              <li key={d.label}>
+                <span className="surv-dead-name">{d.label}</span>
+                <span className="surv-dead-life">
+                  {d.lifespanDays == null
+                    ? t('survival.dead.lasted.unknown')
+                    : d.lifespanDays === 1
+                      ? t('survival.dead.lasted.one')
+                      : t('survival.dead.lasted', { days: fmt(d.lifespanDays, lang) })}
+                </span>
+                <span className="surv-dead-since">
+                  {t('survival.dead.since', { day: utcDay(d.deadSince, lang) })}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}

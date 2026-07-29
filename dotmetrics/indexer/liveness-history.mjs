@@ -191,3 +191,74 @@ export function upsertDay(lines, point) {
   kept.push(JSON.stringify(point));
   return kept;
 }
+
+/** Median of a numeric list, or null when there is nothing to take a median of. */
+function median(values) {
+  const xs = values.filter((v) => typeof v === 'number' && Number.isFinite(v)).sort((a, b) => a - b);
+  if (xs.length === 0) return null;
+  const mid = Math.floor(xs.length / 2);
+  const m = xs.length % 2 ? xs[mid] : (xs[mid - 1] + xs[mid]) / 2;
+  return Math.round(m * 10) / 10;
+}
+
+/**
+ * The death toll and how long apps lived, computed from the CONFIRMED liveness
+ * state — never from a single run's raw probe. A "death" is a deployed name whose
+ * bundle became unreachable and STAYED so long enough to be believed
+ * (see {@link accumulate} rules 1 and 2): `state[label] === 'unreachable'`.
+ *
+ * Both honesty rules that matter here are already paid for upstream: a name is
+ * only in `unreachable` after {@link CONFIRM_RUNS} runs and never as part of a
+ * wave. So this function does no guarding of its own — it reads the settled
+ * verdict and reports lifespans over it. When nothing has died it says so
+ * literally: `deaths: []`, `medianLifespanDays: null`. It never invents a zero.
+ *
+ * @param liveness  the `liveness` block from state.json ({ state, transitions })
+ * @param apps      the apps.json map — for `firstSeenAt` (birth) and
+ *                  `lastSeenAliveAt` (the last probe that found the bundle up)
+ * @param probedThisRun  how many contenthashes this run could probe at all
+ * @returns { deaths, medianLifespanDays, deadNow }
+ */
+export function survival({ liveness = {}, apps = {}, probedThisRun = 0 }) {
+  const state = liveness.state ?? {};
+  const transitions = Array.isArray(liveness.transitions) ? liveness.transitions : [];
+
+  // WHEN each label last went unreachable. Transitions are appended in order, so
+  // the last matching one is the current death's moment — a revived-then-died
+  // app reports its most recent death, not its first.
+  const deadSinceOf = new Map();
+  for (const t of transitions) {
+    if (t && t.to === 'unreachable' && typeof t.at === 'number') deadSinceOf.set(t.label, t.at);
+  }
+
+  const deadLabels = Object.keys(state)
+    .filter((l) => state[l] === 'unreachable')
+    .sort();
+
+  const deaths = deadLabels.map((label) => {
+    const entry = apps[label] ?? {};
+    const deadSince = deadSinceOf.has(label) ? deadSinceOf.get(label) : null;
+    const firstSeenAt = typeof entry.firstSeenAt === 'number' ? entry.firstSeenAt : null;
+    const lastAliveAt = typeof entry.lastSeenAliveAt === 'number' ? entry.lastSeenAliveAt : null;
+    // Lifespan is birth → death. Null — not zero — when either end is unknown:
+    // an unmeasurable span is a different statement from "it lived no time".
+    const lifespanDays =
+      firstSeenAt !== null && deadSince !== null
+        ? Math.round(((deadSince - firstSeenAt) / 86_400) * 10) / 10
+        : null;
+    return {
+      label,
+      displayName: typeof entry.displayName === 'string' ? entry.displayName : undefined,
+      deadSince,
+      lastAliveAt,
+      lifespanDays,
+    };
+  });
+
+  return {
+    deaths,
+    medianLifespanDays: median(deaths.map((d) => d.lifespanDays)),
+    probedThisRun,
+    deadNow: deadLabels.length,
+  };
+}

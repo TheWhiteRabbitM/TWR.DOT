@@ -1,0 +1,636 @@
+{
+  "generatedAt": 1785311210,
+  "count": 70,
+  "apps": [
+    {
+      "label": "buildboard01",
+      "domain": "buildboard01.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785304728,
+      "url": "https://buildboard01.dev-dot.li"
+    },
+    {
+      "label": "dotcheckhub",
+      "domain": "dotcheckhub.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785273720,
+      "url": "https://dotcheckhub.dev-dot.li"
+    },
+    {
+      "label": "chainpulse",
+      "domain": "chainpulse.dot",
+      "displayName": "Chain Pulse",
+      "description": "Live vitals for the Products Devnet system chains — blocks, finality lag, block times.",
+      "tier": 0,
+      "firstSeenAt": 1785272448,
+      "url": "https://chainpulse.dev-dot.li"
+    },
+    {
+      "label": "dotexplorer",
+      "domain": "dotexplorer.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785270060,
+      "url": "https://dotexplorer.dev-dot.li"
+    },
+    {
+      "label": "pilliodot",
+      "domain": "pilliodot.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785262020,
+      "url": "https://pilliodot.dev-dot.li"
+    },
+    {
+      "label": "bulletin-explorer",
+      "domain": "bulletin-explorer.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785261840,
+      "url": "https://bulletin-explorer.dev-dot.li"
+    },
+    {
+      "label": "mini-lucky-smoke",
+      "domain": "mini-lucky-smoke.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785258336,
+      "url": "https://mini-lucky-smoke.dev-dot.li"
+    },
+    {
+      "label": "oblv-vault",
+      "domain": "oblv-vault.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785253944,
+      "url": "https://oblv-vault.dev-dot.li"
+    },
+    {
+      "label": "ip-assets",
+      "domain": "ip-assets.dot",
+      "displayName": "Soft.Law",
+      "description": "Explore the Soft.Law registry, view owned IP assets in read-only Studio, and mint new works.",
+      "tier": 0,
+      "firstSeenAt": 1785245088,
+      "url": "https://ip-assets.dev-dot.li"
+    },
+    {
+      "label": "yechops-preview",
+      "domain": "yechops-preview.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785229452,
+      "url": "https://yechops-preview.dev-dot.li"
+    },
+    {
+      "label": "buy-or-sell",
+      "domain": "buy-or-sell.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785228360,
+      "url": "https://buy-or-sell.dev-dot.li"
+    },
+    {
+      "label": "tintaprotocol",
+      "domain": "tintaprotocol.dot",
+      "displayName": "Tinta",
+      "description": "Sella lo que escribes. Cualquiera puede comprobar que no cambió.",
+      "tier": 0,
+      "firstSeenAt": 1785197808,
+      "url": "https://tintaprotocol.dev-dot.li"
+    },
+    {
+      "label": "provenveil",
+      "domain": "provenveil.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785188868,
+      "url": "https://provenveil.dev-dot.li"
+    },
+    {
+      "label": "dotcheckapp",
+      "domain": "dotcheckapp.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785185004,
+      "url": "https://dotcheckapp.dev-dot.li"
+    },
+    {
+      "label": "hello-devnet-ynrc46",
+      "domain": "hello-devnet-ynrc46.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785184260,
+      "url": "https://hello-devnet-ynrc46.dev-dot.li"
+    },
+    {
+      "label": "quizzlergame",
+      "domain": "quizzlergame.dot",
+      "displayName": "Quizzler",
+      "description": "A live social trivia game for friends.",
+      "tier": 0,
+      "firstSeenAt": 1785180780,
+      "url": "https://quizzlergame.dev-dot.li"
+    },
+    {
+      "label": "proofoftake",
+      "domain": "proofoftake.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785172776,
+      "url": "https://proofoftake.dev-dot.li"
+    },
+    {
+      "label": "pennypixel",
+      "domain": "pennypixel.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785172608,
+      "url": "https://pennypixel.dev-dot.li"
+    },
+    {
+      "label": "stealcrown",
+      "domain": "stealcrown.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785172452,
+      "url": "https://stealcrown.dev-dot.li"
+    },
+    {
+      "label": "oblv-wg-calendar",
+      "domain": "oblv-wg-calendar.dot",
+      "displayName": "Oblv Calendar",
+      "description": "Calendrier du dashboard : le mois en un coup d’œil, l’agenda du jour, saisie en une ligne (jour, heure, récurrence), tout en local.",
+      "tier": 0,
+      "firstSeenAt": 1785145152,
+      "url": "https://oblv-wg-calendar.dev-dot.li"
+    },
+    {
+      "label": "oblv-wg-opengov",
+      "domain": "oblv-wg-opengov.dot",
+      "displayName": "Oblv OpenGov",
+      "description": "Suivi des référendums OpenGov ouverts au vote sur Polkadot : état, tally aye/nay, seuils d'approbation et de support de la track, et temps restant avant échéance.",
+      "tier": 0,
+      "firstSeenAt": 1785142428,
+      "url": "https://oblv-wg-opengov.dev-dot.li"
+    },
+    {
+      "label": "oblv-wg-rss",
+      "domain": "oblv-wg-rss.dot",
+      "displayName": "Oblv RSS",
+      "description": "Votre lecteur RSS sur le dashboard : vos flux fusionnés en une timeline, non-lus mis en avant, article ouvert d'un clic.",
+      "tier": 0,
+      "firstSeenAt": 1785142344,
+      "url": "https://oblv-wg-rss.dev-dot.li"
+    },
+    {
+      "label": "oblv-wg-todo",
+      "domain": "oblv-wg-todo.dot",
+      "displayName": "Oblv Todo",
+      "description": "Liste de tâches sur le dashboard : saisie rapide (échéance, priorité, tags), tri par urgence, tout en local.",
+      "tier": 0,
+      "firstSeenAt": 1785141768,
+      "url": "https://oblv-wg-todo.dev-dot.li"
+    },
+    {
+      "label": "oblv-wg-clock",
+      "domain": "oblv-wg-clock.dot",
+      "displayName": "Oblv Clock",
+      "description": "Horloge sur le dashboard : cadran, afficheur à segments ou chiffres, au choix, dans n'importe quel fuseau.",
+      "tier": 0,
+      "firstSeenAt": 1785137520,
+      "url": "https://oblv-wg-clock.dev-dot.li"
+    },
+    {
+      "label": "oblv-wg-calc",
+      "domain": "oblv-wg-calc.dot",
+      "displayName": "Oblv Calc",
+      "description": "Calculatrice sur le dashboard : expression complète, scientifique, historique réutilisable. Aucun réseau.",
+      "tier": 0,
+      "firstSeenAt": 1785137280,
+      "url": "https://oblv-wg-calc.dev-dot.li"
+    },
+    {
+      "label": "oblv-wg-crypto",
+      "domain": "oblv-wg-crypto.dot",
+      "displayName": "Oblv Crypto",
+      "description": "Suivi de prix crypto sur le dashboard : watchlist personnalisable, variation 24 h et tendance 7 jours.",
+      "tier": 0,
+      "firstSeenAt": 1785137004,
+      "url": "https://oblv-wg-crypto.dev-dot.li"
+    },
+    {
+      "label": "oblv-wg-weather",
+      "domain": "oblv-wg-weather.dot",
+      "displayName": "Oblv Weather",
+      "description": "Météo sur le dashboard : conditions actuelles, heures à venir et prévisions 7 jours.",
+      "tier": 0,
+      "firstSeenAt": 1785135684,
+      "url": "https://oblv-wg-weather.dev-dot.li"
+    },
+    {
+      "label": "giganetwork",
+      "domain": "giganetwork.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785126216,
+      "url": "https://giganetwork.dev-dot.li"
+    },
+    {
+      "label": "dotify-test01",
+      "domain": "dotify-test01.dot",
+      "displayName": "Dotify",
+      "description": "Shared musical presence with artist-owned access and value flows.",
+      "tier": 0,
+      "firstSeenAt": 1785097908,
+      "url": "https://dotify-test01.dev-dot.li"
+    },
+    {
+      "label": "oblv-widgets",
+      "domain": "oblv-widgets.dot",
+      "displayName": "Oblv Widgets",
+      "description": "Widgets pour le dashboard : solde des comptes, et plus à venir.",
+      "tier": 0,
+      "firstSeenAt": 1785070512,
+      "url": "https://oblv-widgets.dev-dot.li"
+    },
+    {
+      "label": "docs",
+      "domain": "docs.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785053724,
+      "url": "https://docs.dev-dot.li"
+    },
+    {
+      "label": "tetris-bulletin",
+      "domain": "tetris-bulletin.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785037284,
+      "url": "https://tetris-bulletin.dev-dot.li"
+    },
+    {
+      "label": "discreetly",
+      "domain": "discreetly.dot",
+      "displayName": "Discreet",
+      "description": "Private bookings for real people: anonymous verified humans, escrow deposits, kept-word reputation.",
+      "tier": 0,
+      "firstSeenAt": 1785016164,
+      "url": "https://discreetly.dev-dot.li"
+    },
+    {
+      "label": "doomarcade00",
+      "domain": "doomarcade00.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785004740,
+      "url": "https://doomarcade00.dev-dot.li"
+    },
+    {
+      "label": "my-dotkit",
+      "domain": "my-dotkit.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784992512,
+      "url": "https://my-dotkit.dev-dot.li"
+    },
+    {
+      "label": "sybildrop",
+      "domain": "sybildrop.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784988036,
+      "url": "https://sybildrop.dev-dot.li"
+    },
+    {
+      "label": "torrent-otp",
+      "domain": "torrent-otp.dot",
+      "displayName": "OTP Tracker",
+      "description": "A serverless BitTorrent tracker. Announces are signed statements, not requests to a server.",
+      "tier": 0,
+      "firstSeenAt": 1784986512,
+      "url": "https://torrent-otp.dev-dot.li"
+    },
+    {
+      "label": "helloworld",
+      "domain": "helloworld.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784972880,
+      "url": "https://helloworld.dev-dot.li"
+    },
+    {
+      "label": "na87u9srwgblr61",
+      "domain": "na87u9srwgblr61.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1784969568,
+      "url": "https://na87u9srwgblr61.dev-dot.li"
+    },
+    {
+      "label": "polkadot-builders-hackademy",
+      "domain": "polkadot-builders-hackademy.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784946816,
+      "url": "https://polkadot-builders-hackademy.dev-dot.li"
+    },
+    {
+      "label": "hahamingx00",
+      "domain": "hahamingx00.dot",
+      "displayName": "hahaming.dot",
+      "description": "The decentralized web, in your browser — powered by .dot Web ID.",
+      "tier": 0,
+      "firstSeenAt": 1784943432,
+      "url": "https://hahamingx00.dev-dot.li"
+    },
+    {
+      "label": "truereviews",
+      "domain": "truereviews.dot",
+      "displayName": "TrueReviews",
+      "description": "Reviews you can trust: one verified human, one review per place, on real map businesses.",
+      "tier": 0,
+      "firstSeenAt": 1784938668,
+      "url": "https://truereviews.dev-dot.li"
+    },
+    {
+      "label": "italiarovente",
+      "domain": "italiarovente.dot",
+      "displayName": "Italia Rovente",
+      "description": "How much hotter Italy has become since 1940: stripes, records, seas, 107 cities.",
+      "tier": 0,
+      "firstSeenAt": 1784935872,
+      "url": "https://italiarovente.dev-dot.li"
+    },
+    {
+      "label": "plaza-social",
+      "domain": "plaza-social.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784922660,
+      "url": "https://plaza-social.dev-dot.li"
+    },
+    {
+      "label": "guestbook",
+      "domain": "guestbook.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784922132,
+      "url": "https://guestbook.dev-dot.li"
+    },
+    {
+      "label": "yologuestbook",
+      "domain": "yologuestbook.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784921268,
+      "url": "https://yologuestbook.dev-dot.li"
+    },
+    {
+      "label": "cosmicteapot",
+      "domain": "cosmicteapot.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784920416,
+      "url": "https://cosmicteapot.dev-dot.li"
+    },
+    {
+      "label": "hellodotworld",
+      "domain": "hellodotworld.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784919264,
+      "url": "https://hellodotworld.dev-dot.li"
+    },
+    {
+      "label": "ajedreztest01",
+      "domain": "ajedreztest01.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784909532,
+      "url": "https://ajedreztest01.dev-dot.li"
+    },
+    {
+      "label": "parlement-populaire",
+      "domain": "parlement-populaire.dot",
+      "displayName": "Parlement Populaire",
+      "description": "Comprendre les mesures, voter, débattre et vérifier les résultats sur Polkadot.",
+      "tier": 0,
+      "firstSeenAt": 1784906892,
+      "url": "https://parlement-populaire.dev-dot.li"
+    },
+    {
+      "label": "dot-pages",
+      "domain": "dot-pages.dot",
+      "displayName": "dotpages",
+      "description": "Tap-to-build websites, published to a .dot name — no backend, no build step.",
+      "tier": 0,
+      "firstSeenAt": 1784899692,
+      "url": "https://dot-pages.dev-dot.li"
+    },
+    {
+      "label": "pactprotocol",
+      "domain": "pactprotocol.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784897232,
+      "url": "https://pactprotocol.dev-dot.li"
+    },
+    {
+      "label": "devnet-atlas",
+      "domain": "devnet-atlas.dot",
+      "displayName": "Products Devnet Atlas 全景",
+      "description": "Bilingual (中/EN) illustrated map of the Polkadot Products Devnet: 3 chains, publish pipeline, commit-reveal, ring VRF & KZG.",
+      "tier": 0,
+      "firstSeenAt": 1784897088,
+      "url": "https://devnet-atlas.dev-dot.li"
+    },
+    {
+      "label": "wudcommunity",
+      "domain": "wudcommunity.dot",
+      "displayName": "WUD Community",
+      "description": "Unofficial WUD dashboard: live supply, holders, whale-to-plankton leaderboard.",
+      "tier": 0,
+      "firstSeenAt": 1784896428,
+      "url": "https://wudcommunity.dev-dot.li"
+    },
+    {
+      "label": "hello-world-bernar",
+      "domain": "hello-world-bernar.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784892816,
+      "url": "https://hello-world-bernar.dev-dot.li"
+    },
+    {
+      "label": "hello-world-app",
+      "domain": "hello-world-app.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1784891208,
+      "url": "https://hello-world-app.dev-dot.li"
+    },
+    {
+      "label": "eternalise-notary",
+      "domain": "eternalise-notary.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784890620,
+      "url": "https://eternalise-notary.dev-dot.li"
+    },
+    {
+      "label": "hermes-agent-test",
+      "domain": "hermes-agent-test.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784889324,
+      "url": "https://hermes-agent-test.dev-dot.li"
+    },
+    {
+      "label": "eternalize-notary",
+      "domain": "eternalize-notary.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784886276,
+      "url": "https://eternalize-notary.dev-dot.li"
+    },
+    {
+      "label": "dotmetrics",
+      "domain": "dotmetrics.dot",
+      "displayName": "dotmetrics",
+      "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
+      "tier": 0,
+      "firstSeenAt": 1784885256,
+      "url": "https://dotmetrics.dev-dot.li"
+    },
+    {
+      "label": "polkaportal03",
+      "domain": "polkaportal03.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784883120,
+      "url": "https://polkaportal03.dev-dot.li"
+    },
+    {
+      "label": "polkaportal02",
+      "domain": "polkaportal02.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1784883000,
+      "url": "https://polkaportal02.dev-dot.li"
+    },
+    {
+      "label": "polkaportal01",
+      "domain": "polkaportal01.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1784880240,
+      "url": "https://polkaportal01.dev-dot.li"
+    },
+    {
+      "label": "handshake",
+      "domain": "handshake.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1784879424,
+      "url": "https://handshake.dev-dot.li"
+    },
+    {
+      "label": "contribnet02",
+      "domain": "contribnet02.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784874816,
+      "url": "https://contribnet02.dev-dot.li"
+    },
+    {
+      "label": "contribnet01",
+      "domain": "contribnet01.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1784874228,
+      "url": "https://contribnet01.dev-dot.li"
+    },
+    {
+      "label": "openpetition",
+      "domain": "openpetition.dot",
+      "displayName": "OpenPetition",
+      "description": "Petitions signed by real people: one signature per person, verifiable by anyone.",
+      "tier": 0,
+      "firstSeenAt": 1784874132,
+      "url": "https://openpetition.dev-dot.li"
+    },
+    {
+      "label": "petitions",
+      "domain": "petitions.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1784873532,
+      "url": "https://petitions.dev-dot.li"
+    },
+    {
+      "label": "chatgpt-guide",
+      "domain": "chatgpt-guide.dot",
+      "displayName": "ChatGPT 学习指南",
+      "description": "Interactive Chinese guide to Wolfram's 'What Is ChatGPT Doing' — 10 stops, 9 hands-on demos.",
+      "tier": 0,
+      "firstSeenAt": 1784854932,
+      "url": "https://chatgpt-guide.dev-dot.li"
+    },
+    {
+      "label": "thebutton",
+      "domain": "thebutton.dot",
+      "displayName": "The Button",
+      "description": "One button. One press per human, ever. A proof-of-personhood experiment.",
+      "tier": 0,
+      "firstSeenAt": 1784844996,
+      "url": "https://thebutton.dev-dot.li"
+    }
+  ]
+}

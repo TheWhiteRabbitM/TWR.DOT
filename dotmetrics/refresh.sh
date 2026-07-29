@@ -36,6 +36,12 @@ node indexer/enrich-onchain.mjs
 node indexer/enrich-times.mjs
 WINDOW=150 node indexer/measure-activity.mjs
 node indexer/probe-liveness.mjs
+# track-changes runs AFTER probe-liveness: velocity needs the fresh contenthash
+# and the changelog reads the CONFIRMED liveness state. build-feed writes the
+# static feed straight into public/ (Vite copies it into dist on the next
+# publish). Both diff against snapshots kept in state.json / src/lib.
+node indexer/track-changes.mjs
+node indexer/build-feed.mjs
 
 echo "===== 2/5 copy fresh data into the app ====="
 cp indexer/apps.json src/lib/discovered.json

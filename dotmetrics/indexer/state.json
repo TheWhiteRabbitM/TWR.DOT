@@ -14,7 +14,7 @@
     "publishedAt": "2026-07-29T06:30:27.846Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-29T07:04:04.000Z",
+    "updatedAt": "2026-07-29T07:46:39.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -80,5 +80,361 @@
     },
     "pendingDown": {},
     "transitions": []
+  },
+  "changes": {
+    "updatedAt": "2026-07-29T07:47:44.000Z",
+    "bootstrapped": true,
+    "names": {
+      "ajedreztest01": {
+        "contenthash": "bafybeidgx4gm7muninnatw6zv6ecscp6ft5eig2kn3znybg6hn2s3ln7wi",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "buildboard01": {
+        "contenthash": "bafybeicq4k55aszl3yzy5ncz3xfanfdxrsqda2njxbzr4kq5i2leyoo6wy",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "bulletin-explorer": {
+        "contenthash": "bafybeihagbwtxmh77vkttxiez3crmsdw3mo4cvys3gmuzgzd4mndx2di7e",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "buy-or-sell": {
+        "contenthash": "bafybeifg4wzhgrcfft2pjg6fyjm3jlwp5p22p4pu2q5aflifz3iu7txm3a",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "chainpulse": {
+        "contenthash": "bafybeihfclrcd44lz6cqtlkmymyjhwaqwbm2wymmqcum2ubowd4ifls7ci",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "chatgpt-guide": {
+        "contenthash": "bafybeif5dqrhtrjq6yzkqq2ern7te5axjc4ghkgdsgrx42yeuzolko66ni",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "contribnet01": {
+        "contenthash": "bafybeidmvmczoqyle3bsoo6a5pnnbbghrq5orpem5cx6t2do42xg47k5qa",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "contribnet02": {
+        "contenthash": "bafybeiezn2iuqjgjntxcgi7m3oy7eouabzxu7pkiygwsiseuenjztf3y7y",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "cosmicteapot": {
+        "contenthash": "bafybeifsfedviexj5srcsekw5phbja2qchfdqd33v2mcij7jjfc2sgl4wy",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "devnet-atlas": {
+        "contenthash": "bafybeihvvpmjumatlux4jihjx25vflnxpux6sck5hvttyocdc7b3vskpru",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "discreetly": {
+        "contenthash": "bafybeigzzwnord2jasqkpeeaz3rwdbpf22rxfe23bb3ahqbdjxxwldfceq",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "docs": {
+        "contenthash": "bafybeiboit23mgalz7y2j2aii23ekve2ex52wdunbefbe3gqnofvsgz3a4",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "doomarcade00": {
+        "contenthash": "bafybeia3hqdxuleam3pd3qcdyxgdsnywm4tfj7trskuhxpnyy65742scs4",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "dot-pages": {
+        "contenthash": "bafybeicvikt7ej2palbbz35ciiwhtm755t4xja75ef4dfmrdeugtgsbgq4",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "dotcheckapp": {
+        "contenthash": "bafybeie4atsvecq24ljajlhjcmadrnlrhfmirtb6t3xb6aufyicxptbyxy",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "dotcheckhub": {
+        "contenthash": "bafybeia6rgdxb2byl4e2egtycd55exqzp32ydvqyrzb35ifuwpc3xzkzja",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "dotexplorer": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "dotify-test01": {
+        "contenthash": "bafybeifwrktpw37gghynn7dfuc2w6rzkbblpdnlyah37lihdnl4vfsug6e",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "dotmetrics": {
+        "contenthash": "bafybeiamfu7dovhbmczp3iatgvg5qfgussnehzb3qfq6ptfj3reh6zpqee",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "eternalise-notary": {
+        "contenthash": "bafybeia3vou57nyykzko433z2gf4aj6onmssf2uxav67rfa6k6uv5w3lam",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "eternalize-notary": {
+        "contenthash": "bafybeibh62tcwdrhxwfv5ujk2zv4stqymn643kswjijt7sb64vnwtyx7sm",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "giganetwork": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "guestbook": {
+        "contenthash": "bafybeihspvi2xdwrpaxt2qupfktco2yvvtxct3vl7vjbbuspeappldceja",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "hahamingx00": {
+        "contenthash": "bafybeigt3lza7b2pyfbnqaje4b3fg7z5r6bdr7coj64t5sh4xcaj25lvoi",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "handshake": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "hello-devnet-ynrc46": {
+        "contenthash": "bafk2bzaced5m6hyrpfyodu3cqrcpwmxrz5rgenf4n6lgtgmcktgfuud5y7dek",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "hello-world-app": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "hello-world-bernar": {
+        "contenthash": "bafybeictyugpqe7xpvbuh2plmhuxwqix6wpsjjd2ilrtvqmxchga2el5ee",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "hellodotworld": {
+        "contenthash": "bafybeihfc5hr5bkjyhkmxc35toqqgbayudcmefgh37licprsylamapf4ga",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "helloworld": {
+        "contenthash": "bafybeiapwo3ftvf6cnp6o5ry7mc7qaxy7gpr373gnymmcppeeuxe4xzqdq",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "hermes-agent-test": {
+        "contenthash": "bafybeicxkhkbpgh74pu5hfge4pgspinfqwcafm36qa5ynx64vssvswtluu",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "ip-assets": {
+        "contenthash": "bafybeiaz7gdj2j3qacwyhwf2jsbh3jc3ytrqgb6iwv335px5rw2bwdqjru",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "italiarovente": {
+        "contenthash": "bafybeieol5z4p34tj2ro4sexkgdoft6mcxisuuvitt42dwktogixls6qva",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "mini-lucky-smoke": {
+        "contenthash": "bafybeigkxuo47vkt4o2mjr2cfinswytrdo4yom3wobx75lan7gcczxkfke",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "my-dotkit": {
+        "contenthash": "bafybeiftwhwr7yl4ap7ya7iaf3gbw4dxa663aedi7qcmea3otl5calnz6q",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "na87u9srwgblr61": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "oblv-vault": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "oblv-wg-calc": {
+        "contenthash": "bafybeihalahyx7ovyjnrzldvbk647innt6b5wgl73vcvg2wfaffnq43uva",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "oblv-wg-calendar": {
+        "contenthash": "bafybeiert4uhagj5id5cilekqintjxz3e65gvl3gnew74c2y2zs6ie2vmq",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "oblv-wg-clock": {
+        "contenthash": "bafybeicei2jh5mbtwk4qukntm2jgt3su2svzb4zbemsxyj2khleowdltoq",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "oblv-wg-crypto": {
+        "contenthash": "bafybeievsytmwxsyvnkx2kex4qy7pgpy6sip5i57ufhtk7it4nnzhoobdq",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "oblv-wg-opengov": {
+        "contenthash": "bafybeihsqf32krrfmbczbdtascq26ni52gahre3qoub6n2z7w5qzr2de34",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "oblv-wg-rss": {
+        "contenthash": "bafybeif34n46a3c6jbrnker3hkmzbecn3vc3fljnjipdpax2acbpcjjxsi",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "oblv-wg-todo": {
+        "contenthash": "bafybeih42ygvyqrzjcb467qm2wc7lzoj2haketz2khicj6vd2w5moo7bk4",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "oblv-wg-weather": {
+        "contenthash": "bafybeiddrfkdolvavs7dr2pkrr5hvc7x7gbaaastliupczihobg66a3rkm",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "oblv-widgets": {
+        "contenthash": "bafybeiee3h227jpjenz3vgm3j62hg7bx6jjdnrzs6o3iyzvuighyak4egu",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "openpetition": {
+        "contenthash": "bafybeidkprdcg3n2hpxjxvx2jcij3fv5nvwvwxz4cqxdghabmf7gn4qx5m",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "pactprotocol": {
+        "contenthash": "bafybeihvlvikojsdu467372lplchc252drzdl26dw5vdfqo5wc77kx7keu",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "parlement-populaire": {
+        "contenthash": "bafybeigvtnalzogfadc23fi527atmqaejupilspblowln7abqthg62kqlm",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "pennypixel": {
+        "contenthash": "bafybeigs4mkljusoqy6x4jggw7hzeomb26slb6c7nwvgf4ul4zkomduiqu",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "petitions": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "pilliodot": {
+        "contenthash": "bafybeibzwwfzifdqbrbxuvrwnvwi2coiaoyxgdryqwlkkbdnzahfhtn5ay",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "plaza-social": {
+        "contenthash": "bafybeid57rs2jcvyny3vfbryye6unkzg4winpidkugt27h4yzqchipku5y",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "polkadot-builders-hackademy": {
+        "contenthash": "bafybeibndit5pcpro6mhfolzny4egpemb7pia75xrkl2kmyx7g7jp6725u",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "polkaportal01": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "polkaportal02": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "polkaportal03": {
+        "contenthash": "bafybeig6w7ujpvvaiugrzluhs75d7wn3n3ooocqnbpideffwihfa2sky7q",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "proofoftake": {
+        "contenthash": "bafybeifpum4czsmjqa53xla74y7ipvf3vjnd7vh2uo7mez77ys63t72g3m",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "provenveil": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "quizzlergame": {
+        "contenthash": "bafybeicygjin6tjzrwnxwuesuhiy2pac6ovxckrss356pqvugybnd4xtae",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "stealcrown": {
+        "contenthash": "bafybeibzojyeqei3frb7xj2ndsnqehnbkulf6igb6cxk2qz5qfcxwr45za",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "sybildrop": {
+        "contenthash": "bafybeih5dsc22klk3po7ykhhkbzqxannf3lrazjo4pfhs5jg3bwgq7l4xm",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "tetris-bulletin": {
+        "contenthash": "bafybeid7gfpcjvsci23xir6w3x65pzkpbimocx6lfwr2sixhia2dgcjyju",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "thebutton": {
+        "contenthash": "bafybeigkxakhdwl4tmirqp6sumrcfqyn7nadyjlfe7rk6m4cx4hj2n6cr4",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "tintaprotocol": {
+        "contenthash": "bafybeiff6dr75wzm24pedafwyab73mbglgymfs3fpg3k5ao3rvkfdx27x4",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "torrent-otp": {
+        "contenthash": "bafybeieboha25da5quecdoz6rwnk7zashcmryjp5xibzhltom33wcuipse",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "truereviews": {
+        "contenthash": "bafybeig62oqtvgjuubjpw5aea3yomxjsspbw4qawaqxp33vrdqjkpcizkq",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "wudcommunity": {
+        "contenthash": "bafybeigzppcnnzon6zfebv2i5in2zzpncktpsid5aerbqfbb4xkzy6ilfa",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "yechops-preview": {
+        "contenthash": "bafybeieeuoxhzy345gdli75cqax7po4gide2knz6hubkdw5dcu6i655xn4",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "yologuestbook": {
+        "contenthash": "bafybeigbru3aq6vpid7p43c72ed3jnuh5v6zyrbi7b4gwq5xullc5fcpae",
+        "updateCount": 0,
+        "live": "alive"
+      }
+    }
   }
 }

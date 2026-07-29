@@ -52,7 +52,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { accumulate, upsertDay } from './liveness-history.mjs';
+import { accumulate, upsertDay, survival } from './liveness-history.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FILE = path.join(HERE, 'apps.json');
@@ -214,7 +214,24 @@ const previousRows = fs.existsSync(LEDGER)
   : [];
 const rows = upsertDay(previousRows, point);
 fs.writeFileSync(LEDGER, rows.join('\n') + '\n');
-fs.writeFileSync(APP_COPY, JSON.stringify(rows.map((r) => JSON.parse(r))) + '\n');
+
+// The app copy is more than the day series now: alongside `series` it carries
+// the death toll and lifespans, computed from the CONFIRMED state this run just
+// wrote — so a death only appears here after it appeared in the transitions, and
+// a run held back by either guard adds no deaths. Honest empties are literal: no
+// deaths → `deaths: []`, `medianLifespanDays: null`, never a fabricated 0.
+const series = rows.map((r) => JSON.parse(r));
+const surv = survival({ liveness, apps: file, probedThisRun: probeable.length });
+fs.writeFileSync(
+  APP_COPY,
+  JSON.stringify({
+    series,
+    deaths: surv.deaths,
+    medianLifespanDays: surv.medianLifespanDays,
+    probedThisRun: surv.probedThisRun,
+    deadNow: surv.deadNow,
+  }) + '\n',
+);
 
 for (const label of changes.died) {
   console.log(`  transition: ${label}.dot alive -> unreachable (confirmed over ${liveness.confirmRuns} runs)`);
@@ -250,5 +267,10 @@ if (unreachable.length > 0) {
 console.log(
   `day ${point.day}: ${point.alive} of ${point.deployed} deployed bundles served ` +
     `(${point.unconfirmed} unconfirmed) via ${point.gateway}`,
+);
+console.log(
+  `survival: ${surv.deadNow} dead now, median lifespan ` +
+    `${surv.medianLifespanDays === null ? 'n/a (none have died)' : `${surv.medianLifespanDays}d`} ` +
+    `over ${surv.deaths.length} death${surv.deaths.length === 1 ? '' : 's'} · ${series.length} day points`,
 );
 console.log(`wrote ${FILE}\n      ${STATE}\n      ${LEDGER}\n      ${APP_COPY}`);

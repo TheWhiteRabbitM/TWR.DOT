@@ -56,8 +56,9 @@ const EN = {
   'lang.switch.aria': 'Switch the interface to {language}',
 
   /* --- search -------------------------------------------------------- */
-  'search.placeholder': 'Search {n} .dot apps by name or description',
-  'search.aria': 'Search every indexed .dot name, display name and description',
+  'search.placeholder': 'Search {n} .dot apps by name, description or owner address',
+  'search.aria':
+    'Search every indexed .dot name, display name, description and owner address',
   'search.clear': 'Clear search',
 
   /* --- headline pair ------------------------------------------------- */
@@ -96,7 +97,8 @@ const EN = {
   'idx.count.search':
     '{shown} of {all} names match “{q}” — search covers the whole index, not the selected filter.',
   'idx.count.plain': '{n} names · ranked by what exists on chain, then newest first',
-  'idx.empty.search': 'No name, display name or description in the index contains “{q}”.',
+  'idx.empty.search':
+    'No name, display name, description or owner address in the index contains “{q}”.',
   'idx.empty.filter': 'No name in the index matches this filter yet.',
 
   /* --- tiers ---------------------------------------------------------
@@ -323,6 +325,86 @@ const EN = {
   'tr.err.tooLong': 'this description is {n} characters and the service accepts {max}',
   'tr.err.quota': 'the free daily quota for this network is used up',
   'tr.err.service': '{detail}',
+
+  /* --- folded back from App.tsx's EXTRA block ------------------------
+     Search restated for the grown haystack (owner address), owner grouping,
+     the copy-link affordance, the bad-link notice and the contract-record
+     convention. These lived beside App.tsx only because lib/ belonged to a
+     different pass; the passes have merged and one typed place holds them. */
+  'facet.owner': 'Group by owner',
+  'idx.count.owner':
+    '{n} names · {owners} owner addresses · groups ordered by how many names each holds',
+  'owner.group.n': '{n} of {all} names',
+  'owner.group.aria': 'Owner {owner} — {n} of {all} indexed names',
+  'owner.group.none': 'owner not recorded in this snapshot',
+  'owner.group.aria.none':
+    '{n} of {all} indexed names whose owner this snapshot does not record',
+  'link.copy': 'copy link',
+  'link.copied': 'link copied',
+  'link.retry': 'try again',
+  'link.copy.aria': 'Copy a link that opens {domain} in this index',
+  'link.failed':
+    'Copy failed — this app could not reach the clipboard. The link is below; select it and copy it by hand.',
+  'route.unknown':
+    'The link you opened asks for “{label}.dot”, and the index holds no such name — it may never have been registered, or it may have left the directory since the link was made. The whole index is shown instead.',
+  'route.unknown.dismiss': 'dismiss',
+  'hint.contract':
+    'This name publishes no {record} record. dotmetrics counts {event} for whatever address a name declares, so running {cmd} makes this app’s own event count appear on its row, over the same window as every other row. This is dotmetrics’ convention and not a platform standard: no manifest field exists for a contract address, so a text record is what we read.',
+
+  /* --- survival / mortality (Charts.tsx SurvivalChart) ----------------
+     Every figure carries its denominator; an empty graveyard is a stated
+     finding, never a blank. */
+  'survival.title': 'Survival',
+  'survival.note':
+    'bundles still answering, against bundles deployed · one point per UTC day · probed through one gateway',
+  'survival.legend.alive': 'answering',
+  'survival.legend.deployed': 'deployed',
+  'survival.aria':
+    'Survival: {alive} of {deployed} deployed bundles still answered on the latest of {days} UTC days observed.',
+  'survival.aria.one':
+    'Survival: {alive} of {deployed} deployed bundles answered on the one UTC day observed so far.',
+  'survival.aria.empty': 'Survival: no days observed yet.',
+  'survival.day.hint':
+    'one UTC day observed so far — the line extends as each day is probed',
+  'survival.deaths.none':
+    'No app has gone dark yet — all {deployed} deployed bundles answered the last probe.',
+  'survival.median': 'median lifespan {days} days',
+  'survival.median.one': 'median lifespan 1 day',
+  'survival.median.unknown': 'lifespan not yet measurable',
+  'survival.median.denom': 'over {n} apps that have gone dark',
+  'survival.median.denom.one': 'over 1 app that has gone dark',
+  'survival.dead.title': 'Gone dark',
+  'survival.dead.lasted': 'lasted {days} days',
+  'survival.dead.lasted.one': 'lasted 1 day',
+  'survival.dead.lasted.unknown': 'lifespan unknown — registered before we watched',
+  'survival.dead.since': 'unreachable since {day}',
+
+  /* --- velocity: bundle updates, on the row and as a facet ------------ */
+  'row.updated': 'updated {ago}',
+  'row.updated.n': 'updated {ago} · {n} changes',
+  'facet.updated': 'Recently updated',
+  'idx.count.updated':
+    '{n} of {all} names have republished their bundle · most recently updated first',
+  'idx.empty.updated':
+    'No bundle in the index has changed since we first saw it — velocity appears here once a contenthash is republished.',
+
+  /* --- changelog: what changed, near the top -------------------------- */
+  'changelog.aria': 'What changed recently',
+  'changelog.summary': 'last 24h: {new} new · {updated} updated · {dark} gone dark',
+  'changelog.kind.new': 'registered',
+  'changelog.kind.updated': 'updated its bundle',
+  'changelog.kind.unreachable': 'went dark',
+  'changelog.kind.revived': 'came back',
+  'changelog.item.aria': '{name} {verb}, {ago}',
+  'changelog.recent.count': 'the {shown} most recent of {all} logged changes',
+  'changelog.recent.none': 'No changes logged yet.',
+
+  /* --- feed: a machine-readable index for anyone building on top ------ */
+  'feed.lead': 'Feed',
+  'feed.blurb':
+    'A machine-readable list of every indexed .dot app, for anyone building on top — the ecosystem has no other discovery surface.',
+  'feed.aria.json': 'The .dot app feed as JSON',
+  'feed.aria.xml': 'The .dot app feed as RSS',
 } as const;
 
 export type MsgKey = keyof typeof EN;
@@ -343,8 +425,10 @@ const IT: Record<MsgKey, string> = {
   'lang.switch.aria': 'Cambia la lingua dell’interfaccia in {language}',
 
   /* --- search -------------------------------------------------------- */
-  'search.placeholder': 'Cerca fra {n} app .dot per nome o descrizione',
-  'search.aria': 'Cerca in ogni nome .dot indicizzato, nome visualizzato e descrizione',
+  'search.placeholder':
+    'Cerca fra {n} app .dot per nome, descrizione o indirizzo del proprietario',
+  'search.aria':
+    'Cerca in ogni nome .dot indicizzato, nome visualizzato, descrizione e indirizzo del proprietario',
   'search.clear': 'Cancella la ricerca',
 
   /* --- headline pair ------------------------------------------------- */
@@ -374,7 +458,7 @@ const IT: Record<MsgKey, string> = {
   'idx.count.plain':
     '{n} nomi · ordinati per ciò che esiste sulla catena, poi dal più recente',
   'idx.empty.search':
-    'Nessun nome, nome visualizzato o descrizione nell’indice contiene “{q}”.',
+    'Nessun nome, nome visualizzato, descrizione o indirizzo del proprietario nell’indice contiene “{q}”.',
   'idx.empty.filter': 'Nessun nome nell’indice corrisponde ancora a questo filtro.',
 
   /* --- tiers --------------------------------------------------------- */
@@ -584,6 +668,81 @@ const IT: Record<MsgKey, string> = {
   'tr.err.tooLong': 'questa descrizione ha {n} caratteri e il servizio ne accetta {max}',
   'tr.err.quota': 'la quota gratuita giornaliera per questa rete è esaurita',
   'tr.err.service': '{detail}',
+
+  /* --- ripiegate da EXTRA di App.tsx --------------------------------- */
+  'facet.owner': 'Raggruppa per proprietario',
+  'idx.count.owner':
+    '{n} nomi · {owners} indirizzi proprietari · gruppi ordinati per quanti nomi ciascuno possiede',
+  'owner.group.n': '{n} nomi su {all}',
+  'owner.group.aria': 'Proprietario {owner} — {n} nomi indicizzati su {all}',
+  'owner.group.none': 'proprietario non registrato in questo snapshot',
+  'owner.group.aria.none':
+    '{n} nomi indicizzati su {all} il cui proprietario questo snapshot non registra',
+  'link.copy': 'copia il link',
+  'link.copied': 'link copiato',
+  'link.retry': 'riprova',
+  'link.copy.aria': 'Copia un link che apre {domain} in questo indice',
+  'link.failed':
+    'Copia non riuscita — questa app non è riuscita a raggiungere gli appunti. Il link è qui sotto: selezionalo e copialo a mano.',
+  'route.unknown':
+    'Il link che hai aperto chiede «{label}.dot», e l’indice non contiene questo nome — può non essere mai stato registrato, oppure può aver lasciato la directory dopo che il link è stato creato. Viene mostrato invece l’indice completo.',
+  'route.unknown.dismiss': 'chiudi',
+  'hint.contract':
+    'Questo nome non pubblica alcun record {record}. dotmetrics conta {event} per l’indirizzo che un nome dichiara, quindi eseguire {cmd} fa comparire il conteggio degli eventi di questa app sulla sua riga, sulla stessa finestra di ogni altra riga. Questa è una convenzione di dotmetrics e non uno standard della piattaforma: non esiste un campo del manifest per l’indirizzo di un contratto, quindi leggiamo un record di testo.',
+
+  /* --- sopravvivenza / mortalità ------------------------------------- */
+  'survival.title': 'Sopravvivenza',
+  'survival.note':
+    'bundle che rispondono ancora, rispetto ai bundle distribuiti · un punto per giorno UTC · sondati attraverso un solo gateway',
+  'survival.legend.alive': 'rispondono',
+  'survival.legend.deployed': 'distribuiti',
+  'survival.aria':
+    'Sopravvivenza: {alive} bundle su {deployed} distribuiti rispondevano ancora nell’ultimo di {days} giorni UTC osservati.',
+  'survival.aria.one':
+    'Sopravvivenza: {alive} bundle su {deployed} distribuiti rispondevano nell’unico giorno UTC finora osservato.',
+  'survival.aria.empty': 'Sopravvivenza: nessun giorno ancora osservato.',
+  'survival.day.hint':
+    'un solo giorno UTC finora osservato — la linea si estende a mano a mano che ogni giorno viene sondato',
+  'survival.deaths.none':
+    'Nessuna app è ancora sparita — tutti i {deployed} bundle distribuiti hanno risposto all’ultimo sondaggio.',
+  'survival.median': 'vita mediana {days} giorni',
+  'survival.median.one': 'vita mediana 1 giorno',
+  'survival.median.unknown': 'vita non ancora misurabile',
+  'survival.median.denom': 'su {n} app che sono sparite',
+  'survival.median.denom.one': 'su 1 app che è sparita',
+  'survival.dead.title': 'Sparite',
+  'survival.dead.lasted': 'durata {days} giorni',
+  'survival.dead.lasted.one': 'durata 1 giorno',
+  'survival.dead.lasted.unknown':
+    'vita sconosciuta — registrata prima che iniziassimo a osservare',
+  'survival.dead.since': 'irraggiungibile dal {day}',
+
+  /* --- velocità ------------------------------------------------------ */
+  'row.updated': 'aggiornato {ago}',
+  'row.updated.n': 'aggiornato {ago} · {n} modifiche',
+  'facet.updated': 'Aggiornate di recente',
+  'idx.count.updated':
+    '{n} nomi su {all} hanno ripubblicato il proprio bundle · prima le più recenti',
+  'idx.empty.updated':
+    'Nessun bundle nell’indice è cambiato da quando l’abbiamo visto la prima volta — la velocità compare qui una volta ripubblicato un contenthash.',
+
+  /* --- changelog ----------------------------------------------------- */
+  'changelog.aria': 'Cosa è cambiato di recente',
+  'changelog.summary': 'ultime 24h: {new} nuove · {updated} aggiornate · {dark} sparite',
+  'changelog.kind.new': 'registrata',
+  'changelog.kind.updated': 'ha aggiornato il bundle',
+  'changelog.kind.unreachable': 'è sparita',
+  'changelog.kind.revived': 'è tornata',
+  'changelog.item.aria': '{name} {verb}, {ago}',
+  'changelog.recent.count': 'le {shown} modifiche più recenti su {all} registrate',
+  'changelog.recent.none': 'Nessuna modifica ancora registrata.',
+
+  /* --- feed ---------------------------------------------------------- */
+  'feed.lead': 'Feed',
+  'feed.blurb':
+    'Un elenco leggibile da una macchina di ogni app .dot indicizzata, per chiunque costruisca sopra — l’ecosistema non ha altra superficie di scoperta.',
+  'feed.aria.json': 'Il feed delle app .dot in JSON',
+  'feed.aria.xml': 'Il feed delle app .dot in RSS',
 };
 
 /**
@@ -606,8 +765,10 @@ const ES: Record<MsgKey, string> = {
   'lang.switch.aria': 'Cambiar el idioma de la interfaz a {language}',
 
   /* --- search -------------------------------------------------------- */
-  'search.placeholder': 'Busca entre {n} apps .dot por nombre o descripción',
-  'search.aria': 'Busca en cada nombre .dot indexado, nombre visible y descripción',
+  'search.placeholder':
+    'Busca entre {n} apps .dot por nombre, descripción o dirección del propietario',
+  'search.aria':
+    'Busca en cada nombre .dot indexado, nombre visible, descripción y dirección del propietario',
   'search.clear': 'Borrar la búsqueda',
 
   /* --- headline pair ------------------------------------------------- */
@@ -642,7 +803,7 @@ const ES: Record<MsgKey, string> = {
   'idx.count.plain':
     '{n} nombres · ordenados por lo que existe en la cadena, luego del más reciente',
   'idx.empty.search':
-    'Ningún nombre, nombre visible o descripción del índice contiene “{q}”.',
+    'Ningún nombre, nombre visible, descripción o dirección de propietario del índice contiene “{q}”.',
   'idx.empty.filter': 'Ningún nombre del índice coincide todavía con este filtro.',
 
   /* --- tiers --------------------------------------------------------- */
@@ -850,6 +1011,81 @@ const ES: Record<MsgKey, string> = {
   'tr.err.tooLong': 'esta descripción tiene {n} caracteres y el servicio acepta {max}',
   'tr.err.quota': 'la cuota diaria gratuita para esta red se ha agotado',
   'tr.err.service': '{detail}',
+
+  /* --- plegadas desde el bloque EXTRA de App.tsx --------------------- */
+  'facet.owner': 'Agrupar por propietario',
+  'idx.count.owner':
+    '{n} nombres · {owners} direcciones propietarias · grupos ordenados por cuántos nombres tiene cada una',
+  'owner.group.n': '{n} nombres de {all}',
+  'owner.group.aria': 'Propietario {owner} — {n} de {all} nombres indexados',
+  'owner.group.none': 'propietario no registrado en este snapshot',
+  'owner.group.aria.none':
+    '{n} de {all} nombres indexados cuyo propietario este snapshot no registra',
+  'link.copy': 'copiar el enlace',
+  'link.copied': 'enlace copiado',
+  'link.retry': 'reintentar',
+  'link.copy.aria': 'Copia un enlace que abre {domain} en este índice',
+  'link.failed':
+    'Copia fallida — esta app no ha podido alcanzar el portapapeles. El enlace está aquí abajo: selecciónalo y cópialo a mano.',
+  'route.unknown':
+    'El enlace que has abierto pide «{label}.dot», y el índice no contiene ese nombre — puede que nunca se registrara, o puede que haya dejado el directory desde que se creó el enlace. En su lugar se muestra el índice completo.',
+  'route.unknown.dismiss': 'cerrar',
+  'hint.contract':
+    'Este nombre no publica ningún record {record}. dotmetrics cuenta {event} para la dirección que un nombre declare, así que ejecutar {cmd} hace aparecer el recuento de eventos de esta app en su fila, sobre la misma ventana que cualquier otra fila. Esta es una convención de dotmetrics y no un estándar de la plataforma: no existe ningún campo del manifest para la dirección de un contrato, así que lo que leemos es un record de texto.',
+
+  /* --- supervivencia / mortalidad ------------------------------------ */
+  'survival.title': 'Supervivencia',
+  'survival.note':
+    'bundles que aún responden, frente a los bundles desplegados · un punto por día UTC · sondeados a través de un único gateway',
+  'survival.legend.alive': 'responden',
+  'survival.legend.deployed': 'desplegados',
+  'survival.aria':
+    'Supervivencia: {alive} de {deployed} bundles desplegados aún respondían en el último de {days} días UTC observados.',
+  'survival.aria.one':
+    'Supervivencia: {alive} de {deployed} bundles desplegados respondían en el único día UTC observado hasta ahora.',
+  'survival.aria.empty': 'Supervivencia: todavía ningún día observado.',
+  'survival.day.hint':
+    'un solo día UTC observado hasta ahora — la línea se extiende a medida que se sondea cada día',
+  'survival.deaths.none':
+    'Ninguna app se ha apagado todavía — los {deployed} bundles desplegados respondieron al último sondeo.',
+  'survival.median': 'vida mediana {days} días',
+  'survival.median.one': 'vida mediana 1 día',
+  'survival.median.unknown': 'vida todavía no medible',
+  'survival.median.denom': 'sobre {n} apps que se han apagado',
+  'survival.median.denom.one': 'sobre 1 app que se ha apagado',
+  'survival.dead.title': 'Apagadas',
+  'survival.dead.lasted': 'duró {days} días',
+  'survival.dead.lasted.one': 'duró 1 día',
+  'survival.dead.lasted.unknown':
+    'vida desconocida — registrada antes de que empezáramos a observar',
+  'survival.dead.since': 'inaccesible desde el {day}',
+
+  /* --- velocidad ----------------------------------------------------- */
+  'row.updated': 'actualizado {ago}',
+  'row.updated.n': 'actualizado {ago} · {n} cambios',
+  'facet.updated': 'Actualizadas hace poco',
+  'idx.count.updated':
+    '{n} de {all} nombres han vuelto a publicar su bundle · primero las más recientes',
+  'idx.empty.updated':
+    'Ningún bundle del índice ha cambiado desde que lo vimos por primera vez — la velocidad aparece aquí en cuanto se vuelve a publicar un contenthash.',
+
+  /* --- changelog ----------------------------------------------------- */
+  'changelog.aria': 'Qué ha cambiado hace poco',
+  'changelog.summary': 'últimas 24h: {new} nuevas · {updated} actualizadas · {dark} apagadas',
+  'changelog.kind.new': 'registrada',
+  'changelog.kind.updated': 'actualizó su bundle',
+  'changelog.kind.unreachable': 'se apagó',
+  'changelog.kind.revived': 'volvió',
+  'changelog.item.aria': '{name} {verb}, {ago}',
+  'changelog.recent.count': 'los {shown} cambios más recientes de {all} registrados',
+  'changelog.recent.none': 'Todavía no se ha registrado ningún cambio.',
+
+  /* --- feed ---------------------------------------------------------- */
+  'feed.lead': 'Feed',
+  'feed.blurb':
+    'Una lista legible por máquina de cada app .dot indexada, para cualquiera que construya encima — el ecosistema no tiene otra superficie de descubrimiento.',
+  'feed.aria.json': 'El feed de apps .dot en JSON',
+  'feed.aria.xml': 'El feed de apps .dot en RSS',
 };
 
 /**
@@ -869,8 +1105,10 @@ const FR: Record<MsgKey, string> = {
   'lang.switch.aria': 'Basculer l’interface en {language}',
 
   /* --- search -------------------------------------------------------- */
-  'search.placeholder': 'Rechercher parmi {n} apps .dot par nom ou description',
-  'search.aria': 'Recherche dans chaque nom .dot indexé, nom affiché et description',
+  'search.placeholder':
+    'Rechercher parmi {n} apps .dot par nom, description ou adresse du propriétaire',
+  'search.aria':
+    'Recherche dans chaque nom .dot indexé, nom affiché, description et adresse du propriétaire',
   'search.clear': 'Effacer la recherche',
 
   /* --- headline pair ------------------------------------------------- */
@@ -901,7 +1139,7 @@ const FR: Record<MsgKey, string> = {
   'idx.count.plain':
     '{n} noms · classés par ce qui existe sur la chaîne, puis du plus récent',
   'idx.empty.search':
-    'Aucun nom, nom affiché ou description de l’index ne contient “{q}”.',
+    'Aucun nom, nom affiché, description ou adresse de propriétaire de l’index ne contient “{q}”.',
   'idx.empty.filter': 'Aucun nom de l’index ne correspond encore à ce filtre.',
 
   /* --- tiers --------------------------------------------------------- */
@@ -1111,6 +1349,81 @@ const FR: Record<MsgKey, string> = {
   'tr.err.tooLong': 'cette description fait {n} caractères et le service en accepte {max}',
   'tr.err.quota': 'le quota quotidien gratuit pour ce réseau est épuisé',
   'tr.err.service': '{detail}',
+
+  /* --- repliées depuis le bloc EXTRA de App.tsx ---------------------- */
+  'facet.owner': 'Grouper par propriétaire',
+  'idx.count.owner':
+    '{n} noms · {owners} adresses propriétaires · groupes classés par le nombre de noms détenus',
+  'owner.group.n': '{n} noms sur {all}',
+  'owner.group.aria': 'Propriétaire {owner} — {n} noms indexés sur {all}',
+  'owner.group.none': 'propriétaire non enregistré dans ce snapshot',
+  'owner.group.aria.none':
+    '{n} noms indexés sur {all} dont ce snapshot n’enregistre pas le propriétaire',
+  'link.copy': 'copier le lien',
+  'link.copied': 'lien copié',
+  'link.retry': 'réessayer',
+  'link.copy.aria': 'Copier un lien qui ouvre {domain} dans cet index',
+  'link.failed':
+    'Échec de la copie — cette app n’a pas pu accéder au presse-papiers. Le lien est ci-dessous : sélectionnez-le et copiez-le à la main.',
+  'route.unknown':
+    'Le lien que vous avez ouvert demande « {label}.dot », et l’index ne contient pas ce nom — il n’a peut-être jamais été enregistré, ou il a pu quitter le directory depuis la création du lien. L’index complet est affiché à la place.',
+  'route.unknown.dismiss': 'fermer',
+  'hint.contract':
+    'Ce nom ne publie aucun record {record}. dotmetrics compte {event} pour l’adresse qu’un nom déclare : exécuter {cmd} fait donc apparaître le compte d’événements de cette app sur sa ligne, sur la même fenêtre que toutes les autres. C’est une convention propre à dotmetrics et non un standard de la plateforme : aucun champ du manifest n’existe pour une adresse de contrat, ce que nous lisons est donc un record de texte.',
+
+  /* --- survie / mortalité -------------------------------------------- */
+  'survival.title': 'Survie',
+  'survival.note':
+    'bundles qui répondent encore, face aux bundles déployés · un point par jour UTC · sondés à travers un seul gateway',
+  'survival.legend.alive': 'répondent',
+  'survival.legend.deployed': 'déployés',
+  'survival.aria':
+    'Survie : {alive} bundles sur {deployed} déployés répondaient encore au dernier des {days} jours UTC observés.',
+  'survival.aria.one':
+    'Survie : {alive} bundles sur {deployed} déployés répondaient au seul jour UTC observé jusqu’ici.',
+  'survival.aria.empty': 'Survie : aucun jour encore observé.',
+  'survival.day.hint':
+    'un seul jour UTC observé jusqu’ici — la ligne s’étend à mesure que chaque jour est sondé',
+  'survival.deaths.none':
+    'Aucune app n’a encore disparu — les {deployed} bundles déployés ont répondu au dernier sondage.',
+  'survival.median': 'durée de vie médiane {days} jours',
+  'survival.median.one': 'durée de vie médiane 1 jour',
+  'survival.median.unknown': 'durée de vie pas encore mesurable',
+  'survival.median.denom': 'sur {n} apps qui ont disparu',
+  'survival.median.denom.one': 'sur 1 app qui a disparu',
+  'survival.dead.title': 'Disparues',
+  'survival.dead.lasted': 'a duré {days} jours',
+  'survival.dead.lasted.one': 'a duré 1 jour',
+  'survival.dead.lasted.unknown':
+    'durée de vie inconnue — enregistrée avant que nous observions',
+  'survival.dead.since': 'injoignable depuis le {day}',
+
+  /* --- vélocité ------------------------------------------------------ */
+  'row.updated': 'mis à jour {ago}',
+  'row.updated.n': 'mis à jour {ago} · {n} changements',
+  'facet.updated': 'Récemment mises à jour',
+  'idx.count.updated':
+    '{n} noms sur {all} ont republié leur bundle · les plus récentes d’abord',
+  'idx.empty.updated':
+    'Aucun bundle de l’index n’a changé depuis que nous l’avons vu pour la première fois — la vélocité apparaît ici dès qu’un contenthash est republié.',
+
+  /* --- changelog ----------------------------------------------------- */
+  'changelog.aria': 'Ce qui a changé récemment',
+  'changelog.summary': 'dernières 24 h : {new} nouvelles · {updated} mises à jour · {dark} disparues',
+  'changelog.kind.new': 'enregistrée',
+  'changelog.kind.updated': 'a mis à jour son bundle',
+  'changelog.kind.unreachable': 'a disparu',
+  'changelog.kind.revived': 'est revenue',
+  'changelog.item.aria': '{name} {verb}, {ago}',
+  'changelog.recent.count': 'les {shown} changements les plus récents sur {all} enregistrés',
+  'changelog.recent.none': 'Aucun changement encore enregistré.',
+
+  /* --- feed ---------------------------------------------------------- */
+  'feed.lead': 'Feed',
+  'feed.blurb':
+    'Une liste lisible par machine de chaque app .dot indexée, pour quiconque construit par-dessus — l’écosystème n’a aucune autre surface de découverte.',
+  'feed.aria.json': 'Le feed des apps .dot en JSON',
+  'feed.aria.xml': 'Le feed des apps .dot en RSS',
 };
 
 const DICT: Record<Lang, Record<MsgKey, string>> = { en: EN, it: IT, es: ES, fr: FR };
