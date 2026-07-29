@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1785314979,
-  "count": 70,
+  "generatedAt": 1785316623,
+  "count": 72,
   "apps": [
+    {
+      "label": "dw3labsgame",
+      "domain": "dw3labsgame.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785315300,
+      "url": "https://dw3labsgame.dev-dot.li"
+    },
+    {
+      "label": "rainbowprobe",
+      "domain": "rainbowprobe.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785315192,
+      "url": "https://rainbowprobe.dev-dot.li"
+    },
     {
       "label": "buildboard01",
       "domain": "buildboard01.dot",

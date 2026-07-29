@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11556887,
-  "updatedAt": "2026-07-29T08:46:40.919Z",
+  "lastBlock": 11557719,
+  "updatedAt": "2026-07-29T09:14:21.325Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "d7a17e5dd87f9fff98d2c555f065f44afc41a9d578ab182a224e0445a3fd7117",
-    "cid": "bafybeic7xtbknjgqvvv5jm7ah5cptvmf42s5xnbq7wpvucxwitej72iiqm",
-    "uploadedAt": "2026-07-29T08:50:55.469Z"
+    "digest": "41af4997990442d21deef4d028f05b138f32d3f25a3d5baac308b4f2497b797b",
+    "cid": "bafybeia5tiqket4ll7mfrqlec6rqo2nafxzjgqqv2m6yensn7644lrdbtu",
+    "uploadedAt": "2026-07-29T09:18:10.908Z"
   },
   "sitePublish": {
-    "treeHash": "4a59fc0ef05eda5d428b220d770493cdd087820792f8c00c3041653bee457e8a",
-    "publishedAt": "2026-07-29T08:28:09.976Z"
+    "treeHash": "386ef6d9e271a359a1480cafe8457d26957d7507102473be574a638ab9feefee",
+    "publishedAt": "2026-07-29T09:20:21.510Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-29T08:49:39.000Z",
+    "updatedAt": "2026-07-29T09:17:03.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -76,13 +76,14 @@
       "truereviews": "alive",
       "wudcommunity": "alive",
       "yechops-preview": "alive",
-      "yologuestbook": "alive"
+      "yologuestbook": "alive",
+      "rainbowprobe": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-29T08:49:39.000Z",
+    "updatedAt": "2026-07-29T09:17:03.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -172,8 +173,9 @@
         "live": "unknown"
       },
       "dotify-test01": {
-        "contenthash": "bafybeifwrktpw37gghynn7dfuc2w6rzkbblpdnlyah37lihdnl4vfsug6e",
-        "updateCount": 0,
+        "contenthash": "bafybeid2kn5b6o3yg4446npwnevbkjf2hhz4nyo3vy366pn6rdzo4smujy",
+        "updateCount": 1,
+        "changedAt": 1785316623,
         "live": "alive"
       },
       "dotmetrics": {
@@ -181,6 +183,11 @@
         "updateCount": 2,
         "changedAt": 1785314979,
         "live": "alive"
+      },
+      "dw3labsgame": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "eternalise-notary": {
         "contenthash": "bafybeia3vou57nyykzko433z2gf4aj6onmssf2uxav67rfa6k6uv5w3lam",
@@ -386,6 +393,11 @@
       },
       "quizzlergame": {
         "contenthash": "bafybeicygjin6tjzrwnxwuesuhiy2pac6ovxckrss356pqvugybnd4xtae",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "rainbowprobe": {
+        "contenthash": "bafybeicqhw7hb63lhbcuvk24qybdxbag4qhioq7v5mbf5dv65f7sa7pjge",
         "updateCount": 0,
         "live": "alive"
       },

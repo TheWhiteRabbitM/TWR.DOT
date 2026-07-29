@@ -4,7 +4,21 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 29 Jul 2026 08:49:39 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 29 Jul 2026 09:17:03 GMT</lastBuildDate>
+    <item>
+      <title>dw3labsgame</title>
+      <link>https://dw3labsgame.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">dw3labsgame</guid>
+      <pubDate>Wed, 29 Jul 2026 08:55:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>rainbowprobe</title>
+      <link>https://rainbowprobe.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">rainbowprobe</guid>
+      <pubDate>Wed, 29 Jul 2026 08:53:12 GMT</pubDate>
+    </item>
     <item>
       <title>buildboard01</title>
       <link>https://buildboard01.dev-dot.li</link>
@@ -340,20 +354,6 @@
       <description></description>
       <guid isPermaLink="false">hellodotworld</guid>
       <pubDate>Fri, 24 Jul 2026 18:54:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>ajedreztest01</title>
-      <link>https://ajedreztest01.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">ajedreztest01</guid>
-      <pubDate>Fri, 24 Jul 2026 16:12:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>Parlement Populaire</title>
-      <link>https://parlement-populaire.dev-dot.li</link>
-      <description>Comprendre les mesures, voter, débattre et vérifier les résultats sur Polkadot.</description>
-      <guid isPermaLink="false">parlement-populaire</guid>
-      <pubDate>Fri, 24 Jul 2026 15:28:12 GMT</pubDate>
     </item>
   </channel>
 </rss>
