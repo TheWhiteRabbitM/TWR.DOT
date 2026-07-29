@@ -31,14 +31,39 @@
  * Names with no contenthash are not probed: there is nothing to probe, and an
  * unknown must never be written as a measured failure.
  *
+ * WHAT THIS RUN LEAVES BEHIND BESIDES apps.json. The three fields above are a
+ * SNAPSHOT, and a snapshot of something with a ~14-day shelf life is worth
+ * little later. The series is the valuable part, so a healthy run also writes:
+ *
+ *   state.json  → `liveness`: the CONFIRMED per-app state, the deaths awaiting
+ *                 confirmation, and the transition log (who went down or came
+ *                 back, and when).
+ *   liveness.jsonl / ../src/lib/liveness.json
+ *               → one ecosystem point per UTC day: alive out of deployed.
+ *
+ * The confirmed series is deliberately more cautious than `entry.alive`, which
+ * is this run's raw verdict: see indexer/liveness-history.mjs for the two rules
+ * that keep a sick gateway from being written into permanent history as a wave
+ * of deaths. Both guards below run FIRST, so a discarded run records no
+ * transitions and no day point either — no measurement, no row.
+ *
  *   node probe-liveness.mjs
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { accumulate, upsertDay } from './liveness-history.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FILE = path.join(HERE, 'apps.json');
+const STATE = path.join(HERE, 'state.json');
+/** Append-style ledger, one row per UTC day. Committed by the scheduled job. */
+const LEDGER = path.join(HERE, 'liveness.jsonl');
+/**
+ * The same rows as a JSON array for the app to import. Rewritten from the WHOLE
+ * ledger every run, so it is a derived file: losing it loses nothing.
+ */
+const APP_COPY = path.join(HERE, '..', 'src', 'lib', 'liveness.json');
 
 const GATEWAY =
   process.env.LIVENESS_GATEWAY ?? 'https://devnet-ipfs.api.polkadotcommunity.foundation/ipfs/';
@@ -160,6 +185,58 @@ for (const label of labels) {
 }
 
 fs.writeFileSync(FILE, JSON.stringify(file, null, 2) + '\n');
+
+// ---- the series ----------------------------------------------------------
+// Reached only past both guards, so every row below rests on a run this script
+// was willing to believe.
+const readJson = (file_, fallback) => {
+  try {
+    return JSON.parse(fs.readFileSync(file_, 'utf8'));
+  } catch {
+    return fallback;
+  }
+};
+
+const { liveness, point, changes } = accumulate({
+  previous: readJson(STATE, {}).liveness,
+  probe: result,
+  now,
+  gateway: new URL(GATEWAY).host,
+});
+
+// Re-read state.json at write time and spread over it: index-apps.mjs,
+// directory-digest.mjs and app-tree-hash.mjs all keep bookkeeping in the same
+// file, and none of it may be dropped by this write.
+fs.writeFileSync(STATE, JSON.stringify({ ...readJson(STATE, {}), liveness }, null, 2) + '\n');
+
+const previousRows = fs.existsSync(LEDGER)
+  ? fs.readFileSync(LEDGER, 'utf8').split('\n').filter(Boolean)
+  : [];
+const rows = upsertDay(previousRows, point);
+fs.writeFileSync(LEDGER, rows.join('\n') + '\n');
+fs.writeFileSync(APP_COPY, JSON.stringify(rows.map((r) => JSON.parse(r))) + '\n');
+
+for (const label of changes.died) {
+  console.log(`  transition: ${label}.dot alive -> unreachable (confirmed over ${liveness.confirmRuns} runs)`);
+}
+for (const label of changes.recovered) {
+  console.log(`  transition: ${label}.dot unreachable -> alive`);
+}
+if (changes.pending.length > 0) {
+  console.log(
+    `awaiting confirmation (unreachable once, not yet believed dead): ` +
+      `${changes.pending.map((l) => `${l}.dot`).join(' · ')}`,
+  );
+}
+if (changes.heldAsWave.length > 0) {
+  warn(
+    `${changes.heldAsWave.length} bundles would have been confirmed dead in ONE run, over the ` +
+      `limit of ${changes.threshold} — apps do not expire together, so this reads as a gateway ` +
+      `or network failure and NOT as ${changes.heldAsWave.length} deaths. None were recorded; ` +
+      `they stay pending with their original timestamps and will be recorded, unchanged, the ` +
+      `first run that does not look like a wave.`,
+  );
+}
 
 console.log(
   `\nprobed ${probeable.length} · alive ${probeable.length - unreachable.length} · ` +

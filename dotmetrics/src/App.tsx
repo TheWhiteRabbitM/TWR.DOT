@@ -1326,6 +1326,12 @@ export function App() {
     (label: string) => {
       if (openApp === label) {
         if (pushed.current > 0) {
+          // Spent BEFORE the call, not after: back() is asynchronous, and until
+          // popstate lands `openApp` still names this row. A second tap inside
+          // that window would otherwise walk back twice — one entry further
+          // than we own, which is the one outcome this counter exists to
+          // prevent. Decremented here, a second tap falls to the branch below.
+          pushed.current -= 1;
           // popstate does the closing, so the tap and the back gesture take
           // exactly one code path and cannot drift apart.
           window.history.back();

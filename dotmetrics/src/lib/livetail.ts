@@ -18,6 +18,19 @@ import { readName, REGISTRY } from './dotns';
  * nothing is emitted until `registry.owner()` confirms the name — and the same
  * round trip picks up the records, so a name that appears live arrives with the
  * same fields the indexer would have given it.
+ *
+ * WHY `@polkadot/api` IS PULLED IN WITH A DYNAMIC `import()` BELOW RATHER THAN
+ * AT THE TOP OF THIS FILE. It is by far the heaviest thing this app depends on —
+ * on its own it was ~1.4 MB of a ~1.5 MB first-load bundle — and nothing the
+ * reader sees at first paint needs it: the index renders from the baked
+ * snapshot, then swaps in the directory fetched from Bulletin, and both of those
+ * reach the page over plain eth_call. This tail is its only caller, it starts
+ * strictly after the directory has loaded, and it is an upgrade to a page that
+ * is already complete without it. As its own chunk it is fetched once the app is
+ * interactive, where the wait costs the reader nothing.
+ *
+ * The `import type` at the top carries the `ApiPromise` type at zero runtime
+ * cost; the values come from the `await import()` inside {@link startLiveTail}.
  */
 const RPC = 'wss://asset-hub-paseo-rpc.n.dwellir.com';
 /** The address as it appears in `revive.ContractEmitted` data: lowercase hex. */
@@ -132,6 +145,9 @@ export async function startLiveTail(
 
   void (async () => {
     try {
+      // The one place the heavy dependency is paid for, and only once the
+      // caller has decided it wants a tail at all.
+      const { ApiPromise, WsProvider } = await import('@polkadot/api');
       api = await ApiPromise.create({ provider: new WsProvider(RPC), noInitWarn: true });
       if (stopped) return void api.disconnect();
       const head = (await api.rpc.chain.getHeader()).number.toNumber();
@@ -158,7 +174,19 @@ export async function startLiveTail(
         onHead?.(n);
         void inspectBlock(api!, n);
       })) as unknown as () => void;
-    } catch {
+    } catch (error) {
+      // Two different failures land here and the reader is owed the difference:
+      // the tail's own code failing to download (offline, a chunk that 404s
+      // behind a stale service worker) and the node refusing the socket. Both
+      // mean "no live feed", which is what onStatus reports, but only the log
+      // can say which — so it says it in a full sentence rather than dumping a
+      // stack.
+      console.warn(
+        '[live-tail] no live registrations feed:',
+        error instanceof Error ? error.message : String(error),
+        `— the directory on the page is the last indexed snapshot and is still correct, ` +
+          `it just stops growing until ${RPC} answers again.`,
+      );
       onStatus?.(false);
     }
   })();

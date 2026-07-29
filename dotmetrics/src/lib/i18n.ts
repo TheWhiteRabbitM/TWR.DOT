@@ -41,6 +41,13 @@ const EN = {
     'apps indexed · {published} published · {deployed} deployed · {declared} declaring a contract · {updated}',
   'hero.updated': 'updated {ago}',
   'hero.rpcDown': 'rpc unreachable',
+  /**
+   * Shown when reads fell back off the first-choice endpoint onto a spare. The
+   * numbers are there because a reader who can see "2 of 3" can also see that
+   * there is a third left; "degraded" alone would say neither how bad it is nor
+   * that the figures on the page are still real.
+   */
+  'hero.rpcFallback': 'first rpc down · reading through {host}, endpoint {using} of {total}',
   'reg.title': 'Registrations',
   'reg.note': 'one cell per UTC hour · one row per UTC day · day total in the right gutter',
   'reg.legend': 'names registered',
@@ -321,6 +328,7 @@ const IT: Record<MsgKey, string> = {
     'app indicizzate · {published} pubblicate · {deployed} distribuite · {declared} che dichiarano un contratto · {updated}',
   'hero.updated': 'aggiornato {ago}',
   'hero.rpcDown': 'rpc irraggiungibile',
+  'hero.rpcFallback': 'primo rpc non risponde · lettura tramite {host}, endpoint {using} di {total}',
   'reg.title': 'Registrazioni',
   'reg.note':
     'una cella per ogni ora UTC · una riga per ogni giorno UTC · totale del giorno nella colonna a destra',

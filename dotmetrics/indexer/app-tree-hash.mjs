@@ -12,9 +12,9 @@
  * index.html, public/, package.json and vite.config.ts. Three exclusions, and
  * one normalisation, each because the refresh itself rewrites the bytes:
  *
- *   - src/lib/discovered.json, ecosystem.json, history.json are DATA the
- *     hourly job copies in; counting them would republish the site every hour
- *     and the gate would gate nothing.
+ *   - src/lib/discovered.json, ecosystem.json, history.json, liveness.json are
+ *     DATA the hourly job writes; counting them would republish the site every
+ *     hour and the gate would gate nothing.
  *   - the DIRECTORY_CID literal in src/lib/directory.ts is masked before
  *     hashing: it is re-pinned whenever a directory upload happens, and a
  *     moved pin is the record's business, not an app change. Any OTHER edit to
@@ -42,6 +42,7 @@ const EXCLUDE = new Set([
   'src/lib/discovered.json',
   'src/lib/ecosystem.json',
   'src/lib/history.json',
+  'src/lib/liveness.json',
 ]);
 
 /** Every included file, as sorted app-relative POSIX paths. */

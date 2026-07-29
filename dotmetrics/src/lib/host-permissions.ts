@@ -5,7 +5,12 @@
  * Outside the container this resolves immediately and does nothing.
  */
 const ORIGINS = [
-  'paseo-assethub-rpc.laissez-faire.trade', // live contract reads
+  // Live contract reads. All three, in the order lib/chain.ts tries them: a
+  // failover endpoint the sandbox has not been told about is an endpoint that
+  // fails silently at the moment it is needed most.
+  'paseo-assethub-rpc.laissez-faire.trade',
+  'eth-rpc-testnet.polkadot.io',
+  'services.polkadothub-rpc.com',
   'asset-hub-paseo-rpc.n.dwellir.com', // live registry tail (WebSocket)
   'dweb.link', // Bulletin directory
   'ipfs.io',

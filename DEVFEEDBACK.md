@@ -49,16 +49,17 @@ Ranked by what it costs a developer, not by how hard it looks to fix.
 | 7 | Spinner output makes `pad` / `dotns` logs unusable in CI | Scripting requires grepping for `baf…` |
 | 4 | Native `<select>` did not open inside the shell on tested devices | Not fully isolated to the shell; worked around app-side |
 | 4b | Apps that ignore the History API turn the back gesture into "quit" | **Our bug**, documented because the symptom reads as a shell defect |
-| 13 | `dotns bulletin authorize` ignores the key you configure and signs as `//Eve` — derived from the **publicly published** Substrate dev seed — and that account's grants work | **Security-relevant, and a correctness bug.** The authority to grant storage access sits on a key whose private half is in every Substrate tutorial; the CLI also tells callers their own key did the granting |
+| 13 | `dotns bulletin authorize` honours `-k` but silently ignores `-m`/keystore for the signer, defaulting on testnet to the public dev key `//Eve` (which is a live authorizer here). Non-testnet is already guarded | **Footgun, mildly security-relevant.** A normal-auth caller signs as a public key without noticing; narrowed twice by re-verification — the first two versions overstated it |
 
 The single highest-leverage change remains **12**: a rate-limited self-service Lite
 grant on the devnet would let builders exercise the write path they are building for.
 
-Finding **13** does not fit that ranking and is listed anyway, because it is the item on
-this page most likely to matter to the engineers rather than to a developer. It is also
-the one we got wrong first and corrected ourselves — the version we originally wrote
-claimed a delegation hole that does not exist. The correction is recorded in place rather
-than deleted, since a report is only worth reading if its mistakes are visible in it.
+Finding **13** is the one we got wrong — twice — and corrected ourselves each time by
+re-verifying instead of trusting the previous write-up. It started as a "delegation hole"
+that does not exist, became "the CLI always signs as a public key" (also too strong), and
+settled as what the source actually shows: an inconsistent, silent signer default on
+testnet, with the non-testnet case already guarded. The correction history is kept in
+place, because a report is only worth trusting if its own mistakes are visible in it.
 
 ---
 
@@ -298,75 +299,62 @@ builders exercise the full write path end-to-end. Highest-leverage item in this 
 
 ## Bulletin write authorization
 
-**13. `dotns bulletin authorize` signs with a hard-coded dev account, not with the
-key you configured.**
+**13. `dotns bulletin authorize` selects its signer inconsistently with the rest of the
+CLI, and on a testnet defaults to the public dev key `//Eve`.**
 
-Observed: `DEFAULT_BULLETIN_AUTHORIZER_KEY_URI = "//Eve"` in
-`@polkadot-community-foundation/dotns-cli@0.8.0` (`dist/utils/constants.d.ts:28`). Every
-`dotns bulletin authorize` run we made — including runs where the account was supplied
-through `DOTNS_MNEMONIC`, and runs from a completely different derived key — printed
-`signer: //Eve` and signed as `//Eve`. The subcommand accepts `--mnemonic`,
-`--key-uri`, `--account` and the keystore options like every other subcommand, and for
-this one they do not select the signer.
+This finding has been narrowed twice by re-verification; the load-bearing claims below
+were each re-checked against the CLI source and the `signer:` line the tool prints.
 
-**`//Eve` is not a private key you shipped by accident — it is a key nobody has.** The
-same constants block sets `DEFAULT_MNEMONIC = "bottom drive obey lake curtain smoke
-basket hold race lonely fit walk"`, the standard Substrate development seed, which is
-published in the documentation of every Substrate project. `//Eve` derived from it is
-`5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw`; anyone can reproduce its private key
-in seconds. Whatever authority that account holds on a deployment is therefore held by
-the public.
+Observed — signer selection (verified by reading `dist/cli.js` and by running each case):
+- `authorize` honours `--key-uri` / `-k`: passing our own key with `-k` printed
+  `signer: (provided via --key-uri)` and signed as us.
+- `authorize` does **not** honour `--mnemonic` / `-m` (nor `--account` / keystore) for the
+  signer: passing our key with `-m` still printed `signer: //Eve` and signed as `//Eve`.
+  Every other subcommand honours `-m` and the keystore. So a user who authenticates the
+  normal way, and does not happen to use `-k`, silently signs `authorize` as `//Eve`
+  rather than as their own account.
+- With no signer at all: the code defaults to `//Eve` **only on a testnet**. On a
+  non-testnet it refuses — `Refusing to default the Authorizer signer to //Eve on this
+  chain … Pass an explicit signer with -k / --key-uri`. The dangerous case is guarded.
 
-Two further facts we checked while confirming this:
-- `//Eve` is **not itself authorized to store** (`authorized: false`) — its privilege is
-  the *granting* origin, which is a separate capability from having a write window.
-- `//Alice` from the same public seed
-  (`5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY`) **currently holds a live Bulletin
-  write authorization** on this devnet: 20 transactions / 2000 bytes, expiring
-  2026-07-30. So well-known development accounts are live participants on the storage
-  network right now, not merely referenced by tooling.
+Observed — who `//Eve` is, and that it is a live participant here:
+- `//Eve` is derived from `DEFAULT_MNEMONIC` in the same constants block —
+  `"bottom drive obey lake curtain smoke basket hold race lonely fit walk"`, the standard
+  Substrate development seed published in every project's docs. Its address is
+  `5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw`; anyone can reproduce its private key.
+- On this devnet `//Eve` held the authorizer origin in practice: earlier `authorize`
+  calls it signed **succeeded**, granting write windows to accounts we derived, one of
+  which then uploaded to Bulletin (CID
+  `bafybeifb2szx6dorw7drflum4cyikfejs6wetovle3bjemb2fqmbphhoia`). `//Alice` from the same
+  public seed (`5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY`) currently holds a live
+  authorization: 20 transactions / 2000 bytes, expiring 2026-07-30. So well-known
+  development accounts are live on the storage network, not merely referenced by tooling.
+- Every `authorize` now fails with `{"type":"Invalid","value":{"type":"Payment"}}` —
+  including one we signed with our own account via `-k` — so the current blocker is the
+  signer's ability to pay for the extrinsic, not an authorization decision. We therefore
+  cannot, right now, cleanly test whether a non-authorizer key is rejected with
+  `BadOrigin`, and do not claim it either way.
 
-Two consequences, one for correctness and one for security:
+*What this corrects.* An earlier version of this finding said `authorize` "ignores the key
+you pass and always signs as `//Eve`", and before that, that "an authorized account can
+transitively delegate authorization past its own expiry". Both were wrong: `-k` does
+select the signer, and the grants we first attributed to our key were `//Eve`'s
+throughout, because `-m` (the way we authenticate everywhere else) is silently not honoured
+here. Reading the source and the printed `signer:` line is what corrected it — the same
+lesson twice: verify **which account** the chain saw, not that the command exited zero.
 
-- **The tool does something other than what its options say.** A caller who passes a key
-  and sees a successful authorization will reasonably conclude that their key granted it.
-  Ours did not. Everything an operator believes about who holds authority on their
-  network is wrong by exactly that gap.
-- **Whoever `//Eve` is on a given deployment, the CLI hands its authority to anyone who
-  installs the package.** On this devnet `//Eve` evidently held the authorizer origin: we
-  successfully created write authorizations for two freshly derived accounts
-  (`5CkV3vUYEW4acjjGnwJUh8XYNeu2uMvQv4s417AZhukanZyj`,
-  `5HbmjFDFWRHSvTgJaCnTTX18nNfoJD9KQ2x6tnFveoRKkkbw`), each with a fresh window
-  expiring 2026-08-12, and one of them then uploaded a file to Bulletin successfully
-  (CID `bafybeifb2szx6dorw7drflum4cyikfejs6wetovle3bjemb2fqmbphhoia`). Those grants were
-  `//Eve`'s, not ours. Subsequent attempts now fail with
-  `{"type":"Invalid","value":{"type":"Payment"}}`, which reads as `//Eve` no longer
-  being able to pay for the extrinsic rather than as a permission decision.
+Net: on a devnet, none of this is alarming — a public authorizer is a reasonable
+convenience and the non-testnet path already refuses it. The parts worth acting on are the
+inconsistency and its silence.
 
-*This finding replaces an earlier version of itself, and the correction is the useful
-part.* We first reported this as "an authorized account can authorize other accounts,
-transitively, past its own expiry" — a delegation hole. That was wrong. We had attributed
-to our own key what a dev key shipped inside the CLI was doing, because the successful
-runs looked like ours and we did not read the `signer:` line the tool was printing
-truthfully all along. The lesson generalises past this bug: when an operation succeeds,
-verify **which account** the chain saw, not merely that the command exited zero.
-
-What we did **not** establish, and so do not claim: whether a genuine authorized account
-can delegate at all (we never actually tested it, since the CLI never used ours); whether
-`//Eve` holds this authority by design on the devnet or by leftover configuration; and
-whether the current `Payment` failures are exhaustion, a deliberate change, or unrelated.
-
-Suggestion, in the order we would do them:
-1. **Take the granting origin off any key derived from the public dev seed**, on any
-   deployment that outlives local development. This is the part that does not depend on
-   the CLI at all.
-2. Make `authorize` use the configured signer like every other subcommand, and fail
-   loudly when no authorizer key is available instead of silently substituting a built-in
-   one. If a default dev authorizer is deliberate for local development, gate it behind
-   an explicit flag such as `--authorizer-key-uri`, so that using a publicly-known key is
-   a choice the caller makes and can see in their own shell history.
-3. Consider whether `DEFAULT_MNEMONIC` belongs in a published package at all: a caller
-   who omits a key currently gets a working, publicly-owned account rather than an error.
+Suggestion:
+1. Make `authorize` honour the same auth options as every other subcommand (`-m`,
+   `--account`, keystore), or refuse loudly when they are set but unused — rather than
+   silently substituting `//Eve` and reporting a `signer:` the caller is unlikely to read.
+2. The non-testnet guard is good; consider extending a visible warning to devnet too (the
+   existing `warnIfDevKeyOnTestnet` only fires for `previewnet`).
+3. Ensure no public-seed account holds the Authorizer origin on any network that outlives
+   local development — that part does not depend on the CLI at all.
 
 ---
 
