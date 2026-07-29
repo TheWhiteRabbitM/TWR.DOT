@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11568265,
-  "updatedAt": "2026-07-29T15:25:10.244Z",
+  "lastBlock": 11571917,
+  "updatedAt": "2026-07-29T17:42:43.289Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "c0a31ef0b4884a5727de570b67a063ed275801fa47708123478fe67df0d84f55",
-    "cid": "bafybeidmmchg63767hjvp42luyhmojljczf7ongfrxlyvfczwh2xzsk6bi",
-    "uploadedAt": "2026-07-29T15:30:16.882Z"
+    "digest": "79d99091e2591d67137326af62fdea379f4a22793d66e3fb0a7056c8bf6402a3",
+    "cid": "bafybeib4np3hxd74iy2ge3pr26umfhlds46bvkwe6v4ivlilnzna3scpzy",
+    "uploadedAt": "2026-07-29T17:47:10.036Z"
   },
   "sitePublish": {
     "treeHash": "78664d01a706e1aad98dd8248beacfd87fb8564a085c07e6bd4ed0be0e8ea206",
     "publishedAt": "2026-07-29T09:58:11.935Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-29T15:29:06.000Z",
+    "updatedAt": "2026-07-29T17:46:04.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -85,7 +85,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-29T15:29:06.000Z",
+    "updatedAt": "2026-07-29T17:46:04.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -94,8 +94,9 @@
         "live": "alive"
       },
       "ascendyendor00": {
-        "contenthash": "bafybeibb2nim7jae6z52r5iky6jvf6fkjobal6dlrpt2uu3fp6wnwxmuka",
-        "updateCount": 0,
+        "contenthash": "bafybeibpx6m2dfpolbxdtwsos5lvqpnzqpoium2geb6cnoex6sw7eibggq",
+        "updateCount": 1,
+        "changedAt": 1785347164,
         "live": "alive"
       },
       "buildboard01": {
@@ -154,8 +155,9 @@
         "live": "alive"
       },
       "doomarcade00": {
-        "contenthash": "bafybeia3hqdxuleam3pd3qcdyxgdsnywm4tfj7trskuhxpnyy65742scs4",
-        "updateCount": 0,
+        "contenthash": "bafybeifo2pyszm6bss6axl2lpyco2g4zb4tagv622j3yliooqmxcbmchhq",
+        "updateCount": 1,
+        "changedAt": 1785347164,
         "live": "alive"
       },
       "dot-pages": {
