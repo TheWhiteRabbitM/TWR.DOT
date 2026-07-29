@@ -1,4 +1,4 @@
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import type { ApiPromise } from '@polkadot/api';
 import type { Discovered } from './registry';
 import { readName, REGISTRY } from './dotns';
 

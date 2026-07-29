@@ -5,7 +5,7 @@ Polkadot app (the "shell"), published to a `.dot` name. This file is the shortes
 between "it does nothing and there is no error" and working code.
 
 Everything below was established by building, publishing and operating seven apps on the
-devnet between 2026-07-23 and 2026-07-27, and re-verified against the live chain. The
+devnet between 2026-07-23 and 2026-07-29, and re-verified against the live chain. The
 same ground stated as a report for the platform's engineers is in `DEVFEEDBACK.md`;
 this file is the practical half. Where a claim is unverified, it says so.
 
@@ -345,7 +345,8 @@ dotns bulletin status --env devnet --json
 
 **Fix:** a scheduled republish at **half the retention window or less**, so one failed run
 cannot expire anything, plus a check that reports how many days of authorization remain
-before it becomes urgent. `pad` is incremental, so republishing unchanged files is cheap.
+before it becomes urgent (and see T20 for what to do when that number gets small).
+`pad` is incremental, so republishing unchanged files is cheap.
 An app that already refreshes its own data on a schedule renews itself for free — the ones
 that need this are the finished, stable apps nobody has touched in a while, which is
 exactly the set you would never think to check.
@@ -361,6 +362,48 @@ checks a CID across gateways, and the honest answer today can be one gateway out
 If your app fetches its own data by CID through a public gateway (a common pattern for
 mutable data), test the gateway you chose rather than assuming IPFS-compatible means
 IPFS-reachable.
+
+### T20 — Verify WHICH ACCOUNT the chain saw, not that the command succeeded
+
+**This trap is here because we fell into it, and it nearly went out as a security report.**
+
+**Symptom:** a privileged operation succeeds when you did not expect to have the
+privilege. You conclude you have a capability you do not have.
+
+**Cause:** a tool can sign with an account other than the one you configured.
+`dotns bulletin authorize` does exactly that: `DEFAULT_BULLETIN_AUTHORIZER_KEY_URI =
+"//Eve"` (`@polkadot-community-foundation/dotns-cli@0.8.0`, `dist/utils/constants.d.ts:28`).
+It accepts `--mnemonic`, `--key-uri`, `--account` and the keystore flags like every other
+subcommand, and for this one they do not choose the signer. It prints `signer: //Eve`
+honestly — we simply did not read it.
+
+What that cost us: we ran an experiment, watched an account we derived receive a Bulletin
+write authorization with an expiry *later* than our own, watched a second account receive
+one too, and concluded that authorization was freely and transitively delegable — a
+serious hole. It was not. `//Eve`, shipped inside the CLI, was granting all of them. Our
+key never granted anything. We had written the finding up before checking the one line
+that disproved it.
+
+**Fix — the habit, not the command:**
+
+```bash
+# after any privileged operation, ask the chain who it actually saw
+dotns bulletin status --env devnet --json      # the grantee's side
+# and read the tool's own signer line, every time, not just when it fails
+```
+
+If your evidence for "I can do X" is that a command exited zero, you do not yet have
+evidence. Look for the account in the tool's output, in the chain's events, or in the
+grantee's own state — three different places, any one of which would have caught this.
+
+**Practical consequence, if you are counting on renewal:** you probably cannot renew your
+own Bulletin authorization. `authorize --force` on your own address is rejected by the
+chain, and the grants that appeared to come from us came from a dev key that has since
+started failing with `{"type":"Invalid","value":{"type":"Payment"}}`. Plan for asking the
+operators before your window closes (T19), and keep the days-remaining check in every
+scheduled run — that check is what tells you the truth regardless of which mechanism is
+open this week.
+
 
 ---
 

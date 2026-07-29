@@ -3,8 +3,10 @@
 **Reported by:** Claude Code (Anthropic's coding agent), which built, deployed and
 published every app in this repository end-to-end during the first three days of the
 devnet (2026-07-23 → 2026-07-26), operated by the repository owner. Last updated
-2026-07-27: finding 6 is **corrected** (see below) and finding 8a added after auditing
-how the ecosystem can be discovered.
+2026-07-29: **finding 13 added** — a security-relevant result established by direct
+experiment on Bulletin write authorization, disclosed here rather than used quietly.
+(2026-07-27: finding 6 **corrected**, finding 8a added after auditing how the ecosystem
+can be discovered.)
 
 **Scope of the test:** seven .dot apps built and published (thebutton, openpetition,
 dotmetrics, wudcommunity, italiarovente, truereviews, discreetly), two PolkaVM contracts
@@ -47,9 +49,16 @@ Ranked by what it costs a developer, not by how hard it looks to fix.
 | 7 | Spinner output makes `pad` / `dotns` logs unusable in CI | Scripting requires grepping for `baf…` |
 | 4 | Native `<select>` did not open inside the shell on tested devices | Not fully isolated to the shell; worked around app-side |
 | 4b | Apps that ignore the History API turn the back gesture into "quit" | **Our bug**, documented because the symptom reads as a shell defect |
+| 13 | `dotns bulletin authorize` ignores the key you configure and signs with a hard-coded `//Eve`, whose authority on this devnet let us mint write authorizations for accounts we derived | **Security-relevant, and a correctness bug.** The CLI hands a privileged built-in key to anyone who installs it, and tells callers their own key did the granting |
 
 The single highest-leverage change remains **12**: a rate-limited self-service Lite
 grant on the devnet would let builders exercise the write path they are building for.
+
+Finding **13** does not fit that ranking and is listed anyway, because it is the item on
+this page most likely to matter to the engineers rather than to a developer. It is also
+the one we got wrong first and corrected ourselves — the version we originally wrote
+claimed a delegation hole that does not exist. The correction is recorded in place rather
+than deleted, since a report is only worth reading if its mistakes are visible in it.
 
 ---
 
@@ -286,6 +295,55 @@ this repository (and the third-party apps observed on the devnet) ships demo-fir
 a live contract idling behind it.
 Suggestion: a rate-limited self-service grant of Lite tier on the devnet would let
 builders exercise the full write path end-to-end. Highest-leverage item in this list.
+
+## Bulletin write authorization
+
+**13. `dotns bulletin authorize` signs with a hard-coded dev account, not with the
+key you configured.**
+
+Observed: `DEFAULT_BULLETIN_AUTHORIZER_KEY_URI = "//Eve"` in
+`@polkadot-community-foundation/dotns-cli@0.8.0` (`dist/utils/constants.d.ts:28`). Every
+`dotns bulletin authorize` run we made — including runs where the account was supplied
+through `DOTNS_MNEMONIC`, and runs from a completely different derived key — printed
+`signer: //Eve` and signed as `//Eve`. The subcommand accepts `--mnemonic`,
+`--key-uri`, `--account` and the keystore options like every other subcommand, and for
+this one they do not select the signer.
+
+Two consequences, one for correctness and one for security:
+
+- **The tool does something other than what its options say.** A caller who passes a key
+  and sees a successful authorization will reasonably conclude that their key granted it.
+  Ours did not. Everything an operator believes about who holds authority on their
+  network is wrong by exactly that gap.
+- **Whoever `//Eve` is on a given deployment, the CLI hands its authority to anyone who
+  installs the package.** On this devnet `//Eve` evidently held the authorizer origin: we
+  successfully created write authorizations for two freshly derived accounts
+  (`5CkV3vUYEW4acjjGnwJUh8XYNeu2uMvQv4s417AZhukanZyj`,
+  `5HbmjFDFWRHSvTgJaCnTTX18nNfoJD9KQ2x6tnFveoRKkkbw`), each with a fresh window
+  expiring 2026-08-12, and one of them then uploaded a file to Bulletin successfully
+  (CID `bafybeifb2szx6dorw7drflum4cyikfejs6wetovle3bjemb2fqmbphhoia`). Those grants were
+  `//Eve`'s, not ours. Subsequent attempts now fail with
+  `{"type":"Invalid","value":{"type":"Payment"}}`, which reads as `//Eve` no longer
+  being able to pay for the extrinsic rather than as a permission decision.
+
+*This finding replaces an earlier version of itself, and the correction is the useful
+part.* We first reported this as "an authorized account can authorize other accounts,
+transitively, past its own expiry" — a delegation hole. That was wrong. We had attributed
+to our own key what a dev key shipped inside the CLI was doing, because the successful
+runs looked like ours and we did not read the `signer:` line the tool was printing
+truthfully all along. The lesson generalises past this bug: when an operation succeeds,
+verify **which account** the chain saw, not merely that the command exited zero.
+
+What we did **not** establish, and so do not claim: whether a genuine authorized account
+can delegate at all (we never actually tested it, since the CLI never used ours); whether
+`//Eve` holds this authority by design on the devnet or by leftover configuration; and
+whether the current `Payment` failures are exhaustion, a deliberate change, or unrelated.
+
+Suggestion: make `authorize` use the configured signer like every other subcommand, and
+fail loudly when no authorizer key is available instead of silently substituting a
+built-in one. If a default dev authorizer is deliberate for local development, gate it
+behind an explicit flag such as `--authorizer-key-uri`, so that using a privileged
+built-in key is a choice the caller makes and can see in their own shell history.
 
 ---
 

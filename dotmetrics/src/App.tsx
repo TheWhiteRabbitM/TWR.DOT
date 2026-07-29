@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { APPS, buildApps, type Discovered } from './lib/registry';
 import { gatewayUrl, loadDirectory, type DirectorySource } from './lib/directory';
@@ -15,7 +15,7 @@ import {
   type RegPoint,
 } from './Charts';
 import { openAppChat } from './lib/host-chat';
-import { openExternal } from './lib/host-nav';
+import { copyText, openExternal } from './lib/host-nav';
 import ecosystemSnapshot from './lib/ecosystem.json';
 import type { AppEntry, AppStats } from './lib/types';
 import {
@@ -28,6 +28,7 @@ import {
   tSplit,
   useLang,
   type Lang,
+  type Vars,
 } from './lib/i18n';
 import { detectLang } from './lib/detect-lang';
 import { ENDPOINT, SERVICE_LABEL, TranslateError, translate } from './lib/translate';
@@ -316,6 +317,209 @@ const LAYOUT_CSS = `
 
 const REFRESH_MS = 20_000;
 
+/* ------------------------------------------------------ strings, this pass */
+
+/**
+ * The strings this pass introduces, under the same lockstep as lib/i18n.ts.
+ *
+ * They live here for the reason LAYOUT_CSS does: lib/ belongs to another pass
+ * and this one owns App.tsx and styles.css, so adding keys to lib/i18n.ts would
+ * be two writers in one file. The discipline that actually protects the reader
+ * is kept verbatim — EN is the source of truth, IT is declared
+ * `Record<ExtraKey, string>`, and a missing, extra or renamed translation is a
+ * compile error at `npm run build` rather than a blank label at runtime. Fold
+ * this block into lib/i18n.ts when the passes merge; it is one contiguous
+ * block, in the same key order, for exactly that.
+ *
+ * Three of these keys deliberately SHADOW lib/i18n.ts — 'search.placeholder',
+ * 'search.aria' and 'idx.empty.search'. Search now also matches an owner
+ * address, and a control that says it searches "name or description" while
+ * quietly matching something else is the kind of small lie this page does not
+ * tell. The shadowing copies are the lib strings plus that clause and nothing
+ * else, so folding them back is a one-line replace each.
+ */
+const EXTRA_EN = {
+  /* --- search, re-stated because the haystack grew ------------------- */
+  'search.placeholder': 'Search {n} .dot apps by name, description or owner address',
+  'search.aria':
+    'Search every indexed .dot name, display name, description and owner address',
+  'idx.empty.search':
+    'No name, display name, description or owner address in the index contains “{q}”.',
+
+  /* --- group by owner ------------------------------------------------
+     A view of data already on every row — the owner the registry returned —
+     and not a new metric. The chip carries no number of its own because "By
+     owner 39" reads as "39 names match"; the count line below the facets says
+     what the mode did, with both figures and their denominator. */
+  'facet.owner': 'Group by owner',
+  'idx.count.owner':
+    '{n} names · {owners} owner addresses · groups ordered by how many names each holds',
+  'owner.group.n': '{n} of {all} names',
+  'owner.group.aria': 'Owner {owner} — {n} of {all} indexed names',
+  /* An absence, worded as one and sorted last however many names it holds: a
+     snapshot that does not record an owner has not found a big one. */
+  'owner.group.none': 'owner not recorded in this snapshot',
+  'owner.group.aria.none':
+    '{n} of {all} indexed names whose owner this snapshot does not record',
+
+  /* --- linking to one row -------------------------------------------- */
+  'link.copy': 'copy link',
+  'link.copied': 'link copied',
+  'link.retry': 'try again',
+  'link.copy.aria': 'Copy a link that opens {domain} in this index',
+  /* The clipboard is refused outright in some shells. Saying "copy failed" and
+     stopping there would leave the reader with no link at all, so the failure
+     hands over the thing the button was for. */
+  'link.failed':
+    'Copy failed — this app could not reach the clipboard. The link is below; select it and copy it by hand.',
+
+  /* --- a shared link that names nothing ------------------------------- */
+  'route.unknown':
+    'The link you opened asks for “{label}.dot”, and the index holds no such name — it may never have been registered, or it may have left the directory since the link was made. The whole index is shown instead.',
+  'route.unknown.dismiss': 'dismiss',
+
+  /* --- the contract-record convention ---------------------------------
+     Shown only in an expanded row, only when the name has a bundle deployed
+     and no contract record. Never a badge and never a collapsed-row marker: a
+     name that declares nothing is not doing anything wrong, so this is an
+     invitation and it is the quietest text in the drawer. */
+  'hint.contract':
+    'This name publishes no {record} record. dotmetrics counts {event} for whatever address a name declares, so running {cmd} makes this app’s own event count appear on its row, over the same window as every other row. This is dotmetrics’ convention and not a platform standard: no manifest field exists for a contract address, so a text record is what we read.',
+} as const;
+
+type ExtraKey = keyof typeof EXTRA_EN;
+
+const EXTRA_IT: Record<ExtraKey, string> = {
+  /* --- search, re-stated because the haystack grew ------------------- */
+  'search.placeholder':
+    'Cerca fra {n} app .dot per nome, descrizione o indirizzo del proprietario',
+  'search.aria':
+    'Cerca in ogni nome .dot indicizzato, nome visualizzato, descrizione e indirizzo del proprietario',
+  'idx.empty.search':
+    'Nessun nome, nome visualizzato, descrizione o indirizzo del proprietario nell’indice contiene “{q}”.',
+
+  /* --- group by owner ------------------------------------------------ */
+  'facet.owner': 'Raggruppa per proprietario',
+  'idx.count.owner':
+    '{n} nomi · {owners} indirizzi proprietari · gruppi ordinati per quanti nomi ciascuno possiede',
+  'owner.group.n': '{n} nomi su {all}',
+  'owner.group.aria': 'Proprietario {owner} — {n} nomi indicizzati su {all}',
+  'owner.group.none': 'proprietario non registrato in questo snapshot',
+  'owner.group.aria.none':
+    '{n} nomi indicizzati su {all} il cui proprietario questo snapshot non registra',
+
+  /* --- linking to one row -------------------------------------------- */
+  'link.copy': 'copia il link',
+  'link.copied': 'link copiato',
+  'link.retry': 'riprova',
+  'link.copy.aria': 'Copia un link che apre {domain} in questo indice',
+  'link.failed':
+    'Copia non riuscita — questa app non è riuscita a raggiungere gli appunti. Il link è qui sotto: selezionalo e copialo a mano.',
+
+  /* --- a shared link that names nothing ------------------------------- */
+  'route.unknown':
+    'Il link che hai aperto chiede «{label}.dot», e l’indice non contiene questo nome — può non essere mai stato registrato, oppure può aver lasciato la directory dopo che il link è stato creato. Viene mostrato invece l’indice completo.',
+  'route.unknown.dismiss': 'chiudi',
+
+  /* --- the contract-record convention -------------------------------- */
+  'hint.contract':
+    'Questo nome non pubblica alcun record {record}. dotmetrics conta {event} per l’indirizzo che un nome dichiara, quindi eseguire {cmd} fa comparire il conteggio degli eventi di questa app sulla sua riga, sulla stessa finestra di ogni altra riga. Questa è una convenzione di dotmetrics e non uno standard della piattaforma: non esiste un campo del manifest per l’indirizzo di un contratto, quindi leggiamo un record di testo.',
+};
+
+const EXTRA: Record<Lang, Record<ExtraKey, string>> = { en: EXTRA_EN, it: EXTRA_IT };
+
+/** `t()` over the block above. Same rule: an unknown `{name}` stays visible. */
+function tx(key: ExtraKey, vars?: Vars): string {
+  const template = EXTRA[getLang()][key];
+  if (!vars) return template;
+  return template.replace(/\{(\w+)\}/g, (whole, name: string) =>
+    name in vars ? String(vars[name]) : whole,
+  );
+}
+
+/** `tSplit()` over the block above, so a sentence with `<code>` in it stays one string. */
+function txSplit<T>(key: ExtraKey, nodes: Record<string, T>): (string | T)[] {
+  const template = EXTRA[getLang()][key];
+  const out: (string | T)[] = [];
+  const re = /\{(\w+)\}/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(template)) !== null) {
+    if (m.index > last) out.push(template.slice(last, m.index));
+    out.push(m[1] in nodes ? nodes[m[1]] : m[0]);
+    last = m.index + m[0].length;
+  }
+  if (last < template.length) out.push(template.slice(last));
+  return out;
+}
+
+/* ------------------------------------------------------- the app route */
+
+/**
+ * `#/app/<label>` — the URL of one row.
+ *
+ * A HASH and not a path: this bundle is served from a content-addressed
+ * gateway, where there is no server to rewrite `/app/foo` back onto index.html.
+ * The fragment is the one part of a URL a static host cannot get wrong.
+ */
+const ROUTE_PREFIX = '#/app/';
+
+/** The DOM id of a row, so a route can find the element to scroll to. */
+const rowDomId = (label: string): string => `r-${label}`;
+
+function labelFromHash(hash: string): string | null {
+  if (!hash.startsWith(ROUTE_PREFIX)) return null;
+  const raw = hash.slice(ROUTE_PREFIX.length);
+  let label: string;
+  try {
+    label = decodeURIComponent(raw);
+  } catch {
+    // A hand-mangled escape sequence is still a link someone followed: keep the
+    // raw text so the "no such name" notice can quote what they actually asked
+    // for, rather than silently showing them the plain index.
+    label = raw;
+  }
+  return label.trim().toLowerCase() || null;
+}
+
+const routeHref = (label: string): string => ROUTE_PREFIX + encodeURIComponent(label);
+
+/** This page's URL with no route on it — where closing a row returns to. */
+const bareHref = (): string => window.location.pathname + window.location.search;
+
+/** The absolute link "copy link" puts on the clipboard. */
+const shareUrl = (label: string): string =>
+  window.location.origin + bareHref() + routeHref(label);
+
+/**
+ * Bring a routed row into view and put the keyboard on it. `false` when the row
+ * is not on the page — a link that arrived before the directory did, or one
+ * that names nothing.
+ *
+ * It scrolls only when the row is not already fully visible: a cold link has to
+ * move the page, but tapping a row already on screen must not yank it out from
+ * under the reader's thumb. The sticky bar's height is read from --bar-h rather
+ * than written here as a number, so the two cannot drift apart.
+ */
+function revealRow(label: string): boolean {
+  const el = document.getElementById(rowDomId(label));
+  if (!el) return false;
+  const barH =
+    parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bar-h'), 10) ||
+    // A shell that will not compute styles still gets a usable margin.
+    56;
+  const box = el.getBoundingClientRect();
+  if (box.top < barH || box.bottom > window.innerHeight) {
+    el.scrollIntoView({ block: 'center' });
+  }
+  el.focus({ preventScroll: true });
+  return true;
+}
+
+/** `0x4c8a…983d`. The full address is in the row's detail and in the group's aria-label. */
+const shortAddr = (addr: string): string =>
+  addr.length > 12 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr;
+
 /* ------------------------------------------------------------- formatting */
 
 /**
@@ -429,6 +633,17 @@ interface Ecosystem {
   excluded: string[];
   beat: HeadBeat | null;
   tailUp: boolean | null;
+  /**
+   * The directory has finished loading — from Bulletin or from the baked copy,
+   * both of which are settled answers.
+   *
+   * `source` cannot stand in for this: it starts at 'baked' and can also END at
+   * 'baked', so it never distinguishes "still fetching" from "fetched nothing".
+   * Only one thing needs the difference: a `#/app/<label>` link naming a name
+   * the index does not hold must not be called broken while the copy that might
+   * contain it is still in flight.
+   */
+  ready: boolean;
 }
 
 function useEcosystem(): Ecosystem {
@@ -444,12 +659,14 @@ function useEcosystem(): Ecosystem {
   const [beat, setBeat] = useState<HeadBeat | null>(null);
   /** `false` once the tail's socket has failed — "no feed" is not "still waiting". */
   const [tailUp, setTailUp] = useState<boolean | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     let stop: (() => void) | null = null;
     void loadDirectory().then((result) => {
       if (cancelled) return;
+      setReady(true);
       setApps(result.apps);
       setSource(result.source);
       setDirectoryCid(result.cid);
@@ -506,7 +723,7 @@ function useEcosystem(): Ecosystem {
     return () => clearInterval(t);
   }, [load]);
 
-  return { apps, stats, online, source, directoryCid, excluded, beat, tailUp };
+  return { apps, stats, online, source, directoryCid, excluded, beat, tailUp, ready };
 }
 
 /* ------------------------------------------------------------ leaving here */
@@ -689,7 +906,14 @@ function AppIcon({ entry }: { entry: AppEntry }) {
     <span className="idx-ico" aria-hidden="true">
       {entry.iconCid && !failed ? (
         <img
-          src={`https://dweb.link/ipfs/${entry.iconCid}`}
+          /* gatewayUrl(), not a gateway written out here. This used to be a
+             literal dweb.link URL, and `dotns bulletin verify` measured what
+             that was worth: of the four public bridges only the Polkadot
+             community one serves our CIDs at all, so nearly every one of the
+             names that publishes an icon was falling back to its monogram. The
+             fallback below still stands — a gateway can always be down, and a
+             broken icon must leave a letter, never a hole. */
+          src={gatewayUrl(entry.iconCid)}
           alt=""
           loading="lazy"
           decoding="async"
@@ -699,6 +923,58 @@ function AppIcon({ entry }: { entry: AppEntry }) {
         mono
       )}
     </span>
+  );
+}
+
+/* ------------------------------------------------------------ copy a link */
+
+/**
+ * "copy link" on an open row.
+ *
+ * Quiet on purpose — it sits beside "Open …↗" as text, not as a button with
+ * chrome. A success reverts to the affordance after a moment; a FAILURE does
+ * not revert and does not merely apologise: the clipboard is refused outright
+ * in some shells, so the link itself is printed for the reader to select, which
+ * is the thing the button was for.
+ */
+function CopyLink({ label, domain }: { label: string; domain: string }) {
+  const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const [link, setLink] = useState('');
+
+  const go = async () => {
+    const url = shareUrl(label);
+    setLink(url);
+    // copyText tries navigator.clipboard and falls back to execCommand; `false`
+    // means both were refused, which is a real outcome and gets said out loud.
+    if (await copyText(url)) {
+      setState('copied');
+      window.setTimeout(() => setState('idle'), 3200);
+    } else {
+      setState('failed');
+    }
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        className="quiet-do"
+        aria-label={tx('link.copy.aria', { domain })}
+        onClick={go}
+      >
+        {state === 'copied'
+          ? tx('link.copied')
+          : state === 'failed'
+            ? tx('link.retry')
+            : tx('link.copy')}
+      </button>
+      {state === 'failed' && (
+        <span className="idx-mt is-err" role="status">
+          <span>{tx('link.failed')}</span>
+          <span className="mono">{link}</span>
+        </span>
+      )}
+    </>
   );
 }
 
@@ -721,6 +997,9 @@ function IndexRow({
   return (
     <>
       <div
+        /* The row is addressable so `#/app/<label>` can find and scroll to it —
+           the element, not a wrapper, because it is also what takes focus. */
+        id={rowDomId(entry.id)}
         className={`idx-row${open ? ' is-open' : ''}`}
         role="button"
         tabIndex={0}
@@ -837,6 +1116,35 @@ function IndexRow({
             </div>
           </div>
 
+          {/* The convention, offered where the absence it explains is stated,
+              and nowhere else: never in the collapsed row, never as a badge.
+              The condition is deliberate — a name with a bundle deployed and no
+              contract record is one that HAS something to measure and has not
+              said where; a name with nothing deployed would only be nagged. */}
+          {!entry.contract && entry.contenthash && (
+            <p className="idx-hint">
+              {txSplit('hint.contract', {
+                record: (
+                  <code key="r" className="mono">
+                    contract
+                  </code>
+                ),
+                event: (
+                  <code key="e" className="mono">
+                    revive.ContractEmitted
+                  </code>
+                ),
+                /* The reader's own name in the command, not a placeholder they
+                   have to substitute — the point is that it can be run. */
+                cmd: (
+                  <code key="c" className="mono">
+                    dotns text set {entry.domain} contract 0x… --env devnet
+                  </code>
+                ),
+              })}
+            </p>
+          )}
+
           {/* OUR instrumentation, under our name, below every chain fact on
               this row. These figures are real, but reading them took an ABI
               only the index's operator can hand-code, so they are presented as
@@ -889,6 +1197,10 @@ function IndexRow({
             >
               {t('detail.open', { domain: entry.domain })}
             </a>
+            {/* A search result that cannot be linked to is not much of an
+                index. This is the row's own URL, and it is offered only on an
+                open row because that is the state the link reproduces. */}
+            <CopyLink label={entry.id} domain={entry.domain} />
           </p>
         </div>
       )}
@@ -942,16 +1254,99 @@ function ChatButton() {
  * `unreachable` exists only while its count does: the chip appears when at
  * least one deployed bundle failed its last probe and vanishes when none do,
  * because a standing "Unreachable 0" would promote the exception to a category.
+ *
+ * `owner` is the odd one and is meant to look it: it hides nothing, it regroups.
+ * It carries no count on its chip for that reason — every other chip's number
+ * is "names that match", and "By owner 39" would read as the same claim about a
+ * different quantity. The count line under the facets states both figures.
  */
-type Facet = 'all' | 'published' | 'deployed' | 'name' | 'declared' | 'new' | 'unreachable';
+type Facet =
+  | 'all'
+  | 'published'
+  | 'deployed'
+  | 'name'
+  | 'declared'
+  | 'new'
+  | 'unreachable'
+  | 'owner';
 
 export function App() {
   const lang = useLang();
-  const { apps, stats, online, source, directoryCid, excluded, beat, tailUp } = useEcosystem();
+  const { apps, stats, online, source, directoryCid, excluded, beat, tailUp, ready } =
+    useEcosystem();
 
   const [query, setQuery] = useState('');
   const [facet, setFacet] = useState<Facet>('all');
-  const [openApp, setOpenApp] = useState<string | null>(null);
+  // Seeded from the URL so a cold `#/app/<label>` is open on the very first
+  // paint, against the baked snapshot, rather than after the fetch lands.
+  const [openApp, setOpenApp] = useState<string | null>(() =>
+    labelFromHash(window.location.hash),
+  );
+
+  /**
+   * How many history entries this page has pushed and not yet walked back off.
+   *
+   * It exists to keep one promise: the shell's back gesture returns to the list
+   * and never leaves the app. Closing a row by tapping it calls
+   * `history.back()` — which is what makes the tap and the gesture the same
+   * action — but only when we KNOW the entry underneath is one of ours. A
+   * reader who arrived cold on `#/app/<label>` has nothing of ours beneath
+   * them, and back() there would exit the app: a bug this codebase has already
+   * paid for once. Any user-driven history move resets this to zero, because
+   * after one we can no longer prove what is underneath.
+   */
+  const pushed = useRef(0);
+
+  /** Drop the route without navigating — for the paths that are not a Back. */
+  const clearRoute = useCallback(() => {
+    if (labelFromHash(window.location.hash)) {
+      window.history.replaceState(null, '', bareHref());
+    }
+    pushed.current = 0;
+    setOpenApp(null);
+  }, []);
+
+  useEffect(() => {
+    const sync = () => {
+      pushed.current = 0;
+      setOpenApp(labelFromHash(window.location.hash));
+    };
+    // Both, and not just one: pushState/replaceState fire neither, a Back
+    // gesture over our own entries fires popstate, and a hash typed or pasted
+    // into the address bar fires hashchange.
+    window.addEventListener('popstate', sync);
+    window.addEventListener('hashchange', sync);
+    return () => {
+      window.removeEventListener('popstate', sync);
+      window.removeEventListener('hashchange', sync);
+    };
+  }, []);
+
+  const toggleApp = useCallback(
+    (label: string) => {
+      if (openApp === label) {
+        if (pushed.current > 0) {
+          // popstate does the closing, so the tap and the back gesture take
+          // exactly one code path and cannot drift apart.
+          window.history.back();
+          return;
+        }
+        clearRoute();
+        return;
+      }
+      if (openApp === null) {
+        window.history.pushState(null, '', routeHref(label));
+        pushed.current += 1;
+      } else {
+        // Row to row is one view change, not two: the reader closed one and
+        // opened another in a single tap. Pushing here would make Back re-open
+        // the row they just left instead of returning them to the list.
+        window.history.replaceState(null, '', routeHref(label));
+      }
+      setOpenApp(label);
+    },
+    [openApp, clearRoute],
+  );
 
   const startOfTodayUtc = useMemo(() => {
     const d = new Date();
@@ -965,7 +1360,12 @@ export function App() {
     let declared = 0;
     let today = 0;
     let unreachable = 0;
+    // Lowercased: the registry returns checksummed addresses, but two copies of
+    // the directory need not agree on the casing, and one owner must never be
+    // able to become two groups because of it.
+    const owners = new Set<string>();
     for (const a of apps) {
+      owners.add(a.owner.toLowerCase());
       // One tier each, so these three add up to `all`. The old counts were
       // cumulative (`tier <= 1`), which meant "published" and "deployed"
       // overlapped and neither chip's number could be verified against the list
@@ -979,7 +1379,16 @@ export function App() {
       // (or a directory copy that predates the probe), not one found down.
       if (a.contenthash && a.alive === false) unreachable += 1;
     }
-    return { all: apps.length, published, deployed, nameOnly, declared, today, unreachable };
+    return {
+      all: apps.length,
+      published,
+      deployed,
+      nameOnly,
+      declared,
+      today,
+      unreachable,
+      owners: owners.size,
+    };
   }, [apps, startOfTodayUtc]);
 
   /** Registrations, for the heatmap and the step spark. Undated names cannot be plotted. */
@@ -992,14 +1401,20 @@ export function App() {
   );
 
   const searching = query.trim().length > 0;
+  /** Grouping is a mode, and search is the one thing that overrides every mode. */
+  const grouping = !searching && facet === 'owner';
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     // Search always runs over the WHOLE index. A filter chip narrows a list;
     // it must never be able to hide a name someone typed the name of.
+    //
+    // The owner address is part of the haystack: the directory holds 39 of
+    // them, they are the answer to "who builds what", and pasting one in has to
+    // find that person's apps whether or not the grouping mode is on.
     const pool = q
       ? apps.filter((a) =>
-          `${a.id} ${a.displayName ?? ''} ${a.name} ${a.description ?? ''}`
+          `${a.id} ${a.displayName ?? ''} ${a.name} ${a.description ?? ''} ${a.owner}`
             .toLowerCase()
             .includes(q),
         )
@@ -1017,6 +1432,8 @@ export function App() {
               return (a.firstSeenAt ?? 0) >= startOfTodayUtc;
             case 'unreachable':
               return Boolean(a.contenthash) && a.alive === false;
+            // 'owner' regroups the index; it does not filter it. Every name is
+            // still here, which is what makes the group counts add up to `all`.
             default:
               return true;
           }
@@ -1029,7 +1446,77 @@ export function App() {
     );
   }, [apps, query, facet, startOfTodayUtc]);
 
-  const facets: { key: Facet; label: string; n: number }[] = [
+  /**
+   * The same names, gathered under the address that owns them.
+   *
+   * This invents nothing: `owner` is `registry.owner()` for the name, already
+   * read, already printed on every expanded row. All the mode does is stop
+   * making the reader open 70 rows to answer "who builds what". Groups are
+   * ordered by how many names the address holds — a count, not a score — and
+   * names inside a group keep the index's own order.
+   */
+  const groups = useMemo(() => {
+    if (!grouping) return [];
+    const byOwner = new Map<string, { owner: string; apps: AppEntry[] }>();
+    for (const a of shown) {
+      const key = a.owner.toLowerCase();
+      const group = byOwner.get(key) ?? { owner: a.owner, apps: [] };
+      group.apps.push(a);
+      byOwner.set(key, group);
+    }
+    return [...byOwner.values()].sort(
+      (a, b) =>
+        // Names with no recorded owner go last however many there are: that
+        // group is an absence in the snapshot, not a large holder of names.
+        Number(a.owner === '') - Number(b.owner === '') ||
+        b.apps.length - a.apps.length ||
+        a.owner.localeCompare(b.owner),
+    );
+  }, [grouping, shown]);
+
+  /**
+   * A `#/app/<label>` that names nothing the index holds.
+   *
+   * Only ever claimed once the directory has settled — the baked snapshot is
+   * older than the fetched one, so a link to a name registered this morning is
+   * momentarily "unknown" on first paint and calling it broken there would be a
+   * lie with a one-second shelf life.
+   */
+  const routedMissing =
+    openApp !== null && ready && !apps.some((a) => a.id === openApp);
+
+  /**
+   * Scroll the routed row into view and put the keyboard on it — once per
+   * label, whether the reader tapped the row or arrived on the URL cold.
+   *
+   * `shown` is in the dependencies because a cold link renders against the
+   * baked snapshot first: the row it names may not exist until the fetched
+   * directory replaces it a moment later, and this has to try again when it
+   * does.
+   */
+  const revealed = useRef<string | null>(null);
+  useEffect(() => {
+    if (!openApp) {
+      revealed.current = null;
+      return;
+    }
+    if (revealed.current === openApp) return;
+    if (revealRow(openApp)) revealed.current = openApp;
+  }, [openApp, shown]);
+
+  /**
+   * Narrowing the list closes the open row.
+   *
+   * Without this a filter could hide the row the URL still names, leaving a
+   * link that says one thing and a page that shows another. Note it does NOT
+   * go back: the reader changed a filter, which is not a navigation, so the
+   * route is rewritten in place rather than walked off.
+   */
+  const narrow = useCallback(() => {
+    if (openApp !== null) clearRoute();
+  }, [openApp, clearRoute]);
+
+  const facets: { key: Facet; label: string; n?: number }[] = [
     { key: 'all', label: t('facet.all'), n: counts.all },
     { key: 'published', label: t('facet.published'), n: counts.published },
     { key: 'deployed', label: t('facet.deployed'), n: counts.deployed },
@@ -1046,6 +1533,10 @@ export function App() {
   if (counts.unreachable > 0) {
     facets.push({ key: 'unreachable', label: t('facet.unreachable'), n: counts.unreachable });
   }
+  // Last, and countless: the filters above all answer "how many names match",
+  // and a number on this chip would be read as the same claim about a different
+  // quantity. What it did is stated in the count line under the row instead.
+  facets.push({ key: 'owner', label: tx('facet.owner') });
 
   const scanned = counts.all + excluded.length;
   const indexAge = Math.floor(Date.now() / 1000) - eco.measuredAt;
@@ -1070,9 +1561,12 @@ export function App() {
           className="find-in"
           type="search"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('search.placeholder', { n: fmt(counts.all, lang) })}
-          aria-label={t('search.aria')}
+          onChange={(e) => {
+            narrow();
+            setQuery(e.target.value);
+          }}
+          placeholder={tx('search.placeholder', { n: fmt(counts.all, lang) })}
+          aria-label={tx('search.aria')}
         />
         {searching && (
           <button
@@ -1142,17 +1636,31 @@ export function App() {
             className={`facet${!searching && facet === f.key ? ' is-on' : ''}`}
             aria-pressed={!searching && facet === f.key}
             onClick={() => {
+              narrow();
               setQuery('');
               setFacet(f.key);
             }}
           >
             {f.label}
-            <span className="facet-n">{fmt(f.n, lang)}</span>
+            {f.n !== undefined && <span className="facet-n">{fmt(f.n, lang)}</span>}
           </button>
         ))}
       </div>
 
       {/* 5 ----------------------------------------------------- the index */}
+      {/* A link someone shared that leads nowhere is a failure, and it says so
+          in words rather than quietly showing the plain index as if nothing had
+          been asked for. The label is capped: a hostile or fat-fingered URL
+          must not be able to paste a paragraph into the page. */}
+      {routedMissing && openApp && (
+        <p className="idx-notice" role="status">
+          {tx('route.unknown', { label: openApp.slice(0, 64) })}
+          <button type="button" className="quiet-do" onClick={clearRoute}>
+            {tx('route.unknown.dismiss')}
+          </button>
+        </p>
+      )}
+
       <div className="idx-count">
         {searching
           ? t('idx.count.search', {
@@ -1160,23 +1668,70 @@ export function App() {
               all: fmt(counts.all, lang),
               q: query.trim(),
             })
-          : t('idx.count.plain', { n: fmt(shown.length, lang) })}
+          : grouping
+            ? tx('idx.count.owner', {
+                n: fmt(shown.length, lang),
+                owners: fmt(groups.length, lang),
+              })
+            : t('idx.count.plain', { n: fmt(shown.length, lang) })}
       </div>
 
       <div className="idx">
-        {shown.map((entry) => (
-          <IndexRow
-            key={entry.id}
-            entry={entry}
-            stats={stats[entry.id] ?? null}
-            open={openApp === entry.id}
-            onToggle={() => setOpenApp(openApp === entry.id ? null : entry.id)}
-          />
-        ))}
+        {/* Two renderings of one list. Grouped, each header names the address
+            and how many of the index's names it holds; flat, the index reads
+            exactly as it always has. Nothing is filtered out either way. */}
+        {grouping
+          ? groups.map((group) => (
+              <div key={group.owner || 'unowned'} className="idx-group-wrap">
+                <div
+                  className="idx-group"
+                  role="heading"
+                  aria-level={3}
+                  /* The visible address is abbreviated to fit a phone, so the
+                     label a screen reader gets is the whole one. */
+                  aria-label={tx(
+                    group.owner ? 'owner.group.aria' : 'owner.group.aria.none',
+                    {
+                      owner: group.owner,
+                      n: fmt(group.apps.length, lang),
+                      all: fmt(counts.all, lang),
+                    },
+                  )}
+                >
+                  <span className="idx-group-o" title={group.owner || undefined}>
+                    {group.owner ? shortAddr(group.owner) : tx('owner.group.none')}
+                  </span>
+                  <span className="idx-group-n">
+                    {tx('owner.group.n', {
+                      n: fmt(group.apps.length, lang),
+                      all: fmt(counts.all, lang),
+                    })}
+                  </span>
+                </div>
+                {group.apps.map((entry) => (
+                  <IndexRow
+                    key={entry.id}
+                    entry={entry}
+                    stats={stats[entry.id] ?? null}
+                    open={openApp === entry.id}
+                    onToggle={() => toggleApp(entry.id)}
+                  />
+                ))}
+              </div>
+            ))
+          : shown.map((entry) => (
+              <IndexRow
+                key={entry.id}
+                entry={entry}
+                stats={stats[entry.id] ?? null}
+                open={openApp === entry.id}
+                onToggle={() => toggleApp(entry.id)}
+              />
+            ))}
         {shown.length === 0 && (
           <div className="idx-empty">
             {searching
-              ? t('idx.empty.search', { q: query.trim() })
+              ? tx('idx.empty.search', { q: query.trim() })
               : t('idx.empty.filter')}
           </div>
         )}

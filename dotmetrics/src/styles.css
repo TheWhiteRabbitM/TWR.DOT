@@ -1438,6 +1438,122 @@ tr.idx-row.is-open td:first-child {
   text-decoration: none;
 }
 
+/* ================================ owner groups, links, the contract hint */
+
+/* A quiet inline text affordance: underlined, no chrome, never competing with
+   the data beside it. Used by "copy link" on an open row and by the dismiss on
+   the bad-link notice — anything that has to be reachable without asking to be
+   noticed. It takes no accent; the accent belongs to the measured data. */
+.quiet-do {
+  padding: 0 var(--sp-1);
+  border: 0;
+  background: transparent;
+  color: var(--tx-low);
+  font: inherit;
+  font-size: var(--fs-1);
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+.quiet-do:hover {
+  color: var(--tx-hi);
+}
+
+.quiet-do:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+  border-radius: 3px;
+}
+
+/* "copy link", set apart from the "Open …↗" it follows. */
+.detail-tag .quiet-do {
+  margin-left: var(--sp-3);
+}
+
+/* The owner group header. Deliberately NOT a row: no background, no hover, no
+   pointer — it is a caption over the names below it, and giving it --bg-2 would
+   have made it indistinguishable from a hovered or an open row. The space above
+   it is what separates one group from the last one's final row. */
+.idx-group {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  padding: var(--sp-5) var(--sp-4) var(--sp-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.idx-group-o {
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-2);
+  color: var(--tx-hi);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idx-group-n {
+  flex: none;
+  font-size: var(--fs-0);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+}
+
+/* Inside a group the last row keeps its hairline: the rule that strips it
+   exists so a border cannot double with the list's own rounded edge, and only
+   the final row of the final group sits at that edge now. */
+.idx-group-wrap .idx-row:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.idx-group-wrap:last-child .idx-row:last-child {
+  border-bottom: none;
+}
+
+/* The contract-record invitation, in an expanded row and nowhere else. The
+   smallest type on the page and the lowest-contrast text token: a name that
+   declares nothing is not doing anything wrong, so this asks rather than
+   warns — no --warn, no badge, no accent. */
+.idx-hint {
+  margin: var(--sp-3) 0 0;
+  font-size: var(--fs-0);
+  line-height: 1.5;
+  color: var(--tx-low);
+}
+
+.idx-hint code {
+  font-size: var(--fs-0);
+  color: var(--tx-mid);
+  overflow-wrap: anywhere;
+}
+
+/* A shared #/app/… naming something the index does not hold. Amber, like every
+   other "we looked and could not find it" on this page — not red: a link that
+   has outlived its name is not an error the reader made. */
+.idx-notice {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-2);
+  margin: var(--sp-3) 0 0;
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--warn);
+  border-radius: var(--r-1);
+  font-size: var(--fs-2);
+  line-height: 1.45;
+  color: var(--warn);
+}
+
+.idx-notice .quiet-do {
+  color: inherit;
+}
+
 /* ========================================================== responsive */
 
 @media (max-width: 900px) {

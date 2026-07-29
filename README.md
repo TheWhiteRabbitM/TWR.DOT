@@ -67,13 +67,13 @@ behind it; write paths activate as personhood rolls out. Each app carries a
 
 ## Developer feedback
 
-[`DEVFEEDBACK.md`](DEVFEEDBACK.md) — sixteen factual findings from this build (resolver,
-sandbox, pad, DotNS, tooling, personhood rollout), each with a concrete suggestion, and a
-summary table ranked by what each one costs a developer. Found by Claude Code while
-building; offered upstream with thanks.
+[`DEVFEEDBACK.md`](DEVFEEDBACK.md) — seventeen factual findings from this build (resolver,
+sandbox, pad, DotNS, Bulletin authorization, tooling, personhood rollout), each with a
+concrete suggestion, and a summary table ranked by what each one costs a developer. Found
+by Claude Code while building; offered upstream with thanks.
 
 [`llms.txt`](llms.txt) — the same ground as a working manual for the next agent or
-developer: twenty traps as **symptom → cause → code that works**, with the verified
+developer: twenty-one traps as **symptom → cause → code that works**, with the verified
 addresses, the shell's real iframe sandbox, a pre-ship checklist, and a procedure for
 debugging the platform's characteristic failure — silence. Written because on this
 platform a blocked fetch, a blocked popup and a wedged host call all look identical:
