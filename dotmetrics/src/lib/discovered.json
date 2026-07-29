@@ -96,7 +96,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeigoa3luwic3s2uhloenqxh5rw4xyunxwiz2q5qywp2isg5bdjmeta",
+    "contenthash": "bafybeib776jik2ldq6lwto7hqxzwn7v3n7u62wmemjh4ekv6y7dchz4qle",
     "hasExecutable": false,
     "tier": 0
   },
@@ -458,7 +458,7 @@
     "firstSeenBlock": 11425464,
     "firstSeenAt": 1785037284,
     "owner": "0xE510Df763d6F8B1545987ced0407EB1b52FD9cA2",
-    "contenthash": "bafybeieszbj357ghwxcztejciiolhmyavlcggwfrqozzdamnbglchrfzqq",
+    "contenthash": "bafybeid7gfpcjvsci23xir6w3x65pzkpbimocx6lfwr2sixhia2dgcjyju",
     "hasExecutable": false,
     "tier": 1
   },
@@ -494,9 +494,12 @@
     "firstSeenBlock": 11455254,
     "firstSeenAt": 1785097908,
     "owner": "0xe3e3a0916d27c5174313f16E1507a286985a8Ac8",
-    "contenthash": "bafybeiamsq2nvjre64x5pc2v6dfefbgmlha7xbwgmhufdw7yo2b77oc7x4",
-    "hasExecutable": false,
-    "tier": 1
+    "contenthash": "bafybeifwrktpw37gghynn7dfuc2w6rzkbblpdnlyah37lihdnl4vfsug6e",
+    "hasExecutable": true,
+    "tier": 0,
+    "displayName": "Dotify",
+    "description": "Shared musical presence with artist-owned access and value flows.",
+    "iconCid": "bafk2bzacedmow5nzxxshwxgvg3kox7k3wiz2qwvxxiqggipn6b2x4dfzeabay"
   },
   "giganetwork": {
     "label": "giganetwork",
@@ -818,7 +821,7 @@
     "url": "https://dotcheckhub.dev-dot.li",
     "firstSeenBlock": 11538250,
     "owner": "0xD1348964Fc8250C1840f859CD2e0AB50f8149fA0",
-    "contenthash": "bafybeigo5krcte6xqzawixfajtixrv3quqklskja62xxlo2mbekesq65cu",
+    "contenthash": "bafybeia6rgdxb2byl4e2egtycd55exqzp32ydvqyrzb35ifuwpc3xzkzja",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785273720
