@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { initTheme } from './lib/theme';
 import { getLang } from './lib/i18n';
+// The @font-face first, so the stack's Inter fallback is registered before any
+// rule that names it. On Apple platforms nothing here is used: -apple-system
+// wins and the type is SF Pro itself.
+import './fonts.css';
 import './styles.css';
 
 // index.html already stamped the stored appearance before first paint; this

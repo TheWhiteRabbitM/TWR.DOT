@@ -106,6 +106,10 @@ const RESOLVE_BUDGET_MS = int('SHOT_RESOLVE_BUDGET_MS', 45_000);
 // screenshot itself is the only readiness signal available.
 const PAINT_BUDGET_MS = int('SHOT_PAINT_BUDGET_MS', 30_000);
 const PAINT_POLL_MS = int('SHOT_PAINT_POLL_MS', 2_500);
+
+// Minimum percentage of the frame that must be content rather than background.
+// Calibrated against all 60 captured apps, not guessed — see coverageOf().
+const MIN_COVERAGE = Number(process.env.SHOT_MIN_COVERAGE ?? 2);
 const DEVICE_SCALE = 2; // capture at 2x (780px wide) so 480px downscale is crisp
 const FLAT_STDEV = 3; // per-channel stdev below this == a blank/uniform render
 const QUALITY_LADDER = [80, 68, 55, 42, 30, 22]; // WebP quality, walked down to hit target
@@ -134,6 +138,19 @@ const readJson = (file, fallback) => {
 };
 
 /**
+ * Is the shell's fetch/resolve screen gone?
+ *
+ * A page-side expression rather than a function, so the same predicate can be
+ * both waited on and re-checked without two copies drifting apart. "taking
+ * longer" is in the list because that is the shell's own slow-fetch warning, and
+ * a thumbnail of it is worse than no thumbnail.
+ */
+const LOADING_GONE = `(() => {
+  const t = (document.body && document.body.innerText || '').toLowerCase();
+  return !/fetching|resolving|loading|caricamento|verifying|taking longer|\\d+%/.test(t);
+})()`;
+
+/**
  * Click away any consent modal the shell has raised, choosing the refusing
  * option every time.
  *
@@ -156,6 +173,50 @@ async function dismissConsent(page) {
     /* no dialog, or the page navigated under us */
   }
   return false;
+}
+
+/**
+ * What fraction of the frame is actually content, as a percentage?
+ *
+ * The flat-render check only catches a frame painted in ONE colour. It cannot
+ * catch the frame that is 99% background with a small card on it — which is
+ * exactly what an app's own transient state looks like: "Connecting…", or
+ * "Couldn't connect — check your connection". Those states render inside the
+ * cross-origin iframe, so there is no text we are allowed to read; the picture
+ * is the only evidence available.
+ *
+ * So: find the modal colour with a coarse histogram, then count the pixels that
+ * differ from it. Measured across all 60 captured apps, the separation is clean
+ * and not a guess — 0.1% for a bare "Connecting…", 1.2% for an error card, then
+ * a gap to 2.4% for a genuinely minimal but real page ("Hello, Devnet") and 4-47%
+ * for everything else. The default threshold sits in that gap.
+ */
+async function coverageOf(png) {
+  const { data, info } = await sharp(png).resize({ width: 120 }).raw().toBuffer({
+    resolveWithObject: true,
+  });
+  const ch = info.channels;
+  const n = info.width * info.height;
+  const hist = new Map();
+  for (let i = 0; i < n; i += 1) {
+    const o = i * ch;
+    const k = ((data[o] >> 5) << 6) | ((data[o + 1] >> 5) << 3) | (data[o + 2] >> 5);
+    hist.set(k, (hist.get(k) ?? 0) + 1);
+  }
+  let best = 0;
+  let bestK = 0;
+  for (const [k, v] of hist) if (v > best) [best, bestK] = [v, k];
+  const br = ((bestK >> 6) & 7) * 32 + 16;
+  const bg = ((bestK >> 3) & 7) * 32 + 16;
+  const bb = (bestK & 7) * 32 + 16;
+  let ink = 0;
+  for (let i = 0; i < n; i += 1) {
+    const o = i * ch;
+    if (Math.abs(data[o] - br) + Math.abs(data[o + 1] - bg) + Math.abs(data[o + 2] - bb) > 60) {
+      ink += 1;
+    }
+  }
+  return (ink / n) * 100;
 }
 
 /** Compress one PNG screenshot to a WebP thumbnail no wider than THUMB_WIDTH. */
@@ -393,15 +454,20 @@ async function main() {
 
       // Then wait for the loading/fetching screen to actually clear before
       // shooting — the title flips before the app has painted.
-      await page
-        .waitForFunction(
-          () => {
-            const t = (document.body?.innerText || '').toLowerCase();
-            return !/fetching|resolving|loading|caricamento|verifying|%/.test(t);
-          },
-          { timeout: RESOLVE_BUDGET_MS, polling: 500 },
-        )
-        .catch(() => {});
+      //
+      // This used to swallow its own timeout and shoot anyway, which is how a
+      // thumbnail of "Fetching archive from IPFS gateway… 95% — This is taking
+      // longer than expected" ended up on a product page. A progress screen has
+      // plenty of pixel variance, so the flat-render check cannot catch it: the
+      // only defence is to treat "still loading when time ran out" as a skip.
+      const cleared = await page
+        .waitForFunction(LOADING_GONE, { timeout: RESOLVE_BUDGET_MS, polling: 500 })
+        .then(() => true)
+        .catch(() => false);
+      if (!cleared) {
+        skip(label, `still fetching from the gateway after ${(RESOLVE_BUDGET_MS / 1000) | 0}s`);
+        continue;
+      }
       await page.waitForTimeout(SETTLE_MS);
 
       // Shoot the app iframe itself, so the thumbnail is the app and not the
@@ -413,6 +479,7 @@ async function main() {
       // what shipped before, and it was simply too short for slower apps.
       let shot = null;
       let flat = true;
+      let coverage = 0;
       const shootUntil = Date.now() + PAINT_BUDGET_MS;
       for (;;) {
         // Once the bundle actually loads (which it only started doing when we
@@ -432,7 +499,16 @@ async function main() {
           (appFrame && (await appFrame.screenshot({ type: 'png' }).catch(() => null))) ||
           (await page.screenshot({ type: 'png', fullPage: false }));
         const stats = await sharp(frame).stats();
-        flat = stats.channels.every((c) => c.stdev < FLAT_STDEV);
+        // "Ready" is three conditions, not one: real variance in the picture,
+        // enough of the frame actually covered in content, and no progress
+        // screen still on it. A gateway that regresses to "fetching" mid-poll
+        // must not be photographed just because the pixels moved.
+        const stillLoading = !(await page.evaluate(LOADING_GONE).catch(() => true));
+        coverage = await coverageOf(frame);
+        flat =
+          stats.channels.every((c) => c.stdev < FLAT_STDEV) ||
+          coverage < MIN_COVERAGE ||
+          stillLoading;
         // Keep the latest frame either way: if it never clears, the log says so
         // and nothing is written, but a later frame is never worse than an
         // earlier one.
@@ -447,8 +523,9 @@ async function main() {
       if (flat) {
         skip(
           label,
-          `still blank after ${((PAINT_BUDGET_MS + SETTLE_MS) / 1000) | 0}s of painting ` +
-            `(likely needs more than the shell, or errored)`,
+          `nothing to photograph after ${((PAINT_BUDGET_MS + SETTLE_MS) / 1000) | 0}s ` +
+            `(${coverage.toFixed(1)}% of the frame is content, needs ${MIN_COVERAGE}%) — ` +
+            `likely its own loading or error state, or it needs more than the shell`,
         );
         continue;
       }

@@ -17,6 +17,15 @@ import { requestHostPermissions } from './lib/host-permissions';
 import { LANGS, getLang, locale, setLang, t, useLang, type Lang } from './lib/i18n';
 import { MODES, setMode, useMode } from './lib/theme';
 import {
+  ChevronLeft,
+  CircleHalf,
+  Magnifier,
+  MoonFill,
+  StarFill,
+  StarOutline,
+  SunFill,
+} from './lib/symbols';
+import {
   cachedRating,
   invalidate,
   localReviews,
@@ -50,11 +59,13 @@ function Stars({ value, size = 12 }: { value: number; size?: number }) {
   const full = Math.round(value);
   return (
     <span className="stars" aria-hidden="true" style={{ fontSize: size }}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <span key={n} className={n <= full ? 'star on' : 'star'}>
-          ★
-        </span>
-      ))}
+      {[1, 2, 3, 4, 5].map((n) =>
+        n <= full ? (
+          <StarFill key={n} className="star on" />
+        ) : (
+          <StarFill key={n} className="star" />
+        ),
+      )}
     </span>
   );
 }
@@ -73,16 +84,28 @@ function ratingLine(r: AppRating | undefined, lang: Lang): string {
   return r.count === 1 ? t('rating.one', { avg }) : t('rating.n', { avg, n: r.count });
 }
 
-/** A rounded-square app mark: the published icon, else the app's own monogram. */
+/**
+ * A rounded-square app mark: the published icon over the app's own monogram.
+ *
+ * The monogram is always rendered and the icon is layered ON TOP of it, rather
+ * than the icon being swapped in on success. An `onError` fallback only helps
+ * when the request actually fails — an icon fetched from the IPFS gateway is
+ * more often merely SLOW, and for those seconds an <img> with no bytes yet is a
+ * blank bordered square. Layering means the worst case is the monogram, which is
+ * the correct answer anyway.
+ */
 function Mark({ app, size }: { app: CatalogApp; size: 'sm' | 'md' | 'lg' }) {
   const [broken, setBroken] = useState(false);
-  const cls = `mark mark-${size}`;
-  if (app.iconUrl && !broken) {
-    return <img className={cls} src={app.iconUrl} alt="" loading="lazy" onError={() => setBroken(true)} />;
-  }
   return (
-    <span className={`${cls} mark-mono`} style={{ background: tint(app.label) }} aria-hidden="true">
-      {initials(app.name)}
+    <span
+      className={`mark mark-${size}`}
+      style={{ background: tint(app.label) }}
+      aria-hidden="true"
+    >
+      <span className="mark-mono">{initials(app.name)}</span>
+      {app.iconUrl && !broken && (
+        <img src={app.iconUrl} alt="" loading="lazy" onError={() => setBroken(true)} />
+      )}
     </span>
   );
 }
@@ -131,10 +154,15 @@ function OpenButton({ app, size = 'sm' }: { app: CatalogApp; size?: 'sm' | 'lg' 
   if (app.tier === 2) {
     return <span className="unavail">{t('tier.2')}</span>;
   }
+  // Two treatments, because Apple has two. In a list or a shelf the App Store's
+  // GET button is a TINTED capsule with the label in the accent colour; the
+  // solid filled capsule with white text is reserved for the product page,
+  // where it is the page's single primary action. Using the solid fill in both
+  // places — which is what this did — makes a browsing screen shout.
   return (
     <button
       type="button"
-      className={size === 'lg' ? 'get get-lg' : 'get'}
+      className={size === 'lg' ? 'get get-solid' : 'get get-tinted'}
       aria-label={t('open.aria', { name: app.name })}
       onClick={(e) => {
         e.stopPropagation();
@@ -193,7 +221,7 @@ function ShelfRow({
   const r = cachedRating(app.key);
   return (
     <div
-      className="row"
+      className={rank !== undefined ? 'row ranked' : 'row'}
       role="button"
       tabIndex={0}
       onClick={() => onOpen(app)}
@@ -245,6 +273,13 @@ function GridCard({ app, onOpen }: { app: CatalogApp; onOpen: (a: CatalogApp) =>
   );
 }
 
+/**
+ * A shelf header, the App Store's way round.
+ *
+ * The separator sits ABOVE the title, spanning the content width — it divides
+ * this section from the one before it, rather than underlining the heading. That
+ * single inversion is most of why a section reads as native or not.
+ */
 function Shelf({
   title,
   sub,
@@ -259,7 +294,7 @@ function Shelf({
   return (
     <section className="shelf">
       <header className="shelf-head">
-        <div>
+        <div className="shelf-title">
           <h2>{title}</h2>
           {sub && <p>{sub}</p>}
         </div>
@@ -341,7 +376,9 @@ function Histogram({ reviews, r, lang }: { reviews: Review[]; r: AppRating | und
         {[5, 4, 3, 2, 1].map((star) => (
           <div className="hist-row" key={star}>
             <span className="hist-stars" aria-hidden="true">
-              {'★'.repeat(star)}
+              {Array.from({ length: star }, (_, i) => (
+                <StarFill key={i} />
+              ))}
             </span>
             <span className="hist-track">
               <span
@@ -440,7 +477,7 @@ function WriteReview({ app, onPosted }: { app: CatalogApp; onPosted: () => void 
             aria-pressed={n === rating}
             onClick={() => setRating(n)}
           >
-            ★
+            {n <= rating ? <StarFill size={1.1} /> : <StarOutline size={1.1} />}
           </button>
         ))}
       </div>
@@ -489,7 +526,7 @@ function Detail({ app, onBack }: { app: CatalogApp; onBack: () => void }) {
   return (
     <div className="detail">
       <button type="button" className="back" onClick={onBack}>
-        <span aria-hidden="true">‹</span> {t('back')}
+        <ChevronLeft size={0.82} /> {t('back')}
       </button>
 
       <header className="phead">
@@ -620,20 +657,25 @@ function inThrees<T>(items: T[]): T[][] {
 
 function Segmented() {
   const mode = useMode();
+  const glyph = { auto: CircleHalf, light: SunFill, dark: MoonFill };
   return (
     <div className="seg" role="group" aria-label={t('appearance.aria')}>
-      {MODES.map((m) => (
-        <button
-          key={m}
-          type="button"
-          className={m === mode ? 'on' : undefined}
-          aria-pressed={m === mode}
-          title={t(`appearance.${m}` as 'appearance.auto')}
-          onClick={() => setMode(m)}
-        >
-          {m === 'auto' ? '◐' : m === 'light' ? '☀' : '☾'}
-        </button>
-      ))}
+      {MODES.map((m) => {
+        const Glyph = glyph[m];
+        const label = t(`appearance.${m}` as 'appearance.auto');
+        return (
+          <button
+            key={m}
+            type="button"
+            className={m === mode ? 'on' : undefined}
+            aria-pressed={m === mode}
+            title={label}
+            onClick={() => setMode(m)}
+          >
+            <Glyph size={0.95} title={label} />
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -645,7 +687,14 @@ export function App() {
   const [reviewed, setReviewed] = useState<number | null>(null);
   const [required, setRequired] = useState<number | null>(null);
   const [chainOff, setChainOff] = useState(false);
-  const [, force] = useState(0);
+  /**
+   * Bumped once the rating reads land. The ratings live in a module-level cache
+   * rather than state (they are read once per session and shared by every card),
+   * so this counter is what tells React the cache has content — and it is the
+   * dependency the Top-rated shelf is derived from. Without it that shelf
+   * memoised an empty list before the first read returned and never recomputed.
+   */
+  const [ratingsVersion, setRatingsVersion] = useState(0);
   const allRef = useRef<HTMLDivElement | null>(null);
 
   // Ask for what the sandbox gates before anything needs it.
@@ -665,7 +714,7 @@ export function App() {
 
   // Ratings for the catalogue. Cached per session, so scrolling is free.
   useEffect(() => {
-    void ratingsFor(CATALOG.map((a) => a.key)).then(() => force((n) => n + 1));
+    void ratingsFor(CATALOG.map((a) => a.key)).then(() => setRatingsVersion((n) => n + 1));
   }, []);
 
   // A shareable link per app, and a back gesture that returns to the store
@@ -700,16 +749,16 @@ export function App() {
   // "New" is a fact we hold exactly: the registration time from the indexer.
   const newest = useMemo(() => CATALOG.slice(0, 12), []);
 
-  // "Top rated" only exists if something is actually rated. An empty top-list
-  // padded with unrated apps would be a ranking we invented.
+  // "Top rated" only exists if something is actually rated: an empty top-list
+  // padded out with unrated apps would be a ranking we invented. Recomputed
+  // when the rating cache fills, which is what ratingsVersion signals.
   const topRated = useMemo(() => {
     const rated = CATALOG.map((a) => ({ a, r: cachedRating(a.key) })).filter(
       (x) => x.r && x.r.count > 0,
     );
     rated.sort((x, y) => y.r!.avg! - x.r!.avg! || y.r!.count - x.r!.count);
     return rated.slice(0, 9).map((x) => x.a);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reviewed, chainOff, results.length, open]);
+  }, [ratingsVersion]);
 
   return (
     <div className="store">
@@ -743,8 +792,8 @@ export function App() {
           <p className="tagline">{t('app.tagline')}</p>
 
           <div className="findwrap">
-            <span className="findglyph" aria-hidden="true">
-              ⌕
+            <span className="findglyph">
+              <Magnifier size={1.05} />
             </span>
             <input
               className="find"

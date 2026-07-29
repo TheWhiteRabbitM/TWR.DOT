@@ -19,8 +19,10 @@
   --bg: #f2f2f7;
   --card: #ffffff;
   --card-2: #ffffff;
+  /* Apple's fill ramp: quaternary / tertiary / secondary systemFill. */
   --fill: rgba(118, 118, 128, 0.12);
   --fill-2: rgba(118, 118, 128, 0.08);
+  --fill-strong: rgba(118, 118, 128, 0.2);
   --hair: rgba(60, 60, 67, 0.18);
   --hair-strong: rgba(60, 60, 67, 0.29);
 
@@ -52,6 +54,7 @@
     --card-2: #2c2c2e;
     --fill: rgba(118, 118, 128, 0.24);
     --fill-2: rgba(118, 118, 128, 0.16);
+    --fill-strong: rgba(118, 118, 128, 0.36);
     --hair: rgba(84, 84, 88, 0.5);
     --hair-strong: rgba(84, 84, 88, 0.72);
 
@@ -73,6 +76,7 @@
   --card-2: #2c2c2e;
   --fill: rgba(118, 118, 128, 0.24);
   --fill-2: rgba(118, 118, 128, 0.16);
+  --fill-strong: rgba(118, 118, 128, 0.36);
   --hair: rgba(84, 84, 88, 0.5);
   --hair-strong: rgba(84, 84, 88, 0.72);
 
@@ -97,12 +101,29 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--label);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI Variable Text',
-    'Segoe UI', Roboto, system-ui, sans-serif;
+  /* SF Pro first, so on iOS and macOS — where this store actually runs, inside
+     the Polkadot app — the type IS Apple's rather than a likeness. Inter next,
+     because SF is not licensable for the web and Inter is the closest match;
+     Segoe UI only as the last resort it should be. See src/fonts.css. */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter,
+    'Segoe UI Variable Text', 'Segoe UI', Roboto, system-ui, sans-serif;
+  /* Apple's own text rendering: antialiased, with the optical kerning and the
+     contextual alternates SF ships. */
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-kerning: normal;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
   text-rendering: optimizeLegibility;
   /* pan-y, not none: swiping must still reach the shell's back gesture. */
   touch-action: pan-y;
+}
+
+/* Every symbol is an inline SVG sized in em, so it sits on the text baseline
+   the way an SF Symbol does rather than hanging below it. */
+svg {
+  display: inline-block;
+  vertical-align: -0.13em;
+  flex: none;
 }
 
 button,
@@ -136,7 +157,8 @@ textarea {
 
 .dim {
   color: var(--label-2);
-  font-size: 15px;
+  font-size: 17px;
+  letter-spacing: -0.025em;
   margin: 0;
 }
 
@@ -192,7 +214,9 @@ textarea {
   min-width: 28px;
   height: 24px;
   padding: 0 6px;
-  border: 0;
+  /* Transparent, not absent: the active thumb draws a real border, and without
+     a matching one here every button would shift half a pixel on selection. */
+  border: 0.5px solid transparent;
   border-radius: 7px;
   background: transparent;
   color: var(--label-2);
@@ -209,23 +233,35 @@ textarea {
   color: var(--label);
   box-shadow: var(--shadow);
   /* the thumb needs a visible edge in dark, where there is no shadow */
-  border: 0.5px solid var(--hair);
+  border-color: var(--hair);
 }
 
 /* ---------------------------------------------------------------- masthead */
 
+/*
+ * The iOS type scale, with Apple's own tracking values.
+ *
+ * These are not eyeballed. Apple publishes a tracking figure per text style, in
+ * points, and the large styles are slightly POSITIVE while body and below are
+ * negative — Large Title 34pt/+0.37, Title 1 28pt/+0.36, Title 2 22pt/+0.35,
+ * Title 3 20pt/+0.38, Body 17pt/-0.43, Subhead 15pt/-0.23, Footnote 13pt/-0.08.
+ * Divided by the size, those become the em values used throughout this file.
+ * Tightening the headings (which is the instinct, and what this file did) is
+ * precisely what stops SF from looking like SF.
+ */
 .large {
   margin: 28px 0 4px;
   font-size: 34px;
   font-weight: 700;
-  letter-spacing: -0.024em;
-  line-height: 1.1;
+  letter-spacing: 0.011em;
+  line-height: 1.2;
 }
 
 .tagline {
   margin: 0 0 18px;
   max-width: 58ch;
   font-size: 15px;
+  letter-spacing: -0.015em;
   line-height: 1.47;
   color: var(--label-2);
 }
@@ -236,22 +272,29 @@ textarea {
 }
 .findglyph {
   position: absolute;
-  left: 12px;
+  left: 11px;
   top: 50%;
-  transform: translateY(-52%);
+  transform: translateY(-50%);
+  display: flex;
   font-size: 17px;
   color: var(--label-3);
   pointer-events: none;
 }
+.findglyph svg {
+  vertical-align: 0;
+}
+/* UISearchBar: 36pt tall, 10pt corners, tertiary fill, 17pt placeholder. */
 .find {
   width: 100%;
-  height: 38px;
+  height: 36px;
   padding: 0 12px 0 34px;
   border: 0;
-  border-radius: var(--r-md);
+  border-radius: 10px;
   background: var(--fill);
-  /* 16px literal: anything less makes iOS zoom the page on focus. */
-  font-size: 16px;
+  /* 16px literal: anything less makes iOS zoom the page on focus. Apple's own
+     search field is 17pt, so this is a floor rather than a compromise. */
+  font-size: 17px;
+  letter-spacing: -0.025em;
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -266,26 +309,40 @@ textarea {
 /* ----------------------------------------------------------------- shelves */
 
 .shelf {
-  margin-top: 34px;
+  /* The rule divides this section from the one above it — App Store shelves are
+     separated, not underlined. Putting the hairline under the heading instead
+     was the single most un-Apple thing in the layout. */
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 0.5px solid var(--hair);
+}
+/* The first shelf follows the search field, which is separation enough. */
+.shelf:first-of-type {
+  border-top: 0;
+  padding-top: 8px;
 }
 
 .shelf-head {
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   gap: 12px;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-  border-bottom: 0.5px solid var(--hair);
+  margin-bottom: 14px;
+}
+.shelf-title {
+  min-width: 0;
 }
 .shelf-head h2 {
   margin: 0;
+  /* Title 2: 22pt bold, tracking +0.35pt. */
   font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.019em;
+  letter-spacing: 0.016em;
+  line-height: 1.18;
 }
 .shelf-head p {
-  margin: 2px 0 0;
+  margin: 3px 0 0;
   font-size: 13px;
+  line-height: 1.35;
   color: var(--label-2);
 }
 .seeall {
@@ -294,12 +351,16 @@ textarea {
   border: 0;
   background: transparent;
   color: var(--accent);
-  font-size: 15px;
+  /* Apple's See All is body-size and REGULAR weight — a bold one reads as a
+     second heading competing with the section title. */
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.011em;
   cursor: pointer;
   padding: 0;
 }
 .seeall:hover {
-  text-decoration: underline;
+  opacity: 0.7;
 }
 
 /* Horizontal rails page one card at a time and hide their scrollbar, the way
@@ -346,24 +407,28 @@ textarea {
 .today-head {
   padding: 16px 16px 12px;
 }
+/* The Today-card eyebrow is SECONDARY GREY in the App Store, not tinted. A
+   coloured kicker on every card turns an editorial shelf into an advert. */
 .kicker {
   display: block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.055em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--label-2);
 }
 .today-head h3 {
-  margin: 3px 0 0;
-  font-size: 21px;
+  margin: 2px 0 0;
+  /* Title 2: 22pt bold, tracking +0.35pt. */
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.018em;
+  letter-spacing: 0.016em;
   line-height: 1.2;
 }
 .today-head p {
   margin: 4px 0 0;
   font-size: 13px;
+  letter-spacing: -0.006em;
   line-height: 1.4;
   color: var(--label-2);
   /* two lines, so every card in the rail is the same height */
@@ -414,11 +479,14 @@ textarea {
   overflow: hidden;
 }
 
+/* iOS top-chart row proportions: a 60pt icon, generous vertical padding, and a
+   separator inset to the icon's trailing edge. */
 .row {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 10px 14px;
+  gap: 12px;
+  padding: 9px 16px;
+  min-height: 78px;
   cursor: pointer;
   position: relative;
 }
@@ -426,11 +494,15 @@ textarea {
 .row + .row::before {
   content: '';
   position: absolute;
-  left: 65px;
+  left: 88px;
   right: 0;
   top: 0;
   height: 0.5px;
   background: var(--hair);
+}
+/* With a rank in front of the icon, the inset moves with it. */
+.row.ranked + .row.ranked::before {
+  left: 106px;
 }
 .row:active {
   background: var(--fill-2);
@@ -438,9 +510,11 @@ textarea {
 
 .rank {
   flex: none;
-  width: 16px;
+  width: 14px;
   text-align: center;
+  /* Regular weight, secondary ink: the rank is a label, not a score. */
   font-size: 15px;
+  font-weight: 400;
   color: var(--label-2);
   font-variant-numeric: tabular-nums;
 }
@@ -450,18 +524,21 @@ textarea {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
+/* Body, 17pt, regular — Apple does NOT bold app names in list rows. */
 .row-name {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  line-height: 1.24;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .row-sub {
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.3;
   color: var(--label-2);
   white-space: nowrap;
   overflow: hidden;
@@ -521,14 +598,24 @@ textarea {
  * corner is smoothed where the browser supports it and rounded where it isn't. */
 .mark {
   flex: none;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  object-fit: cover;
   background: var(--fill);
   border: 0.5px solid var(--hair);
   border-radius: 22.5%;
   overflow: hidden;
+}
+/* The icon sits over the monogram, so a slow gateway shows a letter pair rather
+   than an empty square, and a dead CID never leaves a hole. */
+.mark img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  vertical-align: 0;
 }
 @supports (corner-shape: squircle) {
   .mark {
@@ -536,20 +623,22 @@ textarea {
     border-radius: 30%;
   }
 }
+/* iOS icon sizes, as Apple specifies them: 29pt in dense rows, 60pt in list
+   rows and shelves, 118pt on a product page. */
 .mark-sm {
-  width: 28px;
-  height: 28px;
+  width: 29px;
+  height: 29px;
   font-size: 10px;
 }
 .mark-md {
-  width: 42px;
-  height: 42px;
-  font-size: 13px;
+  width: 60px;
+  height: 60px;
+  font-size: 17px;
 }
 .mark-lg {
-  width: 106px;
-  height: 106px;
-  font-size: 34px;
+  width: 118px;
+  height: 118px;
+  font-size: 38px;
 }
 .mark-mono {
   font-weight: 700;
@@ -570,23 +659,41 @@ textarea {
   color: rgba(255, 255, 255, 0.42);
 }
 
-/* The GET button: small, bold, pill, and never wider than its word. */
+/* The GET button. 28pt tall, capsule, bold 15pt, and never wider than its word
+   plus Apple's generous side padding. */
 .get {
   flex: none;
   height: 28px;
-  padding: 0 15px;
+  min-width: 74px;
+  padding: 0 16px;
   border: 0;
   border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: opacity 120ms ease, background 120ms ease;
+}
+/* In lists and shelves: a tinted capsule with the label in the accent colour.
+   This is what the App Store actually does, and it is why a screen full of
+   buttons reads as calm instead of as a wall of solid pills. */
+.get-tinted {
+  background: var(--fill);
+  color: var(--accent);
+}
+.get-tinted:hover {
+  background: var(--fill-strong);
+}
+/* On the product page only, where it is the page's one primary action. */
+.get-solid {
+  height: 34px;
+  min-width: 96px;
+  padding: 0 26px;
   background: var(--accent-fill);
   color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  transition: opacity 120ms ease;
 }
 .get:hover {
-  opacity: 0.86;
+  opacity: 0.92;
 }
 .get:active {
   opacity: 0.7;
@@ -594,11 +701,6 @@ textarea {
 .get:disabled {
   opacity: 0.5;
   cursor: default;
-}
-.get-lg {
-  height: 34px;
-  padding: 0 26px;
-  font-size: 15px;
 }
 
 /* Where the Open button would be on a name with no bundle behind it. */
@@ -612,10 +714,14 @@ textarea {
   white-space: nowrap;
 }
 
+/* A rating row: SF `star.fill` repeated, gold where earned and light grey where
+   not — Apple fills the empty portion rather than outlining it. */
 .stars {
-  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5px;
   white-space: nowrap;
-  color: var(--label-3);
+  color: var(--fill-strong);
 }
 .star.on {
   color: var(--gold);
@@ -647,21 +753,27 @@ textarea {
 
 /* ------------------------------------------------------------ product page */
 
+/* UINavigationBar back button: `chevron.left` then the previous title, 17pt
+   regular, in the accent colour, with the chevron optically tight to the word. */
 .back {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 5px;
   margin: 18px 0 6px;
   padding: 0;
   border: 0;
   background: transparent;
   color: var(--accent);
   font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.025em;
   cursor: pointer;
 }
-.back span {
-  font-size: 22px;
-  line-height: 1;
+.back svg {
+  vertical-align: -0.06em;
+}
+.back:active {
+  opacity: 0.4;
 }
 
 .phead {
@@ -678,12 +790,13 @@ textarea {
   margin: 0;
   font-size: 26px;
   font-weight: 700;
-  letter-spacing: -0.021em;
+  letter-spacing: 0.013em;
   line-height: 1.15;
 }
 .phead-sub {
   margin: 4px 0 0;
-  font-size: 15px;
+  font-size: 17px;
+  letter-spacing: -0.025em;
   line-height: 1.4;
   color: var(--label-2);
   display: -webkit-box;
@@ -768,7 +881,7 @@ textarea {
   margin: 0 0 12px;
   font-size: 20px;
   font-weight: 700;
-  letter-spacing: -0.017em;
+  letter-spacing: 0.019em;
 }
 
 /* Preview: the capture is a phone screenshot, so it is shown as one — tall,
@@ -807,7 +920,8 @@ textarea {
 .about {
   margin: 0;
   max-width: 64ch;
-  font-size: 15px;
+  font-size: 17px;
+  letter-spacing: -0.025em;
   line-height: 1.53;
   color: var(--label);
 }
@@ -864,9 +978,10 @@ textarea {
 }
 .hist-stars {
   width: 62px;
-  text-align: right;
+  display: inline-flex;
+  justify-content: flex-end;
+  gap: 1px;
   font-size: 9px;
-  letter-spacing: 0.5px;
   color: var(--label-3);
 }
 .hist-track {
@@ -932,7 +1047,7 @@ textarea {
   margin: 0 0 11px;
   font-size: 17px;
   font-weight: 600;
-  letter-spacing: -0.012em;
+  letter-spacing: -0.025em;
 }
 .write-stars {
   display: flex;
@@ -942,6 +1057,9 @@ textarea {
 .pick {
   width: 38px;
   height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 0.5px solid var(--hair);
   border-radius: var(--r-sm);
   background: var(--fill-2);
@@ -949,6 +1067,9 @@ textarea {
   font-size: 19px;
   cursor: pointer;
   transition: color 120ms ease, background 120ms ease;
+}
+.pick svg {
+  vertical-align: 0;
 }
 .pick.on {
   color: var(--gold);
@@ -1055,7 +1176,7 @@ textarea {
   margin: 0 0 8px;
   font-size: 20px;
   font-weight: 700;
-  letter-spacing: -0.017em;
+  letter-spacing: 0.019em;
 }
 .devbox p {
   margin: 0;
