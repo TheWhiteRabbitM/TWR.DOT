@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11558695,
-  "updatedAt": "2026-07-29T09:51:59.741Z",
+  "lastBlock": 11562950,
+  "updatedAt": "2026-07-29T12:25:58.705Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "ba8a92601eee819ff836c10d975f3e61db15c8e0cd6edce43290efdcb25f24c0",
-    "cid": "bafybeid4ngwcfp73gjbvvdoeuclyb5z2e3suakkvcahffcaddc2d3tvroi",
-    "uploadedAt": "2026-07-29T09:56:21.837Z"
+    "digest": "a8f42fc63a57f548aef110d55920dafb69c89430e5d98ef5590181a418c41076",
+    "cid": "bafybeiggiuhznbj3zai57vjqtqlrxgd2ksn3vcczc233go7ebzwtzy63hu",
+    "uploadedAt": "2026-07-29T12:31:03.523Z"
   },
   "sitePublish": {
     "treeHash": "78664d01a706e1aad98dd8248beacfd87fb8564a085c07e6bd4ed0be0e8ea206",
     "publishedAt": "2026-07-29T09:58:11.935Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-29T09:54:55.000Z",
+    "updatedAt": "2026-07-29T12:29:28.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -83,7 +83,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-29T09:54:55.000Z",
+    "updatedAt": "2026-07-29T12:29:28.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -178,15 +178,15 @@
         "live": "unknown"
       },
       "dotify-test01": {
-        "contenthash": "bafybeih22kdzwa67m6bcx7xttl5yoo756etamgrlciq5qthc27ulpnqk3y",
-        "updateCount": 2,
-        "changedAt": 1785318895,
+        "contenthash": "bafybeialugzu7rgm7gereewkfr3qsmtndcekyk73djkbqx24koiiiyz2de",
+        "updateCount": 3,
+        "changedAt": 1785328168,
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeigl2n6nygxdz2yqjgie7eecluda5poent2rsafkcf4vbwhm4uj4ie",
-        "updateCount": 3,
-        "changedAt": 1785318895,
+        "contenthash": "bafybeih7ojrpqjn42b2m6efcekrbd6uf2vangrb3vfsagkx26pzd7gko2e",
+        "updateCount": 4,
+        "changedAt": 1785328168,
         "live": "alive"
       },
       "dw3labsgame": {
@@ -255,8 +255,9 @@
         "live": "alive"
       },
       "ip-assets": {
-        "contenthash": "bafybeiaz7gdj2j3qacwyhwf2jsbh3jc3ytrqgb6iwv335px5rw2bwdqjru",
-        "updateCount": 0,
+        "contenthash": "bafybeife2mmhornmfu2o7keodottcdl64v7drxwaknwzitrosjbqmfvdcy",
+        "updateCount": 1,
+        "changedAt": 1785328168,
         "live": "alive"
       },
       "italiarovente": {
@@ -448,8 +449,9 @@
         "live": "alive"
       },
       "yechops-preview": {
-        "contenthash": "bafybeieeuoxhzy345gdli75cqax7po4gide2knz6hubkdw5dcu6i655xn4",
-        "updateCount": 0,
+        "contenthash": "bafybeibramkzyqkjx3zhfbj3pafessx4zua4y34fsqamrz3e3cxpqaauka",
+        "updateCount": 1,
+        "changedAt": 1785328168,
         "live": "alive"
       },
       "yologuestbook": {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1785318895,
+  "generatedAt": 1785328168,
   "count": 73,
   "apps": [
     {
@@ -105,7 +105,7 @@
       "label": "ip-assets",
       "domain": "ip-assets.dot",
       "displayName": "Soft.Law",
-      "description": "Explore the Soft.Law registry, view owned IP assets in read-only Studio, and mint new works.",
+      "description": "Intellectual property assets and licenses marketplace.",
       "tier": 0,
       "firstSeenAt": 1785245088,
       "url": "https://ip-assets.dev-dot.li"
