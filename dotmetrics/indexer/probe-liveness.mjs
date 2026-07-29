@@ -247,4 +247,8 @@ console.log(
 if (unreachable.length > 0) {
   console.log(`unreachable: ${unreachable.map((l) => `${l}.dot`).join(' · ')}`);
 }
-console.log(`wrote ${FILE}`);
+console.log(
+  `day ${point.day}: ${point.alive} of ${point.deployed} deployed bundles served ` +
+    `(${point.unconfirmed} unconfirmed) via ${point.gateway}`,
+);
+console.log(`wrote ${FILE}\n      ${STATE}\n      ${LEDGER}\n      ${APP_COPY}`);

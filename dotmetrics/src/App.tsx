@@ -19,6 +19,7 @@ import { copyText, openExternal } from './lib/host-nav';
 import ecosystemSnapshot from './lib/ecosystem.json';
 import type { AppEntry, AppStats } from './lib/types';
 import {
+  ENDONYM,
   LANGS,
   getLang,
   languageName,
@@ -71,22 +72,65 @@ const eco = ecosystemSnapshot as EcoSnapshot;
  * a single contiguous block for exactly that reason.
  */
 const LAYOUT_CSS = `
-/* ---- language control: two labels, one segmented chip ----
-   Not a <select>. A native dropdown does not open inside the Polkadot shell's
-   webview — that is a bug this codebase has already paid for once — and with
-   exactly two options a segmented control is fewer taps anyway. It reuses the
-   .facet vocabulary: same height, same radius, same accent-on-active rule. */
-.langsw { display: inline-flex; flex: none; align-items: center; padding: 2px; gap: 2px;
-  border: 1px solid var(--line); border-radius: var(--r-1); background: var(--bg-1); }
-.langsw button {
-  min-width: var(--sp-7); height: var(--sp-6); padding: 0 var(--sp-2);
-  border: 0; border-radius: 4px; background: transparent; color: var(--tx-low);
-  font: inherit; font-size: var(--fs-0); font-weight: 600; letter-spacing: 0.04em;
-  line-height: 1; cursor: pointer; transition: background 100ms ease, color 100ms ease;
+/* ---- language control: one disclosure, one panel of four ----
+   This was two segments, EN | IT, and four do not fit. Measured at 375px: the
+   disclosure below is 43px wide, a four-segment strip is 132px, and the bar has
+   38px of slack. The 51px difference does not produce a horizontal scrollbar —
+   it is taken out of the block pulse, the only other shrinkable thing in the
+   row, whose readout drops from 157px to 106px and starts ellipsising the head
+   number it exists to show. Trading a chain fact for a language label is the
+   wrong trade, so the control collapses to the code of the current language and
+   opens a panel listing all four.
+
+   Still not a <select>. A native dropdown does not open inside the Polkadot
+   shell's webview — a bug this codebase has already paid for once. This is
+   ordinary DOM, positioned absolutely, driven from the keyboard.
+
+   The panel is anchored right: it grows leftward into the page, so at any
+   viewport it stays inside the bar's own padding and can never widen the
+   document. Being absolutely positioned it contributes nothing to layout. */
+.langsw { position: relative; flex: none; }
+.langsw-btn {
+  display: inline-flex; align-items: center; gap: var(--sp-1);
+  height: var(--sp-7); padding: 0 var(--sp-2);
+  border: 1px solid var(--line); border-radius: var(--r-1); background: var(--bg-1);
+  color: var(--tx-mid); font: inherit; font-size: var(--fs-0); font-weight: 600;
+  letter-spacing: 0.04em; line-height: 1; cursor: pointer;
+  transition: color 100ms ease, border-color 100ms ease;
 }
-.langsw button:hover { color: var(--tx-hi); }
-.langsw button[aria-pressed='true'] { background: var(--bg-3); color: var(--pink); }
-.langsw button:focus-visible { outline: 2px solid var(--pink); outline-offset: 1px; }
+.langsw-btn:hover { color: var(--tx-hi); }
+.langsw-btn[aria-expanded='true'] { border-color: var(--pink); color: var(--pink); }
+.langsw-btn:focus-visible { outline: 2px solid var(--pink); outline-offset: 1px; }
+/* Drawn from two borders rather than set as "▾": a shell whose font lacks the
+   glyph would render a tofu box in the top bar, and this has to survive fonts
+   we do not control. */
+.langsw-c {
+  width: 5px; height: 5px; flex: none; margin-top: -3px;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg); transition: transform 120ms ease;
+}
+.langsw-btn[aria-expanded='true'] .langsw-c { margin-top: 1px; transform: rotate(225deg); }
+
+.langsw-panel {
+  position: absolute; top: calc(100% + var(--sp-2)); right: 0; z-index: 30;
+  min-width: 156px; padding: var(--sp-1);
+  display: flex; flex-direction: column;
+  border: 1px solid var(--line-strong); border-radius: var(--r-2);
+  background: var(--bg-1); box-shadow: var(--shadow);
+}
+.langsw-panel button {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4);
+  /* 40px, not the 28px of a facet chip: this one is aimed at with a thumb. */
+  height: var(--sp-10); padding: 0 var(--sp-3);
+  border: 0; border-radius: var(--r-1); background: transparent;
+  color: var(--tx-mid); font: inherit; font-size: var(--fs-2); line-height: 1;
+  text-align: left; white-space: nowrap; cursor: pointer;
+}
+.langsw-panel button:hover { background: var(--bg-2); color: var(--tx-hi); }
+.langsw-panel button[aria-checked='true'] { color: var(--pink); }
+.langsw-panel button:focus-visible { outline: 2px solid var(--pink); outline-offset: -2px; }
+.langsw-code { font-family: var(--mono); font-size: var(--fs-0); letter-spacing: 0.06em; color: var(--tx-low); }
+.langsw-panel button[aria-checked='true'] .langsw-code { color: var(--pink); }
 
 /* ---- third-party description: marker, translate control, MT disclosure ----
    These style OUR annotations around an author's words. They are deliberately
@@ -426,7 +470,86 @@ const EXTRA_IT: Record<ExtraKey, string> = {
     'Questo nome non pubblica alcun record {record}. dotmetrics conta {event} per l’indirizzo che un nome dichiara, quindi eseguire {cmd} fa comparire il conteggio degli eventi di questa app sulla sua riga, sulla stessa finestra di ogni altra riga. Questa è una convenzione di dotmetrics e non uno standard della piattaforma: non esiste un campo del manifest per l’indirizzo di un contratto, quindi leggiamo un record di testo.',
 };
 
-const EXTRA: Record<Lang, Record<ExtraKey, string>> = { en: EXTRA_EN, it: EXTRA_IT };
+const EXTRA_ES: Record<ExtraKey, string> = {
+  /* --- search, re-stated because the haystack grew ------------------- */
+  'search.placeholder':
+    'Busca entre {n} apps .dot por nombre, descripción o dirección del propietario',
+  'search.aria':
+    'Busca en cada nombre .dot indexado, nombre visible, descripción y dirección del propietario',
+  'idx.empty.search':
+    'Ningún nombre, nombre visible, descripción o dirección de propietario del índice contiene “{q}”.',
+
+  /* --- group by owner ------------------------------------------------ */
+  'facet.owner': 'Agrupar por propietario',
+  'idx.count.owner':
+    '{n} nombres · {owners} direcciones propietarias · grupos ordenados por cuántos nombres tiene cada una',
+  'owner.group.n': '{n} nombres de {all}',
+  'owner.group.aria': 'Propietario {owner} — {n} de {all} nombres indexados',
+  'owner.group.none': 'propietario no registrado en este snapshot',
+  'owner.group.aria.none':
+    '{n} de {all} nombres indexados cuyo propietario este snapshot no registra',
+
+  /* --- linking to one row -------------------------------------------- */
+  'link.copy': 'copiar el enlace',
+  'link.copied': 'enlace copiado',
+  'link.retry': 'reintentar',
+  'link.copy.aria': 'Copia un enlace que abre {domain} en este índice',
+  'link.failed':
+    'Copia fallida — esta app no ha podido alcanzar el portapapeles. El enlace está aquí abajo: selecciónalo y cópialo a mano.',
+
+  /* --- a shared link that names nothing ------------------------------- */
+  'route.unknown':
+    'El enlace que has abierto pide «{label}.dot», y el índice no contiene ese nombre — puede que nunca se registrara, o puede que haya dejado el directory desde que se creó el enlace. En su lugar se muestra el índice completo.',
+  'route.unknown.dismiss': 'cerrar',
+
+  /* --- the contract-record convention -------------------------------- */
+  'hint.contract':
+    'Este nombre no publica ningún record {record}. dotmetrics cuenta {event} para la dirección que un nombre declare, así que ejecutar {cmd} hace aparecer el recuento de eventos de esta app en su fila, sobre la misma ventana que cualquier otra fila. Esta es una convención de dotmetrics y no un estándar de la plataforma: no existe ningún campo del manifest para la dirección de un contrato, así que lo que leemos es un record de texto.',
+};
+
+const EXTRA_FR: Record<ExtraKey, string> = {
+  /* --- search, re-stated because the haystack grew ------------------- */
+  'search.placeholder':
+    'Rechercher parmi {n} apps .dot par nom, description ou adresse du propriétaire',
+  'search.aria':
+    'Recherche dans chaque nom .dot indexé, nom affiché, description et adresse du propriétaire',
+  'idx.empty.search':
+    'Aucun nom, nom affiché, description ou adresse de propriétaire de l’index ne contient “{q}”.',
+
+  /* --- group by owner ------------------------------------------------ */
+  'facet.owner': 'Grouper par propriétaire',
+  'idx.count.owner':
+    '{n} noms · {owners} adresses propriétaires · groupes classés par le nombre de noms détenus',
+  'owner.group.n': '{n} noms sur {all}',
+  'owner.group.aria': 'Propriétaire {owner} — {n} noms indexés sur {all}',
+  'owner.group.none': 'propriétaire non enregistré dans ce snapshot',
+  'owner.group.aria.none':
+    '{n} noms indexés sur {all} dont ce snapshot n’enregistre pas le propriétaire',
+
+  /* --- linking to one row -------------------------------------------- */
+  'link.copy': 'copier le lien',
+  'link.copied': 'lien copié',
+  'link.retry': 'réessayer',
+  'link.copy.aria': 'Copier un lien qui ouvre {domain} dans cet index',
+  'link.failed':
+    'Échec de la copie — cette app n’a pas pu accéder au presse-papiers. Le lien est ci-dessous : sélectionnez-le et copiez-le à la main.',
+
+  /* --- a shared link that names nothing ------------------------------- */
+  'route.unknown':
+    'Le lien que vous avez ouvert demande « {label}.dot », et l’index ne contient pas ce nom — il n’a peut-être jamais été enregistré, ou il a pu quitter le directory depuis la création du lien. L’index complet est affiché à la place.',
+  'route.unknown.dismiss': 'fermer',
+
+  /* --- the contract-record convention -------------------------------- */
+  'hint.contract':
+    'Ce nom ne publie aucun record {record}. dotmetrics compte {event} pour l’adresse qu’un nom déclare : exécuter {cmd} fait donc apparaître le compte d’événements de cette app sur sa ligne, sur la même fenêtre que toutes les autres. C’est une convention propre à dotmetrics et non un standard de la plateforme : aucun champ du manifest n’existe pour une adresse de contrat, ce que nous lisons est donc un record de texte.',
+};
+
+const EXTRA: Record<Lang, Record<ExtraKey, string>> = {
+  en: EXTRA_EN,
+  it: EXTRA_IT,
+  es: EXTRA_ES,
+  fr: EXTRA_FR,
+};
 
 /** `t()` over the block above. Same rule: an unknown `{name}` stays visible. */
 function tx(key: ExtraKey, vars?: Vars): string {
@@ -751,27 +874,128 @@ async function openEntry(entry: AppEntry): Promise<void> {
 /* --------------------------------------------------- the language control */
 
 /**
- * EN / IT, as a two-segment chip in the top bar.
+ * EN / IT / ES / FR — a disclosure button and a panel, in the top bar.
  *
- * Not a `<select>`: a native dropdown does not open inside the Polkadot shell's
- * webview, which this codebase has already been bitten by once. Two buttons in
- * a `radiogroup`-shaped chip cost one tap instead of two anyway.
+ * This was a segmented chip with one label per language. Two fitted; four do
+ * not, on the 375px phone this app is mostly opened on — see .langsw in
+ * LAYOUT_CSS for the measured cost, which is paid by the block pulse rather
+ * than by a scrollbar. So the control collapses to the current language's code
+ * and the four choices move into a panel.
+ *
+ * Not a `<select>`, for the same reason as before: a native dropdown does not
+ * open inside the Polkadot shell's webview, which this codebase has already
+ * been bitten by once. This is buttons in a div.
+ *
+ * Keyboard, in full, because a control that only works under a mouse is not
+ * finished: Enter/Space or Down opens it; opening puts focus on the language
+ * already in use, so the first arrow press moves relative to where the reader
+ * IS; Up/Down step and wrap; Home/End jump; Escape closes and gives focus back
+ * to the button; Tab leaves and closes behind itself.
+ *
+ * Each language is named IN ITSELF — Español, not "Spanish" — because a reader
+ * who has landed in a language they cannot read is looking for their own word.
+ * The accessible name is the translated sentence, which screen readers speak in
+ * the interface language the reader has.
  */
 function LanguageSwitch() {
   const lang = useLang();
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const items = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // A tap anywhere else means "not this" — including on the page behind the
+  // panel, which is why this listens on the document and not on a backdrop
+  // element. Pointer events cover mouse, touch and pen in one listener.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!root.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('pointerdown', onDown);
+    return () => document.removeEventListener('pointerdown', onDown);
+  }, [open]);
+
+  // Opening moves the keyboard onto the current language rather than the first
+  // one, so "open, press Down" means "the next language" and not "the second".
+  useEffect(() => {
+    if (open) items.current[LANGS.indexOf(lang)]?.focus();
+  }, [open, lang]);
+
+  function close(refocus: boolean): void {
+    setOpen(false);
+    // Only when the keyboard asked. Refocusing after a tap would summon the
+    // focus ring on a control the reader is already done with.
+    if (refocus) trigger.current?.focus();
+  }
+
+  function onItemKey(e: React.KeyboardEvent, i: number): void {
+    const last = LANGS.length - 1;
+    let to: number | null = null;
+    if (e.key === 'ArrowDown') to = i === last ? 0 : i + 1;
+    else if (e.key === 'ArrowUp') to = i === 0 ? last : i - 1;
+    else if (e.key === 'Home') to = 0;
+    else if (e.key === 'End') to = last;
+    else if (e.key === 'Escape') {
+      close(true);
+      return;
+    } else if (e.key === 'Tab') {
+      // Let the browser take focus onwards; the panel just must not be left
+      // open behind it, hanging over content the reader has moved on to.
+      setOpen(false);
+      return;
+    } else return;
+    e.preventDefault();
+    items.current[to]?.focus();
+  }
+
   return (
-    <div className="langsw" role="group" aria-label={t('lang.aria')}>
-      {LANGS.map((code) => (
-        <button
-          key={code}
-          type="button"
-          aria-pressed={lang === code}
-          aria-label={t(code === 'en' ? 'lang.en.aria' : 'lang.it.aria')}
-          onClick={() => setLang(code)}
-        >
-          {code.toUpperCase()}
-        </button>
-      ))}
+    <div className="langsw" ref={root}>
+      <button
+        ref={trigger}
+        type="button"
+        className="langsw-btn"
+        aria-haspopup="true"
+        aria-expanded={open}
+        aria-label={t('lang.trigger.aria', { language: languageName(lang) })}
+        onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            setOpen(true);
+          } else if (e.key === 'Escape') setOpen(false);
+        }}
+      >
+        {lang.toUpperCase()}
+        <span className="langsw-c" aria-hidden="true" />
+      </button>
+
+      {open && (
+        <div className="langsw-panel" role="menu" aria-label={t('lang.aria')}>
+          {LANGS.map((code, i) => (
+            <button
+              key={code}
+              ref={(el) => {
+                items.current[i] = el;
+              }}
+              type="button"
+              role="menuitemradio"
+              aria-checked={lang === code}
+              aria-label={t('lang.switch.aria', { language: languageName(code) })}
+              onKeyDown={(e) => onItemKey(e, i)}
+              onClick={() => {
+                setLang(code);
+                close(true);
+              }}
+            >
+              <span>{ENDONYM[code]}</span>
+              <span className="langsw-code" aria-hidden="true">
+                {code.toUpperCase()}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
