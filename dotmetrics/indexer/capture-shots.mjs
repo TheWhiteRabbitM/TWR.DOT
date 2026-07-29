@@ -265,10 +265,17 @@ async function main() {
     // capture caught exactly that (at 6%) for all 60 apps. So: load the gateway
     // URL, then POLL until the resolving screen clears and the app has actually
     // painted, before shooting.
-    const url =
+    // ?chainBackend=rpc-gateway is the whole difference between a fast capture
+    // and a stall. Without it the shell defaults to light-client verification,
+    // which is slow and parks headless on a "Fetching content · Use Trusted
+    // Provider" screen; the param pre-selects the trusted RPC gateway, so the
+    // app resolves in seconds instead of stalling. (Thanks to the operator for
+    // spotting this.)
+    const base =
       typeof selected[i].url === 'string' && /^https:\/\//.test(selected[i].url)
         ? selected[i].url
         : `https://${label}.dev-dot.li`;
+    const url = base + (base.includes('?') ? '&' : '?') + 'chainBackend=rpc-gateway';
 
     const page = await context.newPage();
     page.on('dialog', (d) => d.dismiss().catch(() => {}));
