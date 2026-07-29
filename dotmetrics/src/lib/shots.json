@@ -1,1 +1,362 @@
-{}
+{
+  "ajedreztest01": {
+    "file": "shots/ajedreztest01.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313623
+  },
+  "buildboard01": {
+    "file": "shots/buildboard01.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313250
+  },
+  "bulletin-explorer": {
+    "file": "shots/bulletin-explorer.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313285
+  },
+  "buy-or-sell": {
+    "file": "shots/buy-or-sell.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313320
+  },
+  "chainpulse": {
+    "file": "shots/chainpulse.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313267
+  },
+  "chatgpt-guide": {
+    "file": "shots/chatgpt-guide.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313753
+  },
+  "contribnet01": {
+    "file": "shots/contribnet01.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313735
+  },
+  "contribnet02": {
+    "file": "shots/contribnet02.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313727
+  },
+  "cosmicteapot": {
+    "file": "shots/cosmicteapot.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313605
+  },
+  "devnet-atlas": {
+    "file": "shots/devnet-atlas.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313657
+  },
+  "discreetly": {
+    "file": "shots/discreetly.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313493
+  },
+  "docs": {
+    "file": "shots/docs.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313475
+  },
+  "doomarcade00": {
+    "file": "shots/doomarcade00.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313501
+  },
+  "dot-pages": {
+    "file": "shots/dot-pages.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313640
+  },
+  "dotcheckapp": {
+    "file": "shots/dotcheckapp.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313337
+  },
+  "dotcheckhub": {
+    "file": "shots/dotcheckhub.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313259
+  },
+  "dotify-test01": {
+    "file": "shots/dotify-test01.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313458
+  },
+  "dotmetrics": {
+    "file": "shots/dotmetrics.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313709
+  },
+  "eternalise-notary": {
+    "file": "shots/eternalise-notary.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313683
+  },
+  "eternalize-notary": {
+    "file": "shots/eternalize-notary.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313700
+  },
+  "guestbook": {
+    "file": "shots/guestbook.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313588
+  },
+  "hahamingx00": {
+    "file": "shots/hahamingx00.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313554
+  },
+  "hello-devnet-ynrc46": {
+    "file": "shots/hello-devnet-ynrc46.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313346
+  },
+  "hello-world-bernar": {
+    "file": "shots/hello-world-bernar.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313675
+  },
+  "hellodotworld": {
+    "file": "shots/hellodotworld.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313614
+  },
+  "helloworld": {
+    "file": "shots/helloworld.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313536
+  },
+  "hermes-agent-test": {
+    "file": "shots/hermes-agent-test.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313692
+  },
+  "ip-assets": {
+    "file": "shots/ip-assets.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313302
+  },
+  "italiarovente": {
+    "file": "shots/italiarovente.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313571
+  },
+  "mini-lucky-smoke": {
+    "file": "shots/mini-lucky-smoke.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313294
+  },
+  "my-dotkit": {
+    "file": "shots/my-dotkit.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313510
+  },
+  "oblv-wg-calc": {
+    "file": "shots/oblv-wg-calc.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313432
+  },
+  "oblv-wg-calendar": {
+    "file": "shots/oblv-wg-calendar.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313389
+  },
+  "oblv-wg-clock": {
+    "file": "shots/oblv-wg-clock.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313424
+  },
+  "oblv-wg-crypto": {
+    "file": "shots/oblv-wg-crypto.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313441
+  },
+  "oblv-wg-opengov": {
+    "file": "shots/oblv-wg-opengov.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313398
+  },
+  "oblv-wg-rss": {
+    "file": "shots/oblv-wg-rss.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313406
+  },
+  "oblv-wg-todo": {
+    "file": "shots/oblv-wg-todo.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313415
+  },
+  "oblv-wg-weather": {
+    "file": "shots/oblv-wg-weather.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313450
+  },
+  "oblv-widgets": {
+    "file": "shots/oblv-widgets.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313467
+  },
+  "openpetition": {
+    "file": "shots/openpetition.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313744
+  },
+  "pactprotocol": {
+    "file": "shots/pactprotocol.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313649
+  },
+  "parlement-populaire": {
+    "file": "shots/parlement-populaire.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313631
+  },
+  "pennypixel": {
+    "file": "shots/pennypixel.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313372
+  },
+  "pilliodot": {
+    "file": "shots/pilliodot.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313276
+  },
+  "plaza-social": {
+    "file": "shots/plaza-social.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313580
+  },
+  "polkadot-builders-hackademy": {
+    "file": "shots/polkadot-builders-hackademy.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313545
+  },
+  "polkaportal03": {
+    "file": "shots/polkaportal03.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313718
+  },
+  "proofoftake": {
+    "file": "shots/proofoftake.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313363
+  },
+  "quizzlergame": {
+    "file": "shots/quizzlergame.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313354
+  },
+  "stealcrown": {
+    "file": "shots/stealcrown.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313380
+  },
+  "sybildrop": {
+    "file": "shots/sybildrop.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313519
+  },
+  "tetris-bulletin": {
+    "file": "shots/tetris-bulletin.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313484
+  },
+  "thebutton": {
+    "file": "shots/thebutton.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313761
+  },
+  "tintaprotocol": {
+    "file": "shots/tintaprotocol.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313329
+  },
+  "torrent-otp": {
+    "file": "shots/torrent-otp.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313527
+  },
+  "truereviews": {
+    "file": "shots/truereviews.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313562
+  },
+  "wudcommunity": {
+    "file": "shots/wudcommunity.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313666
+  },
+  "yechops-preview": {
+    "file": "shots/yechops-preview.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313311
+  },
+  "yologuestbook": {
+    "file": "shots/yologuestbook.webp",
+    "w": 480,
+    "h": 1039,
+    "capturedAt": 1785313597
+  }
+}
