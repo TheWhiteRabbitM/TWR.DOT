@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785328168,
-  "count": 73,
+  "generatedAt": 1785338946,
+  "count": 74,
   "apps": [
+    {
+      "label": "ascendyendor00",
+      "domain": "ascendyendor00.dot",
+      "displayName": "Ascend",
+      "description": "An ASCII fantasy roguelike. Descend to recover the Amulet of Yendor, and ascend.",
+      "tier": 0,
+      "firstSeenAt": 1785337488,
+      "url": "https://ascendyendor00.dev-dot.li"
+    },
     {
       "label": "dot-store",
       "domain": "dot-store.dot",
@@ -16,7 +25,7 @@
       "domain": "dw3labsgame.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785315300,
       "url": "https://dw3labsgame.dev-dot.li"
     },

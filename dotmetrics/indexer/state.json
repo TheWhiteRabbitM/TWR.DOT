@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11562950,
-  "updatedAt": "2026-07-29T12:25:58.705Z",
+  "lastBlock": 11568265,
+  "updatedAt": "2026-07-29T15:25:10.244Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "a8f42fc63a57f548aef110d55920dafb69c89430e5d98ef5590181a418c41076",
-    "cid": "bafybeiggiuhznbj3zai57vjqtqlrxgd2ksn3vcczc233go7ebzwtzy63hu",
-    "uploadedAt": "2026-07-29T12:31:03.523Z"
+    "digest": "c0a31ef0b4884a5727de570b67a063ed275801fa47708123478fe67df0d84f55",
+    "cid": "bafybeidmmchg63767hjvp42luyhmojljczf7ongfrxlyvfczwh2xzsk6bi",
+    "uploadedAt": "2026-07-29T15:30:16.882Z"
   },
   "sitePublish": {
     "treeHash": "78664d01a706e1aad98dd8248beacfd87fb8564a085c07e6bd4ed0be0e8ea206",
     "publishedAt": "2026-07-29T09:58:11.935Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-29T12:29:28.000Z",
+    "updatedAt": "2026-07-29T15:29:06.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -77,17 +77,24 @@
       "wudcommunity": "alive",
       "yechops-preview": "alive",
       "yologuestbook": "alive",
-      "rainbowprobe": "alive"
+      "rainbowprobe": "alive",
+      "ascendyendor00": "alive",
+      "dw3labsgame": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-29T12:29:28.000Z",
+    "updatedAt": "2026-07-29T15:29:06.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
         "contenthash": "bafybeidgx4gm7muninnatw6zv6ecscp6ft5eig2kn3znybg6hn2s3ln7wi",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "ascendyendor00": {
+        "contenthash": "bafybeibb2nim7jae6z52r5iky6jvf6fkjobal6dlrpt2uu3fp6wnwxmuka",
         "updateCount": 0,
         "live": "alive"
       },
@@ -190,9 +197,9 @@
         "live": "alive"
       },
       "dw3labsgame": {
-        "contenthash": "",
+        "contenthash": "bafybeihq4votaqskcndngna3hvnwrwg3eazk7v4qxdbrerpxqpx4xkjnhy",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "eternalise-notary": {
         "contenthash": "bafybeia3vou57nyykzko433z2gf4aj6onmssf2uxav67rfa6k6uv5w3lam",
@@ -316,8 +323,9 @@
         "live": "alive"
       },
       "oblv-wg-todo": {
-        "contenthash": "bafybeih42ygvyqrzjcb467qm2wc7lzoj2haketz2khicj6vd2w5moo7bk4",
-        "updateCount": 0,
+        "contenthash": "bafybeigha3vuvf5hthjfuogprpbjcdou6mbgxzgycfjbvppopmq7f6ihve",
+        "updateCount": 1,
+        "changedAt": 1785338946,
         "live": "alive"
       },
       "oblv-wg-weather": {
@@ -449,9 +457,9 @@
         "live": "alive"
       },
       "yechops-preview": {
-        "contenthash": "bafybeibramkzyqkjx3zhfbj3pafessx4zua4y34fsqamrz3e3cxpqaauka",
-        "updateCount": 1,
-        "changedAt": 1785328168,
+        "contenthash": "bafybeifgff252y65gpuq5rttebtuwpewgyjhijkxbyfiettzhxgacvvvje",
+        "updateCount": 2,
+        "changedAt": 1785338946,
         "live": "alive"
       },
       "yologuestbook": {
