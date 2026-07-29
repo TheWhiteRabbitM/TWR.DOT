@@ -1,1 +1,308 @@
-{}
+{
+  "buildboard01": {
+    "file": "shots/buildboard01.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314767
+  },
+  "bulletin-explorer": {
+    "file": "shots/bulletin-explorer.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314843
+  },
+  "buy-or-sell": {
+    "file": "shots/buy-or-sell.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314912
+  },
+  "chainpulse": {
+    "file": "shots/chainpulse.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314804
+  },
+  "chatgpt-guide": {
+    "file": "shots/chatgpt-guide.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315829
+  },
+  "contribnet01": {
+    "file": "shots/contribnet01.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315790
+  },
+  "contribnet02": {
+    "file": "shots/contribnet02.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315771
+  },
+  "cosmicteapot": {
+    "file": "shots/cosmicteapot.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315523
+  },
+  "devnet-atlas": {
+    "file": "shots/devnet-atlas.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315630
+  },
+  "discreetly": {
+    "file": "shots/discreetly.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315284
+  },
+  "docs": {
+    "file": "shots/docs.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315246
+  },
+  "doomarcade00": {
+    "file": "shots/doomarcade00.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315303
+  },
+  "dot-pages": {
+    "file": "shots/dot-pages.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315593
+  },
+  "dotcheckapp": {
+    "file": "shots/dotcheckapp.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314948
+  },
+  "dotcheckhub": {
+    "file": "shots/dotcheckhub.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314786
+  },
+  "dotify-test01": {
+    "file": "shots/dotify-test01.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315209
+  },
+  "eternalise-notary": {
+    "file": "shots/eternalise-notary.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315680
+  },
+  "eternalize-notary": {
+    "file": "shots/eternalize-notary.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315718
+  },
+  "guestbook": {
+    "file": "shots/guestbook.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315485
+  },
+  "hahamingx00": {
+    "file": "shots/hahamingx00.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315410
+  },
+  "hello-devnet-ynrc46": {
+    "file": "shots/hello-devnet-ynrc46.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314967
+  },
+  "hellodotworld": {
+    "file": "shots/hellodotworld.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315542
+  },
+  "helloworld": {
+    "file": "shots/helloworld.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315375
+  },
+  "hermes-agent-test": {
+    "file": "shots/hermes-agent-test.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315699
+  },
+  "italiarovente": {
+    "file": "shots/italiarovente.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315447
+  },
+  "oblv-wg-calc": {
+    "file": "shots/oblv-wg-calc.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315156
+  },
+  "oblv-wg-calendar": {
+    "file": "shots/oblv-wg-calendar.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315064
+  },
+  "oblv-wg-clock": {
+    "file": "shots/oblv-wg-clock.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315138
+  },
+  "oblv-wg-crypto": {
+    "file": "shots/oblv-wg-crypto.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315175
+  },
+  "oblv-wg-opengov": {
+    "file": "shots/oblv-wg-opengov.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315082
+  },
+  "oblv-wg-rss": {
+    "file": "shots/oblv-wg-rss.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315100
+  },
+  "oblv-wg-todo": {
+    "file": "shots/oblv-wg-todo.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315119
+  },
+  "oblv-widgets": {
+    "file": "shots/oblv-widgets.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315227
+  },
+  "openpetition": {
+    "file": "shots/openpetition.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315811
+  },
+  "pactprotocol": {
+    "file": "shots/pactprotocol.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315612
+  },
+  "parlement-populaire": {
+    "file": "shots/parlement-populaire.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315575
+  },
+  "pennypixel": {
+    "file": "shots/pennypixel.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315025
+  },
+  "pilliodot": {
+    "file": "shots/pilliodot.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314824
+  },
+  "plaza-social": {
+    "file": "shots/plaza-social.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315466
+  },
+  "polkaportal03": {
+    "file": "shots/polkaportal03.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315752
+  },
+  "proofoftake": {
+    "file": "shots/proofoftake.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315005
+  },
+  "quizzlergame": {
+    "file": "shots/quizzlergame.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314987
+  },
+  "stealcrown": {
+    "file": "shots/stealcrown.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315045
+  },
+  "sybildrop": {
+    "file": "shots/sybildrop.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315337
+  },
+  "tetris-bulletin": {
+    "file": "shots/tetris-bulletin.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315265
+  },
+  "thebutton": {
+    "file": "shots/thebutton.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315848
+  },
+  "tintaprotocol": {
+    "file": "shots/tintaprotocol.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314930
+  },
+  "torrent-otp": {
+    "file": "shots/torrent-otp.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315355
+  },
+  "truereviews": {
+    "file": "shots/truereviews.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315429
+  },
+  "yechops-preview": {
+    "file": "shots/yechops-preview.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785314893
+  },
+  "yologuestbook": {
+    "file": "shots/yologuestbook.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785315504
+  }
+}
