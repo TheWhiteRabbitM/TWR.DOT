@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1785359923,
-  "count": 74,
+  "generatedAt": 1785363558,
+  "count": 76,
   "apps": [
+    {
+      "label": "flowfarm-staking",
+      "domain": "flowfarm-staking.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785362628,
+      "url": "https://flowfarm-staking.dev-dot.li"
+    },
+    {
+      "label": "squadbuilder",
+      "domain": "squadbuilder.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785362088,
+      "url": "https://squadbuilder.dev-dot.li"
+    },
     {
       "label": "ascendyendor00",
       "domain": "ascendyendor00.dot",

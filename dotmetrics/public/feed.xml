@@ -4,7 +4,21 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 29 Jul 2026 21:18:43 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 29 Jul 2026 22:19:18 GMT</lastBuildDate>
+    <item>
+      <title>flowfarm-staking</title>
+      <link>https://flowfarm-staking.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">flowfarm-staking</guid>
+      <pubDate>Wed, 29 Jul 2026 22:03:48 GMT</pubDate>
+    </item>
+    <item>
+      <title>squadbuilder</title>
+      <link>https://squadbuilder.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">squadbuilder</guid>
+      <pubDate>Wed, 29 Jul 2026 21:54:48 GMT</pubDate>
+    </item>
     <item>
       <title>Ascend</title>
       <link>https://ascendyendor00.dev-dot.li</link>
@@ -340,20 +354,6 @@
       <description></description>
       <guid isPermaLink="false">plaza-social</guid>
       <pubDate>Fri, 24 Jul 2026 19:51:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>guestbook</title>
-      <link>https://guestbook.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">guestbook</guid>
-      <pubDate>Fri, 24 Jul 2026 19:42:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>yologuestbook</title>
-      <link>https://yologuestbook.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">yologuestbook</guid>
-      <pubDate>Fri, 24 Jul 2026 19:27:48 GMT</pubDate>
     </item>
   </channel>
 </rss>

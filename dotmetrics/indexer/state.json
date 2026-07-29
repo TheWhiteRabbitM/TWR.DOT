@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11577396,
-  "updatedAt": "2026-07-29T21:15:35.146Z",
+  "lastBlock": 11579230,
+  "updatedAt": "2026-07-29T22:16:41.277Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "cb688e42f822fec63b872e529d9dc355ae55447c2c58a8c9c71beaa8095e4761",
-    "cid": "bafybeidorzr3t43g2lyjznd5b5c7zf5xrzjyc677mmbj33kx2x22dkuida",
-    "uploadedAt": "2026-07-29T21:19:59.339Z"
+    "digest": "c46350ef6b10bd9e10850bfd3b075f951f4fde153ea24200f518d69fd328eca4",
+    "cid": "bafybeidf64yeujimmq5mhrnwyzwaratlsaritv2djwbku5v35a5pkktopu",
+    "uploadedAt": "2026-07-29T22:20:23.063Z"
   },
   "sitePublish": {
     "treeHash": "78664d01a706e1aad98dd8248beacfd87fb8564a085c07e6bd4ed0be0e8ea206",
     "publishedAt": "2026-07-29T09:58:11.935Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-29T21:18:43.000Z",
+    "updatedAt": "2026-07-29T22:19:18.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -79,13 +79,14 @@
       "yologuestbook": "alive",
       "rainbowprobe": "alive",
       "ascendyendor00": "alive",
-      "dw3labsgame": "alive"
+      "dw3labsgame": "alive",
+      "squadbuilder": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-29T21:18:43.000Z",
+    "updatedAt": "2026-07-29T22:19:18.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -94,9 +95,9 @@
         "live": "alive"
       },
       "ascendyendor00": {
-        "contenthash": "bafybeidkxt4nslicf2s47yzqjocaiwwuc7k457aibzxpy4i7mig5ljbdha",
-        "updateCount": 3,
-        "changedAt": 1785359923,
+        "contenthash": "bafybeicvue5qoy2mo54tn66ufwuab2earppu7tgjw6vryfodm7vyvigcpm",
+        "updateCount": 4,
+        "changedAt": 1785363558,
         "live": "alive"
       },
       "buildboard01": {
@@ -212,6 +213,11 @@
         "contenthash": "bafybeibh62tcwdrhxwfv5ujk2zv4stqymn643kswjijt7sb64vnwtyx7sm",
         "updateCount": 0,
         "live": "alive"
+      },
+      "flowfarm-staking": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "giganetwork": {
         "contenthash": "",
@@ -414,6 +420,11 @@
       },
       "rainbowprobe": {
         "contenthash": "bafybeicqhw7hb63lhbcuvk24qybdxbag4qhioq7v5mbf5dv65f7sa7pjge",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "squadbuilder": {
+        "contenthash": "bafybeigisbeh2xniyrkpcr5nx2qk663cksdqesxw4ltxnqsuarxsh4dpbi",
         "updateCount": 0,
         "live": "alive"
       },
