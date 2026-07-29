@@ -4,11 +4,18 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 29 Jul 2026 22:19:18 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 29 Jul 2026 23:20:53 GMT</lastBuildDate>
     <item>
-      <title>flowfarm-staking</title>
+      <title>Radioactive Drums</title>
+      <link>https://radioactivedrums.dev-dot.li</link>
+      <description>A drum machine living entirely on-chain — 8 synthesized voices, 16-step sequencer, zero servers.</description>
+      <guid isPermaLink="false">radioactivedrums</guid>
+      <pubDate>Wed, 29 Jul 2026 22:38:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>FlowFarm</title>
       <link>https://flowfarm-staking.dev-dot.li</link>
-      <description></description>
+      <description>Explore finalized staking data and test a fail-closed PAS reward-advance vault.</description>
       <guid isPermaLink="false">flowfarm-staking</guid>
       <pubDate>Wed, 29 Jul 2026 22:03:48 GMT</pubDate>
     </item>
@@ -347,13 +354,6 @@
       <description>How much hotter Italy has become since 1940: stripes, records, seas, 107 cities.</description>
       <guid isPermaLink="false">italiarovente</guid>
       <pubDate>Fri, 24 Jul 2026 23:31:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>plaza-social</title>
-      <link>https://plaza-social.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">plaza-social</guid>
-      <pubDate>Fri, 24 Jul 2026 19:51:00 GMT</pubDate>
     </item>
   </channel>
 </rss>

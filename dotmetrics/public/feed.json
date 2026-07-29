@@ -1,13 +1,22 @@
 {
-  "generatedAt": 1785363558,
-  "count": 76,
+  "generatedAt": 1785367253,
+  "count": 77,
   "apps": [
+    {
+      "label": "radioactivedrums",
+      "domain": "radioactivedrums.dot",
+      "displayName": "Radioactive Drums",
+      "description": "A drum machine living entirely on-chain — 8 synthesized voices, 16-step sequencer, zero servers.",
+      "tier": 0,
+      "firstSeenAt": 1785364680,
+      "url": "https://radioactivedrums.dev-dot.li"
+    },
     {
       "label": "flowfarm-staking",
       "domain": "flowfarm-staking.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 2,
+      "displayName": "FlowFarm",
+      "description": "Explore finalized staking data and test a fail-closed PAS reward-advance vault.",
+      "tier": 0,
       "firstSeenAt": 1785362628,
       "url": "https://flowfarm-staking.dev-dot.li"
     },
