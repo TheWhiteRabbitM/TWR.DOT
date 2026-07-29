@@ -217,7 +217,7 @@ const LAYOUT_CSS = `
 /* 72px exactly: 8+8 padding around three fixed line boxes (20 + 14 + 18) and
    two 2px gaps. The line-heights are pinned rather than inherited so a long
    display name cannot silently grow every row in the index. */
-.idx-row { align-items: flex-start; min-height: 88px; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); }
+.idx-row { align-items: flex-start; min-height: 68px; gap: var(--sp-3); padding: var(--sp-2) var(--sp-4); }
 .idx-ico {
   width: var(--sp-6); height: var(--sp-6); flex: none; margin-top: 2px; overflow: hidden;
   display: inline-flex; align-items: center; justify-content: center;
@@ -225,9 +225,15 @@ const LAYOUT_CSS = `
   font-size: var(--fs-1); font-weight: 600; text-transform: uppercase;
 }
 .idx-ico img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.idx-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
-.idx-l1 { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); height: var(--sp-6); }
-.idx-title { font-size: var(--fs-3); font-weight: 500; line-height: var(--sp-6); color: var(--tx-hi); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.idx-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+/* Title and tier sit together at the left. The old rule pushed the badge to the
+   far edge with justify-content:space-between, opening a wide empty gap on every
+   row that read as scatter; the badge belongs next to the thing it labels. */
+.idx-l1 { display: flex; align-items: baseline; gap: var(--sp-2); height: var(--sp-6); min-width: 0; }
+.idx-title { flex: 0 1 auto; font-size: var(--fs-3); font-weight: 600; line-height: var(--sp-6); color: var(--tx-hi); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* A quiet tag, not a shout: small, neutral, hugging the name. Repeated on every
+   row, so it must not compete with the name for attention. */
+.idx-l1 .badge { flex: none; height: 15px; padding: 0 5px; font-size: 9px; border-radius: 4px; align-self: center; }
 .idx-l2 { display: flex; align-items: baseline; gap: var(--sp-2); height: 16px; font-family: var(--mono); font-size: var(--fs-0); line-height: 16px; color: var(--tx-low); min-width: 0; }
 .idx-l2 i { font-style: normal; white-space: nowrap; }
 /* The liveness warning. --warn and nothing else: no icon, no badge, no accent —
