@@ -96,6 +96,23 @@ export interface AppEntry {
   hasExecutable: boolean;
   tier: Tier;
   /**
+   * Whether the indexer's LAST liveness probe got the contenthash bundle served
+   * by our gateway. Three states, and the difference between them is the point:
+   *
+   *   true      — the gateway served the bundle when last asked
+   *   false     — it did not (see `lastSeenAliveAt` for how long that has held)
+   *   undefined — never probed: the name has no contenthash (nothing to probe),
+   *               or this directory copy predates the probe. An unknown, NOT a
+   *               measured zero — the UI must show nothing for it.
+   */
+  alive?: boolean;
+  /**
+   * Unix seconds of the last probe that found the bundle reachable. Absent
+   * together with `alive: false` means the gateway has NEVER served it — a
+   * different claim from "it died N days ago", and worded differently.
+   */
+  lastSeenAliveAt?: number;
+  /**
    * Reads stats through an ABI dotmetrics hard-codes for this app. `null` for
    * every name we have not hand-coded, which is nearly all of them.
    *

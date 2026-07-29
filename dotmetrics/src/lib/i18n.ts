@@ -56,6 +56,10 @@ const EN = {
      name can publish. */
   'facet.declared': 'Declares a contract',
   'facet.new': 'New today',
+  /* Rendered ONLY when its count is above zero: alive is the normal state of a
+     deployed bundle, and a permanent "Unreachable 0" chip would dignify the
+     exception into a category. */
+  'facet.unreachable': 'Unreachable',
 
   /* --- the index ----------------------------------------------------- */
   'idx.count.search':
@@ -92,6 +96,17 @@ const EN = {
   'row.events.one': 'event · last {blocks} blocks (~{minutes} min)',
   'row.events.aria':
     '{events} contract events from the address {name} declares, over the last {blocks} blocks (about {minutes} minutes)',
+
+  /* --- bundle liveness ------------------------------------------------
+     Shown ONLY when the last probe could not reach a deployed bundle. An alive
+     bundle shows nothing: reachable is the normal state of a published app, not
+     a badge to earn. "Never seen" is deliberately its own sentence — a bundle
+     our gateway has never served is not a bundle that died N days ago, and
+     pretending to know when it was last up would be a lie. */
+  'live.unreachable': 'bundle unreachable · {days} days',
+  'live.unreachable.one': 'bundle unreachable · 1 day',
+  'live.unreachable.today': 'bundle unreachable · since today',
+  'live.never': 'bundle never seen by our gateway',
 
   /* --- expanded detail ----------------------------------------------- */
   'detail.owner': 'Owner',
@@ -165,9 +180,16 @@ const EN = {
   'method.top.none': 'no contract emitted an event in the measured window',
   'method.p5':
     'What changed. An earlier version of this page ranked apps by a tier only the index’s own operator could reach: the top rank was “live data”, and it went to the four apps whose contract ABI dotmetrics had hand-coded — all four of them ours. It was disclosed here, which did not make it fair, and it broke the rule the tiers exist for: a tier is meant to state a fact about the app, and that one stated a fact about our code. Ranking now uses facts anyone can satisfy — a manifest record, a contenthash, a registered name — and any app can be measured on its own row by publishing the address of its contract as a text record: {cmd}. Its {event} count over the window above then appears beside it, the same metric in the same words as for anyone else. {declared} of {all} indexed names declare one today. This is dotmetrics’ own convention and not a platform standard: no manifest field exists for a contract address, so we read a record instead. The four apps we hard-code readers for still report those figures, now labelled as our instrumentation and counting for nothing in the order.',
+  'method.p6':
+    'Liveness. Bulletin storage is a window, not forever, so every name with a contenthash is probed through one gateway, {gateway} — and through nothing else. “Unreachable” therefore means exactly this: that gateway did not serve the bundle when we asked. It is evidence about one door to the network, never proof the data is gone from it. If more than half of the bundles seen alive last time turn unreachable in a single run, the run is treated as a gateway failure and nothing is recorded — an index must not declare an ecosystem dead because one endpoint had a bad minute. Names that publish no contenthash are not probed at all: there is nothing behind the name to reach, so they can be neither alive nor unreachable.',
 
-  /* --- footer -------------------------------------------------------- */
-  'foot.prov.live': 'index live from Bulletin · {cid}',
+  /* --- footer ---------------------------------------------------------
+     Three sources, three different freshness claims, stated as themselves:
+     'record' — the CID the mutable `directory` record points at right now;
+     'pinned' — the CID this build was compiled with, fetched from Bulletin;
+     'baked'  — the compiled-in snapshot, nothing fetched at all. */
+  'foot.prov.record': 'index live via the directory record · {cid}',
+  'foot.prov.pinned': 'index from the CID pinned in this build · {cid}',
   'foot.prov.baked': 'index from the snapshot baked into this build — Bulletin unreachable',
   'foot.note':
     'Every figure is read live from Polkadot devnet Asset Hub over a public Ethereum RPC — no wallet, no sign-in, no personhood. Test network: tokens carry no value.',
@@ -312,6 +334,7 @@ const IT: Record<MsgKey, string> = {
   'facet.name': 'Solo nome',
   'facet.declared': 'Dichiarano un contratto',
   'facet.new': 'Nuove oggi',
+  'facet.unreachable': 'Irraggiungibili',
 
   /* --- the index ----------------------------------------------------- */
   'idx.count.search':
@@ -343,6 +366,12 @@ const IT: Record<MsgKey, string> = {
   'row.events.one': 'evento · ultimi {blocks} blocchi (~{minutes} min)',
   'row.events.aria':
     '{events} eventi di contratto dall’indirizzo dichiarato da {name}, negli ultimi {blocks} blocchi (circa {minutes} minuti)',
+
+  /* --- bundle liveness ------------------------------------------------ */
+  'live.unreachable': 'bundle irraggiungibile · {days} giorni',
+  'live.unreachable.one': 'bundle irraggiungibile · 1 giorno',
+  'live.unreachable.today': 'bundle irraggiungibile · da oggi',
+  'live.never': 'bundle mai visto dal nostro gateway',
 
   /* --- expanded detail ----------------------------------------------- */
   'detail.owner': 'Proprietario',
@@ -412,9 +441,12 @@ const IT: Record<MsgKey, string> = {
   'method.top.none': 'nessun contratto ha emesso eventi nella finestra misurata',
   'method.p5':
     'Cosa è cambiato. Una versione precedente di questa pagina ordinava le app secondo un livello raggiungibile solo da chi gestisce l’indice: il primo posto era «dati in diretta», e andava alle quattro app di cui dotmetrics teneva scritta a mano l’ABI del contratto — tutte e quattro nostre. Era dichiarato qui, il che non lo rendeva equo, e contraddiceva la regola per cui i livelli esistono: un livello dovrebbe dire un fatto sull’app, e quello diceva un fatto sul nostro codice. Ora l’ordinamento usa fatti che chiunque può soddisfare — un record manifest, un contenthash, un nome registrato — e qualsiasi app può essere misurata sulla propria riga pubblicando l’indirizzo del proprio contratto come record di testo: {cmd}. Il suo conteggio di {event} sulla finestra qui sopra compare allora accanto ad essa, stessa metrica e stesse parole che per chiunque altro. Oggi lo dichiarano {declared} nomi su {all}. Questa è una convenzione di dotmetrics e non uno standard della piattaforma: non esiste un campo del manifest per l’indirizzo di un contratto, quindi leggiamo un record. Le quattro app di cui teniamo un lettore riportano ancora quelle cifre, ora etichettate come nostra strumentazione e senza alcun peso nell’ordine.',
+  'method.p6':
+    'Vitalità. Lo storage di Bulletin è una finestra, non un per sempre, quindi ogni nome con un contenthash viene sondato attraverso un solo gateway, {gateway} — e attraverso nient’altro. «Irraggiungibile» significa dunque esattamente questo: quel gateway non ha servito il bundle quando gliel’abbiamo chiesto. È una prova su una sola porta della rete, mai la prova che i dati ne siano spariti. Se più della metà dei bundle visti vivi la volta scorsa risulta irraggiungibile in una singola esecuzione, l’esecuzione viene trattata come un guasto del gateway e nulla viene registrato: un indice non deve dichiarare morto un ecosistema perché un endpoint ha avuto un minuto storto. I nomi che non pubblicano alcun contenthash non vengono sondati affatto: dietro il nome non c’è nulla da raggiungere, quindi non possono essere né vivi né irraggiungibili.',
 
   /* --- footer -------------------------------------------------------- */
-  'foot.prov.live': 'indice in diretta da Bulletin · {cid}',
+  'foot.prov.record': 'indice in diretta tramite il record directory · {cid}',
+  'foot.prov.pinned': 'indice dal CID fissato in questa build · {cid}',
   'foot.prov.baked':
     'indice dallo snapshot incorporato in questa build — Bulletin irraggiungibile',
   'foot.note':

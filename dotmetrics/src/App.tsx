@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { APPS, buildApps, type Discovered } from './lib/registry';
-import { loadDirectory, type DirectorySource } from './lib/directory';
+import { gatewayUrl, loadDirectory, type DirectorySource } from './lib/directory';
 import { startLiveTail } from './lib/livetail';
 import { readContract, ping } from './lib/chain';
 import { CONTENT_RESOLVER, REGISTRY } from './lib/dotns';
@@ -179,6 +179,10 @@ const LAYOUT_CSS = `
 .idx-title { font-size: var(--fs-3); font-weight: 500; line-height: var(--sp-6); color: var(--tx-hi); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .idx-l2 { display: flex; align-items: baseline; gap: var(--sp-2); height: 16px; font-family: var(--mono); font-size: var(--fs-0); line-height: 16px; color: var(--tx-low); min-width: 0; }
 .idx-l2 i { font-style: normal; white-space: nowrap; }
+/* The liveness warning. --warn and nothing else: no icon, no badge, no accent —
+   a quiet factual line in the metadata row, present only when the last probe
+   failed. Alive bundles render nothing at all here. */
+.idx-live-warn { color: var(--warn); }
 /* min-height, not height: a fixed height plus wrapping text cut descriptions
    mid-line with no ellipsis. The clamp is what limits the lines.
    The line is a flex row because the description can now carry a language
@@ -372,6 +376,27 @@ function tierReason(e: AppEntry): string {
     default:
       return t('tier.reason.2');
   }
+}
+
+/**
+ * The unreachable line for a row, or null — which is what almost every row gets.
+ *
+ * Alive is the NORMAL state of a deployed bundle, so an alive app shows nothing
+ * at all: reachability is not a badge to earn. The line appears only when the
+ * indexer's last probe could not get the bundle served, and it makes the honest
+ * one of two different claims: "unreachable · N days" when we know when it was
+ * last up, "never seen by our gateway" when we do not — the second must never
+ * be dressed up as the first. `alive === undefined` is an unknown (nothing to
+ * probe, or a directory copy that predates the probe) and renders nothing,
+ * because an unknown and a measured failure are different claims.
+ */
+function unreachableLine(entry: AppEntry): string | null {
+  if (!entry.contenthash || entry.alive !== false) return null;
+  if (!entry.lastSeenAliveAt) return t('live.never');
+  const days = Math.floor((Date.now() / 1000 - entry.lastSeenAliveAt) / 86400);
+  if (days < 1) return t('live.unreachable.today');
+  if (days === 1) return t('live.unreachable.one');
+  return t('live.unreachable', { days });
 }
 
 /**
@@ -692,6 +717,7 @@ function IndexRow({
   const tier = entry.tier;
   const detailId = `d-${entry.id}`;
   const measured = declaredEvents(entry);
+  const unreachable = unreachableLine(entry);
   return (
     <>
       <div
@@ -723,6 +749,10 @@ function IndexRow({
                 ? t('row.registered', { ago: ago(entry.firstSeenAt) })
                 : t('row.beforeRange')}
             </i>
+            {/* Quiet, and only ever present in the failing case: an alive
+                bundle earns no "alive" marker, because reachable is the normal
+                state of a deployed app, not a distinction. */}
+            {unreachable && <i className="idx-live-warn">{unreachable}</i>}
           </span>
           {/* Three different kinds of text end up on this line, and only the
               first is the author's: a manifest description, our own tagline for
@@ -908,8 +938,12 @@ function ChatButton() {
  * `declared` replaces it in the same position: also about a per-app number, but
  * about a record any name can publish rather than about which ABIs we happened
  * to hand-code.
+ *
+ * `unreachable` exists only while its count does: the chip appears when at
+ * least one deployed bundle failed its last probe and vanishes when none do,
+ * because a standing "Unreachable 0" would promote the exception to a category.
  */
-type Facet = 'all' | 'published' | 'deployed' | 'name' | 'declared' | 'new';
+type Facet = 'all' | 'published' | 'deployed' | 'name' | 'declared' | 'new' | 'unreachable';
 
 export function App() {
   const lang = useLang();
@@ -930,6 +964,7 @@ export function App() {
     let nameOnly = 0;
     let declared = 0;
     let today = 0;
+    let unreachable = 0;
     for (const a of apps) {
       // One tier each, so these three add up to `all`. The old counts were
       // cumulative (`tier <= 1`), which meant "published" and "deployed"
@@ -940,8 +975,11 @@ export function App() {
       else nameOnly += 1;
       if (a.contract) declared += 1;
       if ((a.firstSeenAt ?? 0) >= startOfTodayUtc) today += 1;
+      // A measured failure only: `alive === undefined` is a name never probed
+      // (or a directory copy that predates the probe), not one found down.
+      if (a.contenthash && a.alive === false) unreachable += 1;
     }
-    return { all: apps.length, published, deployed, nameOnly, declared, today };
+    return { all: apps.length, published, deployed, nameOnly, declared, today, unreachable };
   }, [apps, startOfTodayUtc]);
 
   /** Registrations, for the heatmap and the step spark. Undated names cannot be plotted. */
@@ -977,6 +1015,8 @@ export function App() {
               return Boolean(a.contract);
             case 'new':
               return (a.firstSeenAt ?? 0) >= startOfTodayUtc;
+            case 'unreachable':
+              return Boolean(a.contenthash) && a.alive === false;
             default:
               return true;
           }
@@ -1000,6 +1040,12 @@ export function App() {
     { key: 'declared', label: t('facet.declared'), n: counts.declared },
     { key: 'new', label: t('facet.new'), n: counts.today },
   ];
+  // Present only while true: zero unreachable bundles is the state this chip
+  // must not exist in — unlike `declared`, whose honest zero documents an
+  // unadopted convention, an "Unreachable 0" would be a standing insinuation.
+  if (counts.unreachable > 0) {
+    facets.push({ key: 'unreachable', label: t('facet.unreachable'), n: counts.unreachable });
+  }
 
   const scanned = counts.all + excluded.length;
   const indexAge = Math.floor(Date.now() / 1000) - eco.measuredAt;
@@ -1268,22 +1314,37 @@ export function App() {
             all: <b key="a">{fmt(counts.all, lang)}</b>,
           })}
         </p>
+        {/* How "unreachable" is measured, and — more importantly — what it
+            cannot prove. One gateway is one door, not the network. */}
+        <p>
+          {tSplit('method.p6', {
+            gateway: (
+              <code key="g" className="mono">
+                {new URL(gatewayUrl('')).host}
+              </code>
+            ),
+          })}
+        </p>
       </details>
 
       {/* 8 ----------------------------------------------------------- footer */}
       <div className="foot-row">
         <span className="foot-prov">
-          {source === 'bulletin' && directoryCid
-            ? tSplit('foot.prov.live', {
+          {/* Which of the three sources actually won: the mutable record, the
+              build-time pin, or the compiled-in snapshot. Three different
+              freshness claims — the reader gets the real one. The CID links
+              through the gateway that actually serves our objects. */}
+          {source !== 'baked' && directoryCid
+            ? tSplit(source === 'record' ? 'foot.prov.record' : 'foot.prov.pinned', {
                 cid: (
                   <a
                     key="cid"
-                    href={`https://dweb.link/ipfs/${directoryCid}`}
+                    href={gatewayUrl(directoryCid)}
                     target="_blank"
                     rel="noreferrer"
                     onClick={(e) => {
                       e.preventDefault();
-                      void openExternal(`https://dweb.link/ipfs/${directoryCid}`);
+                      void openExternal(gatewayUrl(directoryCid));
                     }}
                   >
                     {directoryCid}

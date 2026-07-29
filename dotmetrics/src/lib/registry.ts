@@ -68,6 +68,16 @@ export interface Discovered {
    * correctly. Typed loosely for exactly that reason — old files hold a 3.
    */
   tier?: number;
+  /**
+   * From indexer/probe-liveness.mjs: did our gateway serve the contenthash
+   * bundle at the last probe? Absent on names with nothing to probe and on
+   * directory copies that predate the probe — see {@link AppEntry.alive}.
+   */
+  alive?: boolean;
+  /** Unix seconds of the last probe that found the bundle reachable. */
+  lastSeenAliveAt?: number;
+  /** Day-coarse unix seconds of the last probe. Not rendered; kept for state. */
+  livenessCheckedAt?: number;
 }
 
 /** The directory baked into the bundle at build time — the always-available fallback. */
@@ -286,6 +296,8 @@ export function buildApps(map: Record<string, Discovered>): AppEntry[] {
         iconCid: d.iconCid,
         contenthash: d.contenthash,
         hasExecutable: d.hasExecutable ?? false,
+        alive: d.alive,
+        lastSeenAliveAt: d.lastSeenAliveAt,
         // Chain facts, and nothing else. An entry with no records is name-only
         // until one proves otherwise. Note what does NOT appear in tierOf():
         // `read`. Holding a hand-coded reader for an app used to promote it to

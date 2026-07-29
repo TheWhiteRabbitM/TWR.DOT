@@ -34,6 +34,16 @@ export async function ownerOf(label: string): Promise<string> {
   return owner && owner.toLowerCase() !== ZERO ? owner : '';
 }
 
+/**
+ * One text record on `name`, read DIRECTLY off the content resolver over plain
+ * eth_call — rule 2 above. '' when the record is empty; THROWS when the call
+ * itself fails, because "the read failed" and "the record is empty" are
+ * different claims and the caller decides what each one means.
+ */
+export async function textOf(name: string, key: string): Promise<string> {
+  return String((await resolver().text(namehash(name), key)) ?? '');
+}
+
 const B32 = 'abcdefghijklmnopqrstuvwxyz234567';
 
 /**

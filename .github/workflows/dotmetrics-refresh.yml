@@ -1,8 +1,21 @@
 name: dotmetrics self-refresh
 
 # Keeps dotmetrics.dot current without anyone's PC: re-index the .dot registry,
-# re-measure ecosystem activity, publish the fresh directory + site to Bulletin,
-# and commit the growing history back to the repo so every run builds on the last.
+# re-measure ecosystem activity, probe bundle liveness, and commit the growing
+# history back to the repo so every run builds on the last.
+#
+# TRANSACTIONS ARE GATED, because Bulletin writes count against a finite quota:
+#
+#   - The directory JSON is uploaded — and the `directory` text record on
+#     dotmetrics.dot moved to the new CID — only when the directory's SEMANTIC
+#     content changed (indexer/directory-digest.mjs), or when the last upload
+#     is old enough to need a retention renewal. The page reads the record at
+#     runtime, so moving the record IS the deploy; no site build is involved.
+#   - The site itself is built and pad-published only when the app source
+#     actually changed (indexer/app-tree-hash.mjs). Its weekly retention
+#     renewal lives in keepalive.yml, not here.
+#
+# An unchanged hour therefore costs zero transactions, and says so in the log.
 #
 # The devnet publish key lives ONLY in the DEVNET_MNEMONIC repo secret
 # (devnet tokens carry no value; do not reuse this pattern with real keys).
@@ -42,17 +55,21 @@ jobs:
       - name: Install publish CLIs
         run: npm install -g @polkadot-community-foundation/polkadot-app-deploy@0.13.1 @polkadot-community-foundation/dotns-cli@0.8.0
 
-      - name: Re-index registry, records, timestamps and activity
+      - name: Re-index registry, records, timestamps, activity and liveness
         run: |
           set -euo pipefail
           # index-apps admits a candidate label only when registry.owner()
           # confirms it; enrich-onchain then reads owner, manifest, contenthash
           # and executable record for each admitted name off the content
           # resolver. The directory the UI renders is exactly these two passes.
+          # probe-liveness then asks our gateway whether each contenthash is
+          # still actually served — with a mass-death guard that keeps one bad
+          # gateway minute from being recorded as an ecosystem death.
           node indexer/index-apps.mjs
           node indexer/enrich-onchain.mjs
           node indexer/enrich-times.mjs
           WINDOW=150 node indexer/measure-activity.mjs
+          node indexer/probe-liveness.mjs
 
       - name: Copy fresh data into the app
         run: |
@@ -67,28 +84,58 @@ jobs:
           console.log("history points:", arr.length);
           '
 
-      - name: Upload directory to Bulletin and pin the CID
+      - name: Did the directory meaningfully change?
+        id: dirgate
+        run: node indexer/directory-digest.mjs check
+
+      - name: Upload directory and move the record (only when it changed)
+        if: steps.dirgate.outputs.publish == 'true'
         env:
           MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
           DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
         run: |
           set -euo pipefail
           CID=$(dotns bulletin upload src/lib/discovered.json --env devnet 2>&1 | tr -d '\r' | grep -aoE 'baf[a-z0-9]{50,}' | head -1)
-          [ -z "$CID" ] && { echo "bulletin upload failed" >&2; exit 1; }
+          [ -z "$CID" ] && { echo "::error::bulletin upload failed" >&2; exit 1; }
           echo "new directory CID: $CID"
+
+          # Move the mutable pointer the page reads at runtime. The CLI's exit
+          # code gates the submit; the read-back below is the confirmation that
+          # counts — a set we cannot read back over eth_call did not happen,
+          # whatever the CLI printed. A few retries absorb propagation lag.
+          dotns text set dotmetrics.dot directory "$CID" --env devnet 2>&1 | tr -d '\r' | tee /tmp/set.log
+          CONFIRMED=""
+          for i in 1 2 3; do
+            GOT=$(node indexer/read-record.mjs dotmetrics.dot directory || true)
+            [ "$GOT" = "$CID" ] && { CONFIRMED=yes; break; }
+            echo "read-back attempt $i: record is '$GOT', want '$CID' — retrying"
+            sleep 6
+          done
+          [ -z "$CONFIRMED" ] && { echo "::error::directory record set did NOT confirm on read-back" >&2; exit 1; }
+          echo "record confirmed: dotmetrics.dot directory -> $CID"
+
+          # Book-keep the upload, and re-pin the baked fallback so the NEXT
+          # site publish (whenever the app changes) carries the latest CID.
+          # The pin is masked out of app-tree-hash, so this sed alone never
+          # triggers a site publish.
+          node indexer/directory-digest.mjs commit "$CID"
           sed -i "s|export const DIRECTORY_CID = '[a-z0-9]*'|export const DIRECTORY_CID = '$CID'|" src/lib/directory.ts
 
-      - name: Build
-        run: npm run build
+      - name: Did the app source change?
+        id: sitegate
+        run: node indexer/app-tree-hash.mjs check
 
-      - name: Publish to dotmetrics.dot
+      - name: Build and publish the site (only when the app changed)
+        if: steps.sitegate.outputs.publish == 'true'
         env:
           MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
           DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
         run: |
           set -euo pipefail
+          npm run build
           pad ./dist dotmetrics.dot --env devnet 2>&1 | tee /tmp/pad.log | grep -aE 'Setting contenthash|Verified on-chain|Files:' | tail -4
-          grep -aq 'Verified on-chain' /tmp/pad.log || { echo "publish not verified on-chain" >&2; exit 1; }
+          grep -aq 'Verified on-chain' /tmp/pad.log || { echo "::error::publish not verified on-chain" >&2; exit 1; }
+          node indexer/app-tree-hash.mjs commit
 
       - name: Commit the grown history back to the repo
         working-directory: .

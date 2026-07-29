@@ -204,10 +204,15 @@ async function main() {
   out.excluded = [...new Set([...ghosts, ...unresolvedGhosts])].sort();
 
   fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n');
+  // Spread over the CURRENT file, re-read at write time: state.json also
+  // carries the directory-upload and site-publish bookkeeping written by
+  // directory-digest.mjs and app-tree-hash.mjs, and neither an ordinary run
+  // nor --reset (which resets the SCAN, not the publish history) may drop it.
   fs.writeFileSync(
     STATE,
     JSON.stringify(
       {
+        ...readJson(STATE, {}),
         lastBlock: to,
         updatedAt: new Date().toISOString(),
         registry: REGISTRY,

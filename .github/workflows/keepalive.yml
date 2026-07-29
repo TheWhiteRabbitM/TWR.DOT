@@ -6,10 +6,13 @@ name: keep the published sites alive
 # in the CLI — and `pad` is incremental, so a republish of unchanged files is
 # cheap.
 #
-# dotmetrics republishes hourly and italiarovente daily, so both renew
-# themselves. The other five only get published when someone changes them, which
-# means a quiet fortnight would silently take them off the network. This job is
-# the difference between "still up" and "was up when we last looked".
+# italiarovente republishes daily, so it renews itself. dotmetrics used to
+# renew itself hourly too, but its refresh job now publishes the SITE only when
+# the app source actually changes (the directory reaches the page through a
+# DotNS text record instead), so a quiet fortnight would expire its bundle like
+# any other — it is in the matrix below for exactly that reason. The remaining
+# five only get published when someone changes them. This job is the difference
+# between "still up" and "was up when we last looked".
 #
 # Runs weekly — half the retention window, so a single failed run cannot expire
 # anything before the next one.
@@ -44,6 +47,11 @@ jobs:
             name: wudcommunity.dot
           - dir: discreet
             name: discreetly.dot
+          # No longer self-renewing: its hourly job gates site publishes on an
+          # actual app change, so the weekly renewal lives here like everyone
+          # else's. (`pad` is incremental — an unchanged republish is cheap.)
+          - dir: dotmetrics
+            name: dotmetrics.dot
     steps:
       - uses: actions/checkout@v4
 
