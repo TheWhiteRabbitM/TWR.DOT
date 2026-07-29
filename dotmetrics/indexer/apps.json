@@ -10,7 +10,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -25,7 +25,7 @@
     "tier": 1,
     "firstSeenAt": 1785304728,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -40,7 +40,7 @@
     "tier": 1,
     "firstSeenAt": 1785261840,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -55,7 +55,7 @@
     "tier": 1,
     "firstSeenAt": 1785228360,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -73,7 +73,7 @@
     "tier": 0,
     "firstSeenAt": 1785272448,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -91,7 +91,7 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -106,7 +106,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -121,7 +121,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -136,7 +136,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -154,7 +154,7 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -172,7 +172,7 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -187,7 +187,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -202,7 +202,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -220,7 +220,7 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -235,7 +235,7 @@
     "tier": 1,
     "firstSeenAt": 1785185004,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -245,14 +245,15 @@
     "url": "https://dotcheckhub.dev-dot.li",
     "firstSeenBlock": 11538250,
     "owner": "0xD1348964Fc8250C1840f859CD2e0AB50f8149fA0",
-    "contenthash": "bafybeia6rgdxb2byl4e2egtycd55exqzp32ydvqyrzb35ifuwpc3xzkzja",
+    "contenthash": "bafybeiaijefi2kc24a7mf4j7ymvt5iqhcb34uvupkcbdfcuy7hxrae44vy",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785273720,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
-    "updateCount": 0
+    "updateCount": 1,
+    "contenthashChangedAt": 1785313486
   },
   "dotexplorer": {
     "label": "dotexplorer",
@@ -276,7 +277,7 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "displayName": "Dotify",
     "description": "Shared musical presence with artist-owned access and value flows.",
@@ -293,13 +294,14 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeiamfu7dovhbmczp3iatgvg5qfgussnehzb3qfq6ptfj3reh6zpqee",
+    "contenthash": "bafybeihzpcovn354rygmu2tutqy573js54lpzx73lxxt55aev3xj444u2e",
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
-    "updateCount": 0
+    "updateCount": 1,
+    "contenthashChangedAt": 1785313486
   },
   "eternalise-notary": {
     "label": "eternalise-notary",
@@ -312,7 +314,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -327,7 +329,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -353,7 +355,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -371,7 +373,7 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -397,7 +399,7 @@
     "tier": 1,
     "firstSeenAt": 1785184260,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -423,7 +425,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -438,7 +440,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -453,7 +455,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -468,7 +470,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -486,7 +488,7 @@
     "iconCid": "bafk2bzaceaa5n4ujthu2moyqjhitp5lovftnit4njvu2x3in227yjozi5s35u",
     "contenthash": "bafybeiaz7gdj2j3qacwyhwf2jsbh3jc3ytrqgb6iwv335px5rw2bwdqjru",
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -504,7 +506,7 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -519,7 +521,7 @@
     "tier": 1,
     "firstSeenAt": 1785258336,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -534,7 +536,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -574,7 +576,7 @@
     "tier": 0,
     "firstSeenAt": 1785137280,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -592,7 +594,7 @@
     "tier": 0,
     "firstSeenAt": 1785145152,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -610,7 +612,7 @@
     "tier": 0,
     "firstSeenAt": 1785137520,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -628,7 +630,7 @@
     "tier": 0,
     "firstSeenAt": 1785137004,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -646,7 +648,7 @@
     "tier": 0,
     "firstSeenAt": 1785142428,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -664,7 +666,7 @@
     "tier": 0,
     "firstSeenAt": 1785142344,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -682,7 +684,7 @@
     "description": "Liste de tâches sur le dashboard : saisie rapide (échéance, priorité, tags), tri par urgence, tout en local.",
     "iconCid": "bafk2bzacebklauyqr4jvmhfmcyqhslhhrnya5vin5shpebsn4irhn3yd4e2ya",
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -700,7 +702,7 @@
     "tier": 0,
     "firstSeenAt": 1785135684,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -718,7 +720,7 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -736,7 +738,7 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -751,7 +753,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -769,7 +771,7 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -779,14 +781,15 @@
     "url": "https://pennypixel.dev-dot.li",
     "firstSeenBlock": 11491863,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeigs4mkljusoqy6x4jggw7hzeomb26slb6c7nwvgf4ul4zkomduiqu",
+    "contenthash": "bafybeifjqwqbisrkwn4uxbfvbo43uyse64dsjeknkmlnx4m6dwiyk3daoy",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172608,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
-    "updateCount": 0
+    "updateCount": 1,
+    "contenthashChangedAt": 1785313486
   },
   "petitions": {
     "label": "petitions",
@@ -810,7 +813,7 @@
     "tier": 1,
     "firstSeenAt": 1785262020,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -825,7 +828,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -840,7 +843,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -877,7 +880,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -887,14 +890,15 @@
     "url": "https://proofoftake.dev-dot.li",
     "firstSeenBlock": 11491943,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeifpum4czsmjqa53xla74y7ipvf3vjnd7vh2uo7mez77ys63t72g3m",
+    "contenthash": "bafybeie6iockx7jbjdynd5zmtwcl4yj2fmbemsncvgpmuit7hl6r74xk7i",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172776,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
-    "updateCount": 0
+    "updateCount": 1,
+    "contenthashChangedAt": 1785313486
   },
   "provenveil": {
     "label": "provenveil",
@@ -921,7 +925,7 @@
     "tier": 0,
     "firstSeenAt": 1785180780,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -931,14 +935,15 @@
     "url": "https://stealcrown.dev-dot.li",
     "firstSeenBlock": 11491790,
     "owner": "0x4ab6B2461FCA547022499E9De1e7b7BAd27cB1CC",
-    "contenthash": "bafybeibzojyeqei3frb7xj2ndsnqehnbkulf6igb6cxk2qz5qfcxwr45za",
+    "contenthash": "bafybeibdw5xoheyl62hbzskebk7yis3rrrqmiliegqlw4njtdf7fnckk5m",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785172452,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
-    "updateCount": 0
+    "updateCount": 1,
+    "contenthashChangedAt": 1785313486
   },
   "sybildrop": {
     "label": "sybildrop",
@@ -951,7 +956,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -966,7 +971,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -984,7 +989,7 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -1002,7 +1007,7 @@
     "tier": 0,
     "firstSeenAt": 1785197808,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -1020,7 +1025,7 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -1039,7 +1044,7 @@
     "tier": 0,
     "contract": "0x29af38913652b32989d1d96c51af641980e55698",
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -1057,7 +1062,7 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -1072,7 +1077,7 @@
     "tier": 1,
     "firstSeenAt": 1785229452,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },
@@ -1087,7 +1092,7 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785311199,
+    "lastSeenAliveAt": 1785313486,
     "livenessCheckedAt": 1785283200,
     "updateCount": 0
   },

@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11552572,
-  "updatedAt": "2026-07-29T06:18:02.593Z",
+  "lastBlock": 11556055,
+  "updatedAt": "2026-07-29T08:21:01.195Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "f8b7ebc483fd2cc1b6e2ce30b6efb164d18556ede693dcefd910293d80fb56e5",
-    "cid": "bafybeidgvvdnjd4orq6tnxdkx6enlgcel26645rinefjtyeh4cx37inzry",
-    "uploadedAt": "2026-07-29T06:25:28.250Z"
+    "digest": "cc16a541aa05b3870b6cb899f174bb4fd38154fda95859582e348cb8c04859bd",
+    "cid": "bafybeifehtd2cqvv2boof2mw62c2csuywzt4pd5o6hsmqq6eg3ieygp6za",
+    "uploadedAt": "2026-07-29T08:26:03.713Z"
   },
   "sitePublish": {
-    "treeHash": "2e6819cdb0181830f34dfc4201c12691c64a31ac213b4646a064ee0d9a1f0455",
-    "publishedAt": "2026-07-29T06:30:27.846Z"
+    "treeHash": "4a59fc0ef05eda5d428b220d770493cdd087820792f8c00c3041653bee457e8a",
+    "publishedAt": "2026-07-29T08:28:09.976Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-29T07:46:39.000Z",
+    "updatedAt": "2026-07-29T08:24:46.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -82,7 +82,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-29T07:47:44.000Z",
+    "updatedAt": "2026-07-29T08:24:46.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -161,8 +161,9 @@
         "live": "alive"
       },
       "dotcheckhub": {
-        "contenthash": "bafybeia6rgdxb2byl4e2egtycd55exqzp32ydvqyrzb35ifuwpc3xzkzja",
-        "updateCount": 0,
+        "contenthash": "bafybeiaijefi2kc24a7mf4j7ymvt5iqhcb34uvupkcbdfcuy7hxrae44vy",
+        "updateCount": 1,
+        "changedAt": 1785313486,
         "live": "alive"
       },
       "dotexplorer": {
@@ -176,8 +177,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeiamfu7dovhbmczp3iatgvg5qfgussnehzb3qfq6ptfj3reh6zpqee",
-        "updateCount": 0,
+        "contenthash": "bafybeihzpcovn354rygmu2tutqy573js54lpzx73lxxt55aev3xj444u2e",
+        "updateCount": 1,
+        "changedAt": 1785313486,
         "live": "alive"
       },
       "eternalise-notary": {
@@ -331,8 +333,9 @@
         "live": "alive"
       },
       "pennypixel": {
-        "contenthash": "bafybeigs4mkljusoqy6x4jggw7hzeomb26slb6c7nwvgf4ul4zkomduiqu",
-        "updateCount": 0,
+        "contenthash": "bafybeifjqwqbisrkwn4uxbfvbo43uyse64dsjeknkmlnx4m6dwiyk3daoy",
+        "updateCount": 1,
+        "changedAt": 1785313486,
         "live": "alive"
       },
       "petitions": {
@@ -371,8 +374,9 @@
         "live": "alive"
       },
       "proofoftake": {
-        "contenthash": "bafybeifpum4czsmjqa53xla74y7ipvf3vjnd7vh2uo7mez77ys63t72g3m",
-        "updateCount": 0,
+        "contenthash": "bafybeie6iockx7jbjdynd5zmtwcl4yj2fmbemsncvgpmuit7hl6r74xk7i",
+        "updateCount": 1,
+        "changedAt": 1785313486,
         "live": "alive"
       },
       "provenveil": {
@@ -386,8 +390,9 @@
         "live": "alive"
       },
       "stealcrown": {
-        "contenthash": "bafybeibzojyeqei3frb7xj2ndsnqehnbkulf6igb6cxk2qz5qfcxwr45za",
-        "updateCount": 0,
+        "contenthash": "bafybeibdw5xoheyl62hbzskebk7yis3rrrqmiliegqlw4njtdf7fnckk5m",
+        "updateCount": 1,
+        "changedAt": 1785313486,
         "live": "alive"
       },
       "sybildrop": {
