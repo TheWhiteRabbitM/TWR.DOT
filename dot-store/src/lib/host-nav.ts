@@ -237,8 +237,28 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
   return settle('manual');
 }
 
-/** Copy text without assuming the clipboard API is reachable in the sandbox. */
+/**
+ * Copy text without assuming the clipboard API is reachable in the sandbox.
+ *
+ * The `Clipboard` permission is asked for HERE, at the moment something is
+ * actually being copied, rather than at start-up alongside the others. On the
+ * live store the start-up ask produced a modal reading "Read text and data from
+ * your clipboard — granting this permission will reload the application" over a
+ * shop window that had no copy button in sight. A permission prompt with no
+ * visible cause is one a person is right to refuse.
+ */
 export async function copyText(text: string): Promise<boolean> {
+  try {
+    const host = await import('@parity/product-sdk-host');
+    if (await host.isInsideContainer().catch(() => false)) {
+      await Promise.race([
+        host.requestDevicePermission('Clipboard').catch(() => undefined),
+        new Promise((resolve) => setTimeout(resolve, 2500)),
+      ]);
+    }
+  } catch {
+    /* older host or no bridge: try the copy anyway */
+  }
   try {
     await navigator.clipboard.writeText(text);
     return true;

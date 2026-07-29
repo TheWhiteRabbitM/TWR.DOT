@@ -52,6 +52,13 @@ jobs:
           # else's. (`pad` is incremental — an unchanged republish is cheap.)
           - dir: dotmetrics
             name: dotmetrics.dot
+          # Same arrangement as dotmetrics: the hourly job only publishes when
+          # the catalog or the app actually changed, so retention is this job's
+          # business. Its build needs the catalog synced first, or a fresh
+          # checkout would publish whatever data was last committed.
+          - dir: dot-store
+            name: dot-store.dot
+            presteps: sync
     steps:
       - uses: actions/checkout@v4
 
@@ -67,6 +74,14 @@ jobs:
 
       - name: Install publish CLI
         run: npm install -g @polkadot-community-foundation/polkadot-app-deploy@0.13.1
+
+      # dot-store bakes the catalog and the artwork into its bundle, so a
+      # retention republish has to sync them first — otherwise the renewal would
+      # quietly ship whatever data happened to be committed last.
+      - name: Sync the catalog from dotmetrics
+        if: matrix.presteps == 'sync'
+        working-directory: ${{ matrix.dir }}
+        run: node scripts/sync-catalog.mjs
 
       - name: Build
         working-directory: ${{ matrix.dir }}
