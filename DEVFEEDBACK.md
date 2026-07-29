@@ -49,7 +49,7 @@ Ranked by what it costs a developer, not by how hard it looks to fix.
 | 7 | Spinner output makes `pad` / `dotns` logs unusable in CI | Scripting requires grepping for `baf…` |
 | 4 | Native `<select>` did not open inside the shell on tested devices | Not fully isolated to the shell; worked around app-side |
 | 4b | Apps that ignore the History API turn the back gesture into "quit" | **Our bug**, documented because the symptom reads as a shell defect |
-| 13 | `dotns bulletin authorize` ignores the key you configure and signs with a hard-coded `//Eve`, whose authority on this devnet let us mint write authorizations for accounts we derived | **Security-relevant, and a correctness bug.** The CLI hands a privileged built-in key to anyone who installs it, and tells callers their own key did the granting |
+| 13 | `dotns bulletin authorize` ignores the key you configure and signs as `//Eve` — derived from the **publicly published** Substrate dev seed — and that account's grants work | **Security-relevant, and a correctness bug.** The authority to grant storage access sits on a key whose private half is in every Substrate tutorial; the CLI also tells callers their own key did the granting |
 
 The single highest-leverage change remains **12**: a rate-limited self-service Lite
 grant on the devnet would let builders exercise the write path they are building for.
@@ -309,6 +309,23 @@ through `DOTNS_MNEMONIC`, and runs from a completely different derived key — p
 `--key-uri`, `--account` and the keystore options like every other subcommand, and for
 this one they do not select the signer.
 
+**`//Eve` is not a private key you shipped by accident — it is a key nobody has.** The
+same constants block sets `DEFAULT_MNEMONIC = "bottom drive obey lake curtain smoke
+basket hold race lonely fit walk"`, the standard Substrate development seed, which is
+published in the documentation of every Substrate project. `//Eve` derived from it is
+`5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw`; anyone can reproduce its private key
+in seconds. Whatever authority that account holds on a deployment is therefore held by
+the public.
+
+Two further facts we checked while confirming this:
+- `//Eve` is **not itself authorized to store** (`authorized: false`) — its privilege is
+  the *granting* origin, which is a separate capability from having a write window.
+- `//Alice` from the same public seed
+  (`5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY`) **currently holds a live Bulletin
+  write authorization** on this devnet: 20 transactions / 2000 bytes, expiring
+  2026-07-30. So well-known development accounts are live participants on the storage
+  network right now, not merely referenced by tooling.
+
 Two consequences, one for correctness and one for security:
 
 - **The tool does something other than what its options say.** A caller who passes a key
@@ -339,11 +356,17 @@ can delegate at all (we never actually tested it, since the CLI never used ours)
 `//Eve` holds this authority by design on the devnet or by leftover configuration; and
 whether the current `Payment` failures are exhaustion, a deliberate change, or unrelated.
 
-Suggestion: make `authorize` use the configured signer like every other subcommand, and
-fail loudly when no authorizer key is available instead of silently substituting a
-built-in one. If a default dev authorizer is deliberate for local development, gate it
-behind an explicit flag such as `--authorizer-key-uri`, so that using a privileged
-built-in key is a choice the caller makes and can see in their own shell history.
+Suggestion, in the order we would do them:
+1. **Take the granting origin off any key derived from the public dev seed**, on any
+   deployment that outlives local development. This is the part that does not depend on
+   the CLI at all.
+2. Make `authorize` use the configured signer like every other subcommand, and fail
+   loudly when no authorizer key is available instead of silently substituting a built-in
+   one. If a default dev authorizer is deliberate for local development, gate it behind
+   an explicit flag such as `--authorizer-key-uri`, so that using a publicly-known key is
+   a choice the caller makes and can see in their own shell history.
+3. Consider whether `DEFAULT_MNEMONIC` belongs in a published package at all: a caller
+   who omits a key currently gets a working, publicly-owned account rather than an error.
 
 ---
 

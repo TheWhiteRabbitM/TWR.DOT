@@ -377,6 +377,12 @@ It accepts `--mnemonic`, `--key-uri`, `--account` and the keystore flags like ev
 subcommand, and for this one they do not choose the signer. It prints `signer: //Eve`
 honestly — we simply did not read it.
 
+`//Eve` there is derived from `DEFAULT_MNEMONIC` in the same file — the standard Substrate
+development seed, `bottom drive obey lake curtain smoke basket hold race lonely fit walk`
+— so its private key is public knowledge, and so is `//Alice`'s, which currently holds a
+live Bulletin write authorization on this devnet. If you are ever surprised to have a
+privilege, check whether you are standing in a dev account's shoes.
+
 What that cost us: we ran an experiment, watched an account we derived receive a Bulletin
 write authorization with an expiry *later* than our own, watched a second account receive
 one too, and concluded that authorization was freely and transitively delegable — a
