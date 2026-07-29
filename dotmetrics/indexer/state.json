@@ -1,16 +1,16 @@
 {
-  "lastBlock": 11552572,
-  "updatedAt": "2026-07-29T06:18:02.593Z",
+  "lastBlock": 11553460,
+  "updatedAt": "2026-07-29T06:47:10.227Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "f8b7ebc483fd2cc1b6e2ce30b6efb164d18556ede693dcefd910293d80fb56e5",
-    "cid": "bafybeidgvvdnjd4orq6tnxdkx6enlgcel26645rinefjtyeh4cx37inzry",
-    "uploadedAt": "2026-07-29T06:25:28.250Z"
+    "digest": "033caea2db67b92942b076fe648d54dadf62235cc545967e29a997ca8a10aaf6",
+    "cid": "bafybeifakuz2tbevt2qquedgqjxphjsqsoq2q7vbwu3x2yhsz2l224zhfq",
+    "uploadedAt": "2026-07-29T06:51:05.962Z"
   },
   "sitePublish": {
-    "treeHash": "2e6819cdb0181830f34dfc4201c12691c64a31ac213b4646a064ee0d9a1f0455",
-    "publishedAt": "2026-07-29T06:30:27.846Z"
+    "treeHash": "ec461e78567462858d0c3dfb1de91410a12cb6dc80243ad91ab322f44095d2a1",
+    "publishedAt": "2026-07-29T06:53:12.577Z"
   }
 }
