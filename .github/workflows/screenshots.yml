@@ -40,7 +40,7 @@ permissions:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     defaults:
       run:
         working-directory: dotmetrics
@@ -70,7 +70,7 @@ jobs:
         env:
           # Whole-run wall clock, per-nav timeout, and cap — all defaulted in the
           # script; set here so the budget is visible next to the 25-min job cap.
-          SHOT_RUN_BUDGET_MS: '900000'
+          SHOT_RUN_BUDGET_MS: '1980000'
           SHOT_NAV_TIMEOUT_MS: '15000'
           MAX_SHOTS: '100'
         run: node indexer/capture-shots.mjs

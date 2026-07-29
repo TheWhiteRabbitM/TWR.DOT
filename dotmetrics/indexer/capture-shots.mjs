@@ -94,6 +94,12 @@ const RUN_BUDGET_MS = int('SHOT_RUN_BUDGET_MS', 12 * 60 * 1000); // whole-run wa
 const SOFT_TOTAL_BYTES = int('SHOT_SOFT_TOTAL_BYTES', 2 * 1024 * 1024); // warn past this
 
 const VIEWPORT = { width: 390, height: 844 }; // an iPhone-ish phone frame
+
+// How long to let the shell resolve a .dot name and fetch its bundle from
+// Bulletin before giving up. Bulletin fetches are slow; a first capture caught
+// the resolve screen still at 6%. Generous, because a captured spinner is worse
+// than a skipped app.
+const RESOLVE_BUDGET_MS = int('SHOT_RESOLVE_BUDGET_MS', 45_000);
 const DEVICE_SCALE = 2; // capture at 2x (780px wide) so 480px downscale is crisp
 const FLAT_STDEV = 3; // per-channel stdev below this == a blank/uniform render
 const QUALITY_LADDER = [80, 68, 55, 42, 30, 22]; // WebP quality, walked down to hit target
@@ -251,6 +257,14 @@ async function main() {
     }
 
     const { label } = selected[i];
+    // The <label>.dev-dot.li gateway is the ONLY thing that can render the app:
+    // the DotNS contenthash is a `pad` manifest wrapper, not a servable web
+    // root, so loading the raw CID from an IPFS gateway 404s on index.html —
+    // only the shell knows how to unwrap it. The catch is the shell shows a
+    // "Resolving <name>.dot…" screen while it fetches from Bulletin, and a first
+    // capture caught exactly that (at 6%) for all 60 apps. So: load the gateway
+    // URL, then POLL until the resolving screen clears and the app has actually
+    // painted, before shooting.
     const url =
       typeof selected[i].url === 'string' && /^https:\/\//.test(selected[i].url)
         ? selected[i].url
@@ -265,21 +279,41 @@ async function main() {
         skip(label, `HTTP ${status} from ${url}`);
         continue;
       }
-      // Best-effort: wait for the network to settle, then a fixed paint delay.
-      await page.waitForLoadState('networkidle', { timeout: IDLE_TIMEOUT_MS }).catch(() => {});
+
+      // Poll for the app to actually appear: the resolve marker gone AND some
+      // real painted content. Bulletin fetches are slow, so give it up to
+      // RESOLVE_BUDGET_MS. A page that never clears the resolve screen is a
+      // slow/unavailable bundle, not a screenshot — skip it, do not ship the
+      // spinner.
+      const ready = await page
+        .waitForFunction(
+          () => {
+            const t = (document.body?.innerText || '').trim();
+            const resolving = /resolving|loading…|loading\.\.\.|caricamento/i.test(t);
+            const painted = t.length > 40 || document.querySelectorAll('img,svg,canvas,button').length > 3;
+            return !resolving && painted;
+          },
+          { timeout: RESOLVE_BUDGET_MS, polling: 500 },
+        )
+        .then(() => true)
+        .catch(() => false);
+      if (!ready) {
+        skip(label, 'never cleared the resolving screen within budget');
+        continue;
+      }
       await page.waitForTimeout(SETTLE_MS);
 
-      const png = await page.screenshot({ type: 'png', fullPage: false });
+      const shot = await page.screenshot({ type: 'png', fullPage: false });
 
       // Skip anything that painted essentially one flat colour: a blank SPA, an
       // error page, an app that needs the shell. Near-zero variance == nothing.
-      const stats = await sharp(png).stats();
+      const stats = await sharp(shot).stats();
       if (stats.channels.every((c) => c.stdev < FLAT_STDEV)) {
         skip(label, 'rendered blank/flat (likely needs the shell, or errored)');
         continue;
       }
 
-      const webp = await toWebp(png, label);
+      const webp = await toWebp(shot, label);
       const meta = await sharp(webp).metadata();
       fs.writeFileSync(path.join(SHOTS_DIR, `${label}.webp`), webp);
       shots[label] = {
