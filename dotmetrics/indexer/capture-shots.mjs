@@ -303,9 +303,29 @@ async function main() {
         skip(label, 'shell never finished resolving the app within budget');
         continue;
       }
-      // The title flips slightly before the iframe has painted; give the app
-      // frame time to render its first screen.
-      await page.waitForTimeout(SETTLE_MS * 2);
+
+      // The shell's default is light-client verification, which is slow and
+      // stalls headless at a "Fetching content … Use Trusted Provider" screen
+      // that a human would click through. Click that shortcut ourselves if it
+      // appears, so the app actually loads.
+      await page
+        .getByText(/trusted provider|provider attendibile|usa provider/i)
+        .first()
+        .click({ timeout: 4_000 })
+        .catch(() => {});
+
+      // Then wait for the loading/fetching screen to actually clear before
+      // shooting — the title flips before the app has painted.
+      await page
+        .waitForFunction(
+          () => {
+            const t = (document.body?.innerText || '').toLowerCase();
+            return !/fetching|resolving|loading|caricamento|verifying|%/.test(t);
+          },
+          { timeout: RESOLVE_BUDGET_MS, polling: 500 },
+        )
+        .catch(() => {});
+      await page.waitForTimeout(SETTLE_MS);
 
       // Shoot the app iframe itself when we can find it, so the thumbnail is the
       // app and not the shell chrome around it; fall back to the viewport.
