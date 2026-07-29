@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11556055,
-  "updatedAt": "2026-07-29T08:21:01.195Z",
+  "lastBlock": 11556887,
+  "updatedAt": "2026-07-29T08:46:40.919Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "cc16a541aa05b3870b6cb899f174bb4fd38154fda95859582e348cb8c04859bd",
-    "cid": "bafybeifehtd2cqvv2boof2mw62c2csuywzt4pd5o6hsmqq6eg3ieygp6za",
-    "uploadedAt": "2026-07-29T08:26:03.713Z"
+    "digest": "d7a17e5dd87f9fff98d2c555f065f44afc41a9d578ab182a224e0445a3fd7117",
+    "cid": "bafybeic7xtbknjgqvvv5jm7ah5cptvmf42s5xnbq7wpvucxwitej72iiqm",
+    "uploadedAt": "2026-07-29T08:50:55.469Z"
   },
   "sitePublish": {
     "treeHash": "4a59fc0ef05eda5d428b220d770493cdd087820792f8c00c3041653bee457e8a",
     "publishedAt": "2026-07-29T08:28:09.976Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-29T08:24:46.000Z",
+    "updatedAt": "2026-07-29T08:49:39.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -82,7 +82,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-29T08:24:46.000Z",
+    "updatedAt": "2026-07-29T08:49:39.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -161,9 +161,9 @@
         "live": "alive"
       },
       "dotcheckhub": {
-        "contenthash": "bafybeiaijefi2kc24a7mf4j7ymvt5iqhcb34uvupkcbdfcuy7hxrae44vy",
-        "updateCount": 1,
-        "changedAt": 1785313486,
+        "contenthash": "bafybeiareqzj4glgr7n77n6py5o4vzljvqeawz3r6gafnpv73xe573wiem",
+        "updateCount": 2,
+        "changedAt": 1785314979,
         "live": "alive"
       },
       "dotexplorer": {
@@ -177,9 +177,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeihzpcovn354rygmu2tutqy573js54lpzx73lxxt55aev3xj444u2e",
-        "updateCount": 1,
-        "changedAt": 1785313486,
+        "contenthash": "bafybeigfl366zp7dcnmoiirawj4qsqggdwfakkofvmu2bfss6vk5n3na4u",
+        "updateCount": 2,
+        "changedAt": 1785314979,
         "live": "alive"
       },
       "eternalise-notary": {
