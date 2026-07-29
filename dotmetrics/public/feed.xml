@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 29 Jul 2026 09:17:03 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 29 Jul 2026 09:54:55 GMT</lastBuildDate>
+    <item>
+      <title>dot-store</title>
+      <link>https://dot-store.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">dot-store</guid>
+      <pubDate>Wed, 29 Jul 2026 09:31:24 GMT</pubDate>
+    </item>
     <item>
       <title>dw3labsgame</title>
       <link>https://dw3labsgame.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">cosmicteapot</guid>
       <pubDate>Fri, 24 Jul 2026 19:13:36 GMT</pubDate>
-    </item>
-    <item>
-      <title>hellodotworld</title>
-      <link>https://hellodotworld.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">hellodotworld</guid>
-      <pubDate>Fri, 24 Jul 2026 18:54:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

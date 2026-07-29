@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11557719,
-  "updatedAt": "2026-07-29T09:14:21.325Z",
+  "lastBlock": 11558695,
+  "updatedAt": "2026-07-29T09:51:59.741Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "41af4997990442d21deef4d028f05b138f32d3f25a3d5baac308b4f2497b797b",
-    "cid": "bafybeia5tiqket4ll7mfrqlec6rqo2nafxzjgqqv2m6yensn7644lrdbtu",
-    "uploadedAt": "2026-07-29T09:18:10.908Z"
+    "digest": "ba8a92601eee819ff836c10d975f3e61db15c8e0cd6edce43290efdcb25f24c0",
+    "cid": "bafybeid4ngwcfp73gjbvvdoeuclyb5z2e3suakkvcahffcaddc2d3tvroi",
+    "uploadedAt": "2026-07-29T09:56:21.837Z"
   },
   "sitePublish": {
-    "treeHash": "386ef6d9e271a359a1480cafe8457d26957d7507102473be574a638ab9feefee",
-    "publishedAt": "2026-07-29T09:20:21.510Z"
+    "treeHash": "78664d01a706e1aad98dd8248beacfd87fb8564a085c07e6bd4ed0be0e8ea206",
+    "publishedAt": "2026-07-29T09:58:11.935Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-29T09:17:03.000Z",
+    "updatedAt": "2026-07-29T09:54:55.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -83,7 +83,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-29T09:17:03.000Z",
+    "updatedAt": "2026-07-29T09:54:55.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -156,6 +156,11 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "dot-store": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "dotcheckapp": {
         "contenthash": "bafybeie4atsvecq24ljajlhjcmadrnlrhfmirtb6t3xb6aufyicxptbyxy",
         "updateCount": 0,
@@ -173,15 +178,15 @@
         "live": "unknown"
       },
       "dotify-test01": {
-        "contenthash": "bafybeid2kn5b6o3yg4446npwnevbkjf2hhz4nyo3vy366pn6rdzo4smujy",
-        "updateCount": 1,
-        "changedAt": 1785316623,
+        "contenthash": "bafybeih22kdzwa67m6bcx7xttl5yoo756etamgrlciq5qthc27ulpnqk3y",
+        "updateCount": 2,
+        "changedAt": 1785318895,
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeigfl366zp7dcnmoiirawj4qsqggdwfakkofvmu2bfss6vk5n3na4u",
-        "updateCount": 2,
-        "changedAt": 1785314979,
+        "contenthash": "bafybeigl2n6nygxdz2yqjgie7eecluda5poent2rsafkcf4vbwhm4uj4ie",
+        "updateCount": 3,
+        "changedAt": 1785318895,
         "live": "alive"
       },
       "dw3labsgame": {

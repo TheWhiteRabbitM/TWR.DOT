@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785316623,
-  "count": 72,
+  "generatedAt": 1785318895,
+  "count": 73,
   "apps": [
+    {
+      "label": "dot-store",
+      "domain": "dot-store.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785317484,
+      "url": "https://dot-store.dev-dot.li"
+    },
     {
       "label": "dw3labsgame",
       "domain": "dw3labsgame.dot",
