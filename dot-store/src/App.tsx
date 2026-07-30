@@ -11,7 +11,7 @@ import {
 } from './lib/catalog';
 import { appCount, minStatus } from './lib/chain';
 import { APP_REVIEWS, DEMO_ENABLED } from './lib/config';
-import { openExternal } from './lib/host-nav';
+import { openDotApp } from './lib/host-nav';
 import { openAppChat } from './lib/host-chat';
 import { requestHostPermissions } from './lib/host-permissions';
 import { LANGS, getLang, locale, setLang, t, useLang, type Lang } from './lib/i18n';
@@ -167,7 +167,7 @@ function OpenButton({ app, size = 'sm' }: { app: CatalogApp; size?: 'sm' | 'lg' 
       aria-label={t('open.aria', { name: app.name })}
       onClick={(e) => {
         e.stopPropagation();
-        void openExternal(app.openUrl);
+        void openDotApp(app.label, app.openUrl);
       }}
     >
       {t('open')}
@@ -945,7 +945,7 @@ export function App() {
         <button
           type="button"
           className="linkish"
-          onClick={() => void openExternal('https://dotmetrics.dev-dot.li/?chainBackend=rpc-gateway')}
+          onClick={() => void openDotApp('dotmetrics', 'https://dotmetrics.dev-dot.li/?chainBackend=rpc-gateway')}
         >
           {t('foot.metrics')}
         </button>

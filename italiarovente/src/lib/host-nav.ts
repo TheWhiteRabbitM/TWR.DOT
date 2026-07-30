@@ -131,6 +131,81 @@ function classify(error: unknown): string {
   return `host:err:${tag ?? 'unknown'}`;
 }
 
+/**
+ * Open another .dot app the way a store should: INSIDE the Polkadot app.
+ *
+ * This is not a variation on openExternal — it is the opposite intent, and the
+ * distinction is one the host draws itself. From the SDK's own contract for
+ * `navigateTo`: a `dot`-suffixed deep link "routes to another app/route inside
+ * the container", while "an `https://` URL opens externally".
+ *
+ * The store was handing it `https://truereviews.dev-dot.li/?chainBackend=…` —
+ * the web gateway address. That is a perfectly good URL and the correct one in
+ * a browser, but it does not end in `.dot`, so the shell classified every Open
+ * button as an external link and threw the app out into the system browser.
+ * Which is exactly what was reported: tapping an app in the store left the
+ * Polkadot app instead of opening inside it.
+ *
+ * So: inside the container, navigate to `https://<label>.dot` and let the host
+ * resolve the name. Outside it, that scheme means nothing to a browser, so the
+ * gateway URL is right and openExternal handles it. The `chainBackend` hint is
+ * dropped from the deep link deliberately — inside the shell the backend is
+ * already the shell's choice, and the parameter only exists to spare a browser
+ * the slow light-client path.
+ *
+ * @param label     the bare .dot label, e.g. "truereviews"
+ * @param webUrl    the gateway URL to use when we are not inside the container
+ */
+export async function openDotApp(
+  label: string,
+  webUrl: string,
+  opts: OpenOptions = {},
+): Promise<OpenResult> {
+  const deepLink = `https://${label}.dot`;
+  const trail: string[] = [];
+
+  try {
+    const host = await import('@parity/product-sdk-host');
+    const inside = await Promise.race([
+      host.isInsideContainer().catch(() => false),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), HOST_DEADLINE_MS)),
+    ]);
+    if (!inside) {
+      trail.push('outside');
+      return openExternal(webUrl, opts);
+    }
+
+    await ensureOpenUrlPermission(host);
+
+    // navigateTo can queue forever on a wedged channel — the frame transport has
+    // no request timeout — so it is raced, exactly like every other host call
+    // in this module.
+    const outcome = await Promise.race([
+      host
+        .navigateTo(deepLink)
+        .then((r) => (r.ok ? 'ok' : classify(r.error)))
+        .catch((e) => classify(e)),
+      new Promise<string>((resolve) => setTimeout(() => resolve('timeout'), HOST_DEADLINE_MS)),
+    ]);
+
+    if (outcome === 'ok') {
+      trail.push('deeplink:ok');
+      return { via: 'host', trail: trail.join('>'), url: deepLink };
+    }
+
+    // The host refused or never answered. The gateway URL still reaches the
+    // app, just outside the shell — a worse outcome than asked for, and much
+    // better than a button that does nothing.
+    trail.push(`deeplink:${outcome}`);
+    if (outcome === 'timeout') rememberHostWedged();
+    console.warn('[open-dot-app]', trail.join('>'), deepLink);
+    return openExternal(webUrl, opts);
+  } catch (e) {
+    trail.push(`deeplink:threw:${e instanceof Error ? e.name : 'unknown'}`);
+    return openExternal(webUrl, opts);
+  }
+}
+
 export async function openExternal(url: string, opts: OpenOptions = {}): Promise<OpenResult> {
   const trail: string[] = [];
 

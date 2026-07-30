@@ -18,7 +18,7 @@ import {
   type SurvivalPoint,
 } from './Charts';
 import { openAppChat } from './lib/host-chat';
-import { copyText, openExternal } from './lib/host-nav';
+import { copyText, openDotApp, openExternal } from './lib/host-nav';
 import ecosystemSnapshot from './lib/ecosystem.json';
 import livenessData from './lib/liveness.json';
 import changelogData from './lib/changelog.json';
@@ -715,16 +715,18 @@ function useEcosystem(): Ecosystem {
  * should hand you. Outside there is no resolver, so only the public gateway URL
  * works — and that is what stays in the anchor's `href` so right-click and
  * standalone use still land somewhere real.
+ *
+ * The branch used to turn on `isInsideContainerSync()`, which is a synchronous
+ * heuristic rather than an answer: when it guessed wrong inside the app, every
+ * link fell back to the gateway URL — and because that address does not end in
+ * `.dot`, the shell classified it as external and threw the reader out into the
+ * system browser instead of opening the app. openDotApp asks the authoritative
+ * async question, and still falls back to the gateway URL if the host refuses
+ * or never answers.
  */
 async function openEntry(entry: AppEntry): Promise<void> {
-  let url = entry.url;
-  try {
-    const host = await import('@parity/product-sdk-host');
-    if (host.isInsideContainerSync()) url = `https://${entry.domain}`;
-  } catch {
-    // No SDK at all means no shell, so the gateway URL stands.
-  }
-  await openExternal(url);
+  const label = entry.domain.replace(/\.dot$/i, '');
+  await openDotApp(label, entry.url);
 }
 
 /* --------------------------------------------------- the language control */
