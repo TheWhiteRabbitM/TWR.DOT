@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11608425,
-  "updatedAt": "2026-07-30T16:53:48.356Z",
+  "lastBlock": 11611496,
+  "updatedAt": "2026-07-30T18:51:19.002Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "b947afe3f77adc83c16f88c68718234d84ec915021276f16a6eed70548ae04e1",
-    "cid": "bafybeidwbmz72a4uezb6dcgy7zq7ip7pkv76nper5hknmjm42khexamrvu",
-    "uploadedAt": "2026-07-30T16:58:34.103Z"
+    "digest": "47fbf3acfd24afc5b7537fb34ca0dd131f375718271d430117d91357cc8ef1e5",
+    "cid": "bafybeigv7cn3wjkz3k2dwmw75uhsovoiaczkcmffnkq2msecctvstvfhze",
+    "uploadedAt": "2026-07-30T18:56:36.608Z"
   },
   "sitePublish": {
-    "treeHash": "c1d0119b3db69209e9824fd3e74861e468ec26d7419fb9a15b8d535c9e12d2c9",
-    "publishedAt": "2026-07-30T14:48:29.268Z"
+    "treeHash": "6a2637d39b23dd7b4fc157436af073fbfbc1dc5907005a8c9fc75bc808f8aa26",
+    "publishedAt": "2026-07-30T19:00:58.048Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-30T16:56:38.000Z",
+    "updatedAt": "2026-07-30T18:55:16.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -88,13 +88,14 @@
       "thepipersguild": "alive",
       "devnetpulse": "alive",
       "dripstream": "alive",
-      "trustgraph": "alive"
+      "trustgraph": "alive",
+      "dropforge": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-30T16:56:38.000Z",
+    "updatedAt": "2026-07-30T18:55:17.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -175,9 +176,9 @@
         "live": "alive"
       },
       "doomarcade00": {
-        "contenthash": "bafybeidywkotbvosrzxboxzqgtn7ylpcadtc5dsjtfdgk5pvuqk57wv7ru",
-        "updateCount": 2,
-        "changedAt": 1785430598,
+        "contenthash": "bafybeihtvdbm6a2g4wjd56rqtj5vqfmrgnnrwdv3pqj3bfhnbj6kfhl6xm",
+        "updateCount": 3,
+        "changedAt": 1785437717,
         "live": "alive"
       },
       "dot-pages": {
@@ -186,9 +187,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeihevepahiadmmgmvxkp42sbplbcsux4bm267dipelis6x2fdzachy",
-        "updateCount": 4,
-        "changedAt": 1785430598,
+        "contenthash": "bafybeic7mfdmnfl6lt5yin5frh43uzjxrof7522reinzp7zyasdfkvnjpe",
+        "updateCount": 5,
+        "changedAt": 1785437717,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -225,9 +226,9 @@
         "live": "alive"
       },
       "dropforge": {
-        "contenthash": "",
+        "contenthash": "bafybeifw2wxovk47ufbe4ljq6cviiyywwnj6suodmvxqr2obm6zgnvdfg4",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "dw3labsgame": {
         "contenthash": "bafybeigw5zxqdeqdwklpttxxbzqa325u47exxcyahz7yz76cw6gqycf6d4",
@@ -246,9 +247,9 @@
         "live": "alive"
       },
       "flowfarm-staking": {
-        "contenthash": "bafybeibhpgb236dxnh5n5egfznxl6kleknmgytgmbse46rhejtgdjspuam",
-        "updateCount": 4,
-        "changedAt": 1785430598,
+        "contenthash": "bafybeiextx2kqlbvmebzyffkor3ask3tm4dtprxb4kuwcvkw5ri6hnauvm",
+        "updateCount": 5,
+        "changedAt": 1785437717,
         "live": "alive"
       },
       "giganetwork": {

@@ -110,6 +110,12 @@
       "map"
     ]
   },
+  "devnetpulse": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "discreetly": {
     "category": "identity",
     "source": "derived:manifest",
@@ -207,6 +213,18 @@
       "analytics",
       "metrics~"
     ]
+  },
+  "dripstream": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "dropforge": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "dw3labsgame": {
     "category": "games",
@@ -640,6 +658,12 @@
       "humans~",
       "verified"
     ]
+  },
+  "trustgraph": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "wudcommunity": {
     "category": "social",

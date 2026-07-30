@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1785430598,
+  "generatedAt": 1785437717,
   "count": 83,
   "apps": [
     {
@@ -7,7 +7,7 @@
       "domain": "dropforge.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785429600,
       "url": "https://dropforge.dev-dot.li"
     },
