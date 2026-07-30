@@ -37,6 +37,18 @@ export interface OpenOptions {
 const HOST_DEADLINE_MS = 1500;
 
 /**
+ * How long an internal navigation is given before we conclude nothing happened.
+ *
+ * Much longer than HOST_DEADLINE_MS on purpose. That deadline exists because a
+ * background host call can queue forever on a wedged transport, and 1.5s of
+ * silence there means something is broken. A navigation is different: on a
+ * phone the shell has to resolve a .dot name and start loading another app, and
+ * 1.5s is simply not long enough to call it dead. Being impatient here is what
+ * made a working deep link look like a failure.
+ */
+const DEEP_LINK_MS = 9000;
+
+/**
  * Remember, for this session, that the host never answered. It matters because
  * a popup is only allowed while the user's tap is still "transiently active" —
  * a window some engines keep for seconds and others close almost immediately.
@@ -132,6 +144,27 @@ function classify(error: unknown): string {
 }
 
 /**
+ * "Are we inside the container?", asked once and remembered.
+ *
+ * The answer cannot change while the page is alive, and every await between a
+ * tap and the navigation is time the browser's user-activation window is
+ * draining. Asking the host afresh on every tap spent that budget on a question
+ * we already knew the answer to. Primed at startup by requestHostPermissions,
+ * so by the time anyone taps Open this resolves from memory.
+ */
+let insidePromise: Promise<boolean> | null = null;
+
+function insideContainer(host: typeof import('@parity/product-sdk-host')): Promise<boolean> {
+  if (!insidePromise) {
+    insidePromise = Promise.race([
+      host.isInsideContainer().catch(() => false),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), HOST_DEADLINE_MS)),
+    ]);
+  }
+  return insidePromise;
+}
+
+/**
  * Open another .dot app the way a store should: INSIDE the Polkadot app.
  *
  * This is not a variation on openExternal — it is the opposite intent, and the
@@ -166,38 +199,82 @@ export async function openDotApp(
 
   try {
     const host = await import('@parity/product-sdk-host');
-    const inside = await Promise.race([
-      host.isInsideContainer().catch(() => false),
-      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), HOST_DEADLINE_MS)),
-    ]);
+    const inside = await insideContainer(host);
     if (!inside) {
       trail.push('outside');
       return openExternal(webUrl, opts);
     }
 
-    await ensureOpenUrlPermission(host);
+    // No OpenUrl request here. That permission is about handing a link to the
+    // BROWSER, and this is an internal navigation; it is also already asked for
+    // at startup. Asking again put an unexplained prompt in front of a tap.
 
-    // navigateTo can queue forever on a wedged channel — the frame transport has
-    // no request timeout — so it is raced, exactly like every other host call
-    // in this module.
+    // A navigation is not a background call, and the timeout means the opposite
+    // of what it means everywhere else in this module.
+    //
+    // When navigateTo succeeds the shell navigates AWAY: this document is torn
+    // down and the promise may simply never settle. Treating that silence as
+    // "the host is wedged" — which is what the 1500ms race did — meant a
+    // SUCCESSFUL deep link also triggered the gateway fallback, so the app
+    // opened inside the shell and was immediately followed out to the browser.
+    // rememberHostWedged() then latched for the rest of the session and every
+    // later tap skipped the host entirely. That is the mobile report: the links
+    // do not work, and they get worse as you keep tapping.
+    //
+    // So silence is now read as "probably navigating", corroborated by the page
+    // actually going away, and only an EXPLICIT refusal falls back.
+    let departed = false;
+    const noteDeparture = () => {
+      departed = true;
+    };
+    document.addEventListener('visibilitychange', noteDeparture, { once: true });
+    window.addEventListener('pagehide', noteDeparture, { once: true });
+
     const outcome = await Promise.race([
       host
         .navigateTo(deepLink)
         .then((r) => (r.ok ? 'ok' : classify(r.error)))
         .catch((e) => classify(e)),
-      new Promise<string>((resolve) => setTimeout(() => resolve('timeout'), HOST_DEADLINE_MS)),
+      new Promise<string>((resolve) => setTimeout(() => resolve('timeout'), DEEP_LINK_MS)),
     ]);
+    document.removeEventListener('visibilitychange', noteDeparture);
+    window.removeEventListener('pagehide', noteDeparture);
 
-    if (outcome === 'ok') {
-      trail.push('deeplink:ok');
+    if (outcome === 'ok' || (outcome === 'timeout' && departed)) {
+      trail.push(outcome === 'ok' ? 'deeplink:ok' : 'deeplink:navigated');
       return { via: 'host', trail: trail.join('>'), url: deepLink };
     }
+    if (outcome === 'timeout') {
+      // Still here, still visible, nothing happened. Do NOT mark the transport
+      // wedged over one slow navigation — that decision poisons every later tap.
+      trail.push('deeplink:silent');
+      console.warn('[open-dot-app]', trail.join('>'), deepLink);
+      return openExternal(webUrl, opts);
+    }
 
-    // The host refused or never answered. The gateway URL still reaches the
-    // app, just outside the shell — a worse outcome than asked for, and much
-    // better than a button that does nothing.
+    // The `https://<name>.dot` form is what the SDK documents, and the web shell
+    // accepts it. The NATIVE app addresses apps under its own scheme, though —
+    // its own error messages name assets as `polkadot://dot-store.dot/assets/…`
+    // — so when the documented form is explicitly refused, the scheme the
+    // container actually uses is worth one attempt before giving up on staying
+    // inside. Costs nothing when the first form works.
     trail.push(`deeplink:${outcome}`);
-    if (outcome === 'timeout') rememberHostWedged();
+    const schemeLink = `polkadot://${label}.dot`;
+    const second = await Promise.race([
+      host
+        .navigateTo(schemeLink)
+        .then((r) => (r.ok ? 'ok' : classify(r.error)))
+        .catch((e) => classify(e)),
+      new Promise<string>((resolve) => setTimeout(() => resolve('timeout'), DEEP_LINK_MS)),
+    ]);
+    if (second === 'ok' || (second === 'timeout' && departed)) {
+      trail.push('scheme:ok');
+      return { via: 'host', trail: trail.join('>'), url: schemeLink };
+    }
+
+    // Both refused. The gateway URL still reaches the app, just outside the
+    // shell — worse than asked for, and much better than a dead button.
+    trail.push(`scheme:${second}`);
     console.warn('[open-dot-app]', trail.join('>'), deepLink);
     return openExternal(webUrl, opts);
   } catch (e) {
