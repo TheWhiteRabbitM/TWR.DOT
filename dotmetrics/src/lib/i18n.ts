@@ -238,12 +238,12 @@ const EN = {
 
   /* --- pulse strip --------------------------------------------------- */
   'pulse.dead': 'no block feed',
-  'pulse.waiting': 'waiting for heads',
+  'pulse.waiting': 'waiting for blocks',
   'pulse.stalled': 'stalled {n}s',
   'pulse.head': '#{head}',
   'pulse.head.avg': '#{head} · {avg}s avg',
   'pulse.aria.dead': 'Block pulse: the block feed could not be reached',
-  'pulse.aria.waiting': 'Block pulse: no heads received yet',
+  'pulse.aria.waiting': 'Block pulse: no blocks received yet',
   'pulse.aria.stalled':
     'Block pulse stalled: no new head for {n} seconds, last was {head}',
   'pulse.aria.ok': 'Block pulse: head {head}',

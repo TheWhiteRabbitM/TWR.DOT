@@ -81,6 +81,31 @@ export interface DirectoryResult {
    * see and what the registry actually holds.
    */
   excluded: string[];
+  /**
+   * When THIS directory was generated, carried inside the directory itself.
+   *
+   * The page used to date itself from `ecosystem.json`, which is imported
+   * statically and therefore frozen at the last SITE publish. Since the site
+   * only republishes when its source changes — correctly, to spare
+   * transactions — the counts on screen were live while the timestamp beside
+   * them aged: 79 apps, "updated 11h ago", both true of different things.
+   *
+   * A timestamp that travels with the data cannot drift away from it. Null when
+   * an older directory is being served that predates the field.
+   */
+  generatedAt: number | null;
+}
+
+/**
+ * The directory's own generation time, if it carries one.
+ *
+ * Excluded from the upload digest by construction — directory-digest.mjs hashes
+ * per-name semantic fields and no timestamps — so adding this cannot make an
+ * unchanged directory look changed and cost a transaction every hour.
+ */
+function generatedFrom(map: Record<string, unknown>): number | null {
+  const v = (map as { generatedAt?: unknown }).generatedAt;
+  return typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null;
 }
 
 /**
@@ -93,13 +118,21 @@ export interface DirectoryResult {
  * entry a directory is unverified data, and the baked snapshot — which is
  * verified — is the better answer.
  *
- * `excluded` sits beside the entries as a list of rejected labels, so it is
- * skipped rather than validated as one.
+ * METADATA sits beside the entries — `excluded` as a list of rejected labels,
+ * `generatedAt` as the directory's own timestamp — so those keys are skipped
+ * rather than validated as apps.
+ *
+ * Enumerated rather than inferred: "skip anything that is not an object" would
+ * also skip a malformed entry, and this check exists precisely to catch those.
+ * Adding a metadata key without adding it here rejects the whole directory and
+ * silently serves the baked copy instead, which is a failure with no symptom.
  */
+const META_KEYS = new Set(['excluded', 'generatedAt']);
+
 function isDiscoveredMap(value: unknown): value is Record<string, Discovered> {
   if (!value || typeof value !== 'object') return false;
   const entries = Object.entries(value as Record<string, unknown>).filter(
-    ([key]) => key !== 'excluded',
+    ([key]) => !META_KEYS.has(key),
   );
   if (entries.length === 0) return false;
   return entries.every(([, e]) => {
@@ -172,6 +205,7 @@ export async function loadDirectory(): Promise<DirectoryResult> {
         source: 'record',
         cid: recordCid,
         excluded: excludedFrom(map),
+        generatedAt: generatedFrom(map),
       };
     } catch {
       // The record named a CID no gateway would serve. Fall through to the
@@ -188,6 +222,7 @@ export async function loadDirectory(): Promise<DirectoryResult> {
         source: 'pinned',
         cid: DIRECTORY_CID,
         excluded: excludedFrom(map),
+        generatedAt: generatedFrom(map),
       };
     } catch {
       // Fall through to the baked copy.
@@ -202,5 +237,6 @@ export async function loadDirectory(): Promise<DirectoryResult> {
     source: 'baked',
     cid: null,
     excluded: excludedFrom(map),
+        generatedAt: generatedFrom(map),
   };
 }

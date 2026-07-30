@@ -85,6 +85,10 @@ jobs:
         run: |
           set -euo pipefail
           cp indexer/apps.json src/lib/discovered.json
+          # Stamp the directory with its own generation time, so the page can date
+          # the DATA it shows rather than the bundle it arrived in. Safe for the
+          # transaction gate: the digest hashes indexer/apps.json, never this copy.
+          node indexer/stamp-directory.mjs
           cp indexer/ecosystem.json src/lib/ecosystem.json
           node -e '
           const fs = require("fs");

@@ -609,6 +609,8 @@ interface Ecosystem {
   online: boolean | null;
   source: DirectorySource;
   directoryCid: string | null;
+  /** When the directory on screen was generated, or null on an older one. */
+  directoryAt: number | null;
   excluded: string[];
   beat: HeadBeat | null;
   tailUp: boolean | null;
@@ -631,6 +633,7 @@ function useEcosystem(): Ecosystem {
   const [apps, setApps] = useState<AppEntry[]>(APPS);
   const [source, setSource] = useState<DirectorySource>('baked');
   const [directoryCid, setDirectoryCid] = useState<string | null>(null);
+  const [directoryAt, setDirectoryAt] = useState<number | null>(null);
   const [excluded, setExcluded] = useState<string[]>([]);
   const [stats, setStats] = useState<Record<string, AppStats>>({});
   const [online, setOnline] = useState<boolean | null>(null);
@@ -649,6 +652,7 @@ function useEcosystem(): Ecosystem {
       setApps(result.apps);
       setSource(result.source);
       setDirectoryCid(result.cid);
+      setDirectoryAt(result.generatedAt);
       setExcluded(result.excluded);
 
       const found: Record<string, Discovered> = {};
@@ -702,7 +706,7 @@ function useEcosystem(): Ecosystem {
     return () => clearInterval(t);
   }, [load]);
 
-  return { apps, stats, online, source, directoryCid, excluded, beat, tailUp, ready };
+  return { apps, stats, online, source, directoryCid, directoryAt, excluded, beat, tailUp, ready };
 }
 
 /* ------------------------------------------------------------ leaving here */
@@ -1480,7 +1484,7 @@ type Facet =
 
 export function App() {
   const lang = useLang();
-  const { apps, stats, online, source, directoryCid, excluded, beat, tailUp, ready } =
+  const { apps, stats, online, source, directoryCid, directoryAt, excluded, beat, tailUp, ready } =
     useEcosystem();
 
   const [query, setQuery] = useState('');
@@ -1775,7 +1779,33 @@ export function App() {
   facets.push({ key: 'owner', label: t('facet.owner') });
 
   const scanned = counts.all + excluded.length;
-  const indexAge = Math.floor(Date.now() / 1000) - eco.measuredAt;
+
+  /*
+   * Date the DATA, not the bundle it arrived in.
+   *
+   * `eco.measuredAt` comes from ecosystem.json, which is imported statically and
+   * so is frozen at the last site publish. The site only republishes when its
+   * source changes — correctly, to spare transactions — so that timestamp drifts
+   * away from the directory beside it: the hero was showing 79 apps read live
+   * from the record and "updated 11h ago" from the bundle. Both true, of
+   * different things, and the pair reads as a broken pipeline.
+   *
+   * The directory now carries its own generation time, so prefer that and fall
+   * back only for directories published before the field existed.
+   */
+  const dataAt = directoryAt ?? eco.measuredAt;
+
+  /*
+   * An unchanged directory is not a fault.
+   *
+   * The old threshold flagged six hours as stale, which on a quiet devnet is
+   * simply a quiet devnet: the indexer runs hourly and uploads only when
+   * something actually changed, so a long gap means "nothing happened", not
+   * "nobody is looking". Three days is where silence starts being worth a
+   * second glance.
+   */
+  const indexAge = Math.floor(Date.now() / 1000) - dataAt;
+  const STALE_AFTER = 72 * 3600;
 
   return (
     <div className="app">
@@ -1835,8 +1865,8 @@ export function App() {
               deployed: <b key="d">{fmt(counts.deployed, lang)}</b>,
               declared: <b key="c">{fmt(counts.declared, lang)}</b>,
               updated: (
-                <span key="u" className={indexAge > 6 * 3600 ? 'is-stale' : undefined}>
-                  {t('hero.updated', { ago: ago(eco.measuredAt) })}
+                <span key="u" className={indexAge > STALE_AFTER ? 'is-stale' : undefined}>
+                  {t('hero.updated', { ago: ago(dataAt) })}
                 </span>
               ),
             })}
@@ -1993,7 +2023,7 @@ export function App() {
             <h2 className="panel-title">{t('vitals.title')}</h2>
             <span className="panel-note">
               {t('vitals.note', {
-                ago: ago(eco.measuredAt),
+                ago: ago(dataAt),
                 head: fmt(eco.headBlock, lang),
               })}
             </span>
