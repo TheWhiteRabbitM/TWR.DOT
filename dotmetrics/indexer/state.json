@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11587189,
-  "updatedAt": "2026-07-30T03:37:02.622Z",
+  "lastBlock": 11592264,
+  "updatedAt": "2026-07-30T06:46:07.986Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "465609680d1ea4f157895cd844e5cfa48002b42324d08188570c1572a7423969",
-    "cid": "bafybeidbsn4mc5fnxr6b52wvblomkj5rqle7syou6e75cf4lh65klks6i4",
-    "uploadedAt": "2026-07-30T03:40:59.046Z"
+    "digest": "ab23b9a059f3a9b6b1ce2f894f715ac1d39828e590fb029bbd621b18b7b7faec",
+    "cid": "bafybeiexzmuympxkq52awg6o5ommpwpppzn5quucr6zpy7c2onfvpjzsfq",
+    "uploadedAt": "2026-07-30T06:50:17.594Z"
   },
   "sitePublish": {
     "treeHash": "4ff317352c5f5329f6c392aec60dfe587f28644e4ab62347b0a5a7ce3eb42001",
     "publishedAt": "2026-07-30T00:22:15.433Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-30T03:39:40.000Z",
+    "updatedAt": "2026-07-30T06:48:55.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -84,13 +84,14 @@
       "flowfarm-staking": "alive",
       "radioactivedrums": "alive",
       "dot-store": "alive",
-      "contribnet03": "alive"
+      "contribnet03": "alive",
+      "thepipersguild": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-30T03:39:40.000Z",
+    "updatedAt": "2026-07-30T06:48:55.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -140,8 +141,9 @@
         "live": "alive"
       },
       "contribnet03": {
-        "contenthash": "bafybeignokmb4e54kpkmn7t3hea3hgwebnnrgsrfdyw2jxnjlo6vhfdp54",
-        "updateCount": 0,
+        "contenthash": "bafybeihasq766ukjnkxcfijsx5p5hdhlazhykeha5fshhuko7xu6hskrey",
+        "updateCount": 1,
+        "changedAt": 1785394135,
         "live": "alive"
       },
       "cosmicteapot": {
@@ -176,9 +178,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibv2tpfsuoeifqndgscbnlahaxm6uxtj47xmswckjcxejm2672vma",
-        "updateCount": 1,
-        "changedAt": 1785382780,
+        "contenthash": "bafybeifmgcqvmfrn2be5cbi2uidydjhrdbcivlshmt5e2re3pqatjosera",
+        "updateCount": 2,
+        "changedAt": 1785394135,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -210,8 +212,9 @@
         "live": "alive"
       },
       "dw3labsgame": {
-        "contenthash": "bafybeihq4votaqskcndngna3hvnwrwg3eazk7v4qxdbrerpxqpx4xkjnhy",
-        "updateCount": 0,
+        "contenthash": "bafybeidqf55pspcifnwwi5sg3kzpp2ydq5viiv3mo5hzjcz5sb2kpzj44u",
+        "updateCount": 1,
+        "changedAt": 1785394135,
         "live": "alive"
       },
       "eternalise-notary": {
@@ -225,9 +228,9 @@
         "live": "alive"
       },
       "flowfarm-staking": {
-        "contenthash": "bafybeic3flc4l4rjp7dzvdfb4456clx66amuiwp5k6rvukds6ct772s464",
-        "updateCount": 1,
-        "changedAt": 1785382780,
+        "contenthash": "bafybeic47o3iywbea6pz2mfwqrrhgsz3lzi6j7rpgt25mfympeyqdkxir4",
+        "updateCount": 2,
+        "changedAt": 1785394135,
         "live": "alive"
       },
       "giganetwork": {
@@ -464,6 +467,11 @@
       },
       "thebutton": {
         "contenthash": "bafybeigkxakhdwl4tmirqp6sumrcfqyn7nadyjlfe7rk6m4cx4hj2n6cr4",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "thepipersguild": {
+        "contenthash": "bafybeigwy7ktke3tmofkf5dw4nxt3wq5al7gxou6ehmkb4sdge7ojzpen4",
         "updateCount": 0,
         "live": "alive"
       },

@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 30 Jul 2026 03:39:40 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 30 Jul 2026 06:48:55 GMT</lastBuildDate>
+    <item>
+      <title>thepipersguild</title>
+      <link>https://thepipersguild.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">thepipersguild</guid>
+      <pubDate>Thu, 30 Jul 2026 04:45:36 GMT</pubDate>
+    </item>
     <item>
       <title>contribnet03</title>
       <link>https://contribnet03.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description>The decentralized web, in your browser — powered by .dot Web ID.</description>
       <guid isPermaLink="false">hahamingx00</guid>
       <pubDate>Sat, 25 Jul 2026 01:37:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>TrueReviews</title>
-      <link>https://truereviews.dev-dot.li</link>
-      <description>Reviews you can trust: one verified human, one review per place, on real map businesses.</description>
-      <guid isPermaLink="false">truereviews</guid>
-      <pubDate>Sat, 25 Jul 2026 00:17:48 GMT</pubDate>
     </item>
   </channel>
 </rss>
