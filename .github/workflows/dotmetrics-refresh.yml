@@ -147,8 +147,7 @@ jobs:
         run: |
           set -euo pipefail
           npm run build
-          pad ./dist dotmetrics.dot --env devnet 2>&1 | tee /tmp/pad.log | grep -aE 'Setting contenthash|Verified on-chain|Files:' | tail -4
-          grep -aq 'Verified on-chain' /tmp/pad.log || { echo "::error::publish not verified on-chain" >&2; exit 1; }
+          bash ../.github/scripts/pad-publish.sh ./dist dotmetrics.dot
           node indexer/app-tree-hash.mjs commit
 
       - name: Commit the grown history back to the repo
@@ -240,9 +239,7 @@ jobs:
         run: |
           set -euo pipefail
           npm run build
-          pad ./dist dot-store.dot --env devnet 2>&1 | tee /tmp/pad.log | grep -aE 'Setting contenthash|Verified on-chain|Files:' | tail -4
-          # The CLI's own words are not the confirmation; "Verified on-chain" is.
-          grep -aq 'Verified on-chain' /tmp/pad.log || { echo "::error::dot-store publish not verified on-chain" >&2; exit 1; }
+          bash ../.github/scripts/pad-publish.sh ./dist dot-store.dot
           node scripts/tree-hash.mjs commit
 
       - name: Commit the synced catalog back to the repo

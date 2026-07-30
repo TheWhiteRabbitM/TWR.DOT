@@ -94,12 +94,13 @@ jobs:
           DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
         run: |
           set -euo pipefail
-          pad ./dist ${{ matrix.name }} --env devnet 2>&1 | tee /tmp/pad.log \
-            | grep -aE 'Setting contenthash|Verified on-chain|Files:' | tail -4
-          # A publish that did not verify on chain is a publish that did not
-          # happen — fail loudly rather than reporting a green renewal.
-          grep -aq 'Verified on-chain' /tmp/pad.log || {
-            echo "::error::${{ matrix.name }} did not verify on chain"; exit 1; }
+          # pad draws a Bulletin storage account from a shared pool and some of
+          # those accounts are unauthorised; on a bad draw it fails hard instead
+          # of trying another. Seven renewals in a row is seven chances to lose
+          # that lottery. The script retries, keeps pad's full output so a
+          # failure is readable, and still treats "Verified on-chain" as the
+          # only proof — a renewal that did not verify did not happen.
+          bash ../.github/scripts/pad-publish.sh ./dist ${{ matrix.name }}
 
   authorization:
     # The write authorization itself expires. Without it nothing can be renewed,

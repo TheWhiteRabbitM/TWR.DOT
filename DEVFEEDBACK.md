@@ -451,3 +451,36 @@ page loaded cleanly. Since the whole bundle is already content-addressed by its
 CID, per-file hashes buy nothing here; stable filenames let a stale entry find a
 real file. Worth saying in the deployment docs, because the default Vite config
 does the harmful thing.
+
+## 21. `pad` fails hard on an unauthorised storage-pool account
+
+**Severity: high — it turns publishing into a lottery, and the log says nothing.**
+
+Two consecutive hourly runs failed at the publish step in about seven seconds
+each. Run by hand, the reason appeared:
+
+```
+Deployment failed: Bulletin storage account pool account 1 (5Gut8tFY...) is not
+authorized (or its authorization expired). polkadot-app-deploy no longer
+self-authorizes on the Bulletin chain — request authorization for this account
+from the chain's authorizer (testnet faucet / personhood / pool bootstrap),
+then retry.
+```
+
+Retrying immediately drew **pool account 5** and published first time. Earlier
+the same day, publishes drew account 7 and succeeded. So the pool contains both
+authorised and unauthorised accounts, and `pad` fails the whole deployment on a
+bad draw instead of trying another member of the pool it chose from.
+
+Two requests, in order of how much they would help:
+
+1. **Try another pool account** before failing. The pool exists to spread load;
+   the caller has no way to influence the draw and no reason to care which
+   account is used.
+2. **Say it earlier.** The message arrives after preflight, the domain check and
+   the Bulletin connection — all of which succeed and read as progress. Checking
+   the drawn account's authorisation first would fail in one line instead of ten.
+
+A note for anyone writing CI against this: pipe `pad` through `grep` and a
+seven-second failure prints *nothing*, leaving a log that shows a successful
+build followed by `exit 1`. We now keep the full output and show it on give-up.
