@@ -4,7 +4,35 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 30 Jul 2026 14:43:46 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 30 Jul 2026 16:56:38 GMT</lastBuildDate>
+    <item>
+      <title>dropforge</title>
+      <link>https://dropforge.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">dropforge</guid>
+      <pubDate>Thu, 30 Jul 2026 16:40:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>devnetpulse</title>
+      <link>https://devnetpulse.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">devnetpulse</guid>
+      <pubDate>Thu, 30 Jul 2026 15:05:12 GMT</pubDate>
+    </item>
+    <item>
+      <title>trustgraph</title>
+      <link>https://trustgraph.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">trustgraph</guid>
+      <pubDate>Thu, 30 Jul 2026 15:02:48 GMT</pubDate>
+    </item>
+    <item>
+      <title>dripstream</title>
+      <link>https://dripstream.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">dripstream</guid>
+      <pubDate>Thu, 30 Jul 2026 14:58:24 GMT</pubDate>
+    </item>
     <item>
       <title>thepipersguild</title>
       <link>https://thepipersguild.dev-dot.li</link>
@@ -326,34 +354,6 @@
       <description>A serverless BitTorrent tracker. Announces are signed statements, not requests to a server.</description>
       <guid isPermaLink="false">torrent-otp</guid>
       <pubDate>Sat, 25 Jul 2026 13:35:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>helloworld</title>
-      <link>https://helloworld.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">helloworld</guid>
-      <pubDate>Sat, 25 Jul 2026 09:48:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>na87u9srwgblr61</title>
-      <link>https://na87u9srwgblr61.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">na87u9srwgblr61</guid>
-      <pubDate>Sat, 25 Jul 2026 08:52:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>polkadot-builders-hackademy</title>
-      <link>https://polkadot-builders-hackademy.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">polkadot-builders-hackademy</guid>
-      <pubDate>Sat, 25 Jul 2026 02:33:36 GMT</pubDate>
-    </item>
-    <item>
-      <title>hahaming.dot</title>
-      <link>https://hahamingx00.dev-dot.li</link>
-      <description>The decentralized web, in your browser — powered by .dot Web ID.</description>
-      <guid isPermaLink="false">hahamingx00</guid>
-      <pubDate>Sat, 25 Jul 2026 01:37:12 GMT</pubDate>
     </item>
   </channel>
 </rss>

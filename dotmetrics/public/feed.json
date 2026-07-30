@@ -1,7 +1,43 @@
 {
-  "generatedAt": 1785422626,
-  "count": 79,
+  "generatedAt": 1785430598,
+  "count": 83,
   "apps": [
+    {
+      "label": "dropforge",
+      "domain": "dropforge.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785429600,
+      "url": "https://dropforge.dev-dot.li"
+    },
+    {
+      "label": "devnetpulse",
+      "domain": "devnetpulse.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785423912,
+      "url": "https://devnetpulse.dev-dot.li"
+    },
+    {
+      "label": "trustgraph",
+      "domain": "trustgraph.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785423768,
+      "url": "https://trustgraph.dev-dot.li"
+    },
+    {
+      "label": "dripstream",
+      "domain": "dripstream.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785423504,
+      "url": "https://dripstream.dev-dot.li"
+    },
     {
       "label": "thepipersguild",
       "domain": "thepipersguild.dot",
