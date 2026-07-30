@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1785367253,
+  "generatedAt": 1785370725,
   "count": 77,
   "apps": [
     {
@@ -43,7 +43,7 @@
       "domain": "dot-store.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785317484,
       "url": "https://dot-store.dev-dot.li"
     },

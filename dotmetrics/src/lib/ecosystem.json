@@ -1,43 +1,43 @@
 {
-  "measuredAt": 1785367140,
-  "headBlock": 11580724,
+  "measuredAt": 1785370608,
+  "headBlock": 11582168,
   "windowBlocks": 151,
-  "windowSeconds": 552,
-  "contractEvents": 30,
+  "windowSeconds": 480,
+  "contractEvents": 17,
   "activeContracts": 5,
-  "reverts": 39,
+  "reverts": 25,
   "topContracts": [
     {
       "address": "0xaf781298fe769738ef529816c11c121ea8887fc9",
-      "events": 18
+      "events": 9
     },
     {
-      "address": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
-      "events": 5
-    },
-    {
-      "address": "0x326bde29315199c814b1c58b431d84d16ea5ce41",
-      "events": 4
-    },
-    {
-      "address": "0x9aa003594d59c62ee17a73a569fd7b1dbdbd71e1",
+      "address": "0x54700c6ae530d803ae7463e2849447226baa5adb",
       "events": 2
     },
     {
-      "address": "0x571b22c4581138b12abe8e6fca3575aeaab84ecc",
-      "events": 1
+      "address": "0x0dac382877835bc4efa247d525e51720df127845",
+      "events": 2
+    },
+    {
+      "address": "0x1cd1313ed4433e5ffe208e48b4f68521e281e363",
+      "events": 2
+    },
+    {
+      "address": "0x322b728360da23764303cd39c593050b7d1784fc",
+      "events": 2
     }
   ],
   "perContract": {
-    "headBlock": 11580724,
+    "headBlock": 11582168,
     "windowBlocks": 151,
-    "windowSeconds": 552,
+    "windowSeconds": 480,
     "events": {
-      "0xaf781298fe769738ef529816c11c121ea8887fc9": 18,
-      "0x527b08a640b527a3dae0c4be04d7344e430b6e50": 5,
-      "0x326bde29315199c814b1c58b431d84d16ea5ce41": 4,
-      "0x9aa003594d59c62ee17a73a569fd7b1dbdbd71e1": 2,
-      "0x571b22c4581138b12abe8e6fca3575aeaab84ecc": 1
+      "0xaf781298fe769738ef529816c11c121ea8887fc9": 9,
+      "0x54700c6ae530d803ae7463e2849447226baa5adb": 2,
+      "0x0dac382877835bc4efa247d525e51720df127845": 2,
+      "0x1cd1313ed4433e5ffe208e48b4f68521e281e363": 2,
+      "0x322b728360da23764303cd39c593050b7d1784fc": 2
     }
   }
 }
