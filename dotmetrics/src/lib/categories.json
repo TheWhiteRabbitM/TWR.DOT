@@ -3,7 +3,9 @@
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
-    "why": []
+    "why": [
+      "chess~"
+    ]
   },
   "ascendyendor00": {
     "category": "games",
@@ -14,32 +16,38 @@
     ]
   },
   "buildboard01": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "social",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "post~",
+      "feed~"
+    ]
   },
   "bulletin-explorer": {
     "category": "explorers",
-    "source": "derived:manifest",
-    "confidence": "high",
+    "source": "derived:app-text",
+    "confidence": "medium",
     "why": [
-      "explorer~"
+      "explorer~",
+      "map~"
     ]
   },
   "buy-or-sell": {
     "category": "finance",
-    "source": "derived:manifest",
+    "source": "derived:app-text",
     "confidence": "high",
     "why": [
       "buy~",
-      "sell~"
+      "sell~",
+      "long~",
+      "short~"
     ]
   },
   "chainpulse": {
     "category": "explorers",
     "source": "derived:manifest",
-    "confidence": "high",
+    "confidence": "medium",
     "why": [
       "finality",
       "vitals"
@@ -54,35 +62,49 @@
     ]
   },
   "contribnet01": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "social",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "together~",
+      "collaboration~",
+      "contributors~"
+    ]
   },
   "contribnet02": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "social",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "together~",
+      "collaboration~",
+      "contributors~"
+    ]
   },
   "contribnet03": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "social",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "together~",
+      "collaboration~",
+      "contributors~"
+    ]
   },
   "cosmicteapot": {
     "category": "curiosities",
-    "source": "derived:manifest",
-    "confidence": "medium",
+    "source": "derived:app-text",
+    "confidence": "high",
     "why": [
-      "teapot~"
+      "teapot~",
+      "orbit~",
+      "improbable~"
     ]
   },
   "devnet-atlas": {
     "category": "explorers",
     "source": "derived:manifest",
-    "confidence": "high",
+    "confidence": "medium",
     "why": [
       "atlas",
       "map"
@@ -93,27 +115,32 @@
     "source": "derived:manifest",
     "confidence": "high",
     "why": [
+      "identity~",
+      "personhood~",
+      "human~",
       "humans",
-      "verified",
-      "anonymous",
-      "private"
+      "verified"
     ]
   },
   "docs": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "publishing",
+    "source": "derived:app-text",
+    "confidence": "medium",
     "why": [
+      "page~",
       "docs~"
     ]
   },
   "doomarcade00": {
     "category": "games",
-    "source": "derived:manifest",
+    "source": "derived:app-text",
     "confidence": "high",
     "why": [
+      "play~",
       "arcade~",
-      "doom~"
+      "doom~",
+      "ammo~",
+      "health~"
     ]
   },
   "dot-pages": {
@@ -122,7 +149,9 @@
     "confidence": "high",
     "why": [
       "published",
+      "website~",
       "websites",
+      "page~",
       "pages~"
     ]
   },
@@ -133,16 +162,24 @@
     "why": []
   },
   "dotcheckapp": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "social",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "social~",
+      "community~"
+    ]
   },
   "dotcheckhub": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "explorers",
+    "source": "derived:app-text",
+    "confidence": "high",
+    "why": [
+      "explorer~",
+      "directory~",
+      "verzeichnis~",
+      "transparency~"
+    ]
   },
   "dotexplorer": {
     "category": "explorers",
@@ -157,7 +194,9 @@
     "source": "derived:manifest",
     "confidence": "high",
     "why": [
-      "artist"
+      "music~",
+      "artist",
+      "listen~"
     ]
   },
   "dotmetrics": {
@@ -171,15 +210,18 @@
   },
   "dw3labsgame": {
     "category": "games",
-    "source": "derived:manifest",
-    "confidence": "medium",
+    "source": "derived:app-text",
+    "confidence": "high",
     "why": [
-      "game~"
+      "game~",
+      "play~",
+      "score~",
+      "lives~"
     ]
   },
   "eternalise-notary": {
     "category": "identity",
-    "source": "derived:manifest",
+    "source": "derived:app-text",
     "confidence": "high",
     "why": [
       "notary~"
@@ -187,7 +229,7 @@
   },
   "eternalize-notary": {
     "category": "identity",
-    "source": "derived:manifest",
+    "source": "derived:app-text",
     "confidence": "high",
     "why": [
       "notary~"
@@ -210,7 +252,7 @@
   },
   "guestbook": {
     "category": "social",
-    "source": "derived:manifest",
+    "source": "derived:app-text",
     "confidence": "high",
     "why": [
       "guestbook~"
@@ -229,9 +271,9 @@
     "why": []
   },
   "hello-devnet-ynrc46": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "curiosities",
+    "source": "derived:app-text",
+    "confidence": "medium",
     "why": [
       "hello~"
     ]
@@ -247,7 +289,7 @@
   },
   "hello-world-bernar": {
     "category": "curiosities",
-    "source": "derived:manifest",
+    "source": "derived:app-text",
     "confidence": "high",
     "why": [
       "hello~",
@@ -255,16 +297,20 @@
     ]
   },
   "hellodotworld": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "publishing",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "publish~",
+      "bulletin~"
+    ]
   },
   "helloworld": {
     "category": "curiosities",
-    "source": "derived:manifest",
-    "confidence": "medium",
+    "source": "derived:app-text",
+    "confidence": "high",
     "why": [
+      "hello~",
       "hello world~"
     ]
   },
@@ -272,33 +318,46 @@
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
-    "why": []
+    "why": [
+      "published~",
+      "bulletin~"
+    ]
   },
   "ip-assets": {
-    "category": "finance",
+    "category": "explorers",
     "source": "derived:manifest",
-    "confidence": "high",
+    "confidence": "medium",
     "why": [
-      "marketplace"
+      "explorer~",
+      "explore~",
+      "registry~"
     ]
   },
   "italiarovente": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
-    "why": []
+    "why": [
+      "map~"
+    ]
   },
   "mini-lucky-smoke": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "social",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "chat~",
+      "message~"
+    ]
   },
   "my-dotkit": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "finance",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "tokens~",
+      "wallet~"
+    ]
   },
   "na87u9srwgblr61": {
     "category": "other",
@@ -315,15 +374,16 @@
   "oblv-wg-calc": {
     "category": "tools",
     "source": "derived:manifest",
-    "confidence": "medium",
+    "confidence": "high",
     "why": [
+      "calculator~",
       "calc"
     ]
   },
   "oblv-wg-calendar": {
     "category": "tools",
     "source": "derived:manifest",
-    "confidence": "medium",
+    "confidence": "high",
     "why": [
       "calendar"
     ]
@@ -331,7 +391,7 @@
   "oblv-wg-clock": {
     "category": "tools",
     "source": "derived:manifest",
-    "confidence": "medium",
+    "confidence": "high",
     "why": [
       "clock"
     ]
@@ -347,7 +407,7 @@
   "oblv-wg-opengov": {
     "category": "social",
     "source": "derived:manifest",
-    "confidence": "medium",
+    "confidence": "high",
     "why": [
       "vote"
     ]
@@ -363,15 +423,16 @@
   "oblv-wg-todo": {
     "category": "tools",
     "source": "derived:manifest",
-    "confidence": "medium",
+    "confidence": "high",
     "why": [
+      "widget~",
       "todo"
     ]
   },
   "oblv-wg-weather": {
     "category": "tools",
     "source": "derived:manifest",
-    "confidence": "medium",
+    "confidence": "high",
     "why": [
       "weather"
     ]
@@ -381,6 +442,7 @@
     "source": "derived:manifest",
     "confidence": "high",
     "why": [
+      "sdk~",
       "widget~",
       "widgets"
     ]
@@ -394,10 +456,14 @@
     ]
   },
   "pactprotocol": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "finance",
+    "source": "derived:app-text",
+    "confidence": "high",
+    "why": [
+      "wallet~",
+      "escrow~",
+      "marketplace~"
+    ]
   },
   "parlement-populaire": {
     "category": "other",
@@ -409,7 +475,9 @@
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
-    "why": []
+    "why": [
+      "buy~"
+    ]
   },
   "petitions": {
     "category": "social",
@@ -423,14 +491,17 @@
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
-    "why": []
+    "why": [
+      "lives~"
+    ]
   },
   "plaza-social": {
     "category": "social",
-    "source": "derived:manifest",
+    "source": "derived:app-text",
     "confidence": "high",
     "why": [
       "social~",
+      "forum~",
       "plaza~"
     ]
   },
@@ -453,16 +524,22 @@
     "why": []
   },
   "polkaportal03": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "tools",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "builder~",
+      "developer~",
+      "api~"
+    ]
   },
   "proofoftake": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
-    "why": []
+    "why": [
+      "vote~"
+    ]
   },
   "provenveil": {
     "category": "other",
@@ -489,9 +566,10 @@
   },
   "rainbowprobe": {
     "category": "tools",
-    "source": "derived:manifest",
-    "confidence": "medium",
+    "source": "derived:app-text",
+    "confidence": "high",
     "why": [
+      "sandbox~",
       "probe~"
     ]
   },
@@ -509,7 +587,7 @@
   },
   "sybildrop": {
     "category": "identity",
-    "source": "derived:manifest",
+    "source": "derived:app-text",
     "confidence": "medium",
     "why": [
       "sybil~"
@@ -517,10 +595,12 @@
   },
   "tetris-bulletin": {
     "category": "games",
-    "source": "derived:manifest",
+    "source": "derived:app-text",
     "confidence": "high",
     "why": [
-      "tetris~"
+      "arcade~",
+      "tetris~",
+      "score~"
     ]
   },
   "thebutton": {
@@ -557,28 +637,34 @@
     "confidence": "high",
     "why": [
       "human",
+      "humans~",
       "verified"
     ]
   },
   "wudcommunity": {
     "category": "social",
     "source": "derived:manifest",
-    "confidence": "medium",
+    "confidence": "high",
     "why": [
+      "chat~",
       "community"
     ]
   },
   "yechops-preview": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "identity",
+    "source": "derived:app-text",
+    "confidence": "medium",
+    "why": [
+      "proof~",
+      "private~"
+    ]
   },
   "yologuestbook": {
     "category": "social",
-    "source": "derived:manifest",
-    "confidence": "medium",
+    "source": "derived:app-text",
+    "confidence": "high",
     "why": [
+      "message~",
       "guestbook~"
     ]
   }

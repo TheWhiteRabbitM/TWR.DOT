@@ -51,7 +51,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0xa5682be9d45a0e59fd2c3e74469c02c4ba337e6e03e9f8b25b14f7105dca49d0"
+    "key": "0xa5682be9d45a0e59fd2c3e74469c02c4ba337e6e03e9f8b25b14f7105dca49d0",
+    "category": "social",
+    "categorySource": "derived:app-text"
   },
   "bulletin-explorer": {
     "label": "bulletin-explorer",
@@ -69,7 +71,7 @@
     "updateCount": 0,
     "key": "0x5c14967d94128dd1ecef409d5e635ef67bfd6d3c9681ffefe08d81b394dd1418",
     "category": "explorers",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "buy-or-sell": {
     "label": "buy-or-sell",
@@ -87,7 +89,7 @@
     "updateCount": 0,
     "key": "0xa04a23bee9446e452a594efe83aa1088cbe4db63612d9dddbb61ff8465789ec8",
     "category": "finance",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "chainpulse": {
     "label": "chainpulse",
@@ -145,7 +147,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0xee61b3d0fb7cc60f99d5006a4a6150fa49a4218762ce2463cbe5bfc233396c3e"
+    "key": "0xee61b3d0fb7cc60f99d5006a4a6150fa49a4218762ce2463cbe5bfc233396c3e",
+    "category": "social",
+    "categorySource": "derived:app-text"
   },
   "contribnet02": {
     "label": "contribnet02",
@@ -161,7 +165,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0x9bd0de42b5af17f61c94059a42ea7683796f45452615cb458073c953fc6b137e"
+    "key": "0x9bd0de42b5af17f61c94059a42ea7683796f45452615cb458073c953fc6b137e",
+    "category": "social",
+    "categorySource": "derived:app-text"
   },
   "contribnet03": {
     "label": "contribnet03",
@@ -178,7 +184,9 @@
     "livenessCheckedAt": 1785369600,
     "updateCount": 1,
     "contenthashChangedAt": 1785394135,
-    "key": "0xbee7a2c66520195739243593fb6c7670ded7eef8e0aeba75c9e92872604d6be9"
+    "key": "0xbee7a2c66520195739243593fb6c7670ded7eef8e0aeba75c9e92872604d6be9",
+    "category": "social",
+    "categorySource": "derived:app-text"
   },
   "cosmicteapot": {
     "label": "cosmicteapot",
@@ -196,7 +204,7 @@
     "updateCount": 0,
     "key": "0x414f211577f12cb54c8c45af7b9bdc9e6291c83ef8f25a81a81e969a8c6f0aa7",
     "category": "curiosities",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "devnet-atlas": {
     "label": "devnet-atlas",
@@ -254,7 +262,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0x6bf9054545420e9e9f4aa4f353a32c7d0d52c11dbcdda56c53be8375cafeebb1"
+    "key": "0x6bf9054545420e9e9f4aa4f353a32c7d0d52c11dbcdda56c53be8375cafeebb1",
+    "category": "publishing",
+    "categorySource": "derived:app-text"
   },
   "doomarcade00": {
     "label": "doomarcade00",
@@ -273,7 +283,7 @@
     "contenthashChangedAt": 1785347164,
     "key": "0xc75a4698bf5ecb09cbedecf070ba554100870d03544aca576c629de1f17576fc",
     "category": "games",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "dot-pages": {
     "label": "dot-pages",
@@ -327,7 +337,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0xc51232394c6c01788f916c81bd7972495c5b8262708ae3d11387072ea99923e4"
+    "key": "0xc51232394c6c01788f916c81bd7972495c5b8262708ae3d11387072ea99923e4",
+    "category": "social",
+    "categorySource": "derived:app-text"
   },
   "dotcheckhub": {
     "label": "dotcheckhub",
@@ -344,7 +356,9 @@
     "livenessCheckedAt": 1785369600,
     "updateCount": 2,
     "contenthashChangedAt": 1785314979,
-    "key": "0xdc1dd3b39abd9a48513c07e9873260af3342417dae6c5c89f50570cec8ffa9dd"
+    "key": "0xdc1dd3b39abd9a48513c07e9873260af3342417dae6c5c89f50570cec8ffa9dd",
+    "category": "explorers",
+    "categorySource": "derived:app-text"
   },
   "dotexplorer": {
     "label": "dotexplorer",
@@ -421,7 +435,7 @@
     "contenthashChangedAt": 1785394135,
     "key": "0x80fabd93c27cc8e15816282a7c1195cec89b6ecd04426da7580e0af2ea08c28b",
     "category": "games",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "eternalise-notary": {
     "label": "eternalise-notary",
@@ -439,7 +453,7 @@
     "updateCount": 0,
     "key": "0xbc208aea60244ad65a7e2897874b096eb840b00a9f986b316a91191c3e22050e",
     "category": "identity",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "eternalize-notary": {
     "label": "eternalize-notary",
@@ -457,7 +471,7 @@
     "updateCount": 0,
     "key": "0x59448d3e1054fb73bc267efce7f8c09b642480bb70fb440a653044172696900f",
     "category": "identity",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "flowfarm-staking": {
     "label": "flowfarm-staking",
@@ -509,7 +523,7 @@
     "updateCount": 0,
     "key": "0x456f894235d3a53c2bf4d4a40fba388ff571aaf76ea7cbf464f7edf3da3bf8f3",
     "category": "social",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "hahamingx00": {
     "label": "hahamingx00",
@@ -556,7 +570,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0xaa6cad68d533fef6a2085e22ffbc7dd193390fa6c819803448d16a11fb85765a"
+    "key": "0xaa6cad68d533fef6a2085e22ffbc7dd193390fa6c819803448d16a11fb85765a",
+    "category": "curiosities",
+    "categorySource": "derived:app-text"
   },
   "hello-world-app": {
     "label": "hello-world-app",
@@ -588,7 +604,7 @@
     "updateCount": 0,
     "key": "0x6514fd25ad75d4b0a390267d3c511a110ee2c93c8f551d1533fc7937b7ce6099",
     "category": "curiosities",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "hellodotworld": {
     "label": "hellodotworld",
@@ -604,7 +620,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0x6009f581a2f23095e080bf1030822546e34d8ec07ba21cd9cda16f9b03d0d739"
+    "key": "0x6009f581a2f23095e080bf1030822546e34d8ec07ba21cd9cda16f9b03d0d739",
+    "category": "publishing",
+    "categorySource": "derived:app-text"
   },
   "helloworld": {
     "label": "helloworld",
@@ -622,7 +640,7 @@
     "updateCount": 0,
     "key": "0xfa26db7ca85ead399216e7c6316bc50ed24393c3122b582735e7f3b0f91b93f0",
     "category": "curiosities",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "hermes-agent-test": {
     "label": "hermes-agent-test",
@@ -659,7 +677,7 @@
     "updateCount": 1,
     "contenthashChangedAt": 1785328168,
     "key": "0xbef4eb1ed1824f6d5c0a4917e2a66750831df5dda50d5a9df98473c705e90646",
-    "category": "finance",
+    "category": "explorers",
     "categorySource": "derived:manifest"
   },
   "italiarovente": {
@@ -696,7 +714,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0x5009fc898ec348b7b18651820a394716281303a030f5faaa47c5f9606080d329"
+    "key": "0x5009fc898ec348b7b18651820a394716281303a030f5faaa47c5f9606080d329",
+    "category": "social",
+    "categorySource": "derived:app-text"
   },
   "my-dotkit": {
     "label": "my-dotkit",
@@ -712,7 +732,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0x6aaf58ff99347c1524d2446700fa6ec68b8318889e6b672f31984cfb00daea5d"
+    "key": "0x6aaf58ff99347c1524d2446700fa6ec68b8318889e6b672f31984cfb00daea5d",
+    "category": "finance",
+    "categorySource": "derived:app-text"
   },
   "na87u9srwgblr61": {
     "label": "na87u9srwgblr61",
@@ -963,7 +985,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0x202832d007b2f3540f0ea42a6949023d9f6e8b4b0c3e92346b97d0ae08ebfeba"
+    "key": "0x202832d007b2f3540f0ea42a6949023d9f6e8b4b0c3e92346b97d0ae08ebfeba",
+    "category": "finance",
+    "categorySource": "derived:app-text"
   },
   "parlement-populaire": {
     "label": "parlement-populaire",
@@ -1047,7 +1071,7 @@
     "updateCount": 0,
     "key": "0xbf81a32298a4fa24063883b725a9090b969f963b469681f7e238b49516c6754b",
     "category": "social",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "polkadot-builders-hackademy": {
     "label": "polkadot-builders-hackademy",
@@ -1103,7 +1127,9 @@
     "lastSeenAliveAt": 1785394135,
     "livenessCheckedAt": 1785369600,
     "updateCount": 0,
-    "key": "0x1411cd6493028a66a6ecdcc8f8972863dba5ad3466221b72ed84645dc352ad70"
+    "key": "0x1411cd6493028a66a6ecdcc8f8972863dba5ad3466221b72ed84645dc352ad70",
+    "category": "tools",
+    "categorySource": "derived:app-text"
   },
   "proofoftake": {
     "label": "proofoftake",
@@ -1192,7 +1218,7 @@
     "updateCount": 0,
     "key": "0x990799b5aedb5a8755e6ed6909b54d05021fd9cf71ec0c54004b8647ff9a7b8f",
     "category": "tools",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "squadbuilder": {
     "label": "squadbuilder",
@@ -1244,7 +1270,7 @@
     "updateCount": 0,
     "key": "0x5539c8941225f86eb78c715de87c350314362216a3514ad6c7c27e2b5b8025d9",
     "category": "identity",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "tetris-bulletin": {
     "label": "tetris-bulletin",
@@ -1262,7 +1288,7 @@
     "updateCount": 0,
     "key": "0xf3cb06f08a06b89105808b005a84100b5f489495fe3f1585167aa96e959153f3",
     "category": "games",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   },
   "thebutton": {
     "label": "thebutton",
@@ -1397,7 +1423,9 @@
     "livenessCheckedAt": 1785369600,
     "updateCount": 2,
     "contenthashChangedAt": 1785338946,
-    "key": "0x6d3d30925188794a895e0a8eaab71926dde7c9eab55c6d7431bc0cfe797ef101"
+    "key": "0x6d3d30925188794a895e0a8eaab71926dde7c9eab55c6d7431bc0cfe797ef101",
+    "category": "identity",
+    "categorySource": "derived:app-text"
   },
   "yologuestbook": {
     "label": "yologuestbook",
@@ -1415,6 +1443,6 @@
     "updateCount": 0,
     "key": "0x54a98efa4aa7c0d18e4a6682bd25095fcdf30b203e5f29abf1479ff6451b27ca",
     "category": "social",
-    "categorySource": "derived:manifest"
+    "categorySource": "derived:app-text"
   }
 }

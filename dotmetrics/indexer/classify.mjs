@@ -183,7 +183,12 @@ function score(evidence) {
 
       if (!inOwner && !inApp && !inLabel) continue;
       points += weight * (inOwner * 3 + inApp * 1 + inLabel * 2);
-      if (isStrong) strongHit = true;
+      // A distinctive term only earns the promotion below when it came from the
+      // owner's own words or their chosen name. Seen merely somewhere on screen
+      // it is not enough: `pennypixel` was filed under finance because the word
+      // "buy" appeared once in its interface, which is the kind of over-reach
+      // this whole file is meant to avoid.
+      if (isStrong && (inOwner || inLabel)) strongHit = true;
       // ~ marks a term we read off the app itself or its name, rather than
       // something its owner chose to write.
       hits.push(term + (inOwner ? '' : '~'));

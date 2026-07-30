@@ -1,0 +1,633 @@
+{
+  "ajedreztest01": {
+    "title": "Polkadot App",
+    "heads": [
+      "NEON CHESS Caos",
+      "Configuración Arena",
+      "Historial de Combate",
+      "¿Cómo funciona el Caos?",
+      "Grimorio del Caos",
+      "Historial de Magia de Guerra"
+    ],
+    "text": "NEON CHESS CAOS Batalla Cuántica de Almas y Poderes POLKADOT HOST Conectado (0x...) Neon Glow Emerald Mystic CONFIGURACIÓN ARENA Modo de Juego Clásico Caótico místico Dificultad IA NOVATO TÁCTICO CAOS Condiciones Avanzadas Niebla de Guerra DESACTIVADA HISTORIAL DE COMBATE VICTORIAS 0 DERROTAS 0 PARTIDAS 0 ¿CÓMO FUNCIONA EL CAOS? Capturar piezas enemigas te otorga Almas (Peón: 1, Caballo/Alfil: 2, ",
+    "at": 1785409090
+  },
+  "buildboard01": {
+    "title": "BuildBoard — the devnet ship log",
+    "heads": [
+      "What the devnetis shipping, right now.",
+      "Nothing on the board yet"
+    ],
+    "text": "Build Board DEVNET · LIVE What the devnet is shipping, right now. Every ship is a Bulletin record — content-addressed, and gone in 14 days. Post what you built, tip what's useful, find who to build with. 0 BUILDERS 0 LIVE SHIPS 0 TODAY 0 CASH TIPPED No board contract set. Deploy contracts/BoardFeed.sol and set VITE_BOARD_FEED to see the live feed. Until then the board reads empty. Sign in to post ",
+    "at": 1785408387
+  },
+  "bulletin-explorer": {
+    "title": "bulletin-explorer",
+    "heads": [
+      "BULLETIN EXPLORER"
+    ],
+    "text": "Skip to content > BULLETIN-EXPLORER 2026-07-30 10:47:49Z [ NEON ] POLKADOT PRODUCTS DEVNET · BULLETIN CHAIN · READ ONLY BULLETIN EXPLORER Everything stored on the devnet Bulletin chain, read anonymously over HTTPS. No wallet, no SDK, no host container — just the storage map, a public IPFS gateway, and a 201,600-block lease on every object. Reading 4,212 block entries… 2,000 done BULLETIN [ 209 MS ",
+    "at": 1785408470
+  },
+  "buy-or-sell": {
+    "title": "Buy or Sell",
+    "heads": [
+      "Buy or Sell"
+    ],
+    "text": "ONCHAIN PRODUCT · DEVNET Buy or Sell Let the coin decide: DOT or dollars. Long or short? Tap the coin or the button below. $DOT $ Flip the coin",
+    "at": 1785408529
+  },
+  "chainpulse": {
+    "title": "Chain Pulse",
+    "heads": [
+      "Chain Pulse",
+      "Asset Hub",
+      "People",
+      "Bulletin"
+    ],
+    "text": "Chain Pulse Products Devnet Live vitals for the Polkadot Products Devnet system chains, read through the host API — no RPC endpoints, no servers. Asset Hub 1000 Contracts · .dot names · assets FINALIZED — BEST — LAG — BLOCK TIME measuring… connecting… People 1004 Identity · personhood · CASH FINALIZED #5.564.451 BEST #5.564.463 LAG 12 blocks BLOCK TIME measuring… Bulletin 1010 Levity storage · app",
+    "at": 1785408437
+  },
+  "chatgpt-guide": {
+    "title": "《这就是 ChatGPT》互动学习指南",
+    "heads": [
+      "这就是 ChatGPT：它在做什么，为什么有效",
+      "学习路线图",
+      "它只是一次添加一个词",
+      "概率从何而来",
+      "什么是模型",
+      "神经网络怎么「算」"
+    ],
+    "text": "读书伴侣 · STEPHEN WOLFRAM 这就是 ChatGPT：它在做什么，为什么有效 一条 10 站的学习路线，把书里的每个关键概念压缩成「一句话 + 一个可以上手玩的动画」。建议配合书对照着读——每站末尾都标了对应章节。 约 40 分钟 9 个互动演示 对应中文版《这就是ChatGPT》第一篇 学习路线图 一次只加一个词 概率从何而来 什么是模型 神经网络怎么「算」 训练：就是下山 嵌入：把意义变成数字 注意力：ChatGPT 的内部 它是怎么被训练出来的 为什么它有效 局限、出路与全书总结 全书一条主线：ChatGPT 只是在反复猜「下一个词是什么」。前 5 站解释它靠什么猜（概率、模型、神经网络、训练），后 5 站解释它猜得这么好意味着什么。 第 1 站 ↑ 路线图 它只是一次添加一个词 一句话 ChatGPT 写文章时，只是在反复回答同一个问题：「根据目前的文本，下一个词最",
+    "at": 1785409353
+  },
+  "contribnet01": {
+    "title": "frontend",
+    "heads": [
+      "Build together.Get compensated fairly.",
+      "Get started",
+      "Work on what you care about.Build a contribution record that lasts.",
+      "Have an idea?Let the world build it with you.",
+      "— Projects",
+      "ContribNet"
+    ],
+    "text": "CONTRIBNET ? BUILT ON PASEO DEVNET ASSET HUB Build together. Get compensated fairly. ContribNet is the collaboration layer for Polkadot apps. Bring your project on-chain, and contributors anywhere can build it with you — every approved contribution earns a share of the project treasury, paid out automatically. No bottlenecks. No hiring overhead. Find a task Browse projects → Get started Complete t",
+    "at": 1785409297
+  },
+  "contribnet02": {
+    "title": "frontend",
+    "heads": [
+      "Build together.Get compensated fairly.",
+      "Get started",
+      "Work on what you care about.Build a contribution record that lasts.",
+      "Have an idea?Let the world build it with you.",
+      "— Projects",
+      "ContribNet"
+    ],
+    "text": "CONTRIBNET ? BUILT ON PASEO DEVNET ASSET HUB Build together. Get compensated fairly. ContribNet is the collaboration layer for Polkadot apps. Bring your project on-chain, and contributors anywhere can build it with you — every approved contribution earns a share of the project treasury, paid out automatically. No bottlenecks. No hiring overhead. Find a task Browse projects → Get started Complete t",
+    "at": 1785409284
+  },
+  "contribnet03": {
+    "title": "frontend",
+    "heads": [
+      "Build together.Get compensated fairly.",
+      "Get started",
+      "Work on what you care about.Build a contribution record that lasts.",
+      "Have an idea?Let the world build it with you.",
+      "— Projects",
+      "ContribNet"
+    ],
+    "text": "CONTRIBNET ? BUILT ON PASEO DEVNET ASSET HUB Build together. Get compensated fairly. ContribNet is the collaboration layer for Polkadot apps. Bring your project on-chain, and contributors anywhere can build it with you — every approved contribution earns a share of the project treasury, paid out automatically. No bottlenecks. No hiring overhead. Find a task Browse projects → Get started Complete t",
+    "at": 1785408237
+  },
+  "cosmicteapot": {
+    "title": "The Cosmic Teapot",
+    "heads": [
+      "The Cosmic Teapot",
+      "Tea room",
+      "Brew log"
+    ],
+    "text": "COSMICTEAPOT.DOT The Cosmic Teapot Somewhere between Earth and Mars, a small porcelain pot is in elliptical orbit around the Sun. Nobody can prove it isn't. Press the button and it will pour you something improbable. Zero-Gravity Rooibos From the Kuiper Belt. Notes of grapefruit peel, cold vacuum, toasted rice. Contains exactly one photon of yesterday. Steep 1m 50s 69°C the Kuiper Belt Brew a pot ",
+    "at": 1785409065
+  },
+  "devnet-atlas": {
+    "title": "Products Devnet 全景 · Atlas",
+    "heads": [
+      "全景图：有哪些组件，它们怎么配合The atlas: what the pieces are and how they fit",
+      "1大地图：谁在哪里The big map: who lives where",
+      "2发布流水线：pad 一条命令背后发生了什么The publish pipeline: what one pad command actually does",
+      "3commit-reveal：注册域名为什么要等几分钟commit-reveal: why registering a name takes a few minutes",
+      "4用户访问路径：打开 chatgpt-guide.dot 时发生了什么The access path: what happens when you open chatgpt-guide.dot",
+      "5身份体系：为什么上架卡住了The identity system: why listing got stuck"
+    ],
+    "text": "中 EN POLKADOT PRODUCTS DEVNET The atlas: what the pieces are and how they fit Using our real deployment of chatgpt-guide.dot as the running example. A trail of flowcharts and quick tables that put every part we touched back in its place. IN ONE LINE An app = a static bundle (stored on the Bulletin chain) + a .dot name (registered on Asset Hub) + an identity (living on the People chain). Each of th",
+    "at": 1785409167
+  },
+  "discreetly": {
+    "title": "Discreet — private bookings for real people",
+    "heads": [
+      "Book privately"
+    ],
+    "text": "Discreet Book privately No identity shared One human per booking Deposits in escrow Contract live on-chain · 0 services · 0 bookings — you're in the demo: full experience, nothing written to the chain, until personhood opens to everyone. 💬 Discreet community chat All Wellbeing Health Legal & money Classes Beauty SERVICES 🌱 WELLBEING 0.50 PAS deposit Confidential counselling session A 50-minute o",
+    "at": 1785408877
+  },
+  "docs": {
+    "title": "Home - Polkadot App Docs",
+    "heads": [
+      "Build Productsfor People.",
+      "Choose your path",
+      "Explore the platform"
+    ],
+    "text": "Skip to content Public devnet. Tokens have no real value, chains and services may be reset, and flows can change between builds. Home Get started Guides Architecture Reference Feedback Initializing search POLKADOT APP DOCS polkadot-app-docs 0 0 Home ON THIS PAGE Choose your path Explore the platform Get started GET STARTED Introduction For users Developer quickstart Guides GUIDES For users FOR USE",
+    "at": 1785408853
+  },
+  "doomarcade00": {
+    "title": "DOOM.dot — Hell On-Chain",
+    "heads": [],
+    "text": "DOOM .DOT RESETS 11:05:04 #4.822.832 BULLETIN CHAIN DOOM HELL ON-CHAIN · BULLETIN NETWORK READY TO PLAY 100% ENTER HELL AMMO 50 💀 HEALTH 100% PISTOL ARMOR 0% ⎋ ESC 🗺 MAP 💾 SAVE 📂 LOAD ⏸ PAUSE 💬 MSG ↺ TURN ↻ ▲ ◀ ▶ ▼ 🚪 USE 🔥 FIRE ⚡ RUN 🔫 WEP ⇤ STRAFE ⇥ RANKS & SUBMIT DOOM.DOT — STATS ✕ RANKS KILL LOG SUBMIT TODAY'S SLAYERS — 🏆 ACHIEVEMENT UNLOCKED —",
+    "at": 1785408895
+  },
+  "dot-pages": {
+    "title": "dotpages",
+    "heads": [
+      "dotpages",
+      "Start from a layout",
+      "Or build it yourself"
+    ],
+    "text": "dotpages Build and launch your own decentralised website. Start from a template, or jump straight into Markdown or HTML. Sign in START FROM A LAYOUT Blank Clean slate Profile Photo, name, bio, and button links Blog post Title, date, paragraphs, and an image Event Title, when / where, big RSVP OR BUILD IT YOURSELF # Hello, world This is your page. Click anything to make it yours. **Bold**, lists, [",
+    "at": 1785409137
+  },
+  "dot-store": {
+    "title": "dot-store — apps on the Polkadot devnet",
+    "heads": [
+      "App",
+      "In evidenza",
+      "rainbowprobe",
+      "buildboard01",
+      "dotcheckhub",
+      "Chain Pulse"
+    ],
+    "text": "dotstore EN IT ES FR App Tutte le app registrate sulla devnet Polkadot, lette dalla catena a ogni visita. In evidenza Le app che riusciamo a mostrare — screenshot reali, non finti IN EVIDENZA rainbowprobe Distribuita RA rainbowprobe Ancora nessuna recensione Apri IN EVIDENZA buildboard01 Distribuita BU buildboard01 Ancora nessuna recensione Apri IN EVIDENZA dotcheckhub Distribuita DO dotcheckhub A",
+    "at": 1785408339
+  },
+  "dotcheckapp": {
+    "title": "DotCheck · Community Product Testing",
+    "heads": [
+      "Testen. Melden. Besser bauen.",
+      "Product testen",
+      "Feedback",
+      "Betreiber-Dashboard.",
+      "Feedback-Verzeichnis",
+      "Details"
+    ],
+    "text": "✓ DotCheck Betreiber COMMUNITY PRODUCT TESTING Testen. Melden. Besser bauen. Ein einfacher Ort, an dem Nutzer neue Polkadot Products ausprobieren und Entwicklern klares, verwertbares Feedback geben. 0 Tests insgesamt 0 Products getestet — Funktionieren — Ø Bewertung Product testen Dauert weniger als eine Minute. Product-Name * Kategorie Tool Community Commerce Social Gaming Andere Product-Link Hat",
+    "at": 1785408563
+  },
+  "dotcheckhub": {
+    "title": "DotCheck · Product Transparency Explorer",
+    "heads": [
+      "Finde Products, denen du vertrauen kannst.",
+      "Product eintragen",
+      "Erst entdecken, dann verifizieren.",
+      "Sieh, was ein Product wirklich trägt.",
+      "Testen. Melden. Besser bauen.",
+      "Community-Test einreichen"
+    ],
+    "text": "✓ DotCheck DE EN THE .DOT PRODUCT DIRECTORY Finde Products, denen du vertrauen kannst. Ein wachsendes Verzeichnis für Apps im Polkadot-Products-Ökosystem – mit nachvollziehbaren Deployments, Dependencies und Community-Signalen. Offener Katalog, klare Belege. Jede gültige .dot-Domain kann aufgenommen werden. Der Prüfstatus zeigt, wie viel davon bereits technisch bestätigt ist. Alle Verifiziert Bean",
+    "at": 1785408408
+  },
+  "dotify-test01": {
+    "title": "Dotify — Listen together",
+    "heads": [
+      "Let the Music connect the Dots.",
+      "Open the first listening room.",
+      "Open rooms",
+      "Start with the music"
+    ],
+    "text": "Skip to content Connect SHARED LISTENING, HAPPENING NOW Let the Music connect the Dots. Enter a live room, or start one from a track. THE COMMONS IS QUIET Open the first listening room. Choose a track, then share the link. Open the first room 01 / PRESENCE Open rooms Rooms 0 In rooms now 0 Open a room No room is open yet. Choose a track above, or open a room from the catalog. 02 / TRACKS Start wit",
+    "at": 1785408812
+  },
+  "dotmetrics": {
+    "title": "dotmetrics",
+    "heads": [
+      "dotmetrics",
+      "Registrazioni",
+      "Parametri vitali della catena",
+      "Sopravvivenza"
+    ],
+    "text": "dotmetrics in attesa di blocchi IT 79 app indicizzate · 30 pubblicate · 39 distribuite · 1 che dichiarano un contratto · aggiornato 10h fa REGISTRAZIONI una cella per ogni ora UTC · una riga per ogni giorno UTC · totale del giorno nella colonna a destra nomi registrati 24 lug 27 25 lug 10 26 lug 4 27 lug 16 28 lug 11 29 lug 8 30 lug 2 00 06 12 18 UTC Tutte 79 Pubblicate 30 Distribuite 39 Solo nome",
+    "at": 1785409257
+  },
+  "dw3labsgame": {
+    "title": "Rainbow — a platformer whose score is proven, not claimed",
+    "heads": [
+      "Ready",
+      "Top 10",
+      "Your best 10"
+    ],
+    "text": "Skip to content Rainbow Play How it works Ready Your seed is derived from your address, so nobody can play your session for you. Connect an account ← → move · space jump — hold it, a tap is a shorter hop Sound on Fullscreen ⚙ score 0 lives — coins0 tick 0 seed — ◀ ▶ JUMP 01 Account Connect an account 02 Seed issued The enclave issues a seed 03 Run played Play the run 04 Log sent Send the log, not ",
+    "at": 1785408357
+  },
+  "eternalise-notary": {
+    "title": "Eternalise - PNP",
+    "heads": [
+      "Eternalise",
+      "The Link to the Diary",
+      "The Pages",
+      "The Diary's Memories",
+      "Magical Traces"
+    ],
+    "text": "POLKADOT NOTARY PROTOCOL (PNP) Eternalise Write your secrets in the ink of the decentralized JAM architecture. The diary remembers all, and what is written here cannot be undone. THE LINK TO THE DIARY Seeking connection... Awaiting Host Injection PERMISSION DENIED MAGICAL SYNC Connecting... DOMAIN BINDING eternalise-notary.dot THE PAGES Your Declaration ETCH TO CHAIN (REMARK) CRYPTOGRAPHIC SIGNATU",
+    "at": 1785409215
+  },
+  "eternalize-notary": {
+    "title": "Eternalise - PNP",
+    "heads": [
+      "Eternalise",
+      "The Link to the Diary",
+      "The Pages",
+      "The Diary's Memories",
+      "Magical Traces"
+    ],
+    "text": "POLKADOT NOTARY PROTOCOL (PNP) Eternalise Write your secrets in the ink of the decentralized JAM architecture. The diary remembers all, and what is written here cannot be undone. THE LINK TO THE DIARY Seeking connection... Awaiting Host Injection PERMISSION DENIED MAGICAL SYNC Connecting... DOMAIN BINDING eternalize-notary.dot THE PAGES Your Declaration ETCH TO CHAIN (REMARK) CRYPTOGRAPHIC SIGNATU",
+    "at": 1785409245
+  },
+  "guestbook": {
+    "title": "Guestbook — yolodot",
+    "heads": [
+      "GUESTBOOK█",
+      "SIGN",
+      "ENTRIES",
+      "SYSTEM"
+    ],
+    "text": "Skip to entries > YOLODOT.GUESTBOOK [ THEME: AUTO ] POLKADOT PRODUCTS DEVNET · DOTNS USERSTORE GUESTBOOK█ Every entry below lives in a contract on Asset Hub. Reading needs no wallet, no account and no app — the chain hands it to any browser that asks. ! WALLET NOT CONNECTED Wallet not connected yet (Could not connect to the wallet: HostRejectedError: Offset is outside the bounds of the DataView) S",
+    "at": 1785409039
+  },
+  "hahamingx00": {
+    "title": "hahaming.dot - .dot Web ID",
+    "heads": [
+      "hahaming.dot"
+    ],
+    "text": "hahaming.dot hahaming.dot The decentralized web, in your browser Powered by .dot Web ID Visit on dev-dot.li © 2026 .dot Network Demo by BoBin",
+    "at": 1785408982
+  },
+  "hello-devnet-ynrc46": {
+    "title": "Hello, Devnet",
+    "heads": [
+      "Hello, Devnet"
+    ],
+    "text": "Hello, Devnet This is your page. Click anything to make it yours. made with dotpages.dot",
+    "at": 1785408578
+  },
+  "hello-world-bernar": {
+    "title": "hello-world-bernar.dot",
+    "heads": [
+      "Hello World .dot",
+      "Wallet",
+      "Cloud Storage (devnet)",
+      "Sin host de Polkadot"
+    ],
+    "text": "Hello World .dot SDK no disponible: Chain 0xe101f0fa4627d29a257645e02be86d80378fea1a2bf8fa6a918d150ebc760a59 is not supported by the current host. It may not be enabled in this host build, or its genesis hash may have drifted after a network reset. Sin host de Polkadot Estás viendo la app fuera de la app de Polkadot / web gateway, así que el SDK no tiene conexión al host. Publica el bundle con pad",
+    "at": 1785409197
+  },
+  "hellodotworld": {
+    "title": "Hello, Polkadot",
+    "heads": [
+      "Hello, Polkadot"
+    ],
+    "text": "YOLODOT · DEVNET Hello, Polkadot If you are reading this from a .dot domain, the whole publish pipeline works: bundle → Bulletin → DotNS → host. Poke it Not poked yet. Build 2026-07-24 18:54:45 UTC Served from https://hellodotworld.app.dev-dot.li Path /",
+    "at": 1785409078
+  },
+  "helloworld": {
+    "title": "Hello, Twitter!",
+    "heads": [
+      "Hello, Twitter! 👋"
+    ],
+    "text": "HELLOWORLD.DOT Hello, Twitter! 👋 A plain static page, published to the Polkadot Products Devnet. Its bundle lives on the Bulletin chain and its name is a DotNS record — no server in between. Hello, Twitter! ENGLISH Say it in another language Content-addressed on Bulletin, named by DotNS — helloworld.dot",
+    "at": 1785408953
+  },
+  "hermes-agent-test": {
+    "title": "Hermes Test App",
+    "heads": [
+      "🚀 Hello from Hermes"
+    ],
+    "text": "🚀 Hello from Hermes Deployed to Polkadot Products Devnet via Bulletin Chain (1010) Powered by DotNS + pad CLI Published by Hermes Agent · July 2026",
+    "at": 1785409233
+  },
+  "ip-assets": {
+    "title": "Soft.Law — IP Explorer",
+    "heads": [
+      "Ideas becomeverifiable assets.",
+      "Recently registered",
+      "Merlin",
+      "Poly Test",
+      "Messi",
+      "Fish Boi"
+    ],
+    "text": "EXPLORER MY STUDIO REGISTER IP PUBLIC INTELLECTUAL PROPERTY REGISTRY Ideas become verifiable assets. Explore works registered on Soft.Law, anchored to Asset Hub and readable by anyone. ON CHAIN PUBLIC RECORD REGISTRY Recently registered TITLE ON THIS PAGE WORK TYPE ON THIS PAGE All work types Artistic Audiovisual Dramatic Literary Musical Software OWNER ACROSS THE REGISTRY APPLY #32 ARTISTIC Merli",
+    "at": 1785408493
+  },
+  "italiarovente": {
+    "title": "Italia Rovente — Italy's warming since 1940",
+    "heads": [
+      "Italia Rovente",
+      "+1.6°C warmer",
+      "Yearly average temperature",
+      "The map",
+      "The national picture",
+      "The seas"
+    ],
+    "text": "Italia Rovente How much hotter Italy has become since 1940 Rome ROME · LAZIO +1.6°C warmer Rome's yearly average temperature has risen +1.6°C since 1940 — about +0.2°C every decade. Each stripe below is one year, from 1940 on the left to today: blue years were cooler than the 1961–1990 normal, red years hotter. RIGHT NOW IN ROME 36.8° Today 25° / 38° live · Open-Meteo 1940 cooler ← 1961–1990 norma",
+    "at": 1785409010
+  },
+  "mini-lucky-smoke": {
+    "title": "Mini Lucky Rooms Smoke",
+    "heads": [
+      "Mini Lucky Rooms Smoke",
+      "Controls",
+      "Capability Table",
+      "Diagnostics Log",
+      "Latest Action"
+    ],
+    "text": "Mini Lucky Rooms Smoke Build SHA dev Build time dev Host status CONNECTED Current room mini-lucky-smoke:test:alice Chat manager Available Controls Initialize Chat Register Room Register Same Room With Fresh Manager Register Bot Send Text Message Send Actions Message Start Room List Subscription Start Action Subscription Stop Subscriptions Action subscription: inactive Export Diagnostic JSON Reset ",
+    "at": 1785408481
+  },
+  "my-dotkit": {
+    "title": "DotKit — Polkadot Products Devnet",
+    "heads": [
+      "DotKit",
+      "Let's get you set up"
+    ],
+    "text": "DotKit Polkadot Products · Devnet Faucet DEVNET SDK READY | ENV: DEVNET | APP: dotkit 1 2 3 4 5 6 7 Let's get you set up To publish your app on the Polkadot network you need a deploy wallet. We'll create one and get it ready in about 5 minutes. 🔑 Create a secure wallet — right here in your browser ⛽ Top it up with free test tokens 🚀 Publish your app to the network ▸ What is a deploy wallet? ⚡ Pr",
+    "at": 1785408913
+  },
+  "oblv-wg-calc": {
+    "title": "Oblv Calc",
+    "heads": [
+      "Calc",
+      "History"
+    ],
+    "text": "Calc Offline calculator · no network, no permissions DEG RAD 0 MC MR M− M+ M = 0 x! 1/x e eˣ Ans sin cos tan ln log ( ) xʸ √ π AC ⌫ % ÷ 7 8 9 × 4 5 6 − 1 2 3 + ± 0 . = HISTORY Nothing yet. Type an expression and press Enter. Implicit products (2π, 3(4+5)), calculator percent (200+10% = 220), right-associative ^.",
+    "at": 1785408762
+  },
+  "oblv-wg-calendar": {
+    "title": "Oblv Calendar",
+    "heads": [
+      "Calendar",
+      "July 2026",
+      "Thursday 30 July 2026",
+      "Next up",
+      "Tags",
+      "One-line syntax"
+    ],
+    "text": "Calendar Local calendar · no network, no permissions July 2026 Today 0 this week · 0 total MO TU WE TH FR SA SU 29 30 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 1 2 3 4 5 6 7 8 9 THURSDAY 30 JULY 2026 free Nothing on this day. The line above lands here. NEXT UP Nothing ahead. 0 TODAY 0 7 DAYS 0 REPEATS 0 TOTAL TAGS No tags yet. Add #work to an event — it pi",
+    "at": 1785408678
+  },
+  "oblv-wg-clock": {
+    "title": "Oblv Clock",
+    "heads": [
+      "Oblv Clock",
+      "World clocks",
+      "Time zones",
+      "Status"
+    ],
+    "text": "Oblv Clock Rome — Europe · UTC+2 24-hour Seconds on Date on 12 3 6 9 Thu 30 Jul Dial Segments 12 Digits Dial WORLD CLOCKS New York UTC-4 06:52 ✕ Tokyo UTC+9 19:52 ✕ TIME ZONES Pick a city to move the main clock to it, or + to keep it as a world clock. UTC UTC+0 + Paris Europe UTC+2 + London Europe UTC+1 + Berlin Europe UTC+2 + New York America UTC-4 + Chicago America UTC-5 + Los Angeles America UT",
+    "at": 1785408748
+  },
+  "oblv-wg-crypto": {
+    "title": "Oblv Crypto",
+    "heads": [
+      "Oblv Crypto",
+      "Watchlist",
+      "Manage"
+    ],
+    "text": "Oblv Crypto 3 coins · prices in EUR · updated 12:52 € → $ Refresh WATCHLIST DOT Polkadot 0,6687 € +0.6% BTC Bitcoin 56.193 € +0.2% ETH Ethereum 1669 € +0.1% MANAGE Polkadot DOT ↑ ↓ ✕ Bitcoin BTC ↑ ↓ ✕ Ethereum ETH ↑ ↓ ✕ Data by CoinGecko, refreshed every minute. This list is stored in this page's own localStorage — the dashboard widget lives on a different subname, so it keeps a separate one.",
+    "at": 1785408779
+  },
+  "oblv-wg-opengov": {
+    "title": "Oblv OpenGov",
+    "heads": [
+      "OpenGov Tracker",
+      "Open to vote",
+      "Recently closed",
+      "Moderation Team Bounty Top-up (August 2026 – January 2027)",
+      "Timeline",
+      "Proposal"
+    ],
+    "text": "OpenGov Tracker 5 referenda open to vote on Polkadot · updated 12:51 · block ≈ 32.333.603 Refresh Deadline Newest Amount Treasury only OPEN TO VOTE #1928 Preparing Medium spender Moderation Team Bounty Top-up (August 2026 – January 2027) — aye 0,00% support not deciding yet decision starts in 3h 12m #1917 Deciding Small spender 3,5K DOT [Small Spender] Referendum #1917 Polkadot Toronto Offline Mee",
+    "at": 1785408695
+  },
+  "oblv-wg-rss": {
+    "title": "Oblv RSS",
+    "heads": [
+      "Oblv RSS",
+      "Timeline",
+      "Feeds"
+    ],
+    "text": "Oblv RSS 30 articles from 3 feeds · updated 12:51 Mark 30 read Refresh TIMELINE Frozen in Time: Why the Fellowship Manifesto Can't Keep Up With Polkadot Polkadot doesn’t have one center of power off-chain. It has three. Parity builds the protocol. The Web3 Foundation sets strategy, funds the ecosystem, and -since 2025- votes directly in OpenGov. The PCF signs the… Polkadot Forum · thewhiterabbitM ",
+    "at": 1785408708
+  },
+  "oblv-wg-todo": {
+    "title": "Oblv Todo",
+    "heads": [
+      "Todo",
+      "Tags",
+      "Quick-add syntax"
+    ],
+    "text": "Todo To do 0 All 0 Done 0 Empty. Add the first one above — the syntax is in the footer. 0 LATE 0 TODAY 0 OPEN 0 DONE TAGS No tags yet. Add #work to a task. QUICK-ADD SYNTAX Double-click a task to edit it in the same syntax. Click ! to change priority, a #tag to filter. Saved in Polkadot Desktop · shared with the widget",
+    "at": 1785408725
+  },
+  "oblv-wg-weather": {
+    "title": "Oblv Weather",
+    "heads": [
+      "Oblv Weather",
+      "Next 24 hours",
+      "7 days",
+      "Location",
+      "Status"
+    ],
+    "text": "Oblv Weather Paris, France °C ⟳ Refresh 23°C Overcast Feels 25°C · wind 3 km/h · humidity 72% · precipitation 0 mm NEXT 24 HOURS 13h 23° 3% 14h 26° 3% 15h 27° 3% 16h 29° 0% 17h 29° 0% 18h 30° 0% 19h 30° 0% 20h 30° 0% 21h 29° 0% 22h 29° 0% 23h 25° 0% 00h 24° 0% 01h 23° 0% 02h 22° 0% 03h 22° 3% 04h 21° 0% 05h 21° 0% 06h 21° 0% 07h 20° 0% 08h 20° 0% 09h 21° 0% 10h 22° 0% 11h 23° 0% 12h 25° 0% 7 DAYS ",
+    "at": 1785408791
+  },
+  "oblv-widgets": {
+    "title": "Oblv Widgets",
+    "heads": [
+      "Oblv Widgets"
+    ],
+    "text": "Oblv Widgets Widgets for the Polkadot Desktop dashboard. SDK ready Host inside the Polkadot host Connect wallet",
+    "at": 1785408837
+  },
+  "pactprotocol": {
+    "title": "Giga App",
+    "heads": [
+      "The Zero-Fee Truth Layer",
+      "Welcome to the End of Digital Feudalism",
+      "The Manifesto",
+      "Decentralised Juries",
+      "0% Fees for Honest Actors",
+      "No Escrow Honeypots"
+    ],
+    "text": "Pact Protocol Protocol Jury Portal Giga DApp Secured by Polkadot Host Connect Wallet The Zero-Fee Truth Layer A decentralised dispute settlement protocol built natively on Polkadot. No intermediaries. No escrow honeypots. No personal data extraction. Just pure, trustless cryptographic sovereignty. Launch Giga Marketplace Welcome to the End of Digital Feudalism Legacy marketplaces extract massive f",
+    "at": 1785409151
+  },
+  "pennypixel": {
+    "title": "pennypixel.dot",
+    "heads": [],
+    "text": "LIVE 1,024 CELLS · ASSET HUB · CHAIN 420420417 pennypixel.dot ON CHAIN CANVAS 32 × 32 · SCALE 1:16 HEAT · · · HOVER OR TAP A CELL TO INSPECT IT PAINTED VALUE $ 0 1 2 3 4 5 6 7 8 9 . 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 PAINTERS 0 PIXELS $0.01 / PIXEL PAINT PAINT REMAINING 0 #FF2D78 COLOR 03 / 16 BUY PAINT $0.25 = 25 PIXELS LEDGER NO PLACEMENTS OBSERVED YET TOP PAINTERS STEALCROWN.DOT PENNYPIX",
+    "at": 1785408649
+  },
+  "pilliodot": {
+    "title": "Pillio v2",
+    "heads": [
+      "Pillio v2",
+      "Welcome to Pillio",
+      "Add medication"
+    ],
+    "text": "Pillio v2 🟡 Local · local-mock… Welcome to Pillio Pillio lives entirely on the Polkadot Products Devnet. Your medication data belongs to your wallet — nobody else can read or change it. Let's add your first medication. You can add more later. Add medication Step 1 / 7 — Name Name Cancel Next",
+    "at": 1785408458
+  },
+  "plaza-social": {
+    "title": "Forum - Plaza",
+    "heads": [
+      "PLAZA"
+    ],
+    "text": "PLAZA DECENTRALIZED SOCIAL ○ CONNECT ! NO REGISTRY SPECIFIED Add ?registry=0x... to URL [FORUM] Forum not available. Contract not deployed.",
+    "at": 1785409026
+  },
+  "polkaportal03": {
+    "title": "Polkadot Products Devnet - Static App Portal & Documentation",
+    "heads": [
+      "Build static frontends.\n        Address with .dot domains.",
+      "What is a Polkadot Product?",
+      "Quick Developer Loop",
+      "The 4-Layer Architectural Model",
+      "Entry Points",
+      "Your dApp Bundle"
+    ],
+    "text": "Polkadot Products Devnet Preview Overview Architecture .dot Launcher Host API Console CLI Builder Paseo Devnet Official Docs ↗ ✨ Web-Native Apps on Decentralized Infrastructure Build static frontends. Address with .dot domains. The Polkadot Products Devnet enables web apps that run client-side inside the Polkadot app or dev-dot.li web gateway — no app store, no backend servers, powered by zero-fri",
+    "at": 1785409270
+  },
+  "proofoftake": {
+    "title": "proofoftake.dot",
+    "heads": [],
+    "text": "LIVE ASSET HUB · CHAIN 420420417 proofoftake.dot 1 ACCOUNT = 1 VOTE VOTES ATTEMPTED 0 1 2 3 4 5 6 7 8 9 VOTES CAST THE BOARD 08 LIVE 01 Your DAO is three VCs in a trench coat. plum-newt-10 · 27h ago 0 1 2 3 4 5 6 7 8 9 =01 Every L2 is a database with a podcast. plum-vole-11 · 27h ago 0 1 2 3 4 5 6 7 8 9 =01 Roadmaps are fan fiction with a token allocation. plum-crane-12 · 27h ago 0 1 2 3 4 5 6 7 8",
+    "at": 1785408636
+  },
+  "radioactivedrums": {
+    "title": "Radioactive Drums",
+    "heads": [
+      "☢ RADIOACTIVE DRUMS"
+    ],
+    "text": "☢ RADIOACTIVE DRUMS served from the Bulletin chain no servers · no samples · all synthesis ▶ PLAY 120 BPM DEMO CLEAR KICK SNARE CLAP HAT OPEN HAT TOM RIM ZAP ☢ KICK 1 / Q SNARE 2 / W CLAP 3 / E HAT 4 / R OPEN HAT 5 / T TOM 6 / Y RIM 7 / U ZAP ☢ 8 / I tap pads to jam · tap cells to sequence · keys 1–8 play, Q W E R T Y U I too · pattern autosaves locally radioactivedrums.dot — frontend stored on Po",
+    "at": 1785408248
+  },
+  "rainbowprobe": {
+    "title": "Rainbow — Product sandbox probe (E0.1)",
+    "heads": [
+      "Rainbow — Product sandbox probe"
+    ],
+    "text": "Rainbow — Product sandbox probe Experiment E0.1. Decides whether the push/tunnel architecture is viable inside a Polkadot Product, before anything expensive gets built on it. WARN Host container no injectedWeb3 — this page is not inside a host container PASS Frame context iframed; cross-origin=true; origin=https://rainbowprobe.app.dev-dot.li PASS WebAssembly instantiate + call succeeded PASS Third",
+    "at": 1785408369
+  },
+  "squadbuilder": {
+    "title": "SquadCap — build your XI, own your league",
+    "heads": [
+      "SquadCap",
+      "Join a league",
+      "Or start a new league"
+    ],
+    "text": "SQUADCAP no league loaded Real prices. Real points. Your budget, your call. Running in local preview (no Polkadot host detected). League loading and publishing need the Polkadot app or the dev-dot.li web gateway. Error detail: Chain 0xe101f0fa4627d29a257645e02be86d80378fea1a2bf8fa6a918d150ebc760a59 is not supported by the current host. It may not be enabled in this host build, or its genesis hash ",
+    "at": 1785408298
+  },
+  "stealcrown": {
+    "title": "stealcrown.dot",
+    "heads": [
+      "unclaimed"
+    ],
+    "text": "LIVE ASSET HUB · CHAIN 420420417 · READ-ONLY stealcrown.dot 01 CROWN · 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 STEALS THE THRONE IS OPEN OPEN SINCE 09:02:40 NO HOLDER ON RECORD unclaimed 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 : 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 : 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 . 0 1 2 3 4 5 6 7 8 9 UNCLAIMED FOR no holder 27:48:25 OPEN IN THE POLKADOT APP → Pair yo",
+    "at": 1785408665
+  },
+  "sybildrop": {
+    "title": "frontend",
+    "heads": [
+      "sybildrop"
+    ],
+    "text": "sybildrop Connetti Claim Admin Connetti un account per vedere le campagne disponibili.",
+    "at": 1785408929
+  },
+  "tetris-bulletin": {
+    "title": "Polkadot App",
+    "heads": [
+      "PASEO TETRIS",
+      "CABINA RETRO ARCADE",
+      "Host de Conexión",
+      "🏆 Leaderboard On-Chain"
+    ],
+    "text": "TETRIS NIVEL 1 SCORE 0 LÍNEAS 0 🔇 EN 👾 CABINA RETRO ARCADE Saca el máximo score y regístralo de manera permanente en la red de almacenamiento Paseo Bulletin. INSERT COIN / JUGAR ◀ ↺ ▶ ⬇ ▼ ⏸ HOST DE CONEXIÓN Buscando Billetera del Host... Esta dApp se conecta a tu cuenta de juego derivada del Host de manera pasiva. 🏆 🏆 PUNTAJES 🎯 🎯 LOGROS (0/8) 🏆 LEADERBOARD ON-CHAIN 🔄 REFRESCAR # PILOTO / ",
+    "at": 1785408865
+  },
+  "thebutton": {
+    "title": "The Button",
+    "heads": [],
+    "text": "LOADING....... STATION Ø : THE DOT DEVNET TERMINAL // ASSET HUB 420420417 > CONNECTING WALLET (CONNECTED) LOAD THEBUTTON.001 (Y/N)? Y 4 8 15 16 23 42 EXECUTE ONE PRESS PER HUMAN · NO UNDO",
+    "at": 1785409381
+  },
+  "tintaprotocol": {
+    "title": "Tinta — sella lo que escribes",
+    "heads": [
+      "Tinta."
+    ],
+    "text": "Tinta. Sella lo que escribes. Cualquiera puede comprobar después que no cambió ni una coma. SELLAR COMPROBAR TU CONTENIDO o elige un archivo SELLAR Tinta calcula una huella SHA-256 de tu contenido dentro de tu propio navegador. Nada se sube ni se envía a ningún servidor. Si una sola letra cambia, la huella cambia entera y la mancha se dibuja distinta. @tintadot © 2026 Tinta. Todos los derechos res",
+    "at": 1785408542
+  },
+  "torrent-otp": {
+    "title": "OTP - serverless tracker",
+    "heads": [
+      "OTP - Oblivyr Tracker Protocol",
+      "Look up a swarm"
+    ],
+    "text": "OTP - Oblivyr Tracker Protocol Look up who is on a BitTorrent swarm, without a tracker server. Connected - look up any swarm. Announcing may need you to sign in. Look up a swarm look up Looking up a swarm reads the Polkadot Statement Store and publishes nothing. Announcing is a separate step, on the swarm itself. This host reports no signed-in user ({\"tag\":\"Denied\"}). Reading the swarm works. Anno",
+    "at": 1785408940
+  },
+  "truereviews": {
+    "title": "TrueReviews — real people, real reviews",
+    "heads": [
+      "Discover"
+    ],
+    "text": "Discover Discover Demo mode. Real OpenStreetMap search, seeded places, post freely. On the live network every review is signed by a verified human, one per place. ReviewRegistry live on-chain · 0 places reviewed on the contract 💬 Community chat All 🍽️ Food ☕️ Cafés 🍸 Bars 🍦 Sweet 🏛️ Culture 🛍️ Shops LOVED BY VERIFIED HUMANS ☕️ Caffè Al Bicerin 5.0 · 2 🍕 Pizzeria Da Michele 4.8 · 4 🍦 Gelate",
+    "at": 1785408995
+  },
+  "wudcommunity": {
+    "title": "WUD Community Dashboard",
+    "heads": [
+      "WUD Community",
+      "GAVUN WUD$WUD",
+      "The pod",
+      "Top holders"
+    ],
+    "text": "WUD Community Unofficial · live from Polkadot Asset Hub connecting · — ASSET 31337 · POLKADOT ASSET HUB GAVUN WUD $WUD A community token with 221,373 holders. Every number on this page is read straight off the chain — no wallet, no sign-in, nothing typed in by hand. Official site Asset ID 31337 💬 Community chat Holders 221,373 accounts holding WUD Total supply 999.94B 999,939,162,978 WUD Top 10 h",
+    "at": 1785409180
+  },
+  "yechops-preview": {
+    "title": "YechOps: We Build & Scale Resilient Software",
+    "heads": [
+      "We Build & Scale Resilient Software.",
+      "Services",
+      "Web3-Ready CI/CD",
+      "Infrastructure",
+      "Monitor like a Pro",
+      "Proof of Build"
+    ],
+    "text": "YechOps Blog Contact We Build & Scale Resilient Software. From building our own products to providing expert DevOps consulting, we deliver solutions engineered at peak simplicity and performance. Proof of Build Services Web3-Ready CI/CD Don't be like this new L1 project that has their images in a private registry. We run validators for many ecosystems and know what your node operators need. We'll ",
+    "at": 1785408512
+  },
+  "yologuestbook": {
+    "title": "Guestbook",
+    "heads": [
+      "Guestbook",
+      "Entries"
+    ],
+    "text": "YOLODOT · DEVNET Guestbook Leave a note. No account, no sign-up — just a message and a name if you feel like it. Signing needs a wallet inside the Polkadot host app, which is not wired up yet. Your message 280 characters left Name (optional) Signing unavailable ENTRIES 6 entries, newest first. Second entry. Testing whether the first one moves into history. Claude hallo 0x1877…4eF9 · 5d ago good mo",
+    "at": 1785409051
+  }
+}
