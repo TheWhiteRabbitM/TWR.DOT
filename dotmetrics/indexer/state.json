@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11611496,
-  "updatedAt": "2026-07-30T18:51:19.002Z",
+  "lastBlock": 11614271,
+  "updatedAt": "2026-07-30T20:38:39.816Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "47fbf3acfd24afc5b7537fb34ca0dd131f375718271d430117d91357cc8ef1e5",
-    "cid": "bafybeigv7cn3wjkz3k2dwmw75uhsovoiaczkcmffnkq2msecctvstvfhze",
-    "uploadedAt": "2026-07-30T18:56:36.608Z"
+    "digest": "36279c25c3985a5eae0eaf5bba4176ccf0d480c9ce98226cfddb1d6d079d4d95",
+    "cid": "bafybeihurmr2bvtvw23hq7dhd76grw744cbcokiydz3pmhmwpwrctz7zgu",
+    "uploadedAt": "2026-07-30T20:44:25.199Z"
   },
   "sitePublish": {
     "treeHash": "6a2637d39b23dd7b4fc157436af073fbfbc1dc5907005a8c9fc75bc808f8aa26",
     "publishedAt": "2026-07-30T19:00:58.048Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-30T18:55:16.000Z",
+    "updatedAt": "2026-07-30T20:42:40.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -89,13 +89,14 @@
       "devnetpulse": "alive",
       "dripstream": "alive",
       "trustgraph": "alive",
-      "dropforge": "alive"
+      "dropforge": "alive",
+      "scytaledeploy": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-30T18:55:17.000Z",
+    "updatedAt": "2026-07-30T20:42:40.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -187,9 +188,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeic7mfdmnfl6lt5yin5frh43uzjxrof7522reinzp7zyasdfkvnjpe",
-        "updateCount": 5,
-        "changedAt": 1785437717,
+        "contenthash": "bafybeid2skxja4ulzn34qwtjjeez2m3coh6pttsnlg6y445aeygwfo3o2i",
+        "updateCount": 6,
+        "changedAt": 1785444160,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -209,15 +210,15 @@
         "live": "unknown"
       },
       "dotify-test01": {
-        "contenthash": "bafybeialugzu7rgm7gereewkfr3qsmtndcekyk73djkbqx24koiiiyz2de",
-        "updateCount": 3,
-        "changedAt": 1785328168,
+        "contenthash": "bafybeic74vtqfbp5tnmkvdqvz5c7ff65rwkly5v2mm6o7g7iixam2pgrhq",
+        "updateCount": 4,
+        "changedAt": 1785444160,
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeia4phhjad745jmoebtchg7p753p72g6dwbp5l4gyqvdnqi74nw6ku",
-        "updateCount": 7,
-        "changedAt": 1785430598,
+        "contenthash": "bafybeif3irjn2c3zgq4nmfbhg5xvse3d4wgqx5wj576xzb5os32ye6lkuy",
+        "updateCount": 8,
+        "changedAt": 1785444160,
         "live": "alive"
       },
       "dripstream": {
@@ -247,9 +248,9 @@
         "live": "alive"
       },
       "flowfarm-staking": {
-        "contenthash": "bafybeiextx2kqlbvmebzyffkor3ask3tm4dtprxb4kuwcvkw5ri6hnauvm",
-        "updateCount": 5,
-        "changedAt": 1785437717,
+        "contenthash": "bafybeiadkaq5ff2txpfzfd3sbqz5ikf3utw2gv254s4qaqby33cbapfapa",
+        "updateCount": 6,
+        "changedAt": 1785444160,
         "live": "alive"
       },
       "giganetwork": {
@@ -365,9 +366,9 @@
         "live": "alive"
       },
       "oblv-wg-todo": {
-        "contenthash": "bafybeigha3vuvf5hthjfuogprpbjcdou6mbgxzgycfjbvppopmq7f6ihve",
-        "updateCount": 1,
-        "changedAt": 1785338946,
+        "contenthash": "bafybeid2l6bi23onhnklfaabhomeaz7x6vsudnqod3tmux5b7qkqjoebnu",
+        "updateCount": 2,
+        "changedAt": 1785444160,
         "live": "alive"
       },
       "oblv-wg-weather": {
@@ -412,9 +413,9 @@
         "live": "alive"
       },
       "plaza-social": {
-        "contenthash": "bafybeiasrjaajxk7if3rptb3hlhoogfdsfoys7ekdn7cwiaqfrfjyxhcpu",
-        "updateCount": 2,
-        "changedAt": 1785430598,
+        "contenthash": "bafybeid4p3kquzrr57yuycuplhokmcbuuunrxbjcxbuja6vhllbfvzkz3e",
+        "updateCount": 3,
+        "changedAt": 1785444160,
         "live": "alive"
       },
       "polkadot-builders-hackademy": {
@@ -462,6 +463,16 @@
         "contenthash": "bafybeicqhw7hb63lhbcuvk24qybdxbag4qhioq7v5mbf5dv65f7sa7pjge",
         "updateCount": 0,
         "live": "alive"
+      },
+      "scytaledeploy": {
+        "contenthash": "bafybeibzoitfyxlishqawrnaccshhzjm5p7eij4vrinalnx7tdarmmcdju",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "scytaletest": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "squadbuilder": {
         "contenthash": "bafybeigmkeakxneo7douy73pjokpxhhsog7caukt5zrz4mdagvd3i5lq54",

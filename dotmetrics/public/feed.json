@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1785437717,
-  "count": 83,
+  "generatedAt": 1785444160,
+  "count": 85,
   "apps": [
+    {
+      "label": "scytaledeploy",
+      "domain": "scytaledeploy.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785443436,
+      "url": "https://scytaledeploy.dev-dot.li"
+    },
+    {
+      "label": "scytaletest",
+      "domain": "scytaletest.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785442836,
+      "url": "https://scytaletest.dev-dot.li"
+    },
     {
       "label": "dropforge",
       "domain": "dropforge.dot",
@@ -320,8 +338,8 @@
     {
       "label": "oblv-wg-todo",
       "domain": "oblv-wg-todo.dot",
-      "displayName": "Oblv Todo",
-      "description": "Liste de tâches sur le dashboard : saisie rapide (échéance, priorité, tags), tri par urgence, tout en local.",
+      "displayName": "Oblivyr Todo",
+      "description": "Write a task the way you would say it - “pay rent friday !!” - and it files itself by date, priority and tag. Everything stays on your device.",
       "tier": 0,
       "firstSeenAt": 1785141768,
       "url": "https://oblv-wg-todo.dev-dot.li"
