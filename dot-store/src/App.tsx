@@ -432,13 +432,12 @@ function WriteReview({
   const [note, setNote] = useState('');
   const [step, setStep] = useState('');
 
-  // Touching the form is intent enough to start the host handshake: the signing
-  // stack downloads and the account connects while the reader is still typing,
-  // instead of the whole exchange having to fit between the click and a timeout.
-  const warm = () => {
-    void import('./lib/write').then((m) => m.warmUpSigner()).catch(() => undefined);
-  };
-
+  // No warm-up on touch, deliberately. Starting the host handshake when someone
+  // merely taps a star made the shell raise "PERMISSION: sign and submit
+  // on-chain transactions on your behalf" over a rating widget — the same
+  // unprompted-consent problem the startup Clipboard request had, reintroduced
+  // by me while trying to make submitting faster. The connection now begins when
+  // the reader presses Post, where the prompt has a visible cause.
   const submit = async () => {
     if (!rating) {
       setState('error');
@@ -494,7 +493,11 @@ function WriteReview({
         at: Math.floor(Date.now() / 1000),
       });
       setState('local');
-      setNote(out.why);
+      // The shell failing to derive an account is a different situation from
+      // "you have nothing connected", and telling the reader to go and connect
+      // a wallet in that case sends them looking for a setting that is not
+      // there. Name it for what it is.
+      setNote(out.code === 'no-account' ? 'no-account' : '');
       onPosted(false);
     } catch (e) {
       setState('error');
@@ -503,7 +506,7 @@ function WriteReview({
   };
 
   return (
-    <section className="write" onPointerDown={warm} onFocusCapture={warm}>
+    <section className="write">
       <h3>{t('write.h')}</h3>
       <div className="write-stars" role="group" aria-label={t('write.rating')}>
         {[1, 2, 3, 4, 5].map((n) => (
@@ -538,7 +541,9 @@ function WriteReview({
       {/* The translated sentence already says everything a reader needs; the
           internal reason is left out of it, because an English fragment glued
           onto an Italian message reads as a leak, not as detail. */}
-      {state === 'local' && <p className="note">{t('write.demo')}</p>}
+      {state === 'local' && (
+        <p className="note">{note === 'no-account' ? t('write.noaccount') : t('write.demo')}</p>
+      )}
       {state === 'error' && <p className="note note-warn">{t('write.failed', { why: note })}</p>}
     </section>
   );

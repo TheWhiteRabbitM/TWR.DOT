@@ -360,3 +360,94 @@ Suggestion:
 
 Filed with thanks — feeless content-addressed publishing and personhood-as-a-primitive
 are genuinely new capabilities, and everything above is offered to make them land.
+
+---
+
+## 18. The web shell cannot derive a product account, so no app can sign there
+
+**Severity: high — it blocks every signing app on `*.dev-dot.li` in a desktop browser.**
+
+Opening any app that calls `SignerManager.connect()` in the web shell logs:
+
+```
+[signer:host] failed to get product account
+  {cause: RangeError: Offset is outside the bounds of the DataView
+     at DataView.prototype.getUint8}
+[signer:host] host could not derive a product account for dappName;
+  resolving with empty accounts {dotNsIdentifier: <name>.dot,
+  error: Offset is outside the bounds of the DataView}
+```
+
+`connect()` then resolves **successfully** with an empty account list, so an app
+sees "connected, no accounts" and cannot tell a broken host from a reader who
+simply has no account.
+
+Reproduced on two unrelated apps, so it is not app-specific and not a name-shape
+problem (we suspected the hyphen in `dot-store.dot` first):
+
+| App | dappName | Result |
+|---|---|---|
+| `dot-store.dot` | hyphen, 9 chars | empty accounts, same RangeError |
+| `thebutton.dot` | no hyphen | empty accounts, same RangeError — stuck on "CONNECTING WALLET" |
+
+`thebutton.dot` has signed transactions successfully in the past, which places
+the change in the shell rather than in the apps.
+
+Two things would each have saved a day here:
+
+1. **A decode failure should not resolve as success.** Returning `err` — or any
+   account list distinguishable from "this user has none" — would let an app say
+   "the shell could not provide an account" instead of "connect one".
+2. **The permission prompt fires before the failure.** The reader is asked to
+   grant "sign and submit on-chain transactions on your behalf", grants it, and
+   then gets nothing. Deriving the account first would avoid spending a consent
+   on an operation that cannot proceed.
+
+## 19. `.tx()` sizes contract calls with a dry-run that under-estimates
+
+**Severity: high — silent, and it costs a transaction every time.**
+
+`contract.review.tx(...)` on a call that writes one struct, one string and two
+array pushes was included in a block and then reverted with `Revive.OutOfGas`,
+every time. Nothing reached the contract, and nothing observable said why: that
+dispatch error carries no revert reason to decode and emits no event.
+
+Passing explicit limits fixes it, and the same call landed immediately:
+
+```ts
+contract.review.tx(label, name, rating, body, {
+  gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
+  storageDepositLimit: 10n ** 18n,
+})
+```
+
+Two suggestions: apply a safety factor to the dry-run figure rather than
+submitting it verbatim, and surface `OutOfGas` distinctly from a contract revert
+so callers can retry with headroom instead of reporting a reverted contract.
+
+Related: `eth_estimateGas` over the same call through the EVM layer reports
+~29,000 gas, which is far below what it consumes. Wallets that trust it produce
+the same silent failure.
+
+Also worth stating plainly, because it cost us two rounds: **`.tx()` reports
+dispatch failures in its resolved value, not by throwing.** Code that only
+catches will report `OutOfGas` to the user as success.
+
+## 20. Content-hashed asset names break lazily-imported chunks on republish
+
+**Severity: medium — breaks a feature only for readers holding the previous build.**
+
+An entry chunk hard-codes the filenames of the chunks it will fetch later.
+Republishing changes every content hash, so a shell still running the previous
+entry asks for a file that no longer exists:
+
+```
+Failed to fetch dynamically imported module:
+polkadot://dot-store.dot/assets/write-CWblSXmL.js
+```
+
+It surfaces only when the reader uses the lazily-loaded feature — long after the
+page loaded cleanly. Since the whole bundle is already content-addressed by its
+CID, per-file hashes buy nothing here; stable filenames let a stale entry find a
+real file. Worth saying in the deployment docs, because the default Vite config
+does the harmful thing.

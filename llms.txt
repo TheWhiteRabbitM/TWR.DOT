@@ -441,3 +441,83 @@ open this week.
    filenames are content hashes — same name means same bytes.
 4. Instrument before you guess. A breadcrumb string in the UI turned three wrong theories
    into one measurement, in the work that produced this file.
+
+---
+
+## T21 — "connected, but no accounts" is a broken host, not an empty wallet
+
+**Symptom.** `SignerManager.connect()` resolves ok; `getState().accounts` is empty;
+every signing path then reports "no account to sign with".
+
+**Cause.** The web shell fails to derive the product account and swallows it:
+
+```
+[signer:host] failed to get product account
+  {cause: RangeError: Offset is outside the bounds of the DataView}
+[signer:host] host could not derive a product account for dappName;
+  resolving with empty accounts
+```
+
+Confirmed on two unrelated apps, one of which had signed successfully before, so it is
+the shell — not your dappName, not the hyphen in your name.
+
+**What to do.** Treat empty-accounts-after-connect as its own outcome and say so. Do not
+tell the reader to connect a wallet: there is no such setting inside the shell, and you
+will send them looking for one. Test signing in the NATIVE Polkadot app; the web shell
+at `*.dev-dot.li` currently cannot sign at all.
+
+## T22 — a contract call that is mined and then reverts with OutOfGas
+
+**Symptom.** `.tx()` resolves, nothing appears on chain, no revert reason, no event.
+
+**Cause.** `.tx()` sizes the call with its own dry-run and submits that figure. For a
+storage-writing call it comes back short, and the transaction is included and then
+discarded as `Revive.OutOfGas`.
+
+**Code.**
+```ts
+await contract.method.tx(...args, {
+  gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
+  storageDepositLimit: 10n ** 18n,
+})
+```
+Passing both skips the dry-run entirely. Unused weight is not charged and the storage
+deposit is reserved rather than spent, so headroom is free.
+
+**And read the result.** `.tx()` reports dispatch failures in its RESOLVED VALUE:
+
+```ts
+const r = await contract.method.tx(...)
+if (r?.ok === false) fail(r.error)   // catching only throws reports OutOfGas as success
+```
+
+`eth_estimateGas` through the EVM layer under-reports the same call by roughly 4x, so
+multiply it before handing a transaction to a wallet.
+
+## T23 — do not content-hash filenames in a bundle that is already content-addressed
+
+**Symptom.** `Failed to fetch dynamically imported module: polkadot://<name>.dot/assets/x-HASH.js`,
+appearing only when someone uses a lazily-loaded feature.
+
+**Cause.** The entry chunk memorised chunk filenames at build time. You republished, every
+hash changed, and a shell running the previous entry asks for a file that no longer exists.
+
+**Code.** In `vite.config.ts`:
+```ts
+build: { rolldownOptions: { output: {
+  entryFileNames: 'assets/[name].js',
+  chunkFileNames: 'assets/[name].js',
+  assetFileNames: 'assets/[name][extname]',
+} } }
+```
+A new build is already a new CID; per-file cache-busting buys nothing and costs this.
+
+## T24 — ask for consent at the moment it is caused
+
+Both permission mistakes in this codebase were the same mistake. Clipboard was requested at
+startup, so a storefront with no copy button demanded clipboard access. Then a "warm up the
+signer early" optimisation made tapping a star raise *"sign and submit on-chain transactions
+on your behalf"*.
+
+A prompt with no visible cause is one a reader is right to refuse, and refusing it poisons
+the session. Request on the action, not in anticipation of it.

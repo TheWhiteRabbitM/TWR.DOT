@@ -31,7 +31,7 @@ export type PostRoute = 'host' | 'wallet';
 
 export type PostOutcome =
   | { kind: 'onchain'; via: PostRoute; hash?: string }
-  | { kind: 'local'; why: string }
+  | { kind: 'local'; why: string; code?: 'no-account' }
   | { kind: 'error'; why: string; step: string };
 
 export interface PostArgs {
@@ -258,7 +258,19 @@ async function postViaHost(args: PostArgs): Promise<PostOutcome> {
     onStep?.(step);
     const { manager, account } = await getManager();
     if (!account) {
-      return { kind: 'local', why: 'the Polkadot app did not offer an account to sign with' };
+      // Observed in the web shell, and NOT specific to this app: the host logs
+      // "failed to get product account … RangeError: Offset is outside the
+      // bounds of the DataView" and resolves with an empty account list. The
+      // Button, which has signed successfully before, fails identically there.
+      //
+      // So this is the shell being unable to derive an account, not the reader
+      // having forgotten to connect one — and telling them to go and connect a
+      // wallet would send them hunting for a setting that does not exist.
+      return {
+        kind: 'local',
+        code: 'no-account',
+        why: 'the shell could not derive an account for this app',
+      };
     }
 
     const signer = manager.getSigner();

@@ -71,6 +71,8 @@ const EN = {
   'write.already': 'You have already reviewed this app.',
   'write.signing': 'Waiting for your signature…',
   'write.step': '{step}…',
+  'write.noaccount':
+    'The Polkadot shell did not give this app an account to sign with, so the review is saved on this device only. This is the shell failing to derive one — not something you can fix in settings. Try from the Polkadot app on your phone, or use an EVM wallet in a browser.',
   'write.stale': 'The store was updated while this page was open, so part of it could not load. Close dot-store and open it again, then post your review.',
   'info.h': 'Information',
   'info.domain': 'Domain',
@@ -163,6 +165,8 @@ const IT: Dict = {
   'write.already': 'Hai già recensito questa app.',
   'write.signing': 'In attesa della tua firma…',
   'write.step': '{step}…',
+  'write.noaccount':
+    'La shell Polkadot non ha fornito a questa app un account con cui firmare, quindi la recensione è salvata solo su questo dispositivo. È la shell che non riesce a derivarlo — non è una cosa che puoi sistemare nelle impostazioni. Prova dalla Polkadot app sul telefono, oppure usa un portafoglio EVM nel browser.',
   'write.stale': 'Lo store è stato aggiornato mentre questa pagina era aperta, quindi una sua parte non si è caricata. Chiudi dot-store e riaprilo, poi pubblica la recensione.',
   'info.h': 'Informazioni',
   'info.domain': 'Dominio',
@@ -252,6 +256,8 @@ const ES: Dict = {
   'write.already': 'Ya has reseñado esta app.',
   'write.signing': 'Esperando tu firma…',
   'write.step': '{step}…',
+  'write.noaccount':
+    'La shell de Polkadot no ha dado a esta app una cuenta con la que firmar, así que la reseña se guarda solo en este dispositivo. Es la shell la que no consigue derivarla — no es algo que puedas arreglar en los ajustes. Prueba desde la app de Polkadot en el móvil, o usa una cartera EVM en el navegador.',
   'write.stale': 'La tienda se actualizó mientras esta página estaba abierta, así que una parte no pudo cargarse. Cierra dot-store y ábrelo de nuevo, luego publica tu reseña.',
   'info.h': 'Información',
   'info.domain': 'Dominio',
@@ -341,6 +347,8 @@ const FR: Dict = {
   'write.already': 'Vous avez déjà donné un avis sur cette app.',
   'write.signing': 'En attente de votre signature…',
   'write.step': '{step}…',
+  'write.noaccount':
+    'Le shell Polkadot n’a pas fourni à cette app de compte pour signer, l’avis est donc enregistré sur cet appareil uniquement. C’est le shell qui n’arrive pas à en dériver un — rien que vous puissiez corriger dans les réglages. Essayez depuis l’app Polkadot sur téléphone, ou utilisez un portefeuille EVM dans le navigateur.',
   'write.stale': 'La boutique a été mise à jour pendant que cette page était ouverte, une partie n’a donc pas pu se charger. Fermez dot-store puis rouvrez-le, et publiez votre avis.',
   'info.h': 'Informations',
   'info.domain': 'Domaine',
