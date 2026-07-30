@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1785394135,
+  "generatedAt": 1785422626,
   "count": 79,
   "apps": [
     {
@@ -33,7 +33,7 @@
       "label": "flowfarm-staking",
       "domain": "flowfarm-staking.dot",
       "displayName": "FlowFarm",
-      "description": "Explore finalized staking data and test a fail-closed PAS reward-advance vault.",
+      "description": "Explore finalized staking data and inspect an active PAS reward-advance vault on Devnet.",
       "tier": 0,
       "firstSeenAt": 1785362628,
       "url": "https://flowfarm-staking.dev-dot.li"

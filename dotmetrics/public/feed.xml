@@ -4,7 +4,7 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 30 Jul 2026 06:48:55 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 30 Jul 2026 14:43:46 GMT</lastBuildDate>
     <item>
       <title>thepipersguild</title>
       <link>https://thepipersguild.dev-dot.li</link>
@@ -29,7 +29,7 @@
     <item>
       <title>FlowFarm</title>
       <link>https://flowfarm-staking.dev-dot.li</link>
-      <description>Explore finalized staking data and test a fail-closed PAS reward-advance vault.</description>
+      <description>Explore finalized staking data and inspect an active PAS reward-advance vault on Devnet.</description>
       <guid isPermaLink="false">flowfarm-staking</guid>
       <pubDate>Wed, 29 Jul 2026 22:03:48 GMT</pubDate>
     </item>
