@@ -591,6 +591,18 @@
       "probe~"
     ]
   },
+  "scytaledeploy": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "scytaletest": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "squadbuilder": {
     "category": "other",
     "source": "unclassified",

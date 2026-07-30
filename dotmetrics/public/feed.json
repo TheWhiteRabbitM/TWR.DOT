@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1785444160,
-  "count": 85,
+  "generatedAt": 1785450426,
+  "count": 87,
   "apps": [
+    {
+      "label": "dragon-realm",
+      "domain": "dragon-realm.dot",
+      "displayName": "Dragon Realm",
+      "description": "Let the dragons show you the weather.",
+      "tier": 0,
+      "firstSeenAt": 1785445188,
+      "url": "https://dragon-realm.dev-dot.li"
+    },
+    {
+      "label": "zkdot-devnet",
+      "domain": "zkdot-devnet.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785444468,
+      "url": "https://zkdot-devnet.dev-dot.li"
+    },
     {
       "label": "scytaledeploy",
       "domain": "scytaledeploy.dot",
