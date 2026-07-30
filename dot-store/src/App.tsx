@@ -441,7 +441,21 @@ function WriteReview({
     try {
       // The signing stack (polkadot-api + chain metadata) is several megabytes.
       // It is imported HERE, on submit, so browsing 72 apps never pays for it.
-      const { postReview } = await import('./lib/write');
+      //
+      // Its own try/catch, because this import has a failure mode of its own:
+      // when the shell is still running an entry chunk from an earlier publish,
+      // the chunk it asks for may no longer exist. Stable filenames now prevent
+      // that, but a reader holding a page from before this fix still deserves a
+      // sentence they can act on rather than "Failed to fetch dynamically
+      // imported module: polkadot://…".
+      let postReview: typeof import('./lib/write').postReview;
+      try {
+        ({ postReview } = await import('./lib/write'));
+      } catch {
+        setState('error');
+        setNote(t('write.stale'));
+        return;
+      }
       const out = await postReview({
         label: app.label,
         name: app.name,

@@ -45,5 +45,30 @@ export default defineConfig({
     target: 'es2022',
     cssCodeSplit: false,
     assetsInlineLimit: 4096,
+    rolldownOptions: {
+      output: {
+        /*
+         * Stable filenames, no content hashes — deliberately.
+         *
+         * A lazily imported chunk is fetched by the name the ENTRY chunk
+         * memorised at build time. When the shell is still running an entry
+         * from an earlier publish and the bundle has since been republished,
+         * every hash has changed and that name no longer exists, so the import
+         * fails at the moment the reader uses the feature:
+         *
+         *   Failed to fetch dynamically imported module:
+         *   polkadot://<name>.dot/assets/write-CWblSXmL.js
+         *
+         * Content hashes exist to bust HTTP caches; here the whole bundle is
+         * already content-addressed by its CID, so they buy nothing and cost
+         * exactly this. With stable names a stale entry still finds a real file
+         * at the path it expects. Diagnosed on dot-store, applied everywhere
+         * that lazily imports anything.
+         */
+        entryFileNames: 'assets/[name].js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name][extname]',
+      },
+    },
   },
 });
