@@ -73,6 +73,31 @@ export function invalidate(key: string): void {
   cache.delete(key);
 }
 
+/**
+ * Re-read one app's rating after a review was posted, and keep asking until the
+ * number actually moves.
+ *
+ * A transaction that has been accepted is not yet a transaction that has been
+ * included, so an immediate re-read usually returns the old figure. Polling for
+ * a bounded stretch is the difference between the page updating itself and the
+ * reader concluding nothing happened. It gives up quietly: the review is on
+ * chain either way, and the next visit will show it.
+ */
+export async function refreshRating(key: string, attempts = 8, gapMs = 3000): Promise<AppRating> {
+  const before = cache.get(key)?.count ?? 0;
+  let latest: AppRating = { avg: null, count: 0 };
+  for (let i = 0; i < attempts; i++) {
+    cache.delete(key);
+    const r = await ratingOf(key);
+    latest =
+      r && r.count > 0 ? { avg: r.sum / r.count, count: r.count } : { avg: null, count: 0 };
+    cache.set(key, latest);
+    if (latest.count > before) return latest;
+    if (i < attempts - 1) await new Promise((res) => setTimeout(res, gapMs));
+  }
+  return latest;
+}
+
 export async function reviewsFor(key: string): Promise<Review[]> {
   return reviewsOf(key, 0, 50);
 }

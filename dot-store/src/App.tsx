@@ -30,6 +30,7 @@ import {
   invalidate,
   localReviews,
   ratingsFor,
+  refreshRating,
   reviewsFor,
   saveLocalReview,
   type AppRating,
@@ -415,7 +416,14 @@ function ReviewRow({ r, lang }: { r: Review; lang: Lang }) {
 
 type PostState = 'idle' | 'busy' | 'onchain' | 'local' | 'error';
 
-function WriteReview({ app, onPosted }: { app: CatalogApp; onPosted: () => void }) {
+function WriteReview({
+  app,
+  onPosted,
+}: {
+  app: CatalogApp;
+  /** `landed` distinguishes a real on-chain post from a device-only save. */
+  onPosted: (landed: boolean) => void;
+}) {
   const [rating, setRating] = useState(0);
   const [body, setBody] = useState('');
   const [state, setState] = useState<PostState>('idle');
@@ -444,10 +452,17 @@ function WriteReview({ app, onPosted }: { app: CatalogApp; onPosted: () => void 
       if (out.kind === 'onchain') {
         setState('onchain');
         setNote('');
-        onPosted();
+        onPosted(true);
         return;
       }
-      // No signer reachable — keep the review on this device and say so. We
+      if (out.kind === 'error') {
+        // A failed attempt is NOT a local save. Storing it would leave a review
+        // on the device that the reader believes went somewhere.
+        setState('error');
+        setNote(`${out.why} (${out.step})`);
+        return;
+      }
+      // Nothing to sign with — keep the review on this device and say so. We
       // never fabricate a transaction to make the UI look successful.
       saveLocalReview({
         label: app.label,
@@ -455,9 +470,9 @@ function WriteReview({ app, onPosted }: { app: CatalogApp; onPosted: () => void 
         body: body.trim(),
         at: Math.floor(Date.now() / 1000),
       });
-      setState(out.kind === 'local' ? 'local' : 'error');
+      setState('local');
       setNote(out.why);
-      onPosted();
+      onPosted(false);
     } catch (e) {
       setState('error');
       setNote(e instanceof Error ? e.message : String(e));
@@ -497,17 +512,25 @@ function WriteReview({ app, onPosted }: { app: CatalogApp; onPosted: () => void 
       </div>
       {state === 'busy' && step && <p className="note">{t('write.step', { step })}</p>}
       {state === 'onchain' && <p className="note note-ok">{t('write.done')}</p>}
-      {state === 'local' && (
-        <p className="note">
-          {t('write.demo')} {note && <span className="note-why">{note}</span>}
-        </p>
-      )}
+      {/* The translated sentence already says everything a reader needs; the
+          internal reason is left out of it, because an English fragment glued
+          onto an Italian message reads as a leak, not as detail. */}
+      {state === 'local' && <p className="note">{t('write.demo')}</p>}
       {state === 'error' && <p className="note note-warn">{t('write.failed', { why: note })}</p>}
     </section>
   );
 }
 
-function Detail({ app, onBack }: { app: CatalogApp; onBack: () => void }) {
+function Detail({
+  app,
+  onBack,
+  onRated,
+}: {
+  app: CatalogApp;
+  onBack: () => void;
+  /** Tells the store a rating changed, so cards elsewhere re-render. */
+  onRated: () => void;
+}) {
   const lang = useLang();
   const [reviews, setReviews] = useState<Review[] | null>(null);
   const [mine, setMine] = useState<LocalReview | undefined>(() => localReviews()[app.label]);
@@ -604,9 +627,17 @@ function Detail({ app, onBack }: { app: CatalogApp; onBack: () => void }) {
         {DEMO_ENABLED && (
           <WriteReview
             app={app}
-            onPosted={() => {
+            onPosted={(landed) => {
               setMine(localReviews()[app.label]);
+              // The rating shown beside the app's name comes from a module-level
+              // cache filled once on load. Dropping the entry is not enough —
+              // nothing refills it — so a successful post used to leave "no
+              // reviews yet" sitting above the review it had just written.
+              // Re-read it, and tell the page when the new figure has arrived.
               invalidate(app.key);
+              if (landed) {
+                void refreshRating(app.key).then(onRated);
+              }
               load();
             }}
           />
@@ -785,7 +816,7 @@ export function App() {
       </header>
 
       {open ? (
-        <Detail app={open} onBack={back} />
+        <Detail app={open} onBack={back} onRated={() => setRatingsVersion((n) => n + 1)} />
       ) : (
         <>
           <h1 className="large">{t('nav.apps')}</h1>

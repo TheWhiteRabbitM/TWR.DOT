@@ -5,6 +5,21 @@ export const APP_REVIEWS = '0xE4D0485C6e2C7db54C8f14A1620992Be98eDFEC3';
 
 export const DEVNET_EVM_RPC = 'https://paseo-assethub-rpc.laissez-faire.trade';
 
+/**
+ * The devnet Asset Hub's EVM chain id, 420021057, as the hex string an injected
+ * wallet expects. Read from the RPC itself (`eth_chainId`), not guessed — a
+ * wrong value here would have a wallet silently sign against another network.
+ */
+export const DEVNET_CHAIN_ID = '0x190f1b41';
+
+/** What a wallet needs in order to add this network when it doesn't know it. */
+export const DEVNET_CHAIN_PARAMS = {
+  chainId: DEVNET_CHAIN_ID,
+  chainName: 'Polkadot Products Devnet (Asset Hub)',
+  nativeCurrency: { name: 'PAS', symbol: 'PAS', decimals: 18 },
+  rpcUrls: [DEVNET_EVM_RPC],
+} as const;
+
 /** The one IPFS gateway that actually serves devnet CIDs (icons). */
 export const GATEWAY = 'https://devnet-ipfs.api.polkadotcommunity.foundation';
 
