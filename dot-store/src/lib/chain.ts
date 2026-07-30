@@ -103,8 +103,23 @@ export async function ratingOf(key: string): Promise<Rating | null> {
   const r = await ethCall(SEL.app + pad(key));
   if (!r) return null;
   // App { string label; string name; uint32 sum; uint32 count; uint64 firstAt }
-  // Head: [ptr label][ptr name][sum][count][firstAt]
-  return { sum: num(word(r, 2)), count: num(word(r, 3)), firstAt: num(word(r, 4)) };
+  //
+  // The struct is DYNAMIC — it carries two strings — so a function returning it
+  // does not start with the struct. It starts with an offset TO the struct, and
+  // the head follows one word later:
+  //
+  //   word 0  offset to the tuple (0x20)
+  //   word 1  offset to `label`
+  //   word 2  offset to `name`
+  //   word 3  sum
+  //   word 4  count
+  //   word 5  firstAt
+  //
+  // Reading from word 2 — as this did — returns the offset to `name` as the sum
+  // and the real sum as the count. With one review that produced "44.8 out of 5
+  // from 5 ratings": 224 (0xe0, an offset) divided by 5. Verified against the
+  // live contract's raw returndata rather than reasoned about a second time.
+  return { sum: num(word(r, 3)), count: num(word(r, 4)), firstAt: num(word(r, 5)) };
 }
 
 export interface Review {

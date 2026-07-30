@@ -148,11 +148,28 @@ async function postViaWallet(eth: Injected, args: PostArgs): Promise<PostOutcome
 
     step = 'waiting for your signature';
     onStep?.(step);
+    const tx: Record<string, string> = {
+      from,
+      to: APP_REVIEWS,
+      data: encodeReview(label, name, rating, body),
+    };
+
+    // Ask for an estimate and then quadruple it. The same under-estimation that
+    // made every review revert with Revive.OutOfGas on the host path applies
+    // here: pallet-revive's EVM layer reports a figure far below what the call
+    // actually consumes (29k gas for a call that writes a struct, a string and
+    // two array pushes). Unused gas is refunded, so the headroom is free; a
+    // short limit is a transaction that is mined and then throws away.
+    try {
+      const est = (await eth.request({ method: 'eth_estimateGas', params: [tx] })) as string;
+      const gas = BigInt(est) * 4n;
+      tx.gas = '0x' + gas.toString(16);
+    } catch {
+      // No estimate available: let the wallet decide rather than invent a cap.
+    }
+
     const hash = (await withTimeout(
-      eth.request({
-        method: 'eth_sendTransaction',
-        params: [{ from, to: APP_REVIEWS, data: encodeReview(label, name, rating, body) }],
-      }) as Promise<string>,
+      eth.request({ method: 'eth_sendTransaction', params: [tx] }) as Promise<string>,
       TX_MS,
       'review transaction',
     )) as string;
@@ -165,13 +182,73 @@ async function postViaWallet(eth: Injected, args: PostArgs): Promise<PostOutcome
 
 /* -------------------------------------------------------------------- host */
 
+/**
+ * ONE SignerManager for the whole session, connected once.
+ *
+ * The store used to build a fresh manager inside the submit handler and connect
+ * it there, so the entire host handshake had to complete between the click and
+ * the timeout — and two taps meant two managers racing each other over the same
+ * host provider, which The Button's own code warns against in as many words.
+ *
+ * This is the shape that demonstrably works there: a process-wide singleton,
+ * connected as early as we know the reader intends to write, so by the time
+ * they have picked a rating and typed a sentence the account is already there.
+ */
+let managerPromise: Promise<{
+  manager: import('@parity/product-sdk-signer').SignerManager;
+  account: import('@parity/product-sdk-signer').SignerAccount | null;
+}> | null = null;
+
+async function getManager() {
+  if (!managerPromise) {
+    managerPromise = (async () => {
+      const { SignerManager } = await import('@parity/product-sdk-signer');
+      const manager = new SignerManager({ dappName: 'dot-store.dot' });
+      await withTimeout(manager.connect(), CONNECT_MS, 'signer connect').catch(() => undefined);
+      // connect() resolves with the account list, but the manager selects one
+      // asynchronously. Wait for it rather than racing it.
+      const deadline = Date.now() + ACCOUNT_MS;
+      let account = null as import('@parity/product-sdk-signer').SignerAccount | null;
+      for (;;) {
+        const s = manager.getState();
+        if (s.selectedAccount) {
+          account = s.selectedAccount;
+          break;
+        }
+        const first = s.accounts[0];
+        if (first) {
+          const picked = manager.selectAccount(first.address);
+          if (picked.ok) {
+            account = picked.value;
+            break;
+          }
+        }
+        if (Date.now() > deadline) break;
+        await new Promise((r) => setTimeout(r, 250));
+      }
+      return { manager, account };
+    })();
+  }
+  return managerPromise;
+}
+
+/**
+ * Start connecting before the reader presses anything.
+ *
+ * Called when someone touches the review form — a clear enough intent to spend
+ * the download on, and it buys the handshake the seconds it needs. Fire and
+ * forget: every failure here is re-discovered, and reported, on submit.
+ */
+export function warmUpSigner(): void {
+  void getManager().catch(() => undefined);
+}
+
 async function postViaHost(args: PostArgs): Promise<PostOutcome> {
   const { label, name, rating, body, onStep } = args;
   let step = 'starting';
   try {
-    const [host, { SignerManager }, contracts, descriptors, papi] = await Promise.all([
+    const [host, contracts, descriptors, papi] = await Promise.all([
       import('@parity/product-sdk-host'),
-      import('@parity/product-sdk-signer'),
       import('@parity/product-sdk/contracts'),
       import('@parity/product-sdk-descriptors/devnet-asset-hub'),
       import('polkadot-api'),
@@ -179,28 +256,7 @@ async function postViaHost(args: PostArgs): Promise<PostOutcome> {
 
     step = 'connecting your account';
     onStep?.(step);
-    const manager = new SignerManager({ dappName: 'dot-store.dot' });
-    const connected = await withTimeout(manager.connect(), CONNECT_MS, 'signer connect');
-    if (!connected.ok) {
-      return { kind: 'local', why: 'no account is connected in the Polkadot app' };
-    }
-
-    // connect() resolves with the account list, but the selected account is set
-    // asynchronously by the manager. Wait for one rather than racing it.
-    const account = await (async () => {
-      const deadline = Date.now() + ACCOUNT_MS;
-      for (;;) {
-        const s = manager.getState();
-        if (s.selectedAccount) return s.selectedAccount;
-        const first = s.accounts[0];
-        if (first) {
-          const picked = manager.selectAccount(first.address);
-          if (picked.ok) return picked.value;
-        }
-        if (Date.now() > deadline) return null;
-        await new Promise((r) => setTimeout(r, 250));
-      }
-    })();
+    const { manager, account } = await getManager();
     if (!account) {
       return { kind: 'local', why: 'the Polkadot app did not offer an account to sign with' };
     }
@@ -253,11 +309,39 @@ async function postViaHost(args: PostArgs): Promise<PostOutcome> {
       return { kind: 'error', why: explain(mapped.error), step };
     }
 
-    // .tx() dry-runs first, so AlreadyReviewed or NotHuman surfaces as a decoded
-    // revert before anything is signed or paid for.
     step = 'waiting for your signature';
     onStep?.(step);
-    await withTimeout(contract.review.tx(label, name, rating, body), TX_MS, 'review transaction');
+    // EXPLICIT LIMITS, and this is the whole reason reviews never landed.
+    //
+    // `.tx()` normally sizes the call with its own dry-run and submits with
+    // whatever that returns. For this contract the estimate came back short,
+    // and every review was included in a block and then reverted with
+    // `Revive.OutOfGas` — a failure that leaves no trace a reader could see and
+    // no log the contract could emit, which is why the store kept reporting
+    // nothing while the chain kept holding nothing. Reproduced outside the app
+    // against the same contract with the same SDK: OutOfGas every time with the
+    // dry-run, and a review in block 11594035 the moment these limits were
+    // passed instead.
+    //
+    // Passing both also skips the dry-run entirely, per the SDK's own contract.
+    // The numbers are deliberately generous — 0.6s of ref_time and 1 MB of
+    // proof size for one storage write — because unused weight is not charged,
+    // and the storage deposit is reserved and refunded, not spent. Being
+    // stingy here costs a failed transaction; being generous costs nothing.
+    const result = (await withTimeout(
+      contract.review.tx(label, name, rating, body, {
+        gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
+        storageDepositLimit: 10n ** 18n,
+      }),
+      TX_MS,
+      'review transaction',
+    )) as { ok?: boolean; error?: unknown } | undefined;
+
+    // .tx() reports dispatch failures in its RESULT, not by throwing. Reading
+    // only the throw is how OutOfGas passed for success in the first place.
+    if (result && result.ok === false) {
+      return { kind: 'error', why: explain(result.error), step };
+    }
 
     return { kind: 'onchain', via: 'host' };
   } catch (e) {

@@ -371,7 +371,9 @@ function Histogram({ reviews, r, lang }: { reviews: Review[]; r: AppRating | und
       <div className="hist-avg">
         <span className="hist-num">{fmt(r.avg!, lang)}</span>
         <span className="hist-outof">{t('reviews.outof')}</span>
-        <span className="hist-count">{t('reviews.count', { n: r.count })}</span>
+        <span className="hist-count">
+          {r.count === 1 ? t('reviews.count.one', { n: 1 }) : t('reviews.count', { n: r.count })}
+        </span>
       </div>
       <div className="hist-bars">
         {[5, 4, 3, 2, 1].map((star) => (
@@ -429,6 +431,13 @@ function WriteReview({
   const [state, setState] = useState<PostState>('idle');
   const [note, setNote] = useState('');
   const [step, setStep] = useState('');
+
+  // Touching the form is intent enough to start the host handshake: the signing
+  // stack downloads and the account connects while the reader is still typing,
+  // instead of the whole exchange having to fit between the click and a timeout.
+  const warm = () => {
+    void import('./lib/write').then((m) => m.warmUpSigner()).catch(() => undefined);
+  };
 
   const submit = async () => {
     if (!rating) {
@@ -494,7 +503,7 @@ function WriteReview({
   };
 
   return (
-    <section className="write">
+    <section className="write" onPointerDown={warm} onFocusCapture={warm}>
       <h3>{t('write.h')}</h3>
       <div className="write-stars" role="group" aria-label={t('write.rating')}>
         {[1, 2, 3, 4, 5].map((n) => (
