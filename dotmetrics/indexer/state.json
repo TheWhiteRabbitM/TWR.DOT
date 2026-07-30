@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11582124,
-  "updatedAt": "2026-07-30T00:16:10.377Z",
+  "lastBlock": 11587189,
+  "updatedAt": "2026-07-30T03:37:02.622Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "b63701e358effe2512e0cef72443051363b33857d8eb71d597d2c6e3744fba93",
-    "cid": "bafybeihczknswf23xpbzmlzkelk2on7quj66gvhwpafo2ar4gh76vznaku",
-    "uploadedAt": "2026-07-30T00:20:00.656Z"
+    "digest": "465609680d1ea4f157895cd844e5cfa48002b42324d08188570c1572a7423969",
+    "cid": "bafybeidbsn4mc5fnxr6b52wvblomkj5rqle7syou6e75cf4lh65klks6i4",
+    "uploadedAt": "2026-07-30T03:40:59.046Z"
   },
   "sitePublish": {
     "treeHash": "4ff317352c5f5329f6c392aec60dfe587f28644e4ab62347b0a5a7ce3eb42001",
     "publishedAt": "2026-07-30T00:22:15.433Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-30T00:18:45.000Z",
+    "updatedAt": "2026-07-30T03:39:40.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -83,13 +83,14 @@
       "squadbuilder": "alive",
       "flowfarm-staking": "alive",
       "radioactivedrums": "alive",
-      "dot-store": "alive"
+      "dot-store": "alive",
+      "contribnet03": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-30T00:18:45.000Z",
+    "updatedAt": "2026-07-30T03:39:40.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -138,6 +139,11 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "contribnet03": {
+        "contenthash": "bafybeignokmb4e54kpkmn7t3hea3hgwebnnrgsrfdyw2jxnjlo6vhfdp54",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "cosmicteapot": {
         "contenthash": "bafybeifsfedviexj5srcsekw5phbja2qchfdqd33v2mcij7jjfc2sgl4wy",
         "updateCount": 0,
@@ -170,8 +176,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeihrkwlbbo2r6knhfmjapazgrssyathehy32korzxehqygthp4exgu",
-        "updateCount": 0,
+        "contenthash": "bafybeibv2tpfsuoeifqndgscbnlahaxm6uxtj47xmswckjcxejm2672vma",
+        "updateCount": 1,
+        "changedAt": 1785382780,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -197,9 +204,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeih7ojrpqjn42b2m6efcekrbd6uf2vangrb3vfsagkx26pzd7gko2e",
-        "updateCount": 4,
-        "changedAt": 1785328168,
+        "contenthash": "bafybeib5ulelujt37pmeiurlu2ckiuxbsdkufypmownnt3pfkts7hfq53m",
+        "updateCount": 5,
+        "changedAt": 1785382780,
         "live": "alive"
       },
       "dw3labsgame": {
@@ -218,8 +225,9 @@
         "live": "alive"
       },
       "flowfarm-staking": {
-        "contenthash": "bafybeifrnuodnp3h2ft4q6vt3eh3tr5qnj6sy7ggmq3jhgojshb2fiwnba",
-        "updateCount": 0,
+        "contenthash": "bafybeic3flc4l4rjp7dzvdfb4456clx66amuiwp5k6rvukds6ct772s464",
+        "updateCount": 1,
+        "changedAt": 1785382780,
         "live": "alive"
       },
       "giganetwork": {
@@ -279,8 +287,9 @@
         "live": "alive"
       },
       "italiarovente": {
-        "contenthash": "bafybeieol5z4p34tj2ro4sexkgdoft6mcxisuuvitt42dwktogixls6qva",
-        "updateCount": 0,
+        "contenthash": "bafybeicczhspfjyblrmyilfj32tgs6hfdmurejeuelzyjehyqbakfpuun4",
+        "updateCount": 1,
+        "changedAt": 1785382780,
         "live": "alive"
       },
       "mini-lucky-smoke": {

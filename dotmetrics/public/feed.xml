@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 30 Jul 2026 00:18:45 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 30 Jul 2026 03:39:40 GMT</lastBuildDate>
+    <item>
+      <title>contribnet03</title>
+      <link>https://contribnet03.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">contribnet03</guid>
+      <pubDate>Thu, 30 Jul 2026 02:57:00 GMT</pubDate>
+    </item>
     <item>
       <title>Radioactive Drums</title>
       <link>https://radioactivedrums.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description>Reviews you can trust: one verified human, one review per place, on real map businesses.</description>
       <guid isPermaLink="false">truereviews</guid>
       <pubDate>Sat, 25 Jul 2026 00:17:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>Italia Rovente</title>
-      <link>https://italiarovente.dev-dot.li</link>
-      <description>How much hotter Italy has become since 1940: stripes, records, seas, 107 cities.</description>
-      <guid isPermaLink="false">italiarovente</guid>
-      <pubDate>Fri, 24 Jul 2026 23:31:12 GMT</pubDate>
     </item>
   </channel>
 </rss>
