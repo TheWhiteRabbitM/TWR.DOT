@@ -26,6 +26,9 @@ interface RawApp {
   key?: string;
   /** Bulletin CIDs the app's OWNER declared in a `screenshots` text record. */
   screenshots?: string[];
+  /** Category, either declared by the owner or inferred from the app's words. */
+  category?: string;
+  categorySource?: string;
 }
 
 export interface Shot {
@@ -69,6 +72,17 @@ export interface App {
   firstSeenAt: number;
   /** AppReviews key for this app. */
   key: string;
+  /**
+   * Category id, or null when nothing could be established without guessing.
+   *
+   * Computed by dotmetrics/indexer/classify.mjs, which prefers what the owner
+   * declared on their own name and only then reads their words. Null is a real
+   * answer here: two thirds of this directory publish no description, and
+   * filing an app under a wrong heading is a claim about someone else's work.
+   */
+  category: string | null;
+  /** True when the owner declared it themselves rather than us inferring it. */
+  categoryDeclared: boolean;
 }
 
 const shots = shotsRaw as Record<string, Shot>;
@@ -124,6 +138,8 @@ function build(): App[] {
       shots: all,
       firstSeenAt: r.firstSeenAt ?? 0,
       key: r.key,
+      category: r.category ?? null,
+      categoryDeclared: r.categorySource === 'owner',
     });
   }
   // Newest first: a store leads with what just arrived.
@@ -137,6 +153,28 @@ export const FEATURED: App[] = CATALOG.filter((a) => a.shot);
 
 export function findApp(label: string): App | undefined {
   return CATALOG.find((a) => a.label === label);
+}
+
+/**
+ * The categories that actually hold something, with their counts.
+ *
+ * Derived from the catalog rather than declared as a list, so a heading never
+ * appears over an empty shelf — and so a category nobody uses quietly stops
+ * being offered instead of sitting there advertising a gap.
+ */
+export const CATEGORIES: { id: string; count: number }[] = (() => {
+  const counts = new Map<string, number>();
+  for (const a of CATALOG) {
+    if (!a.category) continue;
+    counts.set(a.category, (counts.get(a.category) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([id, count]) => ({ id, count }))
+    .sort((x, y) => y.count - x.count || x.id.localeCompare(y.id));
+})();
+
+export function inCategory(id: string): App[] {
+  return CATALOG.filter((a) => a.category === id);
 }
 
 export function search(q: string): App[] {

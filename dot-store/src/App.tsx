@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   CATALOG,
+  CATEGORIES,
   FEATURED,
   findApp,
+  inCategory,
   initials,
   search,
   tint,
@@ -339,6 +341,14 @@ function MetricsBar({ app, r, lang }: { app: CatalogApp; r: AppRating | undefine
           <span className="metric-v metric-word">{t('meta.noratings')}</span>
         )}
       </div>
+      {app.category && (
+        <div className="metric">
+          <span className="metric-k">{t('meta.category')}</span>
+          <span className="metric-v metric-word">
+            {t(`cat.${app.category}` as 'cat.games')}
+          </span>
+        </div>
+      )}
       <div className="metric">
         <span className="metric-k">{t('meta.status')}</span>
         <span className="metric-v metric-word">{t(`tier.${app.tier}` as 'tier.0')}</span>
@@ -700,6 +710,13 @@ function Detail({
             <dd className="mono">{APP_REVIEWS}</dd>
           </div>
         </dl>
+        {/* Who decided this app's category. An inference presented as a fact
+            would be us putting words in a developer's mouth. */}
+        {app.category && (
+          <p className="credit">
+            {app.categoryDeclared ? t('cat.declared') : t('cat.inferred')}
+          </p>
+        )}
       </section>
     </div>
   );
@@ -742,6 +759,7 @@ function Segmented() {
 export function App() {
   useLang(); // re-render the whole store when the language changes
   const [query, setQuery] = useState('');
+  const [cat, setCat] = useState<string | null>(null);
   const [open, setOpen] = useState<CatalogApp | null>(null);
   const [reviewed, setReviewed] = useState<number | null>(null);
   const [required, setRequired] = useState<number | null>(null);
@@ -805,6 +823,14 @@ export function App() {
   const results = useMemo(() => search(query), [query]);
   const searching = query.trim().length > 0;
 
+  // Search narrows whatever the category chose; a chosen category narrows the
+  // whole catalogue. Either one replaces the editorial shelves, because those
+  // are a front page and this is a filtered list.
+  const shown = useMemo(() => {
+    const base = searching ? results : cat ? inCategory(cat) : CATALOG;
+    return searching && cat ? base.filter((a) => a.category === cat) : base;
+  }, [searching, results, cat]);
+
   // "New" is a fact we hold exactly: the registration time from the indexer.
   const newest = useMemo(() => CATALOG.slice(0, 12), []);
 
@@ -850,6 +876,33 @@ export function App() {
           <h1 className="large">{t('nav.apps')}</h1>
           <p className="tagline">{t('app.tagline')}</p>
 
+          {/* Categories, offered only where they exist. A heading over an empty
+              shelf is worse than no heading, and two thirds of this directory
+              publishes nothing we could file without guessing. */}
+          {CATEGORIES.length > 0 && (
+            <div className="cats" role="group" aria-label={t('cat.h')}>
+              <button
+                type="button"
+                className={cat === null ? 'chip on' : 'chip'}
+                aria-pressed={cat === null}
+                onClick={() => setCat(null)}
+              >
+                {t('cat.all')}
+              </button>
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  className={cat === c.id ? 'chip on' : 'chip'}
+                  aria-pressed={cat === c.id}
+                  onClick={() => setCat(cat === c.id ? null : c.id)}
+                >
+                  {t(`cat.${c.id}` as 'cat.games')} <span className="chip-n">{c.count}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="findwrap">
             <span className="findglyph">
               <Magnifier size={1.05} />
@@ -864,13 +917,16 @@ export function App() {
             />
           </div>
 
-          {searching ? (
-            <Shelf title={t('shelf.all')} sub={t('search.results', { n: results.length })}>
-              {results.length === 0 ? (
+          {searching || cat ? (
+            <Shelf
+              title={cat && !searching ? t(`cat.${cat}` as 'cat.games') : t('shelf.all')}
+              sub={t('search.results', { n: shown.length })}
+            >
+              {shown.length === 0 ? (
                 <p className="dim">{t('search.empty', { q: query.trim() })}</p>
               ) : (
                 <div className="grid">
-                  {results.map((a) => (
+                  {shown.map((a) => (
                     <GridCard key={a.label} app={a} onOpen={openApp} />
                   ))}
                 </div>
@@ -942,6 +998,12 @@ export function App() {
             </pre>
             <p className="devstep">{t('dev.shots')}</p>
             <pre>dotns text set &lt;name&gt;.dot screenshots bafy…,bafy… --env devnet</pre>
+            <p className="devstep">{t('dev.category')}</p>
+            <pre>
+              dotns text set &lt;name&gt;.dot category games --env devnet{'\n'}
+              {'# '}
+              {CATEGORIES.map((c) => c.id).join(' · ') || 'games · social · finance · tools'}
+            </pre>
             <p className="devnote">{t('dev.note')}</p>
           </section>
 

@@ -74,6 +74,10 @@ jobs:
           # contenthash; the changelog reads the CONFIRMED liveness state, so a
           # gateway wobble never becomes a wave of 'unreachable'). build-feed
           # writes the static feed into public/ for Vite to bake into dist.
+          # classify reads the owner-declared category first, then their manifest,
+          # then whatever the app itself renders (appinfo.json, collected by the
+          # weekly screenshot pass). Anything it cannot establish stays 'other'.
+          node indexer/classify.mjs
           node indexer/track-changes.mjs
           node indexer/build-feed.mjs
 
@@ -153,7 +157,7 @@ jobs:
           # 'revived' history, so it MUST be committed or a fresh checkout loses
           # it. liveness.json and the feed are derivable, but committing them
           # keeps the checked-out tree build-ready without re-running the indexer.
-          git add dotmetrics/indexer dotmetrics/src/lib/discovered.json dotmetrics/src/lib/ecosystem.json dotmetrics/src/lib/history.json dotmetrics/src/lib/liveness.json dotmetrics/src/lib/changelog.json dotmetrics/src/lib/directory.ts dotmetrics/public/feed.json dotmetrics/public/feed.xml
+          git add dotmetrics/indexer dotmetrics/src/lib/discovered.json dotmetrics/src/lib/ecosystem.json dotmetrics/src/lib/history.json dotmetrics/src/lib/liveness.json dotmetrics/src/lib/changelog.json dotmetrics/src/lib/categories.json dotmetrics/src/lib/appinfo.json dotmetrics/src/lib/directory.ts dotmetrics/public/feed.json dotmetrics/public/feed.xml
           if git diff --cached --quiet; then
             echo "nothing new to commit"
           else

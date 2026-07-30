@@ -31,6 +31,7 @@ const METRICS = path.join(STORE, '..', 'dotmetrics');
 const SRC_APPS = path.join(METRICS, 'src', 'lib', 'discovered.json');
 const SRC_SHOTS = path.join(METRICS, 'src', 'lib', 'shots.json');
 const SRC_SHOT_DIR = path.join(METRICS, 'public', 'shots');
+const SRC_CATS = path.join(METRICS, 'src', 'lib', 'categories.json');
 
 const OUT_APPS = path.join(STORE, 'src', 'data', 'apps.json');
 const OUT_SHOTS = path.join(STORE, 'src', 'data', 'shots.json');
@@ -71,11 +72,27 @@ if (labels.length === 0) {
   die(`${SRC_APPS} lists no apps — refusing to overwrite the catalog with an empty one`);
 }
 
+// Categories are computed by dotmetrics/indexer/classify.mjs, which reads the
+// owner's declaration first and only then falls back to reading their words.
+// Folded into the catalog rather than shipped as a second file: a card needs
+// its category at render time, and one lookup is one lookup.
+const cats = readJson(SRC_CATS) ?? {};
+
 const out = {};
 let keyed = 0;
+let categorised = 0;
 for (const label of labels.sort()) {
   const entry = { ...apps[label] };
   entry.key = keyFor(label);
+  const c = cats[label];
+  if (c && c.category && c.category !== 'other') {
+    entry.category = c.category;
+    // Kept so the store can say whether a category was DECLARED by the owner or
+    // INFERRED by us. Showing an inference as though it were a fact would be a
+    // claim about someone else's app that nobody made.
+    entry.categorySource = c.source;
+    categorised += 1;
+  }
   keyed += 1;
   out[label] = entry;
 }
@@ -122,7 +139,7 @@ fs.writeFileSync(OUT_SHOTS, JSON.stringify(ordered, null, 2) + '\n');
 
 const withShot = Object.keys(ordered).length;
 console.log(
-  `catalog: ${keyed} apps (all keyed) · screenshots: ${copied} copied, ${pruned} pruned · ` +
+  `catalog: ${keyed} apps (all keyed, ${categorised} categorised) · screenshots: ${copied} copied, ${pruned} pruned · ` +
     `${(bytes / 1024).toFixed(0)} KB of artwork`,
 );
 console.log(

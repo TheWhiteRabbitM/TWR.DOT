@@ -1,0 +1,585 @@
+{
+  "ajedreztest01": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "ascendyendor00": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "roguelike"
+    ]
+  },
+  "buildboard01": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "bulletin-explorer": {
+    "category": "explorers",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "explorer~"
+    ]
+  },
+  "buy-or-sell": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "buy~",
+      "sell~"
+    ]
+  },
+  "chainpulse": {
+    "category": "explorers",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "finality",
+      "vitals"
+    ]
+  },
+  "chatgpt-guide": {
+    "category": "publishing",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "guide"
+    ]
+  },
+  "contribnet01": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "contribnet02": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "contribnet03": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "cosmicteapot": {
+    "category": "curiosities",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "teapot~"
+    ]
+  },
+  "devnet-atlas": {
+    "category": "explorers",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "atlas",
+      "map"
+    ]
+  },
+  "discreetly": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "humans",
+      "verified",
+      "anonymous",
+      "private"
+    ]
+  },
+  "docs": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "docs~"
+    ]
+  },
+  "doomarcade00": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "arcade~",
+      "doom~"
+    ]
+  },
+  "dot-pages": {
+    "category": "publishing",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "published",
+      "websites",
+      "pages~"
+    ]
+  },
+  "dot-store": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "dotcheckapp": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "dotcheckhub": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "dotexplorer": {
+    "category": "explorers",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "explorer~"
+    ]
+  },
+  "dotify-test01": {
+    "category": "media",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "artist"
+    ]
+  },
+  "dotmetrics": {
+    "category": "explorers",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "analytics",
+      "metrics~"
+    ]
+  },
+  "dw3labsgame": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "game~"
+    ]
+  },
+  "eternalise-notary": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "notary~"
+    ]
+  },
+  "eternalize-notary": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "notary~"
+    ]
+  },
+  "flowfarm-staking": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "staking",
+      "reward"
+    ]
+  },
+  "giganetwork": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "guestbook": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "guestbook~"
+    ]
+  },
+  "hahamingx00": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "handshake": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "hello-devnet-ynrc46": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "hello~"
+    ]
+  },
+  "hello-world-app": {
+    "category": "curiosities",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "hello~",
+      "hello world~"
+    ]
+  },
+  "hello-world-bernar": {
+    "category": "curiosities",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "hello~",
+      "hello world~"
+    ]
+  },
+  "hellodotworld": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "helloworld": {
+    "category": "curiosities",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "hello world~"
+    ]
+  },
+  "hermes-agent-test": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "ip-assets": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "marketplace"
+    ]
+  },
+  "italiarovente": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "mini-lucky-smoke": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "my-dotkit": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "na87u9srwgblr61": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "oblv-vault": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "oblv-wg-calc": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "calc"
+    ]
+  },
+  "oblv-wg-calendar": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "calendar"
+    ]
+  },
+  "oblv-wg-clock": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "clock"
+    ]
+  },
+  "oblv-wg-crypto": {
+    "category": "explorers",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "dashboard"
+    ]
+  },
+  "oblv-wg-opengov": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "vote"
+    ]
+  },
+  "oblv-wg-rss": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "rss"
+    ]
+  },
+  "oblv-wg-todo": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "todo"
+    ]
+  },
+  "oblv-wg-weather": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "weather"
+    ]
+  },
+  "oblv-widgets": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "widget~",
+      "widgets"
+    ]
+  },
+  "openpetition": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "petition~"
+    ]
+  },
+  "pactprotocol": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "parlement-populaire": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "pennypixel": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "petitions": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "petition~"
+    ]
+  },
+  "pilliodot": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "plaza-social": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "social~",
+      "plaza~"
+    ]
+  },
+  "polkadot-builders-hackademy": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "polkaportal01": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "polkaportal02": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "polkaportal03": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "proofoftake": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "provenveil": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "quizzlergame": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "game",
+      "quiz~"
+    ]
+  },
+  "radioactivedrums": {
+    "category": "media",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "radio~"
+    ]
+  },
+  "rainbowprobe": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "probe~"
+    ]
+  },
+  "squadbuilder": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "stealcrown": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "sybildrop": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "sybil~"
+    ]
+  },
+  "tetris-bulletin": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "tetris~"
+    ]
+  },
+  "thebutton": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "personhood",
+      "human",
+      "proof"
+    ]
+  },
+  "thepipersguild": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "tintaprotocol": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "torrent-otp": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "truereviews": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "human",
+      "verified"
+    ]
+  },
+  "wudcommunity": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "community"
+    ]
+  },
+  "yechops-preview": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "yologuestbook": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "guestbook~"
+    ]
+  }
+}

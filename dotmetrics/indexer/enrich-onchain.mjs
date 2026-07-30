@@ -183,6 +183,27 @@ await mapLimit(labels, CONCURRENCY, async (label) => {
     /* read failed: keep whatever the last successful run recorded */
   }
 
+  // A `category` the owner declared. Third convention of ours, same shape as
+  // the others, and the one that matters most for fairness: everything else in
+  // the store's categorisation is us reading their words and guessing. This is
+  // them telling us, and it always wins.
+  //
+  //   dotns text set <name>.dot category games --env devnet
+  //
+  // Not validated against a list here on purpose — the indexer reports what the
+  // chain says, and the store decides whether it recognises the value. A typo
+  // should look like a typo, not vanish silently at the indexing step.
+  try {
+    const declared = String((await resolver.text(node, 'category')) ?? '')
+      .trim()
+      .toLowerCase()
+      .slice(0, 24);
+    if (declared) next.category = declared;
+    else delete next.category;
+  } catch {
+    /* read failed: keep whatever the last successful run recorded */
+  }
+
   // Owner-supplied artwork, same read-or-keep rule. An empty answer removes the
   // declaration, so an owner can take their screenshots down again.
   try {

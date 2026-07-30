@@ -78,11 +78,32 @@ const DISCOVERED = path.join(HERE, '..', 'src', 'lib', 'discovered.json');
 const SHOTS_DIR = path.join(HERE, '..', 'public', 'shots');
 const SHOTS_JSON = path.join(HERE, '..', 'src', 'lib', 'shots.json');
 
+/**
+ * What each app says about ITSELF, harvested while it is already open.
+ *
+ * Two thirds of the directory publish no description at all — 49 of 79 names
+ * carry nothing but a label — so anything built on the manifest alone is
+ * guessing for most of the ecosystem. But this job already loads every app in a
+ * real browser to photograph it, and the app frame is readable, so the same
+ * pass can collect the app's own title, headings and opening text.
+ *
+ * That is evidence rather than inference: `cosmicteapot` says "Tea room · Brew
+ * log", `doomarcade00` says "AMMO / HEALTH / ARMOR", `buy-or-sell` says "long
+ * or short?". No description needed, and nothing invented.
+ *
+ * Kept deliberately short. This is a hint for categorising a card, not a copy
+ * of someone else's app.
+ */
+const INFO_JSON = path.join(HERE, '..', 'src', 'lib', 'appinfo.json');
+
 /** An integer tunable, overridable from the environment for CI experiments. */
 const int = (name, fallback) => {
   const v = Number(process.env[name]);
   return Number.isFinite(v) && v > 0 ? v : fallback;
 };
+
+/** How much of an app's own text to keep. A hint, not a copy of their page. */
+const INFO_TEXT_CHARS = int('SHOT_INFO_CHARS', 400);
 
 const THUMB_WIDTH = int('SHOT_WIDTH', 480); // downscaled thumbnail width, px
 const TARGET_BYTES = int('SHOT_TARGET_BYTES', 20 * 1024); // per-thumb soft ceiling
@@ -331,6 +352,9 @@ async function main() {
   // Start the new map from prior thumbnails that are still valid: label still in
   // the directory AND the file still on disk. A capture below overwrites its
   // entry; a name we never reach keeps this carried-over one.
+  // Carried over the same way the thumbnails are: a name we fail to reach this
+  // run keeps the words it gave us last time.
+  const info = readJson(INFO_JSON, {});
   const shots = {};
   for (const [label, meta] of Object.entries(existing)) {
     if (!currentLabels.has(label)) continue; // left the directory / lost its bundle
@@ -530,6 +554,31 @@ async function main() {
         continue;
       }
 
+      // Harvest the app's own words before moving on. Best-effort by design: a
+      // failure here must never cost us the screenshot we just took.
+      try {
+        const needle = `${label}.app.dev-dot.li`;
+        const appDoc = page.frames().find((fr) => fr.url().includes(needle));
+        if (appDoc) {
+          const got = await appDoc.evaluate((limit) => {
+            const heads = Array.from(document.querySelectorAll('h1,h2,h3'))
+              .map((e) => (e.textContent || '').trim())
+              .filter(Boolean)
+              .slice(0, 6);
+            const text = (document.body ? document.body.innerText : '')
+              .replace(/\s+/g, ' ')
+              .trim()
+              .slice(0, limit);
+            return { title: (document.title || '').trim(), heads, text };
+          }, INFO_TEXT_CHARS);
+          if (got && (got.title || got.heads.length || got.text)) {
+            info[label] = { ...got, at: Math.floor(Date.now() / 1000) };
+          }
+        }
+      } catch {
+        /* unreadable frame: the app simply contributes no words this run */
+      }
+
       const webp = await toWebp(shot, label);
       const meta = await sharp(webp).metadata();
       fs.writeFileSync(path.join(SHOTS_DIR, `${label}.webp`), webp);
@@ -574,6 +623,13 @@ async function main() {
   const ordered = {};
   for (const k of Object.keys(shots).sort()) ordered[k] = shots[k];
   fs.writeFileSync(SHOTS_JSON, JSON.stringify(ordered, null, 2) + '\n');
+
+  // The apps' own words, pruned to names still in the directory. Same carry-over
+  // rule as the thumbnails: a name we could not reach keeps what it said before.
+  const keptInfo = {};
+  for (const k of Object.keys(info).sort()) if (currentLabels.has(k)) keptInfo[k] = info[k];
+  fs.writeFileSync(INFO_JSON, JSON.stringify(keptInfo, null, 2) + '\n');
+  console.log(`appinfo.json: ${Object.keys(keptInfo).length} apps described themselves`);
 
   // --- report -------------------------------------------------------------
   let total = 0;
