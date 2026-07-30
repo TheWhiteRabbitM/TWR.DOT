@@ -304,7 +304,7 @@
       }
     },
     "signingBotAutopair": {
-      "title": "Bot di firma",
+      "title": "Signing Bot",
       "statusIdle": "Pronto per la connessione",
       "statusConnecting": "Verifica del bot...",
       "statusPairing": "Abbinamento tramite bot...",
@@ -426,7 +426,7 @@
     "settings": {
       "title": "Impostazioni",
       "testnetEndpoints": "Endpoint testnet",
-      "endpointStable": "Stable",
+      "endpointStable": "Stabile",
       "group": {
         "preferences": "Preferenze",
         "privacy": "Privacy e sicurezza",
@@ -771,7 +771,7 @@
         "confirm": "Cambia endpoint"
       },
       "options": {
-        "endpointStable": "Stable"
+        "endpointStable": "Stabile"
       }
     },
     "offlineAccess": {
@@ -898,16 +898,16 @@
         "allowAlways": "Consenti sempre"
       },
       "allocationRequest": {
-        "title": "Richiesta di allowance",
-        "description": "{productName} richiede l'assegnazione di risorse",
+        "title": "Richiesta di autorizzazione",
+        "description": "{productName} richiede l'autorizzazione a usare queste risorse",
         "requestedResources": "Risorse richieste",
         "polkadotAppHint": "Prepararsi ad approvare nell'app Polkadot",
         "grantAccess": "Continua",
-        "pending": "Assegnazione in corso...",
+        "pending": "Autorizzazione in corso...",
         "polkadotAppLine1": "Apri l'app Polkadot sul telefono,",
         "polkadotAppLine2": "poi approva o rifiuta",
         "polkadotAppApproveButton": "Approva",
-        "allocationRejected": "Richiesta di allowance annullata",
+        "allocationRejected": "Richiesta di autorizzazione annullata",
         "smartContractDetailsIntro": "I seguenti account firmeranno automaticamente le chiamate al contratto:",
         "appAccountWithIndex": "Account app con indice {index}",
         "copyAccountAddress": "Copia indirizzo account",
