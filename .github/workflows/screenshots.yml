@@ -23,12 +23,34 @@ name: dotmetrics app screenshots
 # partial set succeeded. The job goes red only on a real infrastructure failure
 # (discovered.json unreadable, or Chromium refusing to launch).
 
+# TWO CADENCES, BECAUSE A NEW APP SHOULD NOT WAIT A WEEK TO BE SEEN.
+#
+# dot-store's Featured shelf is `CATALOG.filter(a => a.shot)` — its subtitle
+# promises a real screenshot rather than a mock-up, so an app with no thumbnail
+# is correctly excluded. With capture running only on Mondays, that meant every
+# newly registered app was invisible there for up to seven days, and it looked
+# like the shelf had stopped updating. It had not; the screenshots simply never
+# arrived in time.
+#
+# So: a nightly pass in SHOT_ONLY_MISSING mode, which touches only names that
+# have no thumbnail yet — usually none, occasionally the handful registered that
+# day, so it costs a couple of minutes and commits nothing when there is nothing
+# to do. The Monday run stays a full re-capture, because an app that changed its
+# UI should not keep an old picture forever.
 on:
   schedule:
-    # Mondays 05:41 UTC — off the hour, and clear of keepalive.yml (04:23 Mon)
-    # and dotmetrics-refresh.yml (:17 hourly) so signing/commit races are avoided.
+    # Mondays 05:41 UTC — full re-capture. Off the hour, and clear of
+    # keepalive.yml (04:23 Mon) and dotmetrics-refresh.yml (:17 hourly) so
+    # signing/commit races are avoided.
     - cron: '41 5 * * 1'
+    # Nightly 05:41 UTC — new arrivals only. Same minute for the same reason.
+    - cron: '41 5 * * 0,2-6'
   workflow_dispatch:
+    inputs:
+      missing_only:
+        description: 'Capture only apps that have no thumbnail yet'
+        type: boolean
+        default: false
 
 concurrency:
   group: dotmetrics-shots
@@ -73,7 +95,19 @@ jobs:
           SHOT_RUN_BUDGET_MS: '1980000'
           SHOT_NAV_TIMEOUT_MS: '15000'
           MAX_SHOTS: '100'
-        run: node indexer/capture-shots.mjs
+          # Monday's cron is the full re-capture; every other night only fills
+          # the gaps. A manual run is full unless asked otherwise, because the
+          # reason to press the button by hand is usually "re-shoot everything".
+          SHOT_ONLY_MISSING: >-
+            ${{ (github.event.schedule == '41 5 * * 0,2-6'
+                 || inputs.missing_only) && '1' || '' }}
+        run: |
+          if [ -n "${SHOT_ONLY_MISSING:-}" ]; then
+            echo "mode: new arrivals only"
+          else
+            echo "mode: full re-capture"
+          fi
+          node indexer/capture-shots.mjs
 
       - name: Commit thumbnails back to the repo
         if: always() # even a partial run should land the shots it managed to take
