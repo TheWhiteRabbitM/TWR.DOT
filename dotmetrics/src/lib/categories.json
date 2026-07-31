@@ -214,6 +214,14 @@
       "metrics~"
     ]
   },
+  "dragon-realm": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "weather"
+    ]
+  },
   "dripstream": {
     "category": "other",
     "source": "unclassified",
@@ -703,5 +711,11 @@
       "message~",
       "guestbook~"
     ]
+  },
+  "zkdot-devnet": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   }
 }

@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11616642,
-  "updatedAt": "2026-07-30T22:22:43.841Z",
+  "lastBlock": 11619507,
+  "updatedAt": "2026-07-31T00:18:22.121Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "f6358b359ef7f0218444c4b767fd8e83e48084edcb611dac9880df68f2720f9d",
-    "cid": "bafybeigs7go5benyxklfo4v5mgeaqgs6f7noulhy7m6pc6wipfqs4zzxxa",
-    "uploadedAt": "2026-07-30T22:28:28.666Z"
+    "digest": "b04fb51c0a73f3a0416e051c16065a7eef447e648e7819bbe2b00bca33f5510f",
+    "cid": "bafybeiaobxffvqx2tkcrav3mw6zpgxlrqebqqrsoksewrh6aodcsqiw2pe",
+    "uploadedAt": "2026-07-31T00:24:23.158Z"
   },
   "sitePublish": {
-    "treeHash": "d1262add0d340a1bd94766e6747adb7845642c9774b73952145d2a35b76b4769",
-    "publishedAt": "2026-07-30T22:30:35.122Z"
+    "treeHash": "7ed5291e3f665ec7cc6e6c91497cba466df64642c31ec81682b3ce8dabb110fc",
+    "publishedAt": "2026-07-31T00:26:42.017Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-30T22:27:06.000Z",
+    "updatedAt": "2026-07-31T00:21:10.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -98,7 +98,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-30T22:27:06.000Z",
+    "updatedAt": "2026-07-31T00:21:10.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -190,9 +190,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifxetgmw25czlfp44thubovb6zkq4zlwbepmx57hhxs4edsh7plua",
-        "updateCount": 7,
-        "changedAt": 1785450426,
+        "contenthash": "bafybeicp7xhmtbd6bztvhw6l5p6n5qwb5foy526dast567a24pytrexqcq",
+        "updateCount": 8,
+        "changedAt": 1785457270,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -218,9 +218,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeif3irjn2c3zgq4nmfbhg5xvse3d4wgqx5wj576xzb5os32ye6lkuy",
-        "updateCount": 8,
-        "changedAt": 1785444160,
+        "contenthash": "bafybeifbv3iwxtszdhkocghrjf3gdl3jx5urgojso36n425cdxm2lau5r4",
+        "updateCount": 9,
+        "changedAt": 1785457270,
         "live": "alive"
       },
       "dragon-realm": {
@@ -255,9 +255,9 @@
         "live": "alive"
       },
       "flowfarm-staking": {
-        "contenthash": "bafybeib6nvyudqpdgiymieerq5xajz76viawxv74xyp3qic7mkxqlpm26u",
-        "updateCount": 7,
-        "changedAt": 1785450426,
+        "contenthash": "bafybeih6mjy2y5ilswezirpfnxlc2bcdvt4qd2yvar2ik6hbfieqmhuyzy",
+        "updateCount": 8,
+        "changedAt": 1785457270,
         "live": "alive"
       },
       "giganetwork": {
