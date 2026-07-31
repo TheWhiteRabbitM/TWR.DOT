@@ -26,6 +26,7 @@
  *   being composited throttles to nothing.
  */
 import './node-shim';
+import { Presenter } from './crt';
 import Gameboy, { type KeyIndex } from 'serverboy';
 
 export const WIDTH = 160;
@@ -74,8 +75,7 @@ const FRAME_MS = 1000 / 59.7275;
 
 export class Emulator {
   private gb = new Gameboy();
-  private ctx: CanvasRenderingContext2D;
-  private image: ImageData;
+  private screen: Presenter;
   private held = new Set<Button>();
   private raf = 0;
   private running = false;
@@ -84,9 +84,7 @@ export class Emulator {
   frames = 0;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.ctx = canvas.getContext('2d')!;
-    this.ctx.imageSmoothingEnabled = false;
-    this.image = this.ctx.createImageData(WIDTH, HEIGHT);
+    this.screen = new Presenter(canvas, WIDTH, HEIGHT);
   }
 
   async load(url: string) {
@@ -101,14 +99,17 @@ export class Emulator {
     this.frames = 0;
   }
 
-  /** Copy the emulator's RGBA screen onto the canvas. */
+  /** Hand the emulator's RGBA screen to the tube. */
   private present() {
-    const screen = this.gb.getScreen();
-    this.image.data.set(screen);
-    this.ctx.putImageData(this.image, 0, 0);
+    this.screen.image.data.set(this.gb.getScreen());
+    this.screen.draw();
     this.frames++;
   }
 
+  /** The frame as the emulator drew it — see Machine.nativeCanvas. */
+  nativeCanvas(): HTMLCanvasElement {
+    return this.screen.nativeCanvas();
+  }
   /**
    * Advance whole frames synchronously.
    *

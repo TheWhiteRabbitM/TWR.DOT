@@ -46,15 +46,14 @@ await p.screenshot({ path: 'shots/room.png' });
 const cabinets = await p.evaluate(() => window.__arcade.cabinets);
 console.log(`room: ${cabinets.length} cabinets\n`);
 
-/** Distinct colours on a cabinet's screen — a flat screen has one. */
-const look = (i) =>
-  p.evaluate((i) => {
-    const c = document.querySelector(`[data-screen="${i}"]`);
-    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
-    const seen = new Set();
-    for (let j = 0; j < d.length; j += 4) seen.add((d[j] << 16) | (d[j + 1] << 8) | d[j + 2]);
-    return { colours: seen.size, w: c.width, h: c.height };
-  }, i);
+/**
+ * What the emulator drew, at its own resolution.
+ *
+ * Deliberately NOT the visible canvas: that is 3x with scanlines and phosphor
+ * glow on it, and a colour count taken there passes every game including a dead
+ * one — the bloom alone invents hundreds of shades out of a black screen.
+ */
+const look = () => p.evaluate(() => window.__arcade.look());
 
 const box = (i) =>
   p.$eval(`[data-screen="${i}"]`, (e) => {
@@ -90,7 +89,7 @@ for (let i = 0; i < cabinets.length; i++) {
   const f0 = await p.evaluate(() => window.__arcade.frames());
   await p.waitForTimeout(1000);
   const f1 = await p.evaluate(() => window.__arcade.frames());
-  const { colours, w, h } = await look(i);
+  const { colours, w, h } = await look();
 
   await p.screenshot({ path: `shots/cab-${i}-${cab.system}.png` });
 

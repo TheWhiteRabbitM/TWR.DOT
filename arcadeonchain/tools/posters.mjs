@@ -53,37 +53,19 @@ const cabinets = await p.evaluate(() => window.__arcade.cabinets);
 /**
  * What is on the screen, and whether it is alive.
  *
+ * Read from the emulator's own frame rather than the glass — a poster of the
+ * scanlines and the bloom would be a picture of this app, not of the game, and
+ * it would be three times the size for it.
+ *
  * `colours` says there is a picture at all. `moving` says the game is running
  * rather than sitting on a menu, a title card or — the one that produced a
  * genuinely bad poster — its own PAUSE screen, which the walk had triggered by
  * pressing START during play.
  */
-const sample = (i) =>
-  p.evaluate(async (i) => {
-    const c = document.querySelector(`[data-screen="${i}"]`);
-    const ctx = c.getContext('2d');
-    const read = () => ctx.getImageData(0, 0, c.width, c.height).data;
-
-    const a = read();
-    const colours = new Set();
-    for (let j = 0; j < a.length; j += 4) colours.add((a[j] << 16) | (a[j + 1] << 8) | a[j + 2]);
-
-    await new Promise((r) => setTimeout(r, 250));
-    const b = read();
-    let changed = 0;
-    for (let j = 0; j < a.length; j += 4) if (a[j] !== b[j]) changed++;
-
-    return {
-      colours: colours.size,
-      changed,
-      // Two parts in a thousand. A whole percent sounded safe and called
-      // Jeznes dead in all forty frames — its motion is three balls the size of
-      // a fingernail crossing a static playfield, about 200 pixels. Below this
-      // the only thing moving is a blinking cursor, which is a menu.
-      moving: changed > (a.length / 4) * 0.002,
-      png: c.toDataURL('image/png'),
-    };
-  }, i);
+const sample = async () => ({
+  ...(await p.evaluate(() => window.__arcade.look())),
+  png: await p.evaluate(() => window.__arcade.frame()),
+});
 
 for (let i = 0; i < cabinets.length; i++) {
   const cab = cabinets[i];
@@ -112,7 +94,7 @@ for (let i = 0; i < cabinets.length; i++) {
   for (const k of script) {
     if (k) await hold(p, k, 220);
     await p.waitForTimeout(700);
-    shots.push(await sample(i));
+    shots.push(await sample());
   }
 
   // Take the last frame that is BOTH rich and moving.

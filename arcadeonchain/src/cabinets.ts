@@ -38,6 +38,15 @@ export interface Machine {
   press(b: string): void;
   release(b: string): void;
   readonly frames: number;
+  /**
+   * The frame at the machine's own resolution, before the tube gets to it.
+   *
+   * The visible canvas is 3x and carries scanlines and phosphor glow, so
+   * anything measuring the picture — the poster capture, the checks that count
+   * colours to prove a game booted — would be measuring the effects. This is
+   * the emulator's actual output.
+   */
+  nativeCanvas(): HTMLCanvasElement;
 }
 
 export type System = 'nes' | 'gb';

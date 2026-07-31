@@ -9,6 +9,7 @@
  * set headers. No WASM, no question.
  */
 import { NES, Controller } from 'jsnes';
+import { Presenter } from './crt';
 
 const WIDTH = 256;
 const HEIGHT = 240;
@@ -58,8 +59,7 @@ const KEYS: Record<string, Button> = {
 
 export class Emulator {
   private nes: NES;
-  private ctx: CanvasRenderingContext2D;
-  private image: ImageData;
+  private screen: Presenter;
   private buf32: Uint32Array;
   private buf8: Uint8ClampedArray;
 
@@ -76,18 +76,16 @@ export class Emulator {
   frames = 0;
 
   constructor(private canvas: HTMLCanvasElement) {
-    this.ctx = canvas.getContext('2d')!;
-    this.ctx.imageSmoothingEnabled = false;
-    this.image = this.ctx.createImageData(WIDTH, HEIGHT);
-    const buffer = new ArrayBuffer(this.image.data.length);
+    this.screen = new Presenter(canvas, WIDTH, HEIGHT);
+    const buffer = new ArrayBuffer(this.screen.image.data.length);
     this.buf8 = new Uint8ClampedArray(buffer);
     this.buf32 = new Uint32Array(buffer);
 
     this.nes = new NES({
       onFrame: (frameBuffer: Uint32Array) => {
         for (let i = 0; i < WIDTH * HEIGHT; i++) this.buf32[i] = 0xff000000 | frameBuffer[i];
-        this.image.data.set(this.buf8);
-        this.ctx.putImageData(this.image, 0, 0);
+        this.screen.image.data.set(this.buf8);
+        this.screen.draw();
         this.frames++;
       },
       onAudioSample: (l: number, r: number) => {
@@ -204,6 +202,11 @@ export class Emulator {
     const seen = new Set<number>();
     for (let i = 0; i < this.buf32.length; i += 7) seen.add(this.buf32[i] & 0xffffff);
     return seen.size;
+  }
+
+  /** The frame as the emulator drew it — see Machine.nativeCanvas. */
+  nativeCanvas(): HTMLCanvasElement {
+    return this.screen.nativeCanvas();
   }
 
   /** A cheap fingerprint of the current picture, for spotting change. */

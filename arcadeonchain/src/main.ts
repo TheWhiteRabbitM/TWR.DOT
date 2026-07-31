@@ -251,10 +251,40 @@ render();
 
 // Exposed for verification: a headless check can assert the walk-up landed and
 // a cabinet is running, rather than trusting a screenshot.
+//
+// `frame()` hands back the emulator's own output rather than the glass. The
+// visible canvas carries scanlines and phosphor glow, so a colour count taken
+// off it measures the tube — every game would pass, including a dead one.
 (window as unknown as { __arcade: unknown }).__arcade = {
   cabinets: CABINETS,
   playing: () => playing,
   frames: () => machine?.frames ?? 0,
+  frame: () => machine?.nativeCanvas().toDataURL('image/png') ?? null,
+  // Measured in the page rather than shipped out as a quarter-million numbers:
+  // a frame of pixel data crosses the debug protocol as JSON, and doing that
+  // sixty times a run costs more than the emulation.
+  look: async () => {
+    const c = machine?.nativeCanvas();
+    if (!c) return null;
+    const ctx = c.getContext('2d')!;
+    const read = () => ctx.getImageData(0, 0, c.width, c.height).data;
+    const a = read();
+    const seen = new Set<number>();
+    for (let i = 0; i < a.length; i += 4) seen.add((a[i] << 16) | (a[i + 1] << 8) | a[i + 2]);
+    await new Promise((r) => setTimeout(r, 250));
+    const b = read();
+    let changed = 0;
+    for (let i = 0; i < a.length; i += 4) if (a[i] !== b[i]) changed++;
+    return {
+      w: c.width,
+      h: c.height,
+      colours: seen.size,
+      changed,
+      // Two parts in a thousand — enough for three balls crossing a static
+      // playfield, not enough for a blinking cursor on a menu.
+      moving: changed > (a.length / 4) * 0.002,
+    };
+  },
   walkUp,
   leave,
 };
