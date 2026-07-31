@@ -124,6 +124,10 @@ jobs:
     # against that one pipeline rather than as a failure of everything.
     runs-on: ubuntu-latest
     steps:
+      # This job needed no checkout while it was a couple of inline `node -e`
+      # snippets. It reports through a script in the repo now, so it does.
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
