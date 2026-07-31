@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11650889,
-  "updatedAt": "2026-07-31T19:56:42.426Z",
+  "lastBlock": 11653736,
+  "updatedAt": "2026-07-31T21:31:50.523Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "7526d562d3024c9e2c18b023962c5fdebcc328bf611d41e61e70c8175e0ddccf",
-    "cid": "bafybeibhrfa4veg6cesuneu4dutwchxy7wgqitnpa6pxyvhuenns4cnkcu",
-    "uploadedAt": "2026-07-31T20:00:59.658Z"
+    "digest": "c005a44a592aa5068d231ae1b1bec1aff939dfd6ee89e95817b5ebc501ff1792",
+    "cid": "bafybeiaryylmx7dxi77xum2d4gibz52fnymtnl2rashkd7g4dmjxntqf34",
+    "uploadedAt": "2026-07-31T21:36:04.157Z"
   },
   "sitePublish": {
-    "treeHash": "ae39974b1d341a717c0a44d00e34493ecc58570e0a43828f937d463f64b0b598",
-    "publishedAt": "2026-07-31T20:02:57.868Z"
+    "treeHash": "933c2b8055afb12b4b808ad033a36f6f7d693161961d699c3453cc1a151d1117",
+    "publishedAt": "2026-07-31T21:38:35.153Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-31T19:59:38.000Z",
+    "updatedAt": "2026-07-31T21:34:47.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -105,7 +105,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-31T19:59:39.000Z",
+    "updatedAt": "2026-07-31T21:34:47.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -209,9 +209,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeihsgogxyibvhn5xvc7ks32uokvyiqvsrt76fknjkdqvksu43jgztm",
-        "updateCount": 13,
-        "changedAt": 1785527979,
+        "contenthash": "bafybeidxpufql4ydf75t3knuigifzkisakpgi2lyf3czkbbf3xa2gmyy4m",
+        "updateCount": 14,
+        "changedAt": 1785533687,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -237,9 +237,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeidvgftc7tqh6zviiwitv7rj2sl5x4xgyeivy6otbm7nj2vtcom4tq",
-        "updateCount": 14,
-        "changedAt": 1785527979,
+        "contenthash": "bafybeif3lqkxz3bomnbwg7qdead3gaird3kdbzlsihr4gfr5updndopzey",
+        "updateCount": 15,
+        "changedAt": 1785533687,
         "live": "alive"
       },
       "dragon-realm": {
@@ -464,8 +464,9 @@
         "live": "alive"
       },
       "polkadevs": {
-        "contenthash": "bafybeihzttjelxdszwfo756dm6m6vlpeoehj2tlczn7f2bira72uodx45u",
-        "updateCount": 0,
+        "contenthash": "bafybeig4nzbdra7iwxi2pl3i6knkgeznqjozhioarq6lpdhaw4hkk6jiai",
+        "updateCount": 1,
+        "changedAt": 1785533687,
         "live": "alive"
       },
       "polkadot-builders-hackademy": {

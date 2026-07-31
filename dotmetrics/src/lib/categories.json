@@ -565,6 +565,12 @@
       "plaza~"
     ]
   },
+  "polkadevs": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "polkadot-builders-hackademy": {
     "category": "other",
     "source": "unclassified",
