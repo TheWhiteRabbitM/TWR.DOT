@@ -121,8 +121,18 @@ jobs:
           git add dotmetrics/public/shots dotmetrics/src/lib/shots.json
           if git diff --cached --quiet; then
             echo "no thumbnail changes to commit"
-          else
-            git commit -m "dotmetrics: weekly app screenshots (GitHub Actions)"
-            git pull --rebase origin master
-            git push
+            exit 0
           fi
+
+          git commit -m "dotmetrics: app screenshots (GitHub Actions)"
+
+          # --autostash, because the commit above stages only the two thumbnail
+          # paths on purpose and the capture leaves other files dirty in the
+          # working tree. Plain `git pull --rebase` refuses to start with
+          # unstaged changes present, which is exactly how a run that captured
+          # nine new thumbnails committed them locally and then died before the
+          # push — the work was done and thrown away. Autostash sets those
+          # changes aside for the rebase and puts them back after.
+          git pull --rebase --autostash origin master
+          git push
+          echo "pushed $(git rev-parse --short HEAD)"
