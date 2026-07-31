@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 31 Jul 2026 18:04:16 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 31 Jul 2026 19:59:39 GMT</lastBuildDate>
+    <item>
+      <title>polkadevs</title>
+      <link>https://polkadevs.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">polkadevs</guid>
+      <pubDate>Fri, 31 Jul 2026 18:48:24 GMT</pubDate>
+    </item>
     <item>
       <title>lanzadera</title>
       <link>https://lanzadera.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description>Calculatrice sur le dashboard : expression complète, scientifique, historique réutilisable. Aucun réseau.</description>
       <guid isPermaLink="false">oblv-wg-calc</guid>
       <pubDate>Mon, 27 Jul 2026 07:28:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>Oblv Crypto</title>
-      <link>https://oblv-wg-crypto.dev-dot.li</link>
-      <description>Suivi de prix crypto sur le dashboard : watchlist personnalisable, variation 24 h et tendance 7 jours.</description>
-      <guid isPermaLink="false">oblv-wg-crypto</guid>
-      <pubDate>Mon, 27 Jul 2026 07:23:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

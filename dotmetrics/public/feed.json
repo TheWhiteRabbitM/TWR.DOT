@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785521056,
-  "count": 94,
+  "generatedAt": 1785527979,
+  "count": 95,
   "apps": [
+    {
+      "label": "polkadevs",
+      "domain": "polkadevs.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785523704,
+      "url": "https://polkadevs.dev-dot.li"
+    },
     {
       "label": "lanzadera",
       "domain": "lanzadera.dot",

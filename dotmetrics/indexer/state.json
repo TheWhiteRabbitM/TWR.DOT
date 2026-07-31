@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11647296,
-  "updatedAt": "2026-07-31T18:00:42.411Z",
+  "lastBlock": 11650889,
+  "updatedAt": "2026-07-31T19:56:42.426Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "57021e9bed001f5f806c17a8880a7c5de93777d961c2735c47219b869c4962e6",
-    "cid": "bafybeif7xrguqxjb2cpv6ionysu5vccmpcgagkt6ynibubv6al3zpwl5le",
-    "uploadedAt": "2026-07-31T18:05:35.221Z"
+    "digest": "7526d562d3024c9e2c18b023962c5fdebcc328bf611d41e61e70c8175e0ddccf",
+    "cid": "bafybeibhrfa4veg6cesuneu4dutwchxy7wgqitnpa6pxyvhuenns4cnkcu",
+    "uploadedAt": "2026-07-31T20:00:59.658Z"
   },
   "sitePublish": {
-    "treeHash": "1698199e84fa3f7dc65c305a66116c3050bcd0d8e04b8efebf6ed845e48df27d",
-    "publishedAt": "2026-07-31T18:08:51.357Z"
+    "treeHash": "ae39974b1d341a717c0a44d00e34493ecc58570e0a43828f937d463f64b0b598",
+    "publishedAt": "2026-07-31T20:02:57.868Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-31T18:04:15.000Z",
+    "updatedAt": "2026-07-31T19:59:38.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -98,13 +98,14 @@
       "scytalepublish": "alive",
       "chopdotproof01": "alive",
       "gameboyonchain": "alive",
-      "lanzadera": "alive"
+      "lanzadera": "alive",
+      "polkadevs": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-31T18:04:16.000Z",
+    "updatedAt": "2026-07-31T19:59:39.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -208,9 +209,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifly7olhnhk2ddlzzl63ynuy7xwmdylfmkyp5xbe6p4q2xc3roybq",
-        "updateCount": 12,
-        "changedAt": 1785521056,
+        "contenthash": "bafybeihsgogxyibvhn5xvc7ks32uokvyiqvsrt76fknjkdqvksu43jgztm",
+        "updateCount": 13,
+        "changedAt": 1785527979,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -236,9 +237,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeigoqkczzbmnkilvqrpgcg6h3ijnunbkbb2pxtzqpqzonkndwhpolu",
-        "updateCount": 13,
-        "changedAt": 1785521056,
+        "contenthash": "bafybeidvgftc7tqh6zviiwitv7rj2sl5x4xgyeivy6otbm7nj2vtcom4tq",
+        "updateCount": 14,
+        "changedAt": 1785527979,
         "live": "alive"
       },
       "dragon-realm": {
@@ -460,6 +461,11 @@
         "contenthash": "bafybeieua7l35kfzjz6ysf3jojkeveavjir4kdmaiehtcvybxyxkjnf4ee",
         "updateCount": 7,
         "changedAt": 1785521056,
+        "live": "alive"
+      },
+      "polkadevs": {
+        "contenthash": "bafybeihzttjelxdszwfo756dm6m6vlpeoehj2tlczn7f2bira72uodx45u",
+        "updateCount": 0,
         "live": "alive"
       },
       "polkadot-builders-hackademy": {

@@ -7,6 +7,14 @@
       "chess~"
     ]
   },
+  "arcadeonchain": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "arcade~"
+    ]
+  },
   "ascendyendor00": {
     "category": "games",
     "source": "derived:manifest",
@@ -59,6 +67,14 @@
     "confidence": "high",
     "why": [
       "guide"
+    ]
+  },
+  "chopdotproof01": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "community"
     ]
   },
   "contribnet01": {
@@ -270,6 +286,12 @@
       "reward"
     ]
   },
+  "gameboyonchain": {
+    "category": "games",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
   "giganetwork": {
     "category": "other",
     "source": "unclassified",
@@ -366,6 +388,12 @@
     "why": [
       "map~"
     ]
+  },
+  "lanzadera": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "mini-lucky-smoke": {
     "category": "social",
