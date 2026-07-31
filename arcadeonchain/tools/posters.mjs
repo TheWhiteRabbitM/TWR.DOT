@@ -46,6 +46,10 @@ const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1280, height: 860 } });
 await p.goto(URL, { waitUntil: 'domcontentloaded' });
 await p.waitForSelector('.cab');
+
+// Skip the shutter. Clicking to skip it would be a click the room has to not
+// misread as choosing a cabinet, and four seconds per run adds up.
+await p.evaluate(() => window.__arcade.openNow());
 await p.waitForTimeout(600);
 
 const cabinets = await p.evaluate(() => window.__arcade.cabinets);

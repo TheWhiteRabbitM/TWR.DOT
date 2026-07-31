@@ -40,6 +40,10 @@ p.on('console', (m) => m.type() === 'error' && errs.push(m.text()));
 
 await p.goto(URL, { waitUntil: 'domcontentloaded' });
 await p.waitForSelector('.cab', { timeout: 15000 });
+
+// Skip the shutter. Clicking to skip it would be a click the room has to not
+// misread as choosing a cabinet, and four seconds per run adds up.
+await p.evaluate(() => window.__arcade.openNow());
 await p.waitForTimeout(800);
 await p.screenshot({ path: 'shots/room.png' });
 

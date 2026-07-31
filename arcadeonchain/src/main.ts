@@ -15,6 +15,8 @@
  *   the manifest records which applies to each.
  */
 import { CABINETS, SCREENS, makeMachine, posterOf, type Cabinet, type Machine } from './cabinets';
+import { open } from './opening';
+import { insertCoin, warmUp, PRICE, type CoinStep } from './coin';
 import './room.css';
 
 
@@ -27,6 +29,7 @@ let playing: number | null = null;
 function render() {
   root.innerHTML = `
     <div class="room" id="room">
+      <div class="tubes" aria-hidden="true"><i></i><i></i><i></i></div>
       <header class="masthead">
         <h1>ARCADE ON CHAIN</h1>
         <p>Three cabinets. Pick one and walk up to it — the room moves, the screen
@@ -58,7 +61,7 @@ function render() {
                 <span class="stick" aria-hidden="true"></span>
                 <span class="buttons" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
               </span>
-              <span class="coin">INSERT COIN</span>
+              <span class="coin" data-coin="${i}">INSERT COIN · ${PRICE} PAS</span>
             </span>
             <span class="plaque">
               <b>${esc(c.rom ? c.title : 'No cartridge')}</b>
@@ -76,8 +79,64 @@ function render() {
     </div>`;
 
   root.querySelectorAll<HTMLButtonElement>('.cab').forEach((el) =>
-    el.addEventListener('click', () => walkUp(Number(el.dataset.i))),
+    el.addEventListener('click', () => chooseCabinet(Number(el.dataset.i))),
   );
+}
+
+/* ---------------------------------------------------------------- the coin */
+
+/**
+ * Credits, per machine.
+ *
+ * One coin buys one go at the cabinet you put it in — which is what a coin
+ * bought. A shared pool across the row would be a wallet, not an arcade, and it
+ * would make the coin door on each machine a lie.
+ */
+const credits = new Map<number, number>();
+
+/** Is the slot busy? Two taps must not become two coins. */
+const paying = new Set<number>();
+
+/**
+ * Ask for a coin, then let them play.
+ *
+ * Every stage is shown on the cabinet itself. A signature request that opens in
+ * another window with nothing said here reads as a machine that ignored you,
+ * and the fix people reach for is pressing it again — which is the one thing
+ * that must not cost twice.
+ */
+async function chooseCabinet(index: number) {
+  const cab = CABINETS[index];
+  if (!cab.rom || !cab.system) return; // an empty cabinet is not a door
+  if (playing === index || paying.has(index)) return;
+
+  if ((credits.get(index) ?? 0) > 0) {
+    walkUp(index);
+    return;
+  }
+
+  const el = root.querySelector<HTMLElement>(`[data-i="${index}"]`);
+  const slot = root.querySelector<HTMLElement>(`[data-coin="${index}"]`);
+  const say = (s: string) => slot && (slot.textContent = s.toUpperCase());
+
+  paying.add(index);
+  el?.classList.add('paying');
+
+  const outcome = await insertCoin((step: CoinStep) => say(step));
+
+  paying.delete(index);
+  el?.classList.remove('paying');
+
+  if (!outcome.paid) {
+    say(outcome.why);
+    // Leave the reason up long enough to read, then offer the slot again.
+    setTimeout(() => say(`insert coin · ${PRICE} PAS`), 4000);
+    return;
+  }
+
+  credits.set(index, (credits.get(index) ?? 0) + 1);
+  say(outcome.free ? 'free play' : 'credit 1');
+  walkUp(index);
 }
 
 /* ------------------------------------------------------------- the walk-up */
@@ -186,6 +245,9 @@ async function walkUp(index: number) {
 }
 
 function leave() {
+  // The credit is spent on the way out. A coin bought one go; leaving and
+  // walking back up is a second go, and it costs a second coin.
+  if (playing !== null) credits.set(playing, Math.max(0, (credits.get(playing) ?? 1) - 1));
   playing = null;
   machine?.stop();
   machine = null;
@@ -249,6 +311,17 @@ const esc = (s: string) =>
 
 render();
 
+/*
+ * Opening time.
+ *
+ * The shutter goes up, the tubes strike, the machines roll in. The handshake
+ * with the wallet starts the moment the room is open rather than on the first
+ * coin: it takes seconds it can spend while somebody is still deciding which
+ * cabinet to walk to, and every failure in it is rediscovered — and reported —
+ * on the coin itself.
+ */
+open(document.getElementById('room')!, warmUp);
+
 // Exposed for verification: a headless check can assert the walk-up landed and
 // a cabinet is running, rather than trusting a screenshot.
 //
@@ -286,6 +359,16 @@ render();
     };
   },
   walkUp,
+  choose: chooseCabinet,
+  credits: (i: number) => credits.get(i) ?? 0,
+  // Jump the opening. A headless check should not have to sit through four
+  // seconds of shutter, and clicking to skip it would be a click the room then
+  // has to not misread as choosing a cabinet.
+  openNow: () => {
+    const room = document.getElementById('room');
+    document.getElementById('shutter')?.remove();
+    for (const cls of ['lifting', 'lit', 'stocked', 'open']) room?.classList.add(cls);
+  },
   leave,
 };
 

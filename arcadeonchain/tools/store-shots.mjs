@@ -28,6 +28,10 @@ const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 });
 await p.goto(URL, { waitUntil: 'domcontentloaded' });
 await p.waitForSelector('.poster');
+
+// Skip the shutter. Clicking to skip it would be a click the room has to not
+// misread as choosing a cabinet, and four seconds per run adds up.
+await p.evaluate(() => window.__arcade.openNow());
 await p.waitForTimeout(1200); // let the posters decode, or the room shot has holes
 
 await p.addStyleTag({ content: '.idle { animation: none !important; opacity: 1 !important }' });
