@@ -26,6 +26,16 @@ const hold = (p, code, ms = 220) =>
 
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 });
+
+/*
+ * JPEG, not PNG.
+ *
+ * These go on Bulletin, where our own account's quota is what pays for them —
+ * and a lossless 2560x1600 screenshot of a dark room with a glowing screen in
+ * it is 1.3 MB of mostly gradient. At quality 88 the same picture is under a
+ * tenth of that and the difference is invisible on a store card.
+ */
+const shoot = (path) => p.screenshot({ path, type: 'jpeg', quality: 88 });
 await p.goto(URL, { waitUntil: 'domcontentloaded' });
 await p.waitForSelector('.poster');
 
@@ -35,8 +45,8 @@ await p.evaluate(() => window.__arcade.openNow());
 await p.waitForTimeout(1200); // let the posters decode, or the room shot has holes
 
 await p.addStyleTag({ content: '.idle { animation: none !important; opacity: 1 !important }' });
-await p.screenshot({ path: 'store/1-room.png' });
-console.log('  1-room.png            the row, attract stills lit');
+await shoot('store/1-room.jpg');
+console.log('  1-room.jpg            the row, attract stills lit');
 
 /** Is the picture changing? A paused game and a menu are both perfectly still. */
 const moving = (i) =>
@@ -69,13 +79,13 @@ async function play(i, file, note) {
     await p.waitForTimeout(700);
   }
 
-  await p.screenshot({ path: file });
+  await shoot(file);
   console.log(`  ${file.replace('store/', '').padEnd(22)}${note}`);
   await p.evaluate(() => window.__arcade.leave());
   await p.waitForTimeout(500);
 }
 
-await play(0, 'store/2-jeznes.png', 'walked up to the NES cabinet, mid-game');
-await play(2, 'store/3-geometrix.png', 'walked up to a Game Boy Color cabinet');
+await play(0, 'store/2-jeznes.jpg', 'walked up to the NES cabinet, mid-game');
+await play(2, 'store/3-geometrix.jpg', 'walked up to a Game Boy Color cabinet');
 
 await b.close();
