@@ -15,6 +15,19 @@
 #   published first time, which is the whole diagnosis: it is a lottery, not a
 #   broken account of ours.
 #
+# HOW BAD THE ODDS ACTUALLY ARE (measured 2026-07-31)
+#   Five of the ten pool accounts are unauthorized, so a draw is close to a coin
+#   flip. At four attempts a single app fails 0.5^4 = 6.25% of the time, and
+#   across seven apps that is a failed run more often than not — which is what
+#   happened: truereviews drew accounts 4, 2, 0, 4 and gave up. Ten attempts puts
+#   it at 0.1% per app. The retries are cheap (a bad draw fails in ~9 seconds and
+#   writes nothing), so the only thing more attempts costs is log lines.
+#
+#   This is a workaround, not a fix. The fix is for the chain's authorizer to
+#   re-authorize the dead pool accounts; we cannot, because every grant path
+#   fails `{"type":"Invalid","value":{"type":"Payment"}}` for want of funds on
+#   Bulletin. The keepalive workflow's pool report is what surfaces that.
+#
 #   The failure was also invisible. The workflow piped pad through `grep`, so a
 #   seven-second failure printed nothing at all and the log showed a build
 #   followed by "exit code 1". Everything pad says is now kept, and shown when
@@ -29,7 +42,7 @@ set -uo pipefail
 
 DIR="${1:?usage: pad-publish.sh <dist-dir> <name.dot> [attempts]}"
 NAME="${2:?usage: pad-publish.sh <dist-dir> <name.dot> [attempts]}"
-ATTEMPTS="${3:-4}"
+ATTEMPTS="${3:-10}"
 LOG="$(mktemp)"
 
 for attempt in $(seq 1 "$ATTEMPTS"); do

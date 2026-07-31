@@ -103,9 +103,25 @@ jobs:
           bash ../.github/scripts/pad-publish.sh ./dist ${{ matrix.name }}
 
   authorization:
-    # The write authorization itself expires. Without it nothing can be renewed,
-    # so surface how long is left on every run rather than discovering it the
-    # week everything goes dark.
+    # Watch the authorizations that publishing ACTUALLY depends on.
+    #
+    # This job used to check only our own account and hard-fail on it. That was
+    # the wrong target twice over. `pad` does not sign with our account at all:
+    # it draws from a pool of storage accounts derived `//deploy/0…N`, and per
+    # its own DEPLOYMENT.md, "storage is gated by this quota, not by balance
+    # (Bulletin has no fee model)". So the pool's authorization is what keeps
+    # every published app alive, and it was invisible here.
+    #
+    # When first measured, five of the ten pool accounts were already NOT
+    # AUTHORIZED — which is exactly the "lottery" that pad-publish.sh retries
+    # around: a bad draw is a dead account, not a flaky network. And the five
+    # live ones expired sooner than our own authorization did, so the job that
+    # was meant to give early warning would have reported all-clear right up to
+    # the day publishing stopped.
+    #
+    # Our own authorization still matters, but only for `dotns bulletin upload`
+    # (the dotmetrics directory pointer) — so it is reported as a warning
+    # against that one pipeline rather than as a failure of everything.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v4
@@ -115,18 +131,47 @@ jobs:
       - name: Install dotns
         run: npm install -g @polkadot-community-foundation/dotns-cli@0.8.0
 
-      - name: Report days of write authorization left
+      - name: Report pool authorization — what publishing depends on
         env:
           MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
           DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          # The `//deploy/0…9` pool for the default DEV_PHRASE, as reported by
+          # `polkadot-app-bootstrap --env devnet`. Listed literally so this check
+          # stays read-only: bootstrap attempts a grant as a side effect, and a
+          # monitoring job should not try to write.
+          POOL="5DDa6Wx3AV7UNCF7rf7dvHuU29Q6scojoQMohpMnCUiQN7BJ
+          5Gut8tFYUgwwvw7Gubnze1zmXmDp2VXaeA9bPYRbmNb2qius
+          5HKYxtJNB6x2X8RBVoQkGCH3m7zUnSSk5t6pBrcMgNuy4sw7
+          5DWgpEFKY27TG4EXo4hLD6iuXQGGjcdBEgj8y12pqjxjhiTk
+          5C4xnD5VgfPLnfXGcj4w8T9S1gmext48jcyRbxzktrGuMY5V
+          5HmfJ5q1pwuDf7L1cQ1xNtgKm747tUs2BGSrguiWCjnRjpgx
+          5FC773CZwHN2oigFFf79VzCzJZbyrYNNixPHdHJcTGaa9T69
+          5HQaXiJtNRtk7WS9cXwuiMLXgXpT8YzuuDZ1J7bZe4DYAv8i
+          5HZK3oa3DBccmDu4AHAet8RfvKUGKj4La6ePTXQM5bGXzwFo
+          5EX8aPS3X2X8mhgqhcfz4uQeR5SnHWwRMnwpHmrUBLuiBbPf"
+
+          : > /tmp/pool.jsonl
+          for a in $POOL; do
+            line=$(dotns bulletin status "$a" --env devnet --json 2>/dev/null | tr -d '\r' | tail -1)
+            echo "{\"address\":\"$a\",\"status\":${line:-null}}" >> /tmp/pool.jsonl
+          done
+          node .github/scripts/report-pool.mjs /tmp/pool.jsonl
+
+      - name: Report our own authorization — used by the dotmetrics pointer only
+        if: always()
+        env:
+          MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+          DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+        run: |
+          set -uo pipefail
           dotns bulletin status --env devnet --json 2>/dev/null | tr -d '\r' | tail -1 > /tmp/auth.json
           node -e '
             const a = JSON.parse(require("fs").readFileSync("/tmp/auth.json", "utf8"));
             const days = (Date.parse(a.expiresAt) - Date.now()) / 86400000;
-            console.log(`authorized: ${a.authorized} · expires ${a.expiresAt} · ${days.toFixed(1)} days left`);
-            console.log(`quota left: ${a.transactions} transactions · ${(Number(a.bytes)/1048576).toFixed(1)} MiB`);
-            if (!a.authorized || a.expired) { console.log("::error::Bulletin write authorization is gone — nothing can be renewed"); process.exit(1); }
-            if (days < 7) console.log(`::warning::Bulletin authorization expires in ${days.toFixed(1)} days`);
+            console.log(`our account: authorized=${a.authorized} expires ${a.expiresAt} (${days.toFixed(1)} days)`);
+            console.log(`quota left:  ${a.transactions} transactions, ${(Number(a.bytes)/1048576).toFixed(1)} MiB`);
+            if (!a.authorized || a.expired || days < 3)
+              console.log("::warning::`dotns bulletin upload` is about to stop working — the dotmetrics directory pointer depends on it (site publishes do not)");
           '
