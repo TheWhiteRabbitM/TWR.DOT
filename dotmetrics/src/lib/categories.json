@@ -236,12 +236,12 @@
   },
   "dw3labsgame": {
     "category": "games",
-    "source": "derived:app-text",
+    "source": "derived:manifest",
     "confidence": "high",
     "why": [
       "game~",
-      "play~",
-      "score~",
+      "play",
+      "score",
       "lives~"
     ]
   },

@@ -4,7 +4,28 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 31 Jul 2026 07:21:26 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 31 Jul 2026 12:26:00 GMT</lastBuildDate>
+    <item>
+      <title>NES on chain</title>
+      <link>https://nesonchain.dev-dot.li</link>
+      <description>Fifteen freely-licensed NES homebrew games, emulated in the page — nothing is fetched from anywhere else and nothing you press leaves it. Every title ships its author&apos;s own release build under an SPDX licence that permits redistribution: MIT, Zlib, Unlicense and GPL-3.0. Author, licence and source repository are shown on each game screen, and the GPL titles link the corresponding source as the licence requires.</description>
+      <guid isPermaLink="false">nesonchain</guid>
+      <pubDate>Fri, 31 Jul 2026 09:55:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Rainbow</title>
+      <link>https://rainbow-dev.dev-dot.li</link>
+      <description>A platformer whose score is proven, not claimed. Play a run, then watch a TEE on the Acurast network replay your keypresses, recompute the score itself, and sign it for a contract on Polkadot Asset Hub.</description>
+      <guid isPermaLink="false">rainbow-dev</guid>
+      <pubDate>Fri, 31 Jul 2026 08:39:12 GMT</pubDate>
+    </item>
+    <item>
+      <title>scytalepublish</title>
+      <link>https://scytalepublish.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">scytalepublish</guid>
+      <pubDate>Fri, 31 Jul 2026 07:51:12 GMT</pubDate>
+    </item>
     <item>
       <title>Dragon Realm</title>
       <link>https://dragon-realm.dev-dot.li</link>
@@ -333,27 +354,6 @@
       <description>Widgets pour le dashboard : solde des comptes, et plus à venir.</description>
       <guid isPermaLink="false">oblv-widgets</guid>
       <pubDate>Sun, 26 Jul 2026 12:55:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>docs</title>
-      <link>https://docs.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">docs</guid>
-      <pubDate>Sun, 26 Jul 2026 08:15:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>tetris-bulletin</title>
-      <link>https://tetris-bulletin.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">tetris-bulletin</guid>
-      <pubDate>Sun, 26 Jul 2026 03:41:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>Discreet</title>
-      <link>https://discreetly.dev-dot.li</link>
-      <description>Private bookings for real people: anonymous verified humans, escrow deposits, kept-word reputation.</description>
-      <guid isPermaLink="false">discreetly</guid>
-      <pubDate>Sat, 25 Jul 2026 21:49:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

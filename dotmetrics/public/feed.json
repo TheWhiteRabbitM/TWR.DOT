@@ -1,7 +1,34 @@
 {
-  "generatedAt": 1785482486,
-  "count": 87,
+  "generatedAt": 1785500760,
+  "count": 90,
   "apps": [
+    {
+      "label": "nesonchain",
+      "domain": "nesonchain.dot",
+      "displayName": "NES on chain",
+      "description": "Fifteen freely-licensed NES homebrew games, emulated in the page — nothing is fetched from anywhere else and nothing you press leaves it. Every title ships its author's own release build under an SPDX licence that permits redistribution: MIT, Zlib, Unlicense and GPL-3.0. Author, licence and source repository are shown on each game screen, and the GPL titles link the corresponding source as the licence requires.",
+      "tier": 0,
+      "firstSeenAt": 1785491700,
+      "url": "https://nesonchain.dev-dot.li"
+    },
+    {
+      "label": "rainbow-dev",
+      "domain": "rainbow-dev.dot",
+      "displayName": "Rainbow",
+      "description": "A platformer whose score is proven, not claimed. Play a run, then watch a TEE on the Acurast network replay your keypresses, recompute the score itself, and sign it for a contract on Polkadot Asset Hub.",
+      "tier": 0,
+      "firstSeenAt": 1785487152,
+      "url": "https://rainbow-dev.dev-dot.li"
+    },
+    {
+      "label": "scytalepublish",
+      "domain": "scytalepublish.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785484272,
+      "url": "https://scytalepublish.dev-dot.li"
+    },
     {
       "label": "dragon-realm",
       "domain": "dragon-realm.dot",
