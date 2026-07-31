@@ -5,6 +5,12 @@
     "h": 970,
     "capturedAt": 1785409090
   },
+  "ascendyendor00": {
+    "file": "shots/ascendyendor00.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785493717
+  },
   "buildboard01": {
     "file": "shots/buildboard01.webp",
     "w": 480,
@@ -65,6 +71,12 @@
     "h": 970,
     "capturedAt": 1785409167
   },
+  "devnetpulse": {
+    "file": "shots/devnetpulse.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785493629
+  },
   "discreetly": {
     "file": "shots/discreetly.webp",
     "w": 480,
@@ -119,6 +131,24 @@
     "h": 970,
     "capturedAt": 1785409257
   },
+  "dragon-realm": {
+    "file": "shots/dragon-realm.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785493584
+  },
+  "dripstream": {
+    "file": "shots/dripstream.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785493652
+  },
+  "dropforge": {
+    "file": "shots/dropforge.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785493617
+  },
   "dw3labsgame": {
     "file": "shots/dw3labsgame.webp",
     "w": 480,
@@ -136,6 +166,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785409245
+  },
+  "flowfarm-staking": {
+    "file": "shots/flowfarm-staking.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785493706
   },
   "guestbook": {
     "file": "shots/guestbook.webp",
@@ -311,6 +347,12 @@
     "h": 970,
     "capturedAt": 1785408369
   },
+  "scytaledeploy": {
+    "file": "shots/scytaledeploy.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785493606
+  },
   "squadbuilder": {
     "file": "shots/squadbuilder.webp",
     "w": 480,
@@ -359,6 +401,12 @@
     "h": 970,
     "capturedAt": 1785408995
   },
+  "trustgraph": {
+    "file": "shots/trustgraph.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785493640
+  },
   "wudcommunity": {
     "file": "shots/wudcommunity.webp",
     "w": 480,
@@ -376,5 +424,11 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785409051
+  },
+  "zkdot-devnet": {
+    "file": "shots/zkdot-devnet.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785493595
   }
 }
