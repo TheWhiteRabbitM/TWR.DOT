@@ -1,7 +1,43 @@
 {
-  "generatedAt": 1785500760,
-  "count": 90,
+  "generatedAt": 1785521056,
+  "count": 94,
   "apps": [
+    {
+      "label": "lanzadera",
+      "domain": "lanzadera.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785514368,
+      "url": "https://lanzadera.dev-dot.li"
+    },
+    {
+      "label": "arcadeonchain",
+      "domain": "arcadeonchain.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785509076,
+      "url": "https://arcadeonchain.dev-dot.li"
+    },
+    {
+      "label": "chopdotproof01",
+      "domain": "chopdotproof01.dot",
+      "displayName": "ChopDot",
+      "description": "Group money coordination for expenses, savings circles, emergency pots, and community funds.",
+      "tier": 0,
+      "firstSeenAt": 1785508176,
+      "url": "https://chopdotproof01.dev-dot.li"
+    },
+    {
+      "label": "gameboyonchain",
+      "domain": "gameboyonchain.dot",
+      "displayName": "Game Boy on chain",
+      "description": "Twenty Game Boy Color homebrew cartridges, emulated in the page — nothing is fetched from anywhere else. Every one carries an explicit licence permitting redistribution: MIT, Zlib, Apache-2.0, GPL and CC-BY-SA. Titles include Tobu Tobu Girl Deluxe, Dawn Will Come, GB Corp., uCity and Geometrix. Author, licence and source are shown on each game screen; the copyleft titles link the corresponding source as their licence requires. Browse the whole handheld, then pick a cartridge and it scales up to play.",
+      "tier": 0,
+      "firstSeenAt": 1785502884,
+      "url": "https://gameboyonchain.dev-dot.li"
+    },
     {
       "label": "nesonchain",
       "domain": "nesonchain.dot",

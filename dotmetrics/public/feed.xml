@@ -4,7 +4,35 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 31 Jul 2026 12:26:00 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 31 Jul 2026 18:04:16 GMT</lastBuildDate>
+    <item>
+      <title>lanzadera</title>
+      <link>https://lanzadera.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">lanzadera</guid>
+      <pubDate>Fri, 31 Jul 2026 16:12:48 GMT</pubDate>
+    </item>
+    <item>
+      <title>arcadeonchain</title>
+      <link>https://arcadeonchain.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">arcadeonchain</guid>
+      <pubDate>Fri, 31 Jul 2026 14:44:36 GMT</pubDate>
+    </item>
+    <item>
+      <title>ChopDot</title>
+      <link>https://chopdotproof01.dev-dot.li</link>
+      <description>Group money coordination for expenses, savings circles, emergency pots, and community funds.</description>
+      <guid isPermaLink="false">chopdotproof01</guid>
+      <pubDate>Fri, 31 Jul 2026 14:29:36 GMT</pubDate>
+    </item>
+    <item>
+      <title>Game Boy on chain</title>
+      <link>https://gameboyonchain.dev-dot.li</link>
+      <description>Twenty Game Boy Color homebrew cartridges, emulated in the page — nothing is fetched from anywhere else. Every one carries an explicit licence permitting redistribution: MIT, Zlib, Apache-2.0, GPL and CC-BY-SA. Titles include Tobu Tobu Girl Deluxe, Dawn Will Come, GB Corp., uCity and Geometrix. Author, licence and source are shown on each game screen; the copyleft titles link the corresponding source as their licence requires. Browse the whole handheld, then pick a cartridge and it scales up to play.</description>
+      <guid isPermaLink="false">gameboyonchain</guid>
+      <pubDate>Fri, 31 Jul 2026 13:01:24 GMT</pubDate>
+    </item>
     <item>
       <title>NES on chain</title>
       <link>https://nesonchain.dev-dot.li</link>
@@ -326,34 +354,6 @@
       <description>Suivi de prix crypto sur le dashboard : watchlist personnalisable, variation 24 h et tendance 7 jours.</description>
       <guid isPermaLink="false">oblv-wg-crypto</guid>
       <pubDate>Mon, 27 Jul 2026 07:23:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>Oblv Weather</title>
-      <link>https://oblv-wg-weather.dev-dot.li</link>
-      <description>Météo sur le dashboard : conditions actuelles, heures à venir et prévisions 7 jours.</description>
-      <guid isPermaLink="false">oblv-wg-weather</guid>
-      <pubDate>Mon, 27 Jul 2026 07:01:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>giganetwork</title>
-      <link>https://giganetwork.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">giganetwork</guid>
-      <pubDate>Mon, 27 Jul 2026 04:23:36 GMT</pubDate>
-    </item>
-    <item>
-      <title>Dotify</title>
-      <link>https://dotify-test01.dev-dot.li</link>
-      <description>Shared musical presence with artist-owned access and value flows.</description>
-      <guid isPermaLink="false">dotify-test01</guid>
-      <pubDate>Sun, 26 Jul 2026 20:31:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>Oblv Widgets</title>
-      <link>https://oblv-widgets.dev-dot.li</link>
-      <description>Widgets pour le dashboard : solde des comptes, et plus à venir.</description>
-      <guid isPermaLink="false">oblv-widgets</guid>
-      <pubDate>Sun, 26 Jul 2026 12:55:12 GMT</pubDate>
     </item>
   </channel>
 </rss>

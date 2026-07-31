@@ -391,6 +391,12 @@
     "confidence": "none",
     "why": []
   },
+  "nesonchain": {
+    "category": "games",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
   "oblv-vault": {
     "category": "other",
     "source": "unclassified",
@@ -590,6 +596,15 @@
       "radio~"
     ]
   },
+  "rainbow-dev": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "play",
+      "score"
+    ]
+  },
   "rainbowprobe": {
     "category": "tools",
     "source": "derived:app-text",
@@ -604,6 +619,14 @@
     "source": "unclassified",
     "confidence": "none",
     "why": []
+  },
+  "scytalepublish": {
+    "category": "publishing",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "publish~"
+    ]
   },
   "scytaletest": {
     "category": "other",
