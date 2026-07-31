@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1785470574,
+  "generatedAt": 1785482486,
   "count": 87,
   "apps": [
     {
@@ -140,9 +140,9 @@
     {
       "label": "dw3labsgame",
       "domain": "dw3labsgame.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "Rainbow",
+      "description": "A platformer whose score is proven, not claimed. Play a run, then watch a TEE on the Acurast network replay your keypresses, recompute the score itself, and sign it for a contract on Polkadot Asset Hub.",
+      "tier": 0,
       "firstSeenAt": 1785315300,
       "url": "https://dw3labsgame.dev-dot.li"
     },

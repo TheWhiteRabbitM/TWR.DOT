@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11624850,
-  "updatedAt": "2026-07-31T03:59:33.482Z",
+  "lastBlock": 11629896,
+  "updatedAt": "2026-07-31T07:18:31.497Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "d1502986c623e83f4ae284f71d978c1e7e48e07d949e1ab0885c254171e283a2",
-    "cid": "bafybeihrl7zbdlvbxpg2ue425nvs3clls2wchhux24dx2gjy2xmex2v2qm",
-    "uploadedAt": "2026-07-31T04:04:37.194Z"
+    "digest": "11dbf2ef689dd146146aecc4dd4121129d92de75ca1e04433f83899234b90327",
+    "cid": "bafybeidc5kmhnnfrhmmyuhdttitt5zucrg5m7ozcqihj26i27xymttg6k4",
+    "uploadedAt": "2026-07-31T07:22:46.472Z"
   },
   "sitePublish": {
     "treeHash": "7ed5291e3f665ec7cc6e6c91497cba466df64642c31ec81682b3ce8dabb110fc",
     "publishedAt": "2026-07-31T00:26:42.017Z"
   },
   "liveness": {
-    "updatedAt": "2026-07-31T04:02:54.000Z",
+    "updatedAt": "2026-07-31T07:21:25.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -98,7 +98,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-07-31T04:02:54.000Z",
+    "updatedAt": "2026-07-31T07:21:26.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -169,8 +169,9 @@
         "live": "alive"
       },
       "discreetly": {
-        "contenthash": "bafybeigzzwnord2jasqkpeeaz3rwdbpf22rxfe23bb3ahqbdjxxwldfceq",
-        "updateCount": 0,
+        "contenthash": "bafybeihk7obfpa7lr7uvvtsxwmjq32ap6z33ti426qqnsz3dwoprsobvoe",
+        "updateCount": 1,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "docs": {
@@ -190,9 +191,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidkm5tuhqpe3h36q4mt6gldgbfhnmeq3yvpcgekzhmh6xtsltfnta",
-        "updateCount": 9,
-        "changedAt": 1785470574,
+        "contenthash": "bafybeigapawtyw5tevicaevco3erooslajf2j3b3wrddvmifxx547yt3ve",
+        "updateCount": 10,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -218,15 +219,15 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeic5grvj5zr4uhmjjudn3yaf7ysflxxiebldjs6gt7wnnaecx2b2xi",
-        "updateCount": 10,
-        "changedAt": 1785470574,
+        "contenthash": "bafybeig7zepuiyrhyvhbnyhmshw5pytsdp465oy65c5s2q5gn2ntl22odq",
+        "updateCount": 11,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "dragon-realm": {
-        "contenthash": "bafybeigbdx7r7xfn23rpmwios4ccttsc7oswfsrsf7kyd5xzeueibefrpi",
-        "updateCount": 1,
-        "changedAt": 1785470574,
+        "contenthash": "bafybeig37mhxio7zt4hxi5tetlm6pcy7zmkqsqabvb5j67rm6t5lgrt5ni",
+        "updateCount": 2,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "dripstream": {
@@ -240,9 +241,9 @@
         "live": "alive"
       },
       "dw3labsgame": {
-        "contenthash": "bafybeigw5zxqdeqdwklpttxxbzqa325u47exxcyahz7yz76cw6gqycf6d4",
-        "updateCount": 2,
-        "changedAt": 1785422626,
+        "contenthash": "bafybeidi7fk3gdkkh3qwrlna7zncswybg2ixio3sstm65wpycehds5ps7m",
+        "updateCount": 3,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "eternalise-notary": {
@@ -374,9 +375,9 @@
         "live": "alive"
       },
       "oblv-wg-todo": {
-        "contenthash": "bafybeid2l6bi23onhnklfaabhomeaz7x6vsudnqod3tmux5b7qkqjoebnu",
-        "updateCount": 2,
-        "changedAt": 1785444160,
+        "contenthash": "bafybeihrov5ik7p2drdl5ihesd5bxqrzztmxlyyveu32lu4bnr4xl5ddt4",
+        "updateCount": 3,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "oblv-wg-weather": {
@@ -390,8 +391,9 @@
         "live": "alive"
       },
       "openpetition": {
-        "contenthash": "bafybeidkprdcg3n2hpxjxvx2jcij3fv5nvwvwxz4cqxdghabmf7gn4qx5m",
-        "updateCount": 0,
+        "contenthash": "bafybeiapiemioo7dnighlbkqlmcdzpbbtabg6tut6xib2giwy2kkkdb4xa",
+        "updateCount": 1,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "pactprotocol": {
@@ -421,9 +423,9 @@
         "live": "alive"
       },
       "plaza-social": {
-        "contenthash": "bafybeih6yfyxl6vrc2nrilgktnpm3hj4ka4dsoktylvwxozh7vxfti35di",
-        "updateCount": 4,
-        "changedAt": 1785450426,
+        "contenthash": "bafybeibnvl7qnwv7r3q4skp4pru7q3ztcnc6evng3cib3syc6qfeqkfe2q",
+        "updateCount": 5,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "polkadot-builders-hackademy": {
@@ -505,8 +507,9 @@
         "live": "alive"
       },
       "thebutton": {
-        "contenthash": "bafybeigkxakhdwl4tmirqp6sumrcfqyn7nadyjlfe7rk6m4cx4hj2n6cr4",
-        "updateCount": 0,
+        "contenthash": "bafybeid33wpz45pw6rwiawu227itlw2apjiw2xwn32k4uyhoxza4uzphqa",
+        "updateCount": 1,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "thepipersguild": {
@@ -525,8 +528,9 @@
         "live": "alive"
       },
       "truereviews": {
-        "contenthash": "bafybeig62oqtvgjuubjpw5aea3yomxjsspbw4qawaqxp33vrdqjkpcizkq",
-        "updateCount": 0,
+        "contenthash": "bafybeie6o6zd5o4dcshneqym7c6ua6dy6p4dfg334uhwoskxinzdv4tmti",
+        "updateCount": 1,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "trustgraph": {
@@ -535,8 +539,9 @@
         "live": "alive"
       },
       "wudcommunity": {
-        "contenthash": "bafybeigzppcnnzon6zfebv2i5in2zzpncktpsid5aerbqfbb4xkzy6ilfa",
-        "updateCount": 0,
+        "contenthash": "bafybeicncwwodsxn2yrmogijptvtnowe3ge6trxjduowpmubqfweeegaca",
+        "updateCount": 1,
+        "changedAt": 1785482486,
         "live": "alive"
       },
       "yechops-preview": {
