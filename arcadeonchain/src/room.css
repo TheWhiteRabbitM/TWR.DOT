@@ -1,0 +1,604 @@
+/*
+ * The arcade: a dark room, a carpet, and three cabinets in a row.
+ *
+ * WHAT MAKES A CABINET READ AS A CABINET
+ *   Four bands, in this order, and getting the order right matters more than
+ *   getting any one of them beautiful: a lit MARQUEE at the top with the game's
+ *   name, a recessed SCREEN behind glass, a CONTROL PANEL jutting towards you
+ *   with a stick and coloured buttons, and a COIN DOOR at the base. Miss the
+ *   marquee and it is a television; miss the control panel and it is a vending
+ *   machine.
+ *
+ * WHY THE ROOM IS DARK
+ *   An arcade is dark so the screens and the marquees are the only light in it.
+ *   Every glow here comes from a cabinet, which is also what makes the row read
+ *   as depth rather than as three rectangles side by side.
+ *
+ * THE SLOTS ARE EMPTY ON PURPOSE
+ *   Cabinets with no cartridge show as unlit and say so. A cabinet that lies
+ *   about having a game is worse than an empty one, and an arcade that fills up
+ *   as permissions arrive is a better thing to watch than one that was full on
+ *   day one.
+ */
+@import './font.css';
+
+:root {
+  --room: #0a0710;
+  --carpet: #1a0f2e;
+  --carpet-lit: #2d1a4d;
+
+  --cab: #17141f;
+  --cab-lit: #241f31;
+  --cab-edge: #0a0810;
+
+  --neon-a: #ff2d6f;
+  --neon-b: #22d3ee;
+  --neon-c: #ffd23f;
+
+  --ink: #f2eef8;
+  --dim: #8f83a8;
+
+  --pixel: 'Press Start 2P', ui-monospace, monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--room);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* -------------------------------------------------------------------- room */
+
+.room {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  /* The room's own perspective is what lays the carpet down; the cabinets get
+     theirs from the row (see `.row`). Set per-cabinet instead, the row would fan
+     out like a hand of cards. */
+  perspective: 1600px;
+  perspective-origin: 50% 42%;
+  overflow: hidden;
+}
+
+/*
+ * The carpet.
+ *
+ * Laid flat with a rotateX so it recedes, and patterned — arcade carpet was
+ * always loud, because it hid twenty years of spilled drinks.
+ */
+.room::before {
+  content: '';
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: -10%;
+  height: 62%;
+  transform: rotateX(72deg);
+  transform-origin: 50% 100%;
+  background:
+    repeating-conic-gradient(from 45deg, var(--carpet) 0% 25%, var(--carpet-lit) 0% 50%) 0 0 / 90px 90px,
+    var(--carpet);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* The glow the cabinets throw on the back wall. */
+.room::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 40% at 20% 34%, rgba(255, 45, 111, 0.14), transparent 70%),
+    radial-gradient(50% 40% at 50% 30%, rgba(34, 211, 238, 0.14), transparent 70%),
+    radial-gradient(50% 40% at 80% 34%, rgba(255, 210, 63, 0.12), transparent 70%);
+}
+
+.masthead {
+  position: relative;
+  z-index: 2;
+  padding: 26px 20px 8px;
+  text-align: center;
+}
+
+.masthead h1 {
+  margin: 0;
+  font-family: var(--pixel);
+  font-size: clamp(14px, 3.6vw, 26px);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-shadow:
+    0 0 12px rgba(255, 45, 111, 0.6),
+    0 0 34px rgba(34, 211, 238, 0.35);
+}
+
+.masthead p {
+  margin: 12px auto 0;
+  max-width: 56ch;
+  font-size: 13px;
+  color: var(--dim);
+}
+
+/* ------------------------------------------------------------------- the row */
+
+.row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(8px, 2.4vw, 34px);
+  padding: 10px 16px 40px;
+
+  /*
+   * The cabinets' vanishing point lives HERE, not on `.room`, and the row stays
+   * flat.
+   *
+   * The obvious arrangement — perspective on the room, `preserve-3d` on the row
+   * so the cabinets inherit it — renders correctly and is unclickable. Chromium
+   * hit-tests a preserve-3d subtree against geometry that does not match what it
+   * painted: the outer two cabinets answered the mouse only along a ~15px strip
+   * at their inner edge, and `getBoundingClientRect()` agreed with neither. The
+   * whole room looked right and nothing could be chosen.
+   *
+   * Giving the row its own perspective makes each cabinet a direct child of a
+   * perspective element — the plain, well-supported case. Identical picture,
+   * and the boxes are where they look.
+   */
+  perspective: 1600px;
+  perspective-origin: 50% 42%;
+  transform-style: flat;
+}
+
+/*
+ * One cabinet.
+ *
+ * The outer two are turned towards the middle. That single rotation is what
+ * makes three boxes read as a row you could walk down, and it costs one
+ * transform rather than a 3D model.
+ */
+.cab {
+  position: relative;
+  flex: 0 1 auto;
+  width: min(300px, 30vw);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 420ms cubic-bezier(0.22, 0.75, 0.28, 1);
+}
+
+.cab:nth-child(1) { transform: rotateY(19deg) translateZ(-40px); }
+.cab:nth-child(3) { transform: rotateY(-19deg) translateZ(-40px); }
+
+.cab:hover,
+.cab:focus-visible {
+  outline: none;
+  transform: rotateY(0deg) translateZ(24px);
+}
+
+.cab:nth-child(2):hover,
+.cab:nth-child(2):focus-visible {
+  transform: translateZ(24px);
+}
+
+/* The body: a tapered box, wider at the base as a real cabinet is. */
+.cab .body {
+  display: grid;
+  gap: 0;
+  background: linear-gradient(100deg, var(--cab) 0%, var(--cab-lit) 46%, var(--cab) 100%);
+  border-radius: 10px 10px 3px 3px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset -6px 0 14px rgba(0, 0, 0, 0.55),
+    0 26px 50px rgba(0, 0, 0, 0.75);
+}
+
+/* --- marquee --- */
+
+/*
+ * The lit header.
+ *
+ * The one part of a cabinet that is genuinely a light source: a fluorescent
+ * tube behind a printed acrylic. It is bright, slightly uneven, and it is what
+ * you read from across the room.
+ */
+.cab .marquee {
+  position: relative;
+  padding: 12px 10px;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(#fff 0%, #f4e9ff 40%, #d9c6ee 100%);
+  box-shadow:
+    inset 0 -3px 8px rgba(90, 40, 120, 0.35),
+    0 0 24px rgba(255, 255, 255, 0.22);
+}
+
+.cab .marquee span {
+  font-family: var(--pixel);
+  font-size: 10px;
+  line-height: 1.5;
+  color: #2a1740;
+  letter-spacing: 0.03em;
+}
+
+.cab.empty .marquee {
+  background: linear-gradient(#2a2436, #1d1828);
+  box-shadow: inset 0 -3px 8px rgba(0, 0, 0, 0.5);
+}
+
+.cab.empty .marquee span {
+  color: #6b5f80;
+}
+
+/* --- screen --- */
+
+.cab .bezel {
+  padding: 16px 14px;
+  background: #05040a;
+  box-shadow: inset 0 0 0 2px #12101a, inset 0 6px 20px rgba(0, 0, 0, 0.9);
+}
+
+.cab .screen {
+  /* A <span> is inline, and `aspect-ratio` does not apply to inline boxes — the
+     screen was silently taking its shape from the canvas's raw framebuffer
+     instead, which is how a NES ended up 1.07:1 rather than 4:3. */
+  display: block;
+  position: relative;
+  /* Set per cabinet from the machine's own display aspect — see SCREENS. */
+  aspect-ratio: var(--ar, 4 / 3);
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 0 22px rgba(34, 211, 238, 0.18);
+}
+
+.cab .screen canvas,
+.cab .screen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/*
+ * Curved glass: a soft reflection, a vignette, and scanlines.
+ *
+ * Every layer is sized in PERCENTAGES of the screen, never in pixels, because
+ * the walk-up scales this element by up to 3.2. A 3px scanline pitch became a
+ * 10px venetian blind at the one moment anyone was looking closely, and a glare
+ * that stopped at a fixed 42% turned into a hard vertical seam down the middle
+ * of the picture.
+ *
+ * The scanline count is the machine's own line count — 240 for a NES, 144 for a
+ * Game Boy — so the lines land between the game's rows at any size, which is
+ * what a CRT actually did.
+ */
+.cab .screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(112deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02) 34%, transparent 62%),
+    radial-gradient(120% 100% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.7) 100%),
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.26) 0 50%, transparent 50% 100%);
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% calc(100% / var(--lines, 240));
+}
+
+/*
+ * Attract mode: a frame of the cabinet's own game, captured from the ROM by
+ * tools/posters.mjs.
+ *
+ * An arcade was lit by its games — you knew what was in a cabinet from across
+ * the room, before you were close enough to read the marquee. Three black
+ * rectangles is a page about an arcade. It is dimmed and slightly cooled so
+ * PRESS START stays readable on top and so it reads as a machine waiting rather
+ * than one already being played; walking up removes it and the live emulator
+ * takes the same box.
+ */
+.cab .poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  opacity: 0.62;
+  filter: saturate(0.85) brightness(0.9);
+}
+
+.cab:hover .poster,
+.cab:focus-visible .poster {
+  opacity: 0.9;
+  filter: none;
+}
+
+.cab .idle {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  padding: 14px;
+  text-align: center;
+  font-family: var(--pixel);
+  font-size: 8px;
+  line-height: 2;
+  color: #4d4463;
+}
+
+/*
+ * PRESS START over a running game.
+ *
+ * Yellow-on-black was legible against an empty screen and vanished the moment
+ * the cabinets got attract stills behind them — Geometrix's board is yellow in
+ * places. The words sit on their own plate so they read over any picture, which
+ * is exactly what a real attract overlay did.
+ */
+.cab:not(.empty) .idle {
+  color: var(--neon-c);
+  /* The plate is the overlay's own background, not a ::before. A ::before at
+     z-index -1 has no stacking context of its own here, so it sank behind the
+     attract still it was meant to cover. */
+  background: radial-gradient(58% 20% at 50% 50%, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.78) 60%, transparent 100%);
+  text-shadow: 0 0 6px #000, 0 1px 0 #000;
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* --- control panel --- */
+
+/*
+ * The panel juts towards the player.
+ *
+ * rotateX tilts it into the light, which is what stops the lower half of the
+ * cabinet reading as a flat skirt.
+ */
+.cab .panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 14px 12px 16px;
+  background: linear-gradient(#2a2438, #191426);
+  transform: rotateX(26deg);
+  transform-origin: 50% 0;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.07), 0 8px 14px rgba(0, 0, 0, 0.5);
+}
+
+/* Ball-top stick: a sphere on a shaft in a dish. */
+.cab .stick {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #ff8fb0, var(--neon-a) 62%, #8c0d38);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.5);
+}
+
+.cab .stick::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 24px;
+  height: 9px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #0d0b14;
+}
+
+.cab .buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.cab .buttons i {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.45), 0 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.cab .buttons i:nth-child(3n + 1) { background: var(--neon-c); }
+.cab .buttons i:nth-child(3n + 2) { background: var(--neon-b); }
+.cab .buttons i:nth-child(3n + 3) { background: var(--neon-a); }
+
+.cab.empty .stick,
+.cab.empty .buttons i {
+  filter: grayscale(1) brightness(0.45);
+}
+
+/* --- coin door --- */
+
+.cab .coin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  background: #0e0c16;
+  border-radius: 0 0 3px 3px;
+  font-family: var(--pixel);
+  font-size: 6px;
+  letter-spacing: 0.1em;
+  color: #6b5f80;
+}
+
+.cab .coin::before,
+.cab .coin::after {
+  content: '';
+  width: 20px;
+  height: 5px;
+  border-radius: 2px;
+  background: #05040a;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.cab .plaque {
+  margin: 10px 2px 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--dim);
+  text-align: center;
+}
+
+.cab .plaque b {
+  display: block;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ----------------------------------------------------------------- colophon */
+
+.colophon {
+  position: relative;
+  z-index: 2;
+  padding: 8px 20px 34px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #6f6489;
+}
+
+.colophon a {
+  color: var(--neon-b);
+}
+
+@media (max-width: 720px) {
+  .row {
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+  }
+  .cab {
+    width: min(320px, 86vw);
+  }
+  /* The turn only reads as a row when they are side by side. */
+  .cab:nth-child(1),
+  .cab:nth-child(3) {
+    transform: none;
+  }
+}
+
+/* -------------------------------------------------------------------- zoom */
+
+/*
+ * WALK UP TO THE CABINET.
+ *
+ * The row exists to be looked at; a 4:3 screen a third of the way up a cabinet
+ * three-across is not a thing you can play. So choosing one moves the room
+ * rather than swapping the layout: the chosen cabinet turns square-on and the
+ * whole row scales and slides until that screen fills the view. The others stay
+ * where they are, off to the sides, which is what keeps it a room.
+ *
+ * The transform is computed from the measured geometry in main.ts, never from a
+ * constant — a factor that is right at one window size is wrong at every other.
+ */
+.row {
+  transform-origin: 50% 30%;
+  transition: transform 520ms cubic-bezier(0.22, 0.75, 0.28, 1);
+  will-change: transform;
+}
+
+.room.playing .cab {
+  /* Not hidden: seeing the neighbours is what says you are in an arcade rather
+     than looking at a canvas on a page. */
+  opacity: 0.25;
+  filter: blur(1px);
+  transition: opacity 380ms ease, filter 380ms ease, transform 420ms ease;
+}
+
+.room.playing .cab.live {
+  opacity: 1;
+  filter: none;
+  transform: rotateY(0deg) translateZ(0);
+}
+
+/* Marquees keep burning while a game runs — they are the light in the room. */
+.room.playing .cab .marquee {
+  opacity: 0.9;
+}
+
+.room.playing .masthead,
+.room.playing .colophon {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+}
+
+/* The way out, once you are up close. */
+.leave {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 40;
+  transform: translateX(-50%);
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 6px;
+  font-family: var(--pixel);
+  font-size: 8px;
+  color: var(--ink);
+  background: rgba(20, 16, 30, 0.9);
+  box-shadow: inset 0 0 0 2px #3b3350;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.leave:hover {
+  box-shadow: inset 0 0 0 2px var(--neon-b);
+}
+
+.credit {
+  position: fixed;
+  left: 50%;
+  bottom: 62px;
+  z-index: 40;
+  transform: translateX(-50%);
+  max-width: min(560px, 92vw);
+  padding: 9px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+  color: #cfc6de;
+  background: rgba(14, 11, 22, 0.86);
+  backdrop-filter: blur(4px);
+}
+
+.credit a {
+  color: var(--neon-c);
+}

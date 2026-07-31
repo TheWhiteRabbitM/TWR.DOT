@@ -23,3 +23,10 @@ contract/bin/
 # OS noise
 Thumbs.db
 .DS_Store
+
+# verification screenshots — regenerable by each app's tools/look.mjs, and not
+# what ships. Anything a user sees lives under public/ (dotmetrics/public/shots
+# is committed by the nightly workflow and must stay tracked).
+arcadeonchain/shots/
+gameboyonchain/shots/
+nesonchain/shots/
