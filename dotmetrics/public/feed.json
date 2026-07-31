@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1785533687,
+  "generatedAt": 1785540170,
   "count": 95,
   "apps": [
     {
@@ -23,9 +23,9 @@
     {
       "label": "arcadeonchain",
       "domain": "arcadeonchain.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 2,
+      "displayName": "Arcade on chain",
+      "description": "A dark arcade room with three cabinets. The shutter goes up, the tubes strike, and the machines roll in. Insert a coin — a real 1 PAS transfer, signed by you and watched into a block — and the room scales until that cabinet screen fills your view. The games run in the page on emulators built into it: JEZNES on a NES (boingoing, MIT), Tobu Tobu Girl Deluxe and Geometrix on a Game Boy Color (Tangram Games, MIT + CC BY 4.0; AntonioND, GPL-3.0-or-later). Every cartridge carries an explicit licence permitting redistribution, shown on screen with its author and a link to its source. Frames are drawn through a phosphor tube: scanlines at the machine own line count, bloom, and no softening of a single pixel.",
+      "tier": 0,
       "firstSeenAt": 1785509076,
       "url": "https://arcadeonchain.dev-dot.li"
     },
