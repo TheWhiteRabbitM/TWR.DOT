@@ -1,0 +1,27 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1320, height: 900 }, deviceScaleFactor: 2 });
+const shoot = (path)=>p.screenshot({ path, type:'jpeg', quality:88 });
+await p.goto('http://localhost:5186', { waitUntil:'networkidle' }); await p.waitForTimeout(1500);
+await shoot('store/1-hero.jpg'); console.log('1-hero');
+await p.evaluate(()=>document.querySelector('.registry').scrollIntoView({block:'start'})); await p.waitForTimeout(600);
+await shoot('store/2-binder.jpg'); console.log('2-binder');
+await p.evaluate(()=>{ window.scrollTo(0,0); document.querySelector('[data-claim]').click(); });
+await p.waitForTimeout(350);
+await p.evaluate(()=>{
+  const tv='var(--leg)';
+  const svg=document.getElementById('cback').querySelector('svg').outerHTML;
+  document.getElementById('cfront').innerHTML=svg;
+  document.getElementById('cfront').className='card-face card-front foil0';
+  document.getElementById('sheet').style.setProperty('--tc',tv);
+  document.getElementById('cc').classList.add('flipped');
+  document.getElementById('ribbonslot').innerHTML='<span class="ribbon" style="--tc:'+tv+'">Legendary</span>';
+  const bu=document.getElementById('burst'); bu.hidden=false; bu.style.color=tv;
+  document.getElementById('lbgo').hidden=true;
+  document.getElementById('lbst').textContent='Minted — your mask is yours. Pin your links (optional):';
+  document.getElementById('prof').hidden=false;
+  document.getElementById('ptg').value='agostours'; document.getElementById('px').value='agosphoto'; document.getElementById('pbio').value='building on the devnet';
+});
+await p.waitForTimeout(800);
+await shoot('store/3-reveal.jpg'); console.log('3-reveal');
+await b.close();

@@ -1,0 +1,109 @@
+name: peoplebook self-refresh
+
+# Keeps peoplebook.dot current without anyone's PC: re-reads the devnet username
+# directory (so handles registered LATER show up), plus the on-chain claims and
+# profiles from the PeoplebookAvatars contract, and republishes ONLY when the
+# baked data actually changed. An unchanged run costs zero Bulletin transactions
+# and says so. Retention renewal rides keepalive.yml like the other apps.
+#
+# The People endpoint is intermittent, so the fetch retries and a run that still
+# can't read it keeps the committed data and simply publishes nothing that cycle.
+#
+# The devnet publish key lives ONLY in the DEVNET_MNEMONIC repo secret (devnet
+# tokens carry no value; do not reuse this pattern with real keys).
+
+on:
+  schedule:
+    - cron: '41 */6 * * *'   # every 6 hours — new registrations are not frequent
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Publish even if the directory did not change'
+        type: boolean
+        default: false
+
+concurrency:
+  group: peoplebook-refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: peoplebook
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: peoplebook/package-lock.json
+
+      - name: Install app dependencies
+        run: npm ci
+
+      - name: Install publish CLIs
+        run: npm install -g @polkadot-community-foundation/polkadot-app-deploy@0.13.1 @polkadot-community-foundation/dotns-cli@0.8.0
+
+      - name: Re-read the directory + on-chain claims and profiles
+        run: |
+          set -uo pipefail
+          # fetch-data.mjs queries People (Resources.usernameOwnerOf) for the live
+          # handle list and the PeoplebookAvatars contract for each minted token's
+          # tier + profile, then writes src/data.json at the very end — so a failed
+          # read leaves the committed file untouched. The People RPC flakes, so try
+          # a few times before giving up for the cycle.
+          ok=
+          for i in 1 2 3; do
+            if node tools/fetch-data.mjs; then ok=1; break; fi
+            echo "fetch attempt $i failed — retrying in 20s"; sleep 20
+          done
+          [ -z "$ok" ] && echo "::warning::directory fetch failed this run; keeping the committed data.json"
+          exit 0
+
+      - name: Did the directory change?
+        id: gate
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"; echo "forced republish"
+          elif git diff --quiet -- src/data.json; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"; echo "directory unchanged — nothing to publish (0 transactions)"
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"; echo "directory changed — will build and publish"
+          fi
+
+      - name: Build and publish the site (only when the directory changed)
+        if: steps.gate.outputs.publish == 'true'
+        env:
+          MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+          DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+        run: |
+          set -euo pipefail
+          # pad draws a Bulletin storage account from a shared pool; some draws are
+          # unauthorised (see products-devnet-issues #9), so the script retries and
+          # treats "Verified on-chain" as the only proof a publish landed.
+          npm run build
+          bash ../.github/scripts/pad-publish.sh ./dist peoplebook.dot
+
+      - name: Commit the refreshed directory back to the repo
+        working-directory: .
+        run: |
+          set -euo pipefail
+          git config user.name "peoplebook-refresh[bot]"
+          git config user.email "noreply@github.com"
+          git add peoplebook/src/data.json
+          if git diff --cached --quiet; then
+            echo "directory unchanged — nothing to commit"
+          else
+            git commit -m "peoplebook: directory refresh (GitHub Actions)"
+            git pull --rebase origin master
+            git push
+          fi

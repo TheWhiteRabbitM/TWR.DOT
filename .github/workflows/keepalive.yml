@@ -59,6 +59,11 @@ jobs:
           - dir: dot-store
             name: dot-store.dot
             presteps: sync
+          # peoplebook's hourly-ish refresh only publishes when the directory
+          # changes, so a quiet fortnight would expire its bundle. Its data.json
+          # is committed, so a plain build renews with the last-known directory.
+          - dir: peoplebook
+            name: peoplebook.dot
     steps:
       - uses: actions/checkout@v4
 
