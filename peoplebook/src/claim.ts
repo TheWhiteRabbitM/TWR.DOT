@@ -162,7 +162,7 @@ export async function claim(
   onStep('connecting');
   const b = await bind().catch(() => null);
   if (!b) return { ok: false, why: 'No wallet — open peoplebook inside the Polkadot app to claim.' };
-  const { contract, slot: s } = b;
+  const { contract } = b;
 
   onStep('preparing');
   const node = dotName ? namehash(dotName) : ZERO_NODE;
@@ -172,9 +172,19 @@ export async function claim(
   let lastErr = '';
   for (let attempt = 0; attempt < 3 && !landed; attempt++) {
     try {
+      // EXPLICIT LIMITS — the whole reason a claim would never prompt the wallet.
+      // `.tx()` normally sizes the call with its own dry-run; for this contract
+      // that estimate comes back short, so the tx reverts `Revive.OutOfGas`
+      // WITHOUT ever asking for a signature ("tx not ok" with no wallet popup).
+      // Passing both limits skips the dry-run and submits generously — unused
+      // weight is not charged and the storage deposit is reserved, not spent.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res: any = await withTimeout(
-        contract.claim.tx(handle, node, { signerManager: s.manager, value: VALUE_PLANCK }),
+        contract.claim.tx(handle, node, {
+          value: VALUE_PLANCK,
+          gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
+          storageDepositLimit: 10n ** 18n,
+        }),
         CLAIM_MS,
         'claim',
       );
@@ -217,7 +227,7 @@ export async function setProfile(
   onStatus('Connecting your wallet…');
   const b = await bind().catch(() => null);
   if (!b) return { ok: false, why: 'No wallet — open peoplebook inside the Polkadot app.' };
-  const { contract, slot } = b;
+  const { contract } = b;
 
   let id: bigint;
   try {
@@ -234,9 +244,14 @@ export async function setProfile(
 
   onStatus('Approve the update in your wallet…');
   try {
+    // Explicit limits skip the dry-run so the wallet actually prompts (same
+    // reason as claim()); setProfile isn't payable, so no value.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res: any = await withTimeout(
-      contract.setProfile.tx(id, tg, x, bio, { signerManager: slot.manager }),
+      contract.setProfile.tx(id, tg, x, bio, {
+        gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
+        storageDepositLimit: 10n ** 18n,
+      }),
       CLAIM_MS,
       'setProfile',
     );

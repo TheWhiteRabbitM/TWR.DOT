@@ -70,6 +70,9 @@ const split = (name: string): [string, string] => {
 };
 const tgUrl = (h: string) => 'https://t.me/' + encodeURIComponent(h.replace(/^@/, ''));
 const xUrl = (h: string) => 'https://x.com/' + encodeURIComponent(h.replace(/^@/, ''));
+/** Same truncation the build uses on People owners, so a connected account can
+ *  be matched back to its handle: first6…last6. */
+const truncOwner = (s: string) => (s.length > 14 ? s.slice(0, 6) + '…' + s.slice(-6) : s);
 
 /* ---- page ---- */
 const dialSegs = (boost: boolean) => DIAL.map((d) => `<span class="seg ${d.cls}" style="flex-basis:${boost ? d.boost : d.base}%"></span>`).join('');
@@ -176,6 +179,8 @@ const countEl = document.getElementById('count')!;
 const q = document.getElementById('q') as HTMLInputElement;
 const switches = document.getElementById('switches')!;
 let curFilter = '';
+/** The handle that belongs to the connected identity, once recognised. */
+let myHandle: string | null = null;
 
 function socialChips(u: User): string {
   const s = u.social;
@@ -188,7 +193,8 @@ function socialChips(u: User): string {
 function card(u: User, i: number): string {
   const [b, s] = split(u.name);
   const t = claimed.get(u.name);
-  const cls = t !== undefined ? `card claimed t${t}` : 'card unclaimed';
+  const isYou = u.name === myHandle;
+  const cls = (t !== undefined ? `card claimed t${t}` : 'card unclaimed') + (isYou ? ' you' : '');
   const style = `animation-delay:${Math.min(i * 10, 380)}ms`;
   let foot: string;
   if (t !== undefined) {
@@ -198,6 +204,7 @@ function card(u: User, i: number): string {
     foot = `<button class="claimbtn" data-claim="${esc(u.name)}">Crank · 1 PAS</button>`;
   }
   return `<div class="sleeve" style="${style}"><div class="${cls}"><div class="tab"></div>
+    ${isYou ? '<span class="youtag">YOU</span>' : ''}
     <div class="art">${avatar(u.name)}</div>
     <div class="who"><div class="handle">${esc(b)}<span class="sfx">${esc(s)}</span></div><div class="owner">${esc(u.owner)}</div></div>
     <div class="foot">${foot}</div></div></div>`;
@@ -382,10 +389,27 @@ grid.addEventListener('click', (e) => {
   if (ed) return openSheet(ed.dataset.edit!, 'edit');
 });
 document.getElementById('crank')!.addEventListener('click', () => {
-  const pool = D.users.filter((u) => !claimed.has(u.name));
-  if (!pool.length) return;
-  openSheet(pool[Math.floor(Math.random() * pool.length)].name, 'claim');
+  // If we've recognised the connected identity, crank goes straight to YOUR mask
+  // (claim it, or edit its links if you already own it). Otherwise, don't propose
+  // a stranger — send them to search for their own handle.
+  if (myHandle) return openSheet(myHandle, claimed.has(myHandle) ? 'edit' : 'claim');
+  document.querySelector('.registry')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  q.focus();
+  q.placeholder = 'type your handle to claim your mask';
 });
+
+/** We recognised the connected account as a registered handle: make the whole
+ *  machine about claiming YOUR mask instead of a random one. */
+function recognise(me: User) {
+  myHandle = me.name;
+  const [b, s] = split(me.name);
+  document.getElementById('wtext')!.innerHTML = `YOU · ${esc(b)}<span style="opacity:.6">${esc(s)}</span>`;
+  const crank = document.getElementById('crank')!;
+  crank.innerHTML = claimed.has(me.name)
+    ? `YOUR MASK<small>${esc(me.name)} · pin your links</small>`
+    : `CLAIM<small>your mask · ${esc(me.name)}</small>`;
+  render(); // re-render so your card shows the YOU marker + highlight
+}
 q.addEventListener('input', render);
 switches.addEventListener('click', (e) => {
   const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-f]');
@@ -406,6 +430,11 @@ render();
 warmUp();
 walletAddress().then((addr) => {
   const w = document.getElementById('wallet')!, t = document.getElementById('wtext')!;
-  if (addr) { w.classList.add('on'); t.textContent = addr.slice(0, 6) + '…' + addr.slice(-6); }
-  else t.textContent = 'OPEN IN THE POLKADOT APP';
+  if (!addr) { t.textContent = 'OPEN IN THE POLKADOT APP'; return; }
+  w.classList.add('on');
+  t.textContent = addr.slice(0, 6) + '…' + addr.slice(-6);
+  // The Polkadot app connects the account that IS your identity, so if it owns a
+  // registered handle we can recognise you and point the machine at YOUR mask.
+  const me = D.users.find((u) => u.owner === truncOwner(addr));
+  if (me) recognise(me);
 });
