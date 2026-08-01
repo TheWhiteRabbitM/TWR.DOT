@@ -4,7 +4,21 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 31 Jul 2026 23:22:50 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 01 Aug 2026 00:20:54 GMT</lastBuildDate>
+    <item>
+      <title>web3poker</title>
+      <link>https://web3poker.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">web3poker</guid>
+      <pubDate>Fri, 31 Jul 2026 23:52:48 GMT</pubDate>
+    </item>
+    <item>
+      <title>compute-flux</title>
+      <link>https://compute-flux.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">compute-flux</guid>
+      <pubDate>Fri, 31 Jul 2026 23:48:48 GMT</pubDate>
+    </item>
     <item>
       <title>polkadevs</title>
       <link>https://polkadevs.dev-dot.li</link>
@@ -340,20 +354,6 @@
       <description>Write a task the way you would say it - “pay rent friday !!” - and it files itself by date, priority and tag. Everything stays on your device.</description>
       <guid isPermaLink="false">oblv-wg-todo</guid>
       <pubDate>Mon, 27 Jul 2026 08:42:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>Oblv Clock</title>
-      <link>https://oblv-wg-clock.dev-dot.li</link>
-      <description>Horloge sur le dashboard : cadran, afficheur à segments ou chiffres, au choix, dans n&apos;importe quel fuseau.</description>
-      <guid isPermaLink="false">oblv-wg-clock</guid>
-      <pubDate>Mon, 27 Jul 2026 07:32:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>Oblv Calc</title>
-      <link>https://oblv-wg-calc.dev-dot.li</link>
-      <description>Calculatrice sur le dashboard : expression complète, scientifique, historique réutilisable. Aucun réseau.</description>
-      <guid isPermaLink="false">oblv-wg-calc</guid>
-      <pubDate>Mon, 27 Jul 2026 07:28:00 GMT</pubDate>
     </item>
   </channel>
 </rss>

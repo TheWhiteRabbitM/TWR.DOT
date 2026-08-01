@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1785540170,
-  "count": 95,
+  "generatedAt": 1785543654,
+  "count": 97,
   "apps": [
+    {
+      "label": "web3poker",
+      "domain": "web3poker.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785541968,
+      "url": "https://web3poker.dev-dot.li"
+    },
+    {
+      "label": "compute-flux",
+      "domain": "compute-flux.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785541728,
+      "url": "https://compute-flux.dev-dot.li"
+    },
     {
       "label": "polkadevs",
       "domain": "polkadevs.dot",

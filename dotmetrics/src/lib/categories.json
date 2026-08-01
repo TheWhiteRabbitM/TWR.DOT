@@ -9,11 +9,9 @@
   },
   "arcadeonchain": {
     "category": "games",
-    "source": "derived:manifest",
-    "confidence": "medium",
-    "why": [
-      "arcade~"
-    ]
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "ascendyendor00": {
     "category": "games",

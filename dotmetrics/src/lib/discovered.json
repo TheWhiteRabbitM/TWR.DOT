@@ -10,8 +10,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "arcadeonchain": {
@@ -34,8 +34,8 @@
       "bafybeigax3ev3v4zsq2efek3tahptgy6fxofa2kgt4ht3pqkebja4uw65a"
     ],
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400
   },
   "ascendyendor00": {
     "label": "ascendyendor00",
@@ -51,8 +51,8 @@
     "tier": 0,
     "firstSeenAt": 1785337488,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 8,
     "contenthashChangedAt": 1785500760
   },
@@ -67,8 +67,8 @@
     "tier": 1,
     "firstSeenAt": 1785304728,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "bulletin-explorer": {
@@ -82,8 +82,8 @@
     "tier": 1,
     "firstSeenAt": 1785261840,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "buy-or-sell": {
@@ -97,8 +97,8 @@
     "tier": 1,
     "firstSeenAt": 1785228360,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "chainpulse": {
@@ -115,8 +115,8 @@
     "tier": 0,
     "firstSeenAt": 1785272448,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "chatgpt-guide": {
@@ -133,8 +133,8 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "chopdotproof01": {
@@ -151,8 +151,23 @@
     "tier": 0,
     "firstSeenAt": 1785508176,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
+    "updateCount": 0
+  },
+  "compute-flux": {
+    "label": "compute-flux",
+    "domain": "compute-flux.dot",
+    "url": "https://compute-flux.dev-dot.li",
+    "firstSeenBlock": 11657634,
+    "owner": "0x91545EDAb058e61DdfbE63Cd4548d5d104e661F9",
+    "contenthash": "bafybeieczgr6lixeeldyk4smvj47me63oq6ryhlqmlydz5rxenjwy7v3xq",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1785541728,
+    "alive": true,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "contribnet01": {
@@ -166,8 +181,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "contribnet02": {
@@ -181,8 +196,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "contribnet03": {
@@ -196,8 +211,8 @@
     "tier": 1,
     "firstSeenAt": 1785380220,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 3,
     "contenthashChangedAt": 1785521056
   },
@@ -212,8 +227,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "devnet-atlas": {
@@ -230,8 +245,8 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "devnetpulse": {
@@ -245,8 +260,8 @@
     "tier": 1,
     "firstSeenAt": 1785423912,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785500760
   },
@@ -264,8 +279,8 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 2,
     "contenthashChangedAt": 1785500760
   },
@@ -280,8 +295,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "doomarcade00": {
@@ -295,8 +310,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 3,
     "contenthashChangedAt": 1785437717
   },
@@ -314,8 +329,8 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "dot-store": {
@@ -327,12 +342,12 @@
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785317484,
-    "updateCount": 15,
-    "contenthash": "bafybeihfgarziz7lc5rgsz7eyyfv6foljiqsx7up6fdrwxwehgsmsu6dvi",
+    "updateCount": 16,
+    "contenthash": "bafybeif7j55muztm72fji3rmz2akxyqqyvkiucz5ych42jifthf4a35o3m",
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
-    "contenthashChangedAt": 1785540170
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
+    "contenthashChangedAt": 1785543654
   },
   "dotcheckapp": {
     "label": "dotcheckapp",
@@ -345,8 +360,8 @@
     "tier": 1,
     "firstSeenAt": 1785185004,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "dotcheckhub": {
@@ -360,8 +375,8 @@
     "tier": 1,
     "firstSeenAt": 1785273720,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 3,
     "contenthashChangedAt": 1785422626
   },
@@ -387,8 +402,8 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "displayName": "Dotify",
     "description": "Shared musical presence with artist-owned access and value flows.",
     "iconCid": "bafk2bzacebh4rknk6x7zl4pul7t3ff7y2pglpk5x4q2k3nxnql5ebizvgluxk",
@@ -409,8 +424,8 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 16,
     "contenthashChangedAt": 1785540170
   },
@@ -428,8 +443,8 @@
     "tier": 0,
     "firstSeenAt": 1785445188,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 3,
     "contenthashChangedAt": 1785500760
   },
@@ -444,8 +459,8 @@
     "tier": 1,
     "firstSeenAt": 1785423504,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785500760
   },
@@ -461,8 +476,8 @@
     "updateCount": 1,
     "contenthash": "bafybeicy2rfkwxokwaqab3fbryjul7twijvuakyas7dmpetr6xcex6pupy",
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "contenthashChangedAt": 1785500760
   },
   "dw3labsgame": {
@@ -477,8 +492,8 @@
     "updateCount": 4,
     "contenthash": "bafybeic2nryiko23zwv4haoq6vzskapccv2rnox44wanrz5ebriloqzama",
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "contenthashChangedAt": 1785500760,
     "displayName": "Rainbow",
     "description": "A platformer whose score is proven, not claimed. Play a run, then watch a TEE on the Acurast network replay your keypresses, recompute the score itself, and sign it for a contract on Polkadot Asset Hub.",
@@ -495,8 +510,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "eternalize-notary": {
@@ -510,8 +525,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "flowfarm-staking": {
@@ -529,8 +544,8 @@
     "iconCid": "bafk2bzacebe2nw6h5ekwlimydhnbudwu5tvgi5p7ghmhao55y56xtry6yqryq",
     "contenthash": "bafybeicwzsiam2vnmw7uaf7j45hbialgm4lm7terfs2fibd2xk5fhiiqi4",
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "contenthashChangedAt": 1785470574
   },
   "gameboyonchain": {
@@ -552,8 +567,8 @@
     "tier": 0,
     "firstSeenAt": 1785502884,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "giganetwork": {
@@ -578,8 +593,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "hahamingx00": {
@@ -596,8 +611,8 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "handshake": {
@@ -622,8 +637,8 @@
     "tier": 1,
     "firstSeenAt": 1785184260,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "hello-world-app": {
@@ -648,8 +663,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "hellodotworld": {
@@ -663,8 +678,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "helloworld": {
@@ -678,8 +693,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "hermes-agent-test": {
@@ -693,8 +708,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "ip-assets": {
@@ -711,8 +726,8 @@
     "iconCid": "bafk2bzaceaa5n4ujthu2moyqjhitp5lovftnit4njvu2x3in227yjozi5s35u",
     "contenthash": "bafybeife2mmhornmfu2o7keodottcdl64v7drxwaknwzitrosjbqmfvdcy",
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785328168
   },
@@ -730,8 +745,8 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785382780
   },
@@ -746,8 +761,8 @@
     "tier": 1,
     "firstSeenAt": 1785514368,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "mini-lucky-smoke": {
@@ -761,8 +776,8 @@
     "tier": 1,
     "firstSeenAt": 1785258336,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "my-dotkit": {
@@ -776,8 +791,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "na87u9srwgblr61": {
@@ -810,8 +825,8 @@
     "tier": 0,
     "firstSeenAt": 1785491700,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "oblv-vault": {
@@ -839,8 +854,8 @@
     "tier": 0,
     "firstSeenAt": 1785137280,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "oblv-wg-calendar": {
@@ -857,8 +872,8 @@
     "tier": 0,
     "firstSeenAt": 1785145152,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "oblv-wg-clock": {
@@ -875,8 +890,8 @@
     "tier": 0,
     "firstSeenAt": 1785137520,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "oblv-wg-crypto": {
@@ -893,8 +908,8 @@
     "tier": 0,
     "firstSeenAt": 1785137004,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "oblv-wg-opengov": {
@@ -911,8 +926,8 @@
     "tier": 0,
     "firstSeenAt": 1785142428,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "oblv-wg-rss": {
@@ -929,8 +944,8 @@
     "tier": 0,
     "firstSeenAt": 1785142344,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "oblv-wg-todo": {
@@ -947,8 +962,8 @@
     "description": "Write a task the way you would say it - “pay rent friday !!” - and it files itself by date, priority and tag. Everything stays on your device.",
     "iconCid": "bafk2bzacebklauyqr4jvmhfmcyqhslhhrnya5vin5shpebsn4irhn3yd4e2ya",
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 3,
     "contenthashChangedAt": 1785482486
   },
@@ -966,8 +981,8 @@
     "tier": 0,
     "firstSeenAt": 1785135684,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "oblv-widgets": {
@@ -984,8 +999,8 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "openpetition": {
@@ -1002,8 +1017,8 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785482486
   },
@@ -1018,8 +1033,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "parlement-populaire": {
@@ -1036,8 +1051,8 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "pennypixel": {
@@ -1051,8 +1066,8 @@
     "tier": 1,
     "firstSeenAt": 1785172608,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 3,
     "contenthashChangedAt": 1785500760
   },
@@ -1078,8 +1093,8 @@
     "tier": 1,
     "firstSeenAt": 1785262020,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "plaza-social": {
@@ -1093,8 +1108,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 7,
     "contenthashChangedAt": 1785521056
   },
@@ -1109,8 +1124,8 @@
     "tier": 1,
     "firstSeenAt": 1785523704,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 2,
     "contenthashChangedAt": 1785540170
   },
@@ -1125,8 +1140,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "polkaportal01": {
@@ -1162,8 +1177,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "proofoftake": {
@@ -1177,8 +1192,8 @@
     "tier": 1,
     "firstSeenAt": 1785172776,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 3,
     "contenthashChangedAt": 1785500760
   },
@@ -1207,8 +1222,8 @@
     "tier": 0,
     "firstSeenAt": 1785180780,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "radioactivedrums": {
@@ -1225,8 +1240,8 @@
     "tier": 0,
     "firstSeenAt": 1785364680,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "rainbow-dev": {
@@ -1243,8 +1258,8 @@
     "tier": 0,
     "firstSeenAt": 1785487152,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "rainbowprobe": {
@@ -1258,8 +1273,8 @@
     "tier": 1,
     "firstSeenAt": 1785315192,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "scytaledeploy": {
@@ -1273,8 +1288,8 @@
     "tier": 1,
     "firstSeenAt": 1785443436,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785500760
   },
@@ -1289,8 +1304,8 @@
     "tier": 1,
     "firstSeenAt": 1785484272,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "scytaletest": {
@@ -1315,8 +1330,8 @@
     "tier": 1,
     "firstSeenAt": 1785362088,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785367253
   },
@@ -1331,8 +1346,8 @@
     "tier": 1,
     "firstSeenAt": 1785172452,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 4,
     "contenthashChangedAt": 1785500760
   },
@@ -1347,8 +1362,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "tetris-bulletin": {
@@ -1362,8 +1377,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "thebutton": {
@@ -1380,8 +1395,8 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785482486
   },
@@ -1396,8 +1411,8 @@
     "tier": 1,
     "firstSeenAt": 1785386736,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "tintaprotocol": {
@@ -1414,8 +1429,8 @@
     "tier": 0,
     "firstSeenAt": 1785197808,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "torrent-otp": {
@@ -1432,8 +1447,8 @@
     "hasExecutable": true,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "truereviews": {
@@ -1451,8 +1466,8 @@
     "tier": 0,
     "contract": "0x29af38913652b32989d1d96c51af641980e55698",
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785482486
   },
@@ -1467,10 +1482,25 @@
     "tier": 1,
     "firstSeenAt": 1785423768,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785500760
+  },
+  "web3poker": {
+    "label": "web3poker",
+    "domain": "web3poker.dot",
+    "url": "https://web3poker.dev-dot.li",
+    "firstSeenBlock": 11657752,
+    "owner": "0x744b1e21C2815807589316332E26f483EAC2a283",
+    "contenthash": "bafybeia3eva4r6bpyrct274ntnq4igeqlydii5w54rphldrtlk76tnlnre",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1785541968,
+    "alive": true,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
+    "updateCount": 0
   },
   "wudcommunity": {
     "label": "wudcommunity",
@@ -1486,8 +1516,8 @@
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 2,
     "contenthashChangedAt": 1785500760
   },
@@ -1502,8 +1532,8 @@
     "tier": 1,
     "firstSeenAt": 1785229452,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 2,
     "contenthashChangedAt": 1785338946
   },
@@ -1518,8 +1548,8 @@
     "hasExecutable": false,
     "tier": 1,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 0
   },
   "zkdot-devnet": {
@@ -1533,8 +1563,8 @@
     "tier": 1,
     "firstSeenAt": 1785444468,
     "alive": true,
-    "lastSeenAliveAt": 1785540170,
-    "livenessCheckedAt": 1785456000,
+    "lastSeenAliveAt": 1785543654,
+    "livenessCheckedAt": 1785542400,
     "updateCount": 1,
     "contenthashChangedAt": 1785470574
   },
@@ -1581,6 +1611,7 @@
     "g6t1",
     "g7hghph",
     "g8mx",
+    "gfvv",
     "gjhthqhzh",
     "gogxg",
     "gx1q",
@@ -1671,5 +1702,5 @@
     "zluj",
     "zoro"
   ],
-  "generatedAt": 1785540170
+  "generatedAt": 1785543654
 }
