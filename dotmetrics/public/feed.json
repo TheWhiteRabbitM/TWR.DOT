@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785576535,
-  "count": 97,
+  "generatedAt": 1785584498,
+  "count": 98,
   "apps": [
+    {
+      "label": "ip-market",
+      "domain": "ip-market.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785582864,
+      "url": "https://ip-market.dev-dot.li"
+    },
     {
       "label": "web3poker",
       "domain": "web3poker.dot",
@@ -320,9 +329,9 @@
     {
       "label": "ip-assets",
       "domain": "ip-assets.dot",
-      "displayName": "Soft.Law",
-      "description": "Intellectual property assets and licenses marketplace.",
-      "tier": 0,
+      "displayName": "",
+      "description": "",
+      "tier": 2,
       "firstSeenAt": 1785245088,
       "url": "https://ip-assets.dev-dot.li"
     },

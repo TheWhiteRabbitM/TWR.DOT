@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sat, 01 Aug 2026 09:28:55 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 01 Aug 2026 11:41:38 GMT</lastBuildDate>
+    <item>
+      <title>ip-market</title>
+      <link>https://ip-market.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">ip-market</guid>
+      <pubDate>Sat, 01 Aug 2026 11:14:24 GMT</pubDate>
+    </item>
     <item>
       <title>web3poker</title>
       <link>https://web3poker.dev-dot.li</link>
@@ -251,9 +258,9 @@
       <pubDate>Tue, 28 Jul 2026 15:52:24 GMT</pubDate>
     </item>
     <item>
-      <title>Soft.Law</title>
+      <title>ip-assets</title>
       <link>https://ip-assets.dev-dot.li</link>
-      <description>Intellectual property assets and licenses marketplace.</description>
+      <description></description>
       <guid isPermaLink="false">ip-assets</guid>
       <pubDate>Tue, 28 Jul 2026 13:24:48 GMT</pubDate>
     </item>
@@ -347,13 +354,6 @@
       <description>Votre lecteur RSS sur le dashboard : vos flux fusionnés en une timeline, non-lus mis en avant, article ouvert d&apos;un clic.</description>
       <guid isPermaLink="false">oblv-wg-rss</guid>
       <pubDate>Mon, 27 Jul 2026 08:52:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>Oblivyr Todo</title>
-      <link>https://oblv-wg-todo.dev-dot.li</link>
-      <description>Write a task the way you would say it - “pay rent friday !!” - and it files itself by date, priority and tag. Everything stays on your device.</description>
-      <guid isPermaLink="false">oblv-wg-todo</guid>
-      <pubDate>Mon, 27 Jul 2026 08:42:48 GMT</pubDate>
     </item>
   </channel>
 </rss>
