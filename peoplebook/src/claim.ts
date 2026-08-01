@@ -62,6 +62,25 @@ function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise<T> {
   return Promise.race([p, new Promise<T>((_, r) => setTimeout(() => r(new Error(`${what} timed out`)), ms))]);
 }
 
+/** Turn a `.tx()` failure result into a reason worth showing. The SDK puts the
+ *  detail in `.error`/`.dispatchError`, not always in a string, so dig it out. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function revertReason(res: any): string {
+  const raw = res?.dispatchError ?? res?.error ?? res?.formatted ?? res?.value ?? res;
+  let d: string;
+  try {
+    d = typeof raw === 'string' ? raw : JSON.stringify(raw, (_k, v) => (typeof v === 'bigint' ? v.toString() : v));
+  } catch {
+    d = String(raw);
+  }
+  if (/HandleTaken|taken/i.test(d)) return 'This mask has already been claimed.';
+  if (/Underpaid/i.test(d)) return 'The payment did not clear the 1 PAS price.';
+  if (/StorageDeposit|Insufficient|Funds|Balance|Payment/i.test(d)) return 'Not enough PAS for the claim (1 PAS + a small storage deposit). Top up and retry.';
+  if (/OutOfGas/i.test(d)) return 'Ran out of gas — try again.';
+  if (/AccountUnmapped|unmapped/i.test(d)) return 'Your account still needs mapping — try once more.';
+  return 'On-chain error: ' + (d || 'unknown').slice(0, 160);
+}
+
 /* ------------------------------------------------------------- the signer */
 
 let slot: Promise<Slot | null> | null = null;
@@ -168,39 +187,32 @@ export async function claim(
   const node = dotName ? namehash(dotName) : ZERO_NODE;
 
   onStep('signing');
-  let landed = false;
-  let lastErr = '';
-  for (let attempt = 0; attempt < 3 && !landed; attempt++) {
-    try {
-      // EXPLICIT LIMITS — the whole reason a claim would never prompt the wallet.
-      // `.tx()` normally sizes the call with its own dry-run; for this contract
-      // that estimate comes back short, so the tx reverts `Revive.OutOfGas`
-      // WITHOUT ever asking for a signature ("tx not ok" with no wallet popup).
-      // Passing both limits skips the dry-run and submits generously — unused
-      // weight is not charged and the storage deposit is reserved, not spent.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const res: any = await withTimeout(
-        contract.claim.tx(handle, node, {
-          value: VALUE_PLANCK,
-          gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
-          storageDepositLimit: 10n ** 18n,
-        }),
-        CLAIM_MS,
-        'claim',
-      );
-      if (res?.ok === false) throw new Error(res?.dispatchError ? String(res.formatted ?? 'dispatch failed') : 'tx not ok');
-      landed = true;
-      if (attempt === 0) onStep('minting');
-    } catch (e) {
-      lastErr = String((e as Error).message || e);
-      if (/rejected|cancel/i.test(lastErr)) return { ok: false, why: 'You cancelled the signature.' };
-      if (/Funds|Insufficient|Payment|Balance/i.test(lastErr)) return { ok: false, why: 'Not enough PAS to claim.' };
-      if (/HandleTaken|taken/i.test(lastErr)) return { ok: false, why: 'This mask was just claimed by someone else.' };
-      // OutOfGas / estimation flake — wait a beat and retry.
-      await new Promise((r) => setTimeout(r, 1200));
-    }
+  // EXPLICIT LIMITS skip .tx()'s own dry-run so the wallet actually prompts (a
+  // short estimate otherwise reverts OutOfGas before any signature). Unused
+  // weight isn't charged; the storage deposit is reserved, not spent.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let res: any;
+  try {
+    res = await withTimeout(
+      contract.claim.tx(handle, node, {
+        value: VALUE_PLANCK,
+        gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
+        storageDepositLimit: 10n ** 18n,
+      }),
+      CLAIM_MS,
+      'claim',
+    );
+  } catch (e) {
+    const m = String((e as Error).message || e);
+    if (/rejected|cancel/i.test(m)) return { ok: false, why: 'You cancelled the signature.' };
+    return { ok: false, why: m.slice(0, 170) || 'The claim did not send.' };
   }
-  if (!landed) return { ok: false, why: lastErr.slice(0, 120) || 'The claim did not land.' };
+
+  onStep('minting');
+  // `.tx()` reports a dispatch failure in its RESULT, not by throwing — surface
+  // the real reason instead of a blank "tx not ok". A revert is deterministic,
+  // so there is nothing to retry.
+  if (res && res.ok === false) return { ok: false, why: revertReason(res) };
 
   // Read the rolled tier back for this handle.
   try {
@@ -255,7 +267,10 @@ export async function setProfile(
       CLAIM_MS,
       'setProfile',
     );
-    if (res?.ok === false) throw new Error(res?.dispatchError ? String(res.formatted ?? 'dispatch failed') : 'tx not ok');
+    if (res?.ok === false) {
+      const raw = res.dispatchError ?? res.error ?? res.formatted ?? res;
+      throw new Error(typeof raw === 'string' ? raw : JSON.stringify(raw, (_k, v) => (typeof v === 'bigint' ? v.toString() : v)));
+    }
   } catch (e) {
     const m = String((e as Error).message || e);
     if (/rejected|cancel/i.test(m)) return { ok: false, why: 'You cancelled the signature.' };
