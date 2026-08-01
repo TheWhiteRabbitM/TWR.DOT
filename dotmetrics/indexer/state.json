@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11678237,
-  "updatedAt": "2026-08-01T11:38:29.518Z",
+  "lastBlock": 11682314,
+  "updatedAt": "2026-08-01T13:59:28.970Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "3eb05fa5774633d75f58a34c2a86a9fd10359a24070160dd6e0c517a79d82517",
-    "cid": "bafybeigkrbiye4mhnjnd57xl7ewe564stveyddu2wq5blrmpfh4mlvb63a",
-    "uploadedAt": "2026-08-01T11:42:46.741Z"
+    "digest": "7c6859d3910dc69480fbf021decaea002190a683296b095910acfdd763afa8d4",
+    "cid": "bafybeibcyilmaso5lapsnrwufdwyn2v655ipphmasahyclzypyqqovjyem",
+    "uploadedAt": "2026-08-01T14:03:42.244Z"
   },
   "sitePublish": {
-    "treeHash": "e6e029e4d7763ae4dfc27d7b0c7f024613e2b8dd6a7b7d5f1823a653fc040d52",
-    "publishedAt": "2026-08-01T09:33:11.272Z"
+    "treeHash": "830ac48f8ccdf4297c1f268b9f365bd0921b005893ecbd4e844fe3315fe281a5",
+    "publishedAt": "2026-08-01T14:05:48.574Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-01T11:41:37.000Z",
+    "updatedAt": "2026-08-01T14:02:28.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -101,13 +101,14 @@
       "polkadevs": "alive",
       "arcadeonchain": "alive",
       "compute-flux": "alive",
-      "web3poker": "alive"
+      "web3poker": "alive",
+      "ip-market": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-01T11:41:38.000Z",
+    "updatedAt": "2026-08-01T14:02:29.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -218,9 +219,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifyj2lxzjzr5t47qetfruwcbyk2cuvycmgdqokyc4zy4p7dds4nme",
-        "updateCount": 20,
-        "changedAt": 1785584498,
+        "contenthash": "bafybeiarpugvn4l7otehliilyot23d5r3u5xvb65kyfn6c2bm2f4harvqy",
+        "updateCount": 21,
+        "changedAt": 1785592949,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -353,9 +354,9 @@
         "live": "unknown"
       },
       "ip-market": {
-        "contenthash": "",
+        "contenthash": "bafybeidzt6zmwpt6jqkvirap2ei5gumofxdz44gmio36fzyln3rlt4dmf4",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "italiarovente": {
         "contenthash": "bafybeicczhspfjyblrmyilfj32tgs6hfdmurejeuelzyjehyqbakfpuun4",
@@ -472,9 +473,9 @@
         "live": "alive"
       },
       "plaza-social": {
-        "contenthash": "bafybeif7ubw4gymby46h2po4s6oqc4mclfijywhko3xpp7u4sqdnlpya24",
-        "updateCount": 8,
-        "changedAt": 1785584498,
+        "contenthash": "bafybeidgw72blregcl22olsjj2x44xc7ztyvtab5ynymewapgvpqo5sqim",
+        "updateCount": 9,
+        "changedAt": 1785592949,
         "live": "alive"
       },
       "polkadevs": {

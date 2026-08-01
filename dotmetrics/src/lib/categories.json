@@ -377,12 +377,20 @@
   },
   "ip-assets": {
     "category": "explorers",
-    "source": "derived:manifest",
-    "confidence": "medium",
+    "source": "derived:app-text",
+    "confidence": "high",
     "why": [
       "explorer~",
       "explore~",
       "registry~"
+    ]
+  },
+  "ip-market": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "market~"
     ]
   },
   "italiarovente": {

@@ -1,23 +1,23 @@
 {
-  "measuredAt": 1785584376,
-  "headBlock": 11678345,
+  "measuredAt": 1785592824,
+  "headBlock": 11682419,
   "windowBlocks": 151,
   "windowSeconds": 300,
-  "contractEvents": 11,
+  "contractEvents": 12,
   "activeContracts": 1,
   "reverts": 25,
   "topContracts": [
     {
       "address": "0xaf781298fe769738ef529816c11c121ea8887fc9",
-      "events": 11
+      "events": 12
     }
   ],
   "perContract": {
-    "headBlock": 11678345,
+    "headBlock": 11682419,
     "windowBlocks": 151,
     "windowSeconds": 300,
     "events": {
-      "0xaf781298fe769738ef529816c11c121ea8887fc9": 11
+      "0xaf781298fe769738ef529816c11c121ea8887fc9": 12
     }
   }
 }
