@@ -26,8 +26,11 @@ import ABI from './abi.json';
 
 const ADDRESS = '0xA56Fab4B4900FcccCd6ca8B064d8663eDfaa5bac';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
-/** 1 PAS in native planck (10 decimals). msg.value inside the contract = ×1e8. */
-const VALUE_PLANCK = 10_000_000_000n;
+/** 0.1 PAS in native planck (10 decimals). msg.value inside the contract = ×1e8,
+ *  so this clears a price of 1e17. Kept low so a modestly-funded devnet account
+ *  can send it and still stay above its existential deposit — a 1 PAS value on a
+ *  ~1 PAS balance fails with Revive.TransferFailed. */
+const VALUE_PLANCK = 1_000_000_000n;
 const ZERO_NODE = ('0x' + '00'.repeat(32)) as `0x${string}`;
 
 const CONNECT_MS = 12_000;
@@ -74,8 +77,9 @@ function revertReason(res: any): string {
     d = String(raw);
   }
   if (/HandleTaken|taken/i.test(d)) return 'This mask has already been claimed.';
-  if (/Underpaid/i.test(d)) return 'The payment did not clear the 1 PAS price.';
-  if (/StorageDeposit|Insufficient|Funds|Balance|Payment/i.test(d)) return 'Not enough PAS for the claim (1 PAS + a small storage deposit). Top up and retry.';
+  if (/Underpaid/i.test(d)) return 'The payment did not clear the price.';
+  if (/TransferFailed/i.test(d)) return 'Not enough PAS: your account can’t send the payment and stay above its minimum balance. Top up a little PAS and retry.';
+  if (/StorageDeposit|Insufficient|Funds|Balance|Payment/i.test(d)) return 'Not enough PAS for the claim (price + a small storage deposit). Top up and retry.';
   if (/OutOfGas/i.test(d)) return 'Ran out of gas — try again.';
   if (/AccountUnmapped|unmapped/i.test(d)) return 'Your account still needs mapping — try once more.';
   return 'On-chain error: ' + (d || 'unknown').slice(0, 160);

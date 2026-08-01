@@ -2,7 +2,7 @@
  * peoplebook — COIN-OP // THE MASK MACHINE
  *
  * The directory and the generated masks are static; the CLAIM is real. You crank
- * the machine, it takes 1 PAS through the wallet, the contract mints an NFT and
+ * the machine, it takes 0.1 PAS through the wallet, the contract mints an NFT and
  * rolls its rarity on chain, and a capsule cracks open into a foil card. Once you
  * own a mask you can attach your links (Telegram, X, a bio) — written on chain by
  * the token owner via setProfile, and shown on the card. Claimed handles carry the
@@ -89,14 +89,14 @@ app.innerHTML = `
           <div class="odds-dial">${dialSegs(false)}</div>
         </div>
         <div class="controls">
-          <div class="slot"><span class="slotmouth"></span><span class="slotlbl">INSERT<br>1 PAS</span></div>
+          <div class="slot"><span class="slotmouth"></span><span class="slotlbl">INSERT<br>0.1 PAS</span></div>
           <button class="pull" id="crank">TURN<small>crank a random mask</small></button>
         </div>
         <div class="tray" id="tray"></div>
       </div>
       <div class="pitch">
         <h1 class="headline">Claim your<br>mask.</h1>
-        <p class="lede">167 handles on the devnet — every one wears a generated mask. Crank yours on chain for <span class="pas">1 PAS</span> and the machine rolls its rarity. Own a <b>.dot</b>? Slot it in for better odds. Then pin your <b>Telegram</b> and <b>X</b> to it.</p>
+        <p class="lede">167 handles on the devnet — every one wears a generated mask. Crank yours on chain for <span class="pas">0.1 PAS</span> and the machine rolls its rarity. Own a <b>.dot</b>? Slot it in for better odds. Then pin your <b>Telegram</b> and <b>X</b> to it.</p>
         <div class="connect" id="wallet"><span class="led"></span><span id="wtext">CONNECT</span></div>
         <div class="scoreboard" id="hud"></div>
       </div>
@@ -143,7 +143,7 @@ app.innerHTML = `
         <div class="plabel">Bio</div><input id="pbio" placeholder="one line about you" maxlength="160" autocomplete="off">
         <button class="psave" id="psave">Save links to chain</button>
       </div>
-      <button class="pull small" id="lbgo">TURN · 1 PAS</button>
+      <button class="pull small" id="lbgo">TURN · 0.1 PAS</button>
       <div class="acts" id="acts" hidden></div>
     </div>
   </div>`;
@@ -201,7 +201,7 @@ function card(u: User, i: number): string {
     const chips = socialChips(u);
     foot = `<span class="gem">${TIERS[t].name}</span><div class="socials">${chips}<button class="editlinks" data-edit="${esc(u.name)}">${chips ? 'Edit' : '+ Links'}</button></div>`;
   } else {
-    foot = `<button class="claimbtn" data-claim="${esc(u.name)}">Crank · 1 PAS</button>`;
+    foot = `<button class="claimbtn" data-claim="${esc(u.name)}">Crank · 0.1 PAS</button>`;
   }
   return `<div class="sleeve" style="${style}"><div class="${cls}"><div class="tab"></div>
     ${isYou ? '<span class="youtag">YOU</span>' : ''}
@@ -261,7 +261,7 @@ function loop() {
 const STEP_TEXT: Record<ClaimStep, string> = {
   connecting: 'Connecting your wallet…',
   preparing: 'Loading the capsule…',
-  signing: 'Approve the 1 PAS payment in your wallet…',
+  signing: 'Approve the 0.1 PAS payment in your wallet…',
   minting: 'Cranking the machine…',
   done: '',
 };
@@ -316,7 +316,7 @@ function openSheet(handle: string, mode: 'claim' | 'edit') {
   } else {
     minidial.hidden = false; setDial(minidial, false);
     dotInput.hidden = false; dotInput.value = '';
-    goBtn.hidden = false; goBtn.disabled = false; goBtn.textContent = 'TURN · 1 PAS'; goBtn.dataset.mode = 'go';
+    goBtn.hidden = false; goBtn.disabled = false; goBtn.textContent = 'TURN · 0.1 PAS'; goBtn.dataset.mode = 'go';
   }
 }
 
