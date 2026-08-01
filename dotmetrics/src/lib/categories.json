@@ -348,6 +348,15 @@
       "hello world~"
     ]
   },
+  "hello-world-pricey-app": {
+    "category": "curiosities",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "hello~",
+      "hello world~"
+    ]
+  },
   "hellodotworld": {
     "category": "publishing",
     "source": "derived:app-text",
