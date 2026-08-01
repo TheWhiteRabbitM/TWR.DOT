@@ -552,6 +552,12 @@
       "buy~"
     ]
   },
+  "peoplebook": {
+    "category": "social",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
   "petitions": {
     "category": "social",
     "source": "derived:manifest",
