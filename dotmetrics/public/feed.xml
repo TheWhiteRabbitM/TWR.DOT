@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sat, 01 Aug 2026 15:26:53 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 01 Aug 2026 17:22:17 GMT</lastBuildDate>
+    <item>
+      <title>peoplebook</title>
+      <link>https://peoplebook.dev-dot.li</link>
+      <description>The devnet identity directory, where every handle has a claimable on-chain avatar NFT. Read live from the People chain: every person who registered a .dot-style handle gets a generated mask. Claim yours for 1 PAS and the PeoplebookAvatars contract (deployed on the devnet Asset Hub) mints an ERC-721 to you and rolls its rarity on chain, gacha-style: Legendary 3%, Epic 10%, Rare 20%, Uncommon 30%, Common 37%. The image is generated inside the contract, so the NFT shows in any wallet with nothing hosted anywhere. Own a .dot? Add it at claim and the contract verifies it against the registry for better odds. Searchable, self-updating as people claim.</description>
+      <guid isPermaLink="false">peoplebook</guid>
+      <pubDate>Sat, 01 Aug 2026 16:03:48 GMT</pubDate>
+    </item>
     <item>
       <title>IP Market by Soft.Law</title>
       <link>https://ip-market.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description>Suivi des référendums OpenGov ouverts au vote sur Polkadot : état, tally aye/nay, seuils d&apos;approbation et de support de la track, et temps restant avant échéance.</description>
       <guid isPermaLink="false">oblv-wg-opengov</guid>
       <pubDate>Mon, 27 Jul 2026 08:53:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>Oblv RSS</title>
-      <link>https://oblv-wg-rss.dev-dot.li</link>
-      <description>Votre lecteur RSS sur le dashboard : vos flux fusionnés en une timeline, non-lus mis en avant, article ouvert d&apos;un clic.</description>
-      <guid isPermaLink="false">oblv-wg-rss</guid>
-      <pubDate>Mon, 27 Jul 2026 08:52:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

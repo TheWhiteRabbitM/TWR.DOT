@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785598013,
-  "count": 98,
+  "generatedAt": 1785604937,
+  "count": 99,
   "apps": [
+    {
+      "label": "peoplebook",
+      "domain": "peoplebook.dot",
+      "displayName": "peoplebook",
+      "description": "The devnet identity directory, where every handle has a claimable on-chain avatar NFT. Read live from the People chain: every person who registered a .dot-style handle gets a generated mask. Claim yours for 1 PAS and the PeoplebookAvatars contract (deployed on the devnet Asset Hub) mints an ERC-721 to you and rolls its rarity on chain, gacha-style: Legendary 3%, Epic 10%, Rare 20%, Uncommon 30%, Common 37%. The image is generated inside the contract, so the NFT shows in any wallet with nothing hosted anywhere. Own a .dot? Add it at claim and the contract verifies it against the registry for better odds. Searchable, self-updating as people claim.",
+      "tier": 0,
+      "firstSeenAt": 1785600228,
+      "url": "https://peoplebook.dev-dot.li"
+    },
     {
       "label": "ip-market",
       "domain": "ip-market.dot",

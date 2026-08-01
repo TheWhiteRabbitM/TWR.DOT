@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11684344,
-  "updatedAt": "2026-08-01T15:22:45.423Z",
+  "lastBlock": 11687273,
+  "updatedAt": "2026-08-01T17:19:16.520Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "1ca717514f9bf4f6567b082a32fe062f3cad27437911553fd5d4925584dafc59",
-    "cid": "bafybeicudonmjgt5l7cd3ddhwogr4cbibqljeq3hnaqepzdo7da5wyagfq",
-    "uploadedAt": "2026-08-01T15:28:17.727Z"
+    "digest": "56854b5fe8dd1927831fd9161b6c71263479f0c580e5ae22291afb4e9f8e5218",
+    "cid": "bafybeiaj7zkk6vuzfu6o3vnjlisqg4ncbgks2sxljb5he4eti3niygf4va",
+    "uploadedAt": "2026-08-01T17:23:25.137Z"
   },
   "sitePublish": {
     "treeHash": "a4ec2786c7783b23017247f8c6378aa16bd9ffe902d0d5f77bae875393b802d8",
     "publishedAt": "2026-08-01T15:29:59.766Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-01T15:26:53.000Z",
+    "updatedAt": "2026-08-01T17:22:17.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -102,13 +102,14 @@
       "arcadeonchain": "alive",
       "compute-flux": "alive",
       "web3poker": "alive",
-      "ip-market": "alive"
+      "ip-market": "alive",
+      "peoplebook": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-01T15:26:53.000Z",
+    "updatedAt": "2026-08-01T17:22:17.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -219,9 +220,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeihrive55hk4fgsgc57pvdlqimiqqb3lsgbgf2idjxvoglar7cqrmm",
-        "updateCount": 22,
-        "changedAt": 1785598013,
+        "contenthash": "bafybeif3p4t4pguaewuiyxvou5iskh6ki446gygm5dgskuz3r3r5xryw7i",
+        "updateCount": 23,
+        "changedAt": 1785604937,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -247,9 +248,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeienonxau2rfay5ny3dvigdzxgiu54ssnx5v7zq5ttbhvfm7zr6ktm",
-        "updateCount": 20,
-        "changedAt": 1785598013,
+        "contenthash": "bafybeifz4j33m7cztqab54fwyhfru56vwedzl2nf4nrkogppte2cujab24",
+        "updateCount": 21,
+        "changedAt": 1785604937,
         "live": "alive"
       },
       "dragon-realm": {
@@ -461,6 +462,11 @@
         "contenthash": "bafybeib2qi7ma7jcbijcafog32ajim4kkolknjjmm52a5e5u3kuyejqnti",
         "updateCount": 3,
         "changedAt": 1785500760,
+        "live": "alive"
+      },
+      "peoplebook": {
+        "contenthash": "bafybeibzw4sntox2gzs5finfd6wy3yibzxipiu6ddaqd4dv6sgg342bog4",
+        "updateCount": 0,
         "live": "alive"
       },
       "petitions": {
