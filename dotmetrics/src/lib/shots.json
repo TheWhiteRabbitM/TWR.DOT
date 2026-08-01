@@ -5,6 +5,12 @@
     "h": 970,
     "capturedAt": 1785409090
   },
+  "arcadeonchain": {
+    "file": "shots/arcadeonchain.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785570800
+  },
   "ascendyendor00": {
     "file": "shots/ascendyendor00.webp",
     "w": 480,
@@ -40,6 +46,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785409354
+  },
+  "chopdotproof01": {
+    "file": "shots/chopdotproof01.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785570813
   },
   "contribnet01": {
     "file": "shots/contribnet01.webp",
@@ -173,6 +185,12 @@
     "h": 970,
     "capturedAt": 1785493706
   },
+  "gameboyonchain": {
+    "file": "shots/gameboyonchain.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785570823
+  },
   "guestbook": {
     "file": "shots/guestbook.webp",
     "w": 480,
@@ -227,6 +245,12 @@
     "h": 970,
     "capturedAt": 1785409010
   },
+  "lanzadera": {
+    "file": "shots/lanzadera.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785570790
+  },
   "mini-lucky-smoke": {
     "file": "shots/mini-lucky-smoke.webp",
     "w": 480,
@@ -238,6 +262,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785408913
+  },
+  "nesonchain": {
+    "file": "shots/nesonchain.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785570834
   },
   "oblv-wg-calc": {
     "file": "shots/oblv-wg-calc.webp",
@@ -323,6 +353,12 @@
     "h": 970,
     "capturedAt": 1785409026
   },
+  "polkadevs": {
+    "file": "shots/polkadevs.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785570779
+  },
   "polkaportal03": {
     "file": "shots/polkaportal03.webp",
     "w": 480,
@@ -341,6 +377,12 @@
     "h": 970,
     "capturedAt": 1785408248
   },
+  "rainbow-dev": {
+    "file": "shots/rainbow-dev.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785570845
+  },
   "rainbowprobe": {
     "file": "shots/rainbowprobe.webp",
     "w": 480,
@@ -352,6 +394,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785493606
+  },
+  "scytalepublish": {
+    "file": "shots/scytalepublish.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785570856
   },
   "squadbuilder": {
     "file": "shots/squadbuilder.webp",
@@ -406,6 +454,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785493640
+  },
+  "web3poker": {
+    "file": "shots/web3poker.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785570728
   },
   "wudcommunity": {
     "file": "shots/wudcommunity.webp",
