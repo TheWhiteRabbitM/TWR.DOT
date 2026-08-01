@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11682314,
-  "updatedAt": "2026-08-01T13:59:28.970Z",
+  "lastBlock": 11684344,
+  "updatedAt": "2026-08-01T15:22:45.423Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "7c6859d3910dc69480fbf021decaea002190a683296b095910acfdd763afa8d4",
-    "cid": "bafybeibcyilmaso5lapsnrwufdwyn2v655ipphmasahyclzypyqqovjyem",
-    "uploadedAt": "2026-08-01T14:03:42.244Z"
+    "digest": "1ca717514f9bf4f6567b082a32fe062f3cad27437911553fd5d4925584dafc59",
+    "cid": "bafybeicudonmjgt5l7cd3ddhwogr4cbibqljeq3hnaqepzdo7da5wyagfq",
+    "uploadedAt": "2026-08-01T15:28:17.727Z"
   },
   "sitePublish": {
-    "treeHash": "830ac48f8ccdf4297c1f268b9f365bd0921b005893ecbd4e844fe3315fe281a5",
-    "publishedAt": "2026-08-01T14:05:48.574Z"
+    "treeHash": "a4ec2786c7783b23017247f8c6378aa16bd9ffe902d0d5f77bae875393b802d8",
+    "publishedAt": "2026-08-01T15:29:59.766Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-01T14:02:28.000Z",
+    "updatedAt": "2026-08-01T15:26:53.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -108,7 +108,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-01T14:02:29.000Z",
+    "updatedAt": "2026-08-01T15:26:53.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -219,9 +219,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiarpugvn4l7otehliilyot23d5r3u5xvb65kyfn6c2bm2f4harvqy",
-        "updateCount": 21,
-        "changedAt": 1785592949,
+        "contenthash": "bafybeihrive55hk4fgsgc57pvdlqimiqqb3lsgbgf2idjxvoglar7cqrmm",
+        "updateCount": 22,
+        "changedAt": 1785598013,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -247,9 +247,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeicuf2chohgesgwmxc2nrjdenga6qm4cmehq5koga24fbnmi7nlvse",
-        "updateCount": 19,
-        "changedAt": 1785584498,
+        "contenthash": "bafybeienonxau2rfay5ny3dvigdzxgiu54ssnx5v7zq5ttbhvfm7zr6ktm",
+        "updateCount": 20,
+        "changedAt": 1785598013,
         "live": "alive"
       },
       "dragon-realm": {
@@ -354,8 +354,9 @@
         "live": "unknown"
       },
       "ip-market": {
-        "contenthash": "bafybeidzt6zmwpt6jqkvirap2ei5gumofxdz44gmio36fzyln3rlt4dmf4",
-        "updateCount": 0,
+        "contenthash": "bafkreihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku",
+        "updateCount": 1,
+        "changedAt": 1785598013,
         "live": "alive"
       },
       "italiarovente": {
@@ -607,9 +608,9 @@
         "live": "alive"
       },
       "web3poker": {
-        "contenthash": "bafybeifjcfsvtvgfhmpralgoa4zj667ov2qy2pbcwvsrg2ourirhasepqe",
-        "updateCount": 1,
-        "changedAt": 1785556850,
+        "contenthash": "bafybeiheybqsye5kayxqspt2pa3xpuoz2bfok7x5g3zoykzq7i7qwhh2bi",
+        "updateCount": 2,
+        "changedAt": 1785598013,
         "live": "alive"
       },
       "wudcommunity": {
