@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785608340,
-  "count": 99,
+  "generatedAt": 1785613440,
+  "count": 100,
   "apps": [
+    {
+      "label": "hello-world-pricey-app",
+      "domain": "hello-world-pricey-app.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785611052,
+      "url": "https://hello-world-pricey-app.dev-dot.li"
+    },
     {
       "label": "peoplebook",
       "domain": "peoplebook.dot",

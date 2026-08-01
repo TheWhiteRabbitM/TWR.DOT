@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11688996,
-  "updatedAt": "2026-08-01T18:16:03.267Z",
+  "lastBlock": 11691459,
+  "updatedAt": "2026-08-01T19:39:36.781Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "76369a21e9f0a88692a82d6ee1b6ea49f23291546f31d6d174c5319ee9dd9665",
-    "cid": "bafybeidwbsgcpneyfhkcz7z7ogteico5hf7aojiwp2nguei4ugb2xb7buq",
-    "uploadedAt": "2026-08-01T18:20:41.740Z"
+    "digest": "a32f1574e62d9736d57903ebd5e19ccde70299fcd05e83f0ecf46bd5f8198f6c",
+    "cid": "bafybeidthfrjamoebc5vgqcec526f52oyk5vnqxenge4hkjydsohzithze",
+    "uploadedAt": "2026-08-01T19:45:25.200Z"
   },
   "sitePublish": {
     "treeHash": "457c03b1033aa95d5877f72aef20bf149f39f976060d727367b55e88d8b7d2f2",
     "publishedAt": "2026-08-01T18:22:48.153Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-01T18:18:59.000Z",
+    "updatedAt": "2026-08-01T19:43:59.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -109,7 +109,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-01T18:19:00.000Z",
+    "updatedAt": "2026-08-01T19:44:00.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -220,9 +220,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifcxzup6ef55hqmndu6x6c7qhvi7wra24impm4xas2i3rzbeszvfq",
-        "updateCount": 24,
-        "changedAt": 1785608340,
+        "contenthash": "bafybeielked2gwnaj6peefyw36lp2rzczksfd6dur2v7vetoxi5xu5h6ji",
+        "updateCount": 25,
+        "changedAt": 1785613440,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -248,9 +248,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeifz4j33m7cztqab54fwyhfru56vwedzl2nf4nrkogppte2cujab24",
-        "updateCount": 21,
-        "changedAt": 1785604937,
+        "contenthash": "bafybeidbvz7n56dxdci77km5kr4mp3bxydzv4fbss5eemmagtojt2wee3m",
+        "updateCount": 22,
+        "changedAt": 1785613440,
         "live": "alive"
       },
       "dragon-realm": {
@@ -332,6 +332,11 @@
         "contenthash": "bafybeictyugpqe7xpvbuh2plmhuxwqix6wpsjjd2ilrtvqmxchga2el5ee",
         "updateCount": 0,
         "live": "alive"
+      },
+      "hello-world-pricey-app": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "hellodotworld": {
         "contenthash": "bafybeihfc5hr5bkjyhkmxc35toqqgbayudcmefgh37licprsylamapf4ga",
