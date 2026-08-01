@@ -75,6 +75,12 @@
       "community"
     ]
   },
+  "compute-flux": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "contribnet01": {
     "category": "social",
     "source": "derived:app-text",
@@ -735,6 +741,12 @@
     ]
   },
   "trustgraph": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "web3poker": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
