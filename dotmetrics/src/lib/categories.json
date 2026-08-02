@@ -67,6 +67,12 @@
       "guide"
     ]
   },
+  "chirponchain": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "chopdotproof01": {
     "category": "social",
     "source": "derived:manifest",
@@ -131,10 +137,13 @@
     ]
   },
   "devnetpulse": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "probe",
+      "clock"
+    ]
   },
   "discreetly": {
     "category": "identity",
@@ -243,16 +252,20 @@
     ]
   },
   "dripstream": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "payment"
+    ]
   },
   "dropforge": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "media",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "art"
+    ]
   },
   "dw3labsgame": {
     "category": "games",
@@ -289,6 +302,12 @@
       "staking",
       "reward"
     ]
+  },
+  "frenchan-app77": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "gameboyonchain": {
     "category": "games",
@@ -534,6 +553,14 @@
       "widgets"
     ]
   },
+  "open-docs": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "docs~"
+    ]
+  },
   "openpetition": {
     "category": "social",
     "source": "derived:manifest",
@@ -559,11 +586,11 @@
     "why": []
   },
   "pennypixel": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "medium",
     "why": [
-      "buy~"
+      "signature"
     ]
   },
   "peoplebook": {
@@ -639,11 +666,12 @@
     ]
   },
   "proofoftake": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "high",
     "why": [
-      "vote~"
+      "post",
+      "vote"
     ]
   },
   "provenveil": {
@@ -714,10 +742,12 @@
     "why": []
   },
   "stealcrown": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "wallet"
+    ]
   },
   "sybildrop": {
     "category": "identity",
@@ -776,10 +806,12 @@
     ]
   },
   "trustgraph": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "verified"
+    ]
   },
   "web3poker": {
     "category": "other",
