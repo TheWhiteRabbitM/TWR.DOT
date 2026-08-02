@@ -36,6 +36,15 @@ export interface ButtonState {
   /** True when state is served by the local mock rather than a chain. */
   mocked: boolean;
   /**
+   * Which account is signing: `wallet` is one of the user's own accounts,
+   * `app` the host-derived app-scoped fallback. The fallback holds no funds and
+   * no personhood, so the screen has to name it rather than leave the user with
+   * an unexplained refusal. Absent in simulation.
+   */
+  signerKind?: 'wallet' | 'app' | null;
+  /** SS58 address of the signing account, so an `app` fallback can be funded. */
+  signerAddress?: string | null;
+  /**
    * Current chain step, shown while loading or pressing. Without it a stalled
    * await is indistinguishable from a slow one.
    */

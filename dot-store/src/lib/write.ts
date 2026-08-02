@@ -11,7 +11,9 @@ import { APP_REVIEWS_ABI } from './reviews-abi';
  *
  * There are three routes, tried in order of how much they can do:
  *
- *   1. Inside the Polkadot app, sign through the host's own account.
+ *   1. Inside the Polkadot app, sign through the host — with the reader's OWN
+ *      wallet account, best-funded first, falling back to the app-scoped
+ *      account only when the shell surfaces no wallet at all.
  *   2. Outside it, sign with an injected EVM wallet if there is one. The devnet
  *      Asset Hub is EVM-compatible and AppReviews is an ordinary contract, so
  *      this needs no library at all — the calldata is the same hand-rolled
@@ -183,53 +185,165 @@ async function postViaWallet(eth: Injected, args: PostArgs): Promise<PostOutcome
 /* -------------------------------------------------------------------- host */
 
 /**
- * ONE SignerManager for the whole session, connected once.
+ * WHOSE ACCOUNT SIGNS, and why it is not a SignerManager any more.
  *
- * The store used to build a fresh manager inside the submit handler and connect
- * it there, so the entire host handshake had to complete between the click and
- * the timeout — and two taps meant two managers racing each other over the same
- * host provider, which The Button's own code warns against in as many words.
+ * The store used to sign through `new SignerManager({ dappName: 'dot-store.dot' })`.
+ * That does NOT use the reader's wallet: given a `dappName`, the host provider
+ * takes its product-account branch and hands back `getProductAccount('dot-store.dot', 0)`
+ * — an APP-SCOPED account the shell derives for this app. It starts empty, it is
+ * not visible in the wallet UI, and nobody can fund it without being told it
+ * exists. Every review is a paid transaction (a fee, at minimum), so that
+ * account is exactly the one that cannot pay: the failures read as
+ * `Revive.TransferFailed` or "Inability to pay some fees", and any state the
+ * contract keys on the caller would be keyed on an address that is not the
+ * reader's. `SignerManager` offers no route to the wallet at all.
  *
- * This is the shape that demonstrably works there: a process-wide singleton,
- * connected as early as we know the reader intends to write, so by the time
- * they have picked a rating and typed a sentence the account is already there.
+ * So the accounts provider is used directly, and the reader's OWN accounts come
+ * first (`getLegacyAccounts` + `getLegacyAccountSigner`), choosing the
+ * best-funded one when there are several. The app-scoped account stays as a
+ * fallback for shells that expose no wallet accounts — it still works when it
+ * has a balance, and when it doesn't the failure names the address so it can be
+ * topped up instead of reading like a bug.
  */
-let managerPromise: Promise<{
-  manager: import('@parity/product-sdk-signer').SignerManager;
-  account: import('@parity/product-sdk-signer').SignerAccount | null;
-}> | null = null;
+type SignerKind = 'wallet' | 'app';
 
-async function getManager() {
-  if (!managerPromise) {
-    managerPromise = (async () => {
-      const { SignerManager } = await import('@parity/product-sdk-signer');
-      const manager = new SignerManager({ dappName: 'dot-store.dot' });
-      await withTimeout(manager.connect(), CONNECT_MS, 'signer connect').catch(() => undefined);
-      // connect() resolves with the account list, but the manager selects one
-      // asynchronously. Wait for it rather than racing it.
-      const deadline = Date.now() + ACCOUNT_MS;
-      let account = null as import('@parity/product-sdk-signer').SignerAccount | null;
-      for (;;) {
-        const s = manager.getState();
-        if (s.selectedAccount) {
-          account = s.selectedAccount;
-          break;
-        }
-        const first = s.accounts[0];
-        if (first) {
-          const picked = manager.selectAccount(first.address);
-          if (picked.ok) {
-            account = picked.value;
-            break;
-          }
-        }
-        if (Date.now() > deadline) break;
-        await new Promise((r) => setTimeout(r, 250));
-      }
-      return { manager, account };
-    })();
+interface Slot {
+  address: string;
+  // The provider's signer is a PAPI PolkadotSigner; the SDK's contract helpers
+  // are reached through an untyped bridge below, so this stays deliberately open.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  signer: any;
+  /** 'wallet' = one of the reader's own accounts; 'app' = the host-derived one. */
+  kind: SignerKind;
+  name?: string;
+}
+
+/** Only a SUCCESSFUL connection is memoised — see getSlot(). */
+let slotPromise: Promise<Slot | null> | null = null;
+
+async function connect(): Promise<Slot | null> {
+  const [host, papi] = await Promise.all([
+    import('@parity/product-sdk-host'),
+    import('polkadot-api'),
+  ]);
+
+  // The provider's lookups answer with a ResultAsync — thenable, but not a
+  // Promise — so every call is wrapped and this boundary is untyped.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ap: any = await withTimeout(
+    host.getAccountsProvider() as unknown as Promise<unknown>,
+    CONNECT_MS,
+    'accounts provider',
+  ).catch(() => null);
+  if (!ap) return null;
+
+  // A HostAccount carries `publicKey` bytes and no address at all.
+  const ss58 = (pk: Uint8Array) => papi.AccountId().dec(pk) as string;
+
+  // The reader's own accounts first.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const r: any = await withTimeout(
+      Promise.resolve(ap.getLegacyAccounts()),
+      ACCOUNT_MS,
+      'wallet accounts',
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const accounts: any[] = (r?.value ?? []).filter(
+      (a: { publicKey?: Uint8Array }) => a?.publicKey,
+    );
+    if (accounts.length) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const best = await richest(accounts.map((a: any) => ({ ...a, address: ss58(a.publicKey) })));
+      return {
+        address: best.address,
+        signer: ap.getLegacyAccountSigner({ publicKey: best.publicKey, name: best.name }),
+        kind: 'wallet',
+        name: best.name,
+      };
+    }
+  } catch {
+    // Fall through to the app account rather than giving up on signing.
   }
-  return managerPromise;
+
+  // Fallback: the app-scoped account, for shells that surface no wallet.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const r: any = await withTimeout(
+      Promise.resolve(ap.getProductAccount('dot-store.dot', 0)),
+      ACCOUNT_MS,
+      'app account',
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pa: any = r?.value;
+    if (pa) {
+      const address = pa.address ?? (pa.publicKey ? ss58(pa.publicKey) : null);
+      if (address) return { address, signer: ap.getProductAccountSigner(pa), kind: 'app' };
+    }
+  } catch {
+    // No account of either kind — the caller reports 'no-account'.
+  }
+  return null;
+}
+
+/**
+ * Of the reader's accounts, the one that can actually pay the fee.
+ *
+ * Balance reads are best effort and bounded: if they all fail we keep the first
+ * account, which is the behaviour a single-account wallet has anyway.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function richest<T extends { address: string } & Record<string, any>>(
+  accounts: T[],
+): Promise<T> {
+  if (accounts.length === 1) return accounts[0];
+  try {
+    const [papi, descriptors, host] = await Promise.all([
+      import('polkadot-api'),
+      import('@parity/product-sdk-descriptors/devnet-asset-hub'),
+      import('@parity/product-sdk-host'),
+    ]);
+    const genesis = (descriptors.devnet_asset_hub as unknown as { genesis: `0x${string}` }).genesis;
+    const provider = await withTimeout(host.getHostProvider(genesis), CONNECT_MS, 'host provider');
+    if (!provider) return accounts[0];
+    const api = papi.createClient(provider).getTypedApi(descriptors.devnet_asset_hub);
+    const weighed = await Promise.all(
+      accounts.slice(0, 6).map(async (a) => {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const acc: any = await withTimeout(
+            api.query.System.Account.getValue(a.address),
+            10_000,
+            'balance',
+          );
+          return { a, free: BigInt(acc?.data?.free ?? 0) };
+        } catch {
+          return { a, free: 0n };
+        }
+      }),
+    );
+    weighed.sort((x, y) => (y.free > x.free ? 1 : y.free < x.free ? -1 : 0));
+    return weighed[0].a;
+  } catch {
+    return accounts[0];
+  }
+}
+
+/**
+ * The connected account, connected once per session.
+ *
+ * Only a SUCCESSFUL connection is memoised. Caching a failure would make one
+ * bad boot permanent: every later Post would replay the same dead session
+ * instead of trying the handshake again.
+ */
+function getSlot(): Promise<Slot | null> {
+  if (!slotPromise) {
+    slotPromise = connect().catch(() => null);
+    void slotPromise.then((s) => {
+      if (!s) slotPromise = null;
+    });
+  }
+  return slotPromise;
 }
 
 /**
@@ -240,12 +354,43 @@ async function getManager() {
  * forget: every failure here is re-discovered, and reported, on submit.
  */
 export function warmUpSigner(): void {
-  void getManager().catch(() => undefined);
+  void getSlot().catch(() => undefined);
+}
+
+/**
+ * Which account is signing, for anything that wants to show it. `kind: 'app'`
+ * means the reader's wallet was not reachable and the shell's app-scoped
+ * account is being used instead — an address they can fund, but not one they
+ * will recognise.
+ */
+export async function signerInfo(): Promise<{
+  address: string;
+  kind: SignerKind;
+  name?: string;
+} | null> {
+  const s = await getSlot().catch(() => null);
+  return s ? { address: s.address, kind: s.kind, name: s.name } : null;
+}
+
+/**
+ * When the app-scoped fallback is the one signing, a payment failure has a
+ * remedy the reader cannot guess: fund THAT address. Only appended to failures
+ * that are actually about money — an AlreadyReviewed revert does not need it.
+ */
+function fallbackHint(slot: Slot, why: string): string {
+  if (slot.kind !== 'app') return why;
+  if (!/balance|funds|fee|TransferFailed|Payment|Deposit|pay/i.test(why)) return why;
+  return (
+    `${why} — the store is signing with the app account the Polkadot app derived for it ` +
+    `(${slot.address}), not your wallet, and it is empty; send it a little PAS and try again`
+  );
 }
 
 async function postViaHost(args: PostArgs): Promise<PostOutcome> {
   const { label, name, rating, body, onStep } = args;
   let step = 'starting';
+  // Hoisted so a throw anywhere below can still say which account was signing.
+  let slot: Slot | null = null;
   try {
     const [host, contracts, descriptors, papi] = await Promise.all([
       import('@parity/product-sdk-host'),
@@ -256,8 +401,8 @@ async function postViaHost(args: PostArgs): Promise<PostOutcome> {
 
     step = 'connecting your account';
     onStep?.(step);
-    const { manager, account } = await getManager();
-    if (!account) {
+    slot = await getSlot();
+    if (!slot) {
       // Observed in the web shell, and NOT specific to this app: the host logs
       // "failed to get product account … RangeError: Offset is outside the
       // bounds of the DataView" and resolves with an empty account list. The
@@ -273,7 +418,7 @@ async function postViaHost(args: PostArgs): Promise<PostOutcome> {
       };
     }
 
-    const signer = manager.getSigner();
+    const signer = slot.signer;
     if (!signer) {
       return { kind: 'local', why: 'no signer available for the selected account' };
     }
@@ -302,8 +447,10 @@ async function postViaHost(args: PostArgs): Promise<PostOutcome> {
       descriptors.devnet_asset_hub,
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // `{ signer }`, NOT `{ signerManager }`: the manager would re-derive the
+    // app-scoped account internally and undo the choice made in connect().
     const contract = (contracts as any).createContract(runtime, APP_REVIEWS, APP_REVIEWS_ABI, {
-      signerManager: manager,
+      signer,
     });
 
     // pallet-revive rejects an unmapped origin with AccountUnmapped, and a fresh
@@ -313,12 +460,12 @@ async function postViaHost(args: PostArgs): Promise<PostOutcome> {
     onStep?.(step);
     const mapped = (await withTimeout(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (contracts as any).ensureContractAccountMapped(runtime, account.address, signer),
+      (contracts as any).ensureContractAccountMapped(runtime, slot.address, signer),
       MAP_MS,
       'account mapping',
     )) as { ok: boolean; error?: unknown } | undefined;
     if (mapped && mapped.ok === false) {
-      return { kind: 'error', why: explain(mapped.error), step };
+      return { kind: 'error', why: fallbackHint(slot, explain(mapped.error)), step };
     }
 
     step = 'waiting for your signature';
@@ -352,12 +499,13 @@ async function postViaHost(args: PostArgs): Promise<PostOutcome> {
     // .tx() reports dispatch failures in its RESULT, not by throwing. Reading
     // only the throw is how OutOfGas passed for success in the first place.
     if (result && result.ok === false) {
-      return { kind: 'error', why: explain(result.error), step };
+      return { kind: 'error', why: fallbackHint(slot, explain(result.error)), step };
     }
 
     return { kind: 'onchain', via: 'host' };
   } catch (e) {
-    return { kind: 'error', why: explain(e), step };
+    const why = explain(e);
+    return { kind: 'error', why: slot ? fallbackHint(slot, why) : why, step };
   }
 }
 

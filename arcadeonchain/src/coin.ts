@@ -57,16 +57,33 @@ function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise<T> {
 /**
  * The connection, made once and kept.
  *
- * A fresh SignerManager per coin would mean two of them racing over the same
- * host provider on a double tap, which The Button's own code warns against in
- * as many words.
+ * A fresh connection per coin would mean two of them racing over the same host
+ * provider on a double tap, which The Button's own code warns against in as
+ * many words.
  */
 let slotPromise: Promise<Slot | null> | null = null;
 
+/**
+ * Whose money it is.
+ *
+ * 'wallet' — one of the player's own accounts, the one that can actually pay.
+ * 'app'    — an address the shell derived for arcadeonchain.dot. It exists, it
+ *            signs, and it starts empty: nobody has ever put PAS in it and the
+ *            player cannot see it in their wallet. Only a fallback, and the
+ *            cabinet says so out loud when it is what is paying.
+ */
+export type PayerKind = 'wallet' | 'app';
+
 type Slot = {
-  manager: import('@parity/product-sdk-signer').SignerManager;
-  account: import('@parity/product-sdk-signer').SignerAccount;
-  api: { tx: { Balances: { transfer_keep_alive: (a: unknown) => unknown } } };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  signer: any;
+  address: string;
+  kind: PayerKind;
+  name?: string;
+  api: {
+    tx: { Balances: { transfer_keep_alive: (a: unknown) => unknown } };
+    query: { System: { Account: { getValue: (a: string) => Promise<unknown> } } };
+  };
   MultiAddress: { Id: (a: string) => unknown };
   /** Planck per PAS, read off the chain rather than assumed. */
   unit: bigint;
@@ -78,48 +95,53 @@ type Slot = {
  *
  * Resolves to null when there is nothing to connect to — that is free play, not
  * a failure, and the caller says so on the cabinet.
+ *
+ * WHY NOT SignerManager
+ *   `new SignerManager({ dappName: 'arcadeonchain.dot' })` reads like "connect
+ *   the player's wallet" and is not: inside the shell that branch asks for an
+ *   APP-SCOPED account the host derives for this product. It is empty, the
+ *   player cannot see or fund it from their wallet, and a coin drawn on it dies
+ *   with "Inability to pay some fees" — a cabinet that eats a signature and
+ *   gives nothing back. So go to the accounts provider directly and pay from
+ *   one of the player's REAL accounts; the app-scoped one is a fallback only,
+ *   for a host that hands out no wallet accounts at all.
  */
 async function openSlot(): Promise<Slot | null> {
-  // The host package is small; the signer, PAPI and the Asset Hub metadata come
-  // to about 1.4 MB between them, and 880 kB of that is the metadata alone.
-  // Asking the cheap question first means a plain browser — our own dev server,
-  // the store's screenshot bot, anyone outside the shell — never downloads a
-  // chain SDK it has nothing to talk to.
+  // The host package is small; PAPI and the Asset Hub metadata come to about
+  // 1.4 MB between them, and 880 kB of that is the metadata alone. Asking the
+  // cheap question first means a plain browser — our own dev server, the
+  // store's screenshot bot, anyone outside the shell — never downloads a chain
+  // SDK it has nothing to talk to.
   const host = await import('@parity/product-sdk-host');
   const inside = await host.isInsideContainer().catch(() => false);
   if (!inside) return null; // no shell, no wallet, no coin — free play
 
-  const [signerPkg, descriptors, papi] = await Promise.all([
-    import('@parity/product-sdk-signer'),
+  const [descriptors, papi] = await Promise.all([
     import('@parity/product-sdk-descriptors/devnet-asset-hub'),
     import('polkadot-api'),
   ]);
 
-  const manager = new signerPkg.SignerManager({ dappName: 'arcadeonchain.dot' });
-  await withTimeout(manager.connect(), CONNECT_MS, 'wallet').catch(() => undefined);
+  // The provider's lookups answer with a neverthrow ResultAsync — thenable, not
+  // a Promise — so this boundary is deliberately untyped.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ap: any = await withTimeout(host.getAccountsProvider(), CONNECT_MS, 'wallet').catch(() => null);
+  if (!ap) return null;
+  const ss58 = (pk: Uint8Array) => papi.AccountId().dec(pk) as string;
 
-  // connect() resolves with the account list, but selection happens after it.
-  // Waiting is the difference between "no account" and "not yet".
-  const deadline = Date.now() + ACCOUNT_MS;
-  let account: import('@parity/product-sdk-signer').SignerAccount | null = null;
-  for (;;) {
-    const s = manager.getState();
-    if (s.selectedAccount) {
-      account = s.selectedAccount;
-      break;
-    }
-    const first = s.accounts[0];
-    if (first) {
-      const picked = manager.selectAccount(first.address);
-      if (picked.ok) {
-        account = picked.value;
-        break;
-      }
-    }
-    if (Date.now() > deadline) break;
-    await new Promise((r) => setTimeout(r, 250));
+  // The player's own accounts, before anything else.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let wallets: any[] = [];
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const r: any = await withTimeout(Promise.resolve(ap.getLegacyAccounts()), ACCOUNT_MS, 'accounts');
+    wallets = (r?.value ?? [])
+      .filter((a: { publicKey?: Uint8Array }) => a?.publicKey)
+      // A LegacyAccount is { publicKey, name? } and carries no address of its own.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((a: any) => ({ ...a, address: ss58(a.publicKey) }));
+  } catch {
+    wallets = []; // fall through to the app-scoped account
   }
-  if (!account) return null;
 
   // The connection has to be the host's own, or the shell raises a "Direct
   // Chain Access" warning at the player mid-game.
@@ -129,6 +151,42 @@ async function openSlot(): Promise<Slot | null> {
 
   const client = papi.createClient(provider);
   const api = client.getTypedApi(descriptors.devnet_asset_hub) as unknown as Slot['api'];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let signer: any = null;
+  let address = '';
+  let kind: PayerKind = 'wallet';
+  let name: string | undefined;
+
+  if (wallets.length) {
+    const best = await richest(api, wallets);
+    address = best.address;
+    name = best.name;
+    signer = ap.getLegacyAccountSigner({ publicKey: best.publicKey, name: best.name });
+  } else {
+    // Fallback: the address the host derives for this product. It signs, but it
+    // starts empty, so the room has to name it rather than let a coin fail with
+    // a revert nobody can act on.
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const r: any = await withTimeout(
+        Promise.resolve(ap.getProductAccount('arcadeonchain.dot', 0)),
+        ACCOUNT_MS,
+        'app account',
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const pa: any = r?.value;
+      const pad = pa ? (pa.address ?? (pa.publicKey ? ss58(pa.publicKey) : '')) : '';
+      if (pa && pad) {
+        address = pad;
+        kind = 'app';
+        signer = ap.getProductAccountSigner(pa);
+      }
+    } catch {
+      /* no account at all */
+    }
+  }
+  if (!signer || !address) return null;
 
   // Decimals come off the chain. Paseo's native balance is ten places and the
   // EVM view of the same chain is eighteen; hardcoding either one is a bug
@@ -140,8 +198,10 @@ async function openSlot(): Promise<Slot | null> {
   const decimals = typeof props?.tokenDecimals === 'number' ? props.tokenDecimals : 10;
 
   return {
-    manager,
-    account,
+    signer,
+    address,
+    kind,
+    name,
     api,
     MultiAddress: (descriptors as unknown as { MultiAddress: Slot['MultiAddress'] }).MultiAddress,
     unit: 10n ** BigInt(decimals),
@@ -149,9 +209,59 @@ async function openSlot(): Promise<Slot | null> {
   };
 }
 
+/**
+ * Of the player's accounts, the one that can actually pay.
+ *
+ * A wallet with six accounts usually has five empty ones; picking the first is
+ * a coin refused for no reason the player can see. Balance reads are best
+ * effort — if they all fail we take the first, which is the old behaviour.
+ */
+async function richest<T extends { address: string }>(api: Slot['api'], accounts: T[]): Promise<T> {
+  if (accounts.length === 1) return accounts[0];
+  try {
+    const weighed = await Promise.all(
+      accounts.slice(0, 6).map(async (a) => {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const acc: any = await withTimeout(api.query.System.Account.getValue(a.address), 6_000, 'balance');
+          return { a, free: BigInt(acc?.data?.free ?? 0) };
+        } catch {
+          return { a, free: 0n };
+        }
+      }),
+    );
+    weighed.sort((x, y) => (y.free > x.free ? 1 : y.free < x.free ? -1 : 0));
+    return weighed[0].a;
+  } catch {
+    return accounts[0];
+  }
+}
+
+/**
+ * Only a SUCCESSFUL connection is kept.
+ *
+ * Memoising a failure makes one bad boot permanent: every later coin would get
+ * the same dead session back and the room would stay on free play until it was
+ * reloaded.
+ */
 function slot(): Promise<Slot | null> {
-  if (!slotPromise) slotPromise = openSlot().catch(() => null);
+  if (!slotPromise) {
+    const p = openSlot().catch(() => null);
+    slotPromise = p;
+    void p.then((s) => {
+      if (!s && slotPromise === p) slotPromise = null;
+    });
+  }
   return slotPromise;
+}
+
+/**
+ * Who is paying, for the room to say out loud — or null outside the shell,
+ * which is free play and needs no name.
+ */
+export async function payer(): Promise<{ address: string; kind: PayerKind; name?: string } | null> {
+  const s = await slot().catch(() => null);
+  return s ? { address: s.address, kind: s.kind, name: s.name } : null;
 }
 
 /**
@@ -182,7 +292,7 @@ export async function insertCoin(onStep: (s: CoinStep) => void): Promise<CoinOut
   }
   if (!s) return { paid: true, free: true };
 
-  const signer = s.manager.getSigner();
+  const signer = s.signer;
   if (!signer) return { paid: false, why: 'NO WALLET' };
 
   const tx = s.api.tx.Balances.transfer_keep_alive({
@@ -207,9 +317,17 @@ export async function insertCoin(onStep: (s: CoinStep) => void): Promise<CoinOut
     if (isSigningRejection(e)) return { paid: false, why: 'COIN RETURNED', detail: 'you cancelled' };
     const text = String((e as Error)?.message ?? e);
     // The chain says this as a dispatch error, and it is the one failure a
-    // player can actually do something about.
-    if (/InsufficientBalance|Funds|Payment/i.test(text))
-      return { paid: false, why: `NOT ENOUGH ${s.symbol}`, detail: text };
+    // player can actually do something about — as long as they are told WHICH
+    // pocket is empty. On the app-scoped fallback that is not their wallet.
+    if (/InsufficientBalance|Inability to pay|Funds|Payment|TransferFailed|Balance/i.test(text))
+      return {
+        paid: false,
+        why: s.kind === 'app' ? `FUND THE ARCADE ACCOUNT` : `NOT ENOUGH ${s.symbol}`,
+        detail:
+          s.kind === 'app'
+            ? `${s.address} is the address the Polkadot app derived for arcadeonchain — not your wallet. Send it a little ${s.symbol} and try again. (${text})`
+            : `${s.address} cannot cover ${PRICE} ${s.symbol} plus the fee. (${text})`,
+      };
     return { paid: false, why: 'COIN REJECTED', detail: text };
   }
 

@@ -5,8 +5,7 @@ import {
   QUERY_FALLBACK_ORIGIN,
 } from '@parity/product-sdk/contracts';
 import { devnet_asset_hub } from '@parity/product-sdk-descriptors/devnet-asset-hub';
-import type { SignerManager } from '@parity/product-sdk-signer';
-import type { ChainDefinition, HexString, PolkadotClient } from 'polkadot-api';
+import type { ChainDefinition, HexString, PolkadotClient, PolkadotSigner } from 'polkadot-api';
 import { HANDSHAKE_ABI } from './abi';
 import { CONTRACT_ADDRESS } from './config';
 import type { AgreementRow, AgreementState, HandshakeDriver, KeptWord, MyState } from './types';
@@ -108,12 +107,19 @@ export interface ChainDriverOptions {
   account: string;
   h160Address: HexString;
   username: string | null;
-  signerManager: SignerManager;
+  /**
+   * The signer for `account` — resolved in `lib/signer.ts` from the user's own
+   * wallet accounts, or (fallback) from the app-scoped product account. Passed
+   * as a plain `PolkadotSigner` rather than a `SignerManager` on purpose: a
+   * manager built with `{ dappName }` always resolves to the app-scoped account,
+   * which nobody can fund from the wallet UI.
+   */
+  signer: PolkadotSigner;
   onStep?: (step: string) => void;
 }
 
 export async function createChainDriver(options: ChainDriverOptions): Promise<HandshakeDriver> {
-  const { chain, account, h160Address, username, signerManager, onStep } = options;
+  const { chain, account, h160Address, username, signer, onStep } = options;
   const step = (message: string) => onStep?.(message);
 
   step('connecting via host api');
@@ -122,8 +128,12 @@ export async function createChainDriver(options: ChainDriverOptions): Promise<Ha
   step('preparing contract');
   const client = chain.getRawClient(devnet_asset_hub);
   const runtime = createContractRuntimeFromClient(client, devnet_asset_hub);
+  // `defaultSigner` / `defaultOrigin` are the static equivalents of what the
+  // signer manager used to supply — every `.tx()` is signed and paid by the
+  // account we picked, and reads still override the origin explicitly below.
   const contract = createContract(runtime, CONTRACT_ADDRESS as HexString, HANDSHAKE_ABI, {
-    signerManager,
+    defaultSigner: signer,
+    defaultOrigin: account,
   });
 
   // Reads never run as the user (AccountUnmapped otherwise — see thebutton/README.md).
@@ -132,8 +142,6 @@ export async function createChainDriver(options: ChainDriverOptions): Promise<Ha
   let mapped = false;
   async function ensureMapped(): Promise<void> {
     if (mapped) return;
-    const signer = signerManager.getSigner();
-    if (!signer) throw new Error('no signer available — is an account selected?');
     step('preparing your account');
     const result = await withTimeout(
       ensureContractAccountMapped(runtime, account, signer),

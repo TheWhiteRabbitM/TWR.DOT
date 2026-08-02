@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useProductSDK } from '@parity/product-sdk/react';
-import type { SignerAccount, SignerManager } from '@parity/product-sdk-signer';
+import { devnet_asset_hub } from '@parity/product-sdk-descriptors/devnet-asset-hub';
 import type { HexString } from 'polkadot-api';
 import { ButtonScreen } from './ButtonScreen';
-import { getSignerManager, useSignerState } from './lib/signer';
+import { useAccount } from './lib/signer';
+import type { BalanceReader, ButtonAccount } from './lib/signer';
 import { createMockDriver } from './lib/mockDriver';
 import { createChainDriver } from './lib/chainDriver';
+import type { ChainAccess } from './lib/chainDriver';
 import { BUTTON_ADDRESS, MIN_TIER } from './lib/config';
 import type { ButtonDriver, ButtonState } from './lib/types';
 
@@ -113,19 +115,42 @@ export function MockApp() {
   return <ButtonScreen state={{ ...state, mocked: true }} onPress={press} />;
 }
 
+/**
+ * Free balances, read through the host's shared chain connection.
+ *
+ * Only used to rank the user's accounts so the best-funded one signs. It lives
+ * here rather than in lib/signer.ts because chain access belongs to the SDK app
+ * instance — opening a second connection is what makes the host warn the user
+ * about "Direct Chain Access".
+ */
+function makeBalanceReader(chain: ChainAccess): BalanceReader {
+  return async (addresses) => {
+    await chain.connect({ assetHub: devnet_asset_hub });
+    const api = chain.getRawClient(devnet_asset_hub).getTypedApi(devnet_asset_hub);
+    return Promise.all(
+      addresses.map(async (address) => {
+        try {
+          const info = await api.query.System.Account.getValue(address);
+          return BigInt(info?.data?.free ?? 0n);
+        } catch {
+          // A single unreadable account just loses its vote in the ranking.
+          return null;
+        }
+      }),
+    );
+  };
+}
+
 /** Runs inside the host container, against the deployed contract. */
 export function HostApp() {
-  const manager = getSignerManager();
-  const signer = useSignerState();
+  // Chain access goes through the SDK app instance so connections reuse the
+  // container's, rather than opening a direct one the host warns about.
+  const app = useProductSDK();
+  const chain = app.chain as ChainAccess;
 
-  useEffect(() => {
-    if (signer.status === 'disconnected') {
-      void manager.connect();
-    }
-  }, [manager, signer.status]);
-
-  const account = signer.selectedAccount;
-  const error = signer.error;
+  // Referentially stable: useAccount re-runs its effect when this changes.
+  const readBalances = useMemo(() => makeBalanceReader(chain), [chain]);
+  const { status, account, error } = useAccount(readBalances);
 
   if (!account) {
     return (
@@ -133,18 +158,18 @@ export function HostApp() {
         state={{
           ...INITIAL,
           phase: error ? 'error' : 'loading',
-          error: error ? message(error) : null,
-          step: error ? null : `connecting wallet (${signer.status})`,
+          error,
+          step: error ? null : `connecting wallet (${status})`,
         }}
         onPress={() => {}}
       />
     );
   }
 
-  return <Connected account={account} manager={manager} />;
+  return <Connected account={account} chain={chain} />;
 }
 
-function Connected({ account, manager }: { account: SignerAccount; manager: SignerManager }) {
+function Connected({ account, chain }: { account: ButtonAccount; chain: ChainAccess }) {
   const { address, name } = account;
   const [simulating, setSimulating] = useState(false);
 
@@ -152,7 +177,7 @@ function Connected({ account, manager }: { account: SignerAccount; manager: Sign
   return (
     <ChainScreen
       account={account}
-      manager={manager}
+      chain={chain}
       onSimulate={() => setSimulating(true)}
       key={`${address}-chain`}
     />
@@ -168,19 +193,14 @@ function SimulatedScreen({ username }: { username: string | null }) {
 
 function ChainScreen({
   account,
-  manager,
+  chain,
   onSimulate,
 }: {
-  account: SignerAccount;
-  manager: SignerManager;
+  account: ButtonAccount;
+  chain: ChainAccess;
   onSimulate: () => void;
 }) {
-  const { address, h160Address, name } = account;
-
-  // Chain access goes through the SDK app instance so connections reuse the
-  // container's, rather than opening a direct one the host warns about.
-  const app = useProductSDK();
-  const chain = app.chain;
+  const { address, h160Address, name, kind, signer } = account;
 
   const makeDriver = useCallback(
     async (onStep: StepReporter) => {
@@ -194,11 +214,12 @@ function ChainScreen({
         account: address,
         h160Address,
         username: name,
-        signerManager: manager,
+        signer,
+        accountKind: kind,
         onStep,
       });
     },
-    [chain, address, h160Address, name, manager],
+    [chain, address, h160Address, name, kind, signer],
   );
 
   const { state, press } = useButtonState(makeDriver);

@@ -242,6 +242,27 @@ export function ButtonScreen({ state, onPress, onSimulate }: ButtonScreenProps) 
 
                 {rabbit && <p className="is-rabbit">&gt; SUBJECT 15 LOOSE ON LEVEL 3</p>}
 
+                {/* Which key is signing. The app-scoped account is a fallback
+                    for hosts that expose no wallet accounts: it starts empty
+                    and carries no personhood, so it gets named loudly rather
+                    than leaving a real human staring at a refusal. */}
+                {state.signerKind === 'wallet' && state.signerAddress && (
+                  <p className="dim">
+                    &gt; SIGNING AS {shorten(state.signerAddress)}
+                    {state.username ? ` :: ${state.username.toUpperCase()}` : ''}
+                  </p>
+                )}
+                {state.signerKind === 'app' && state.signerAddress && (
+                  <>
+                    <p className="is-alert">
+                      &gt; APP ACCOUNT IN USE :: {shorten(state.signerAddress)}
+                    </p>
+                    <p className="dim">
+                      &gt; NO WALLET ACCOUNT EXPOSED :: THIS KEY HOLDS NO FUNDS AND NO PERSONHOOD
+                    </p>
+                  </>
+                )}
+
                 {state.mocked && (
                   <p className="dim">&gt; SIMULATION MODE :: NO CHAIN ATTACHED</p>
                 )}

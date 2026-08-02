@@ -5,8 +5,7 @@ import {
   QUERY_FALLBACK_ORIGIN,
 } from '@parity/product-sdk/contracts';
 import { devnet_asset_hub } from '@parity/product-sdk-descriptors/devnet-asset-hub';
-import type { SignerManager } from '@parity/product-sdk-signer';
-import type { ChainDefinition, HexString, PolkadotClient } from 'polkadot-api';
+import type { ChainDefinition, HexString, PolkadotClient, PolkadotSigner } from 'polkadot-api';
 
 /**
  * The subset of the SDK's `App.chain` this driver needs.
@@ -19,6 +18,7 @@ export interface ChainAccess {
   getRawClient(descriptor: ChainDefinition): PolkadotClient;
 }
 import { THE_BUTTON_ABI } from './abi';
+import type { AccountKind } from './signer';
 import type { ButtonDriver, Presser } from './types';
 
 /** How many roll entries to pull in one read. */
@@ -114,8 +114,17 @@ export interface ChainDriverOptions {
   h160Address: HexString;
   /** DotNS username, when the host exposes one. */
   username: string | null;
-  /** Resolves the signer at call time, so account switches are picked up. */
-  signerManager: SignerManager;
+  /**
+   * Signer for `account`. Comes from the accounts provider — the user's own
+   * wallet account whenever the host exposes one (see lib/signer.ts).
+   */
+  signer: PolkadotSigner;
+  /**
+   * Whether `account` is the user's own ('wallet') or the app-scoped fallback
+   * ('app'). Passed through to the UI: an app-scoped account holds no funds and
+   * no personhood, which explains an otherwise baffling refusal.
+   */
+  accountKind: AccountKind;
   /** Reports the current step so a slow or stuck stage is visible in the UI. */
   onStep?: (step: string) => void;
 }
@@ -128,7 +137,7 @@ export interface ChainDriverOptions {
  * the web gateway.
  */
 export async function createChainDriver(options: ChainDriverOptions): Promise<ButtonDriver> {
-  const { chain, address, account, h160Address, username, signerManager, onStep } = options;
+  const { chain, address, account, h160Address, username, signer, accountKind, onStep } = options;
   const step = (message: string) => onStep?.(message);
 
   step('connecting via host api');
@@ -142,15 +151,18 @@ export async function createChainDriver(options: ChainDriverOptions): Promise<Bu
   const client = chain.getRawClient(devnet_asset_hub);
   const runtime = createContractRuntimeFromClient(client, devnet_asset_hub);
 
-  // signerManager resolves the current account for signing transactions.
-  const contract = createContract(runtime, address, THE_BUTTON_ABI, { signerManager });
+  // `defaultSigner` is the option the SDK actually reads for a static signer —
+  // `createContract` maps `{ signerManager, defaultOrigin, defaultSigner }` and
+  // ignores anything else, so a plain `{ signer }` here would silently leave
+  // every .tx() with no signer at all.
+  const contract = createContract(runtime, address, THE_BUTTON_ABI, { defaultSigner: signer });
 
   // Read-only dry-runs must NOT run as the user: pallet-revive rejects any
   // unmapped origin with AccountUnmapped, and a fresh account is always
   // unmapped. QUERY_FALLBACK_ORIGIN is the pallet's own module account, mapped
-  // by construction. The SDK would fall back to it on its own, except that its
-  // origin resolution prefers the signerManager's selected account — which is
-  // exactly the unmapped one — so it has to be forced per query. This is what
+  // by construction. The SDK does fall back to it when no origin is configured,
+  // but only after a warning, and any future `defaultOrigin` would silently
+  // become the unmapped account — so it stays forced per query. This is what
   // put "AccountUnmapped" on screen the first time a real user loaded the app.
   const QUERY = { origin: QUERY_FALLBACK_ORIGIN };
 
@@ -162,8 +174,6 @@ export async function createChainDriver(options: ChainDriverOptions): Promise<Bu
 
   async function ensureMapped(): Promise<void> {
     if (mapped) return;
-    const signer = signerManager.getSigner();
-    if (!signer) throw new Error('no signer available — is an account selected?');
 
     step('mapping account for pallet-revive');
     const result = await withTimeout(
@@ -225,6 +235,8 @@ export async function createChainDriver(options: ChainDriverOptions): Promise<Bu
         tier,
         roll,
         mocked: false,
+        signerKind: accountKind,
+        signerAddress: account,
       };
     },
 

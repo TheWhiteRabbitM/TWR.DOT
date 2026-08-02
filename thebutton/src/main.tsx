@@ -74,7 +74,8 @@ void isInsideContainer()
 
       root.render(
         <StrictMode>
-          {/* The app instance owns chain connections; SignerManager owns keys. */}
+          {/* The app instance owns chain connections; lib/signer.ts picks the
+              key, straight from the host's accounts provider. */}
           <ProductSDKContext.Provider value={app}>
             <HostApp />
           </ProductSDKContext.Provider>

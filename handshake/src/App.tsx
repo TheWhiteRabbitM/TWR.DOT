@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useProductSDK } from '@parity/product-sdk/react';
-import type { SignerAccount, SignerManager } from '@parity/product-sdk-signer';
-import type { HexString } from 'polkadot-api';
-import { getSignerManager, useSignerState } from './lib/signer';
+import { useHostAccount } from './lib/signer';
+import type { ConnectedAccount } from './lib/signer';
 import { createMockDriver } from './lib/mockDriver';
 import { createChainDriver } from './lib/chainDriver';
+import type { ChainAccess } from './lib/chainDriver';
 import { CONTRACT_ADDRESS, PUBLIC_HOST, TERMS_MAX, TERMS_MIN, TIER } from './lib/config';
 import { friendlyName, message, timeAgo } from './lib/human';
 import type { AgreementRow, HandshakeDriver, KeptWord, MyState } from './lib/types';
@@ -428,7 +428,14 @@ function NewScreen({ driver, me, refresh }: ScreenProps) {
 
 /* -------------------------------------------------------------------- shell */
 
-function Shell({ driver }: { driver: HandshakeDriver }) {
+function Shell({
+  driver,
+  account,
+}: {
+  driver: HandshakeDriver;
+  /** Absent in the demo — there is no chain account there. */
+  account?: ConnectedAccount | null;
+}) {
   const route = useRoute();
   const [rows, setRows] = useState<AgreementRow[]>([]);
   const [me, setMe] = useState<MyState | null>(null);
@@ -487,6 +494,15 @@ function Shell({ driver }: { driver: HandshakeDriver }) {
           </p>
         )}
 
+        {account?.kind === 'app' && (
+          <p className="banner">
+            No wallet account was available, so Handshake is signing with the app account the
+            Polkadot app derived for it — not one of your own. It starts empty and won't appear
+            in your wallet, so send it a little PAS before making or accepting an agreement:{' '}
+            <span>{account.address}</span>
+          </p>
+        )}
+
         {phase === 'loading' && (
           <div className="card pad">
             <p className="empty">{step}…</p>
@@ -521,6 +537,12 @@ function Shell({ driver }: { driver: HandshakeDriver }) {
           Recorded on Polkadot devnet · contract <span>{CONTRACT_ADDRESS}</span> · test
           network, tokens carry no value
         </p>
+        {account && (
+          <p className="footer-tech">
+            Signing with {account.kind === 'wallet' ? 'your wallet account' : "Handshake's app account"}{' '}
+            <span>{account.address}</span>
+          </p>
+        )}
       </footer>
     </div>
   );
@@ -534,24 +556,18 @@ export function MockApp() {
 }
 
 export function HostApp() {
-  const manager = getSignerManager();
-  const signer = useSignerState();
+  const app = useProductSDK();
+  // The user's own account (best-funded) when the host exposes one; the
+  // app-scoped account only as a fallback — see lib/signer.ts.
+  const session = useHostAccount(app.chain);
 
-  useEffect(() => {
-    if (signer.status === 'disconnected') {
-      void manager.connect();
-    }
-  }, [manager, signer.status]);
-
-  const account = signer.selectedAccount;
-
-  if (!account) {
+  if (!session.account) {
     return (
       <div className="page">
         <main className="container">
           <div className="card pad">
             <p className="empty">
-              {signer.error ? `Wallet error: ${signer.error.message}` : 'Connecting…'}
+              {session.error ? `Wallet error: ${session.error.message}` : 'Connecting…'}
             </p>
           </div>
         </main>
@@ -559,22 +575,21 @@ export function HostApp() {
     );
   }
 
-  return <Connected account={account} manager={manager} />;
+  return <Connected account={session.account} chain={app.chain} />;
 }
 
-function Connected({ account, manager }: { account: SignerAccount; manager: SignerManager }) {
-  const app = useProductSDK();
+function Connected({ account, chain }: { account: ConnectedAccount; chain: ChainAccess }) {
   const [driver, setDriver] = useState<HandshakeDriver | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     void createChainDriver({
-      chain: app.chain,
+      chain,
       account: account.address,
-      h160Address: account.h160Address as HexString,
+      h160Address: account.h160Address,
       username: account.name,
-      signerManager: manager,
+      signer: account.signer,
     })
       .then((next) => {
         if (!cancelled) setDriver(next);
@@ -585,7 +600,7 @@ function Connected({ account, manager }: { account: SignerAccount; manager: Sign
     return () => {
       cancelled = true;
     };
-  }, [app, account.address, account.h160Address, account.name, manager]);
+  }, [chain, account]);
 
   if (error) {
     return (
@@ -609,5 +624,5 @@ function Connected({ account, manager }: { account: SignerAccount; manager: Sign
       </div>
     );
   }
-  return <Shell driver={driver} />;
+  return <Shell driver={driver} account={account} />;
 }

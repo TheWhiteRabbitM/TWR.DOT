@@ -510,6 +510,15 @@ body {
   color: var(--neon-b);
 }
 
+/* Whose account the coins come out of, when it isn't the player's own. An
+   address is one long unbreakable word — let it wrap rather than widen the
+   room. */
+.colophon .payer {
+  margin-top: 10px;
+  color: var(--neon-b);
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 720px) {
   .row {
     flex-direction: column;

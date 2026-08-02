@@ -16,7 +16,7 @@
  */
 import { CABINETS, SCREENS, makeMachine, posterOf, type Cabinet, type Machine } from './cabinets';
 import { open } from './opening';
-import { insertCoin, warmUp, PRICE, type CoinStep } from './coin';
+import { insertCoin, warmUp, payer, PRICE, type CoinStep } from './coin';
 import './room.css';
 
 
@@ -75,6 +75,7 @@ function render() {
         <p>Cabinets hold only games their authors permit us to show — an explicit
            licence, or permission asked for and given. Empty slots stay empty until
            then.</p>
+        <p class="payer" id="payer" hidden></p>
       </footer>
     </div>`;
 
@@ -320,7 +321,30 @@ render();
  * cabinet to walk to, and every failure in it is rediscovered — and reported —
  * on the coin itself.
  */
-open(document.getElementById('room')!, warmUp);
+open(document.getElementById('room')!, () => {
+  warmUp();
+  void nameThePayer();
+});
+
+/**
+ * Say whose money the coins come out of, but only when it isn't obvious.
+ *
+ * Paying from the player's own account needs no notice — that is what a coin
+ * slot means. The app-scoped account the shell derives for arcadeonchain does:
+ * it is an address the player has never seen, it holds nothing until somebody
+ * sends it something, and a coin drawn on an empty one fails for a reason that
+ * looks like a broken machine. Naming it is the difference between a cabinet
+ * that is out of order and one that is waiting for change.
+ */
+async function nameThePayer() {
+  const who = await payer().catch(() => null);
+  const el = root.querySelector<HTMLElement>('#payer');
+  if (!el || !who || who.kind !== 'app') return; // free play, or their own wallet
+  el.hidden = false;
+  el.textContent =
+    `Coins are paid from ${who.address} — the address the Polkadot app derived for ` +
+    `arcadeonchain, not your wallet. Send it a little PAS to play.`;
+}
 
 // Exposed for verification: a headless check can assert the walk-up landed and
 // a cabinet is running, rather than trusting a screenshot.

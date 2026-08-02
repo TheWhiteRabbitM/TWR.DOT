@@ -5,8 +5,7 @@ import {
   QUERY_FALLBACK_ORIGIN,
 } from '@parity/product-sdk/contracts';
 import { devnet_asset_hub } from '@parity/product-sdk-descriptors/devnet-asset-hub';
-import type { SignerManager } from '@parity/product-sdk-signer';
-import type { ChainDefinition, HexString, PolkadotClient } from 'polkadot-api';
+import type { ChainDefinition, HexString, PolkadotClient, PolkadotSigner } from 'polkadot-api';
 import { OPENPETITION_ABI } from './abi';
 import { CONTRACT_ADDRESS } from './config';
 import type { MyState, PetitionRow, PetitionsDriver } from './types';
@@ -96,12 +95,18 @@ export interface ChainDriverOptions {
   /** EVM address of the same account — what `me(address, id)` actually takes. */
   h160Address: HexString;
   username: string | null;
-  signerManager: SignerManager;
+  /**
+   * The signer for `account`. Comes from the accounts provider — the user's own
+   * wallet account when the host exposes one, the app-scoped product account
+   * otherwise. Deliberately NOT a `SignerManager`: its `dappName` branch always
+   * resolves to the empty app account, which cannot pay for a signature.
+   */
+  signer: PolkadotSigner;
   onStep?: (step: string) => void;
 }
 
 export async function createChainDriver(options: ChainDriverOptions): Promise<PetitionsDriver> {
-  const { chain, account, h160Address, username, signerManager, onStep } = options;
+  const { chain, account, h160Address, username, signer, onStep } = options;
   const step = (message: string) => onStep?.(message);
 
   step('connecting via host api');
@@ -110,8 +115,12 @@ export async function createChainDriver(options: ChainDriverOptions): Promise<Pe
   step('preparing contract');
   const client = chain.getRawClient(devnet_asset_hub);
   const runtime = createContractRuntimeFromClient(client, devnet_asset_hub);
+  // `defaultSigner` is the key `createContract` actually reads (it maps
+  // `options.defaultSigner` onto the handle's `signer` default); a bare
+  // `{ signer }` is silently dropped and every `.tx()` then fails with
+  // "No signer available".
   const contract = createContract(runtime, CONTRACT_ADDRESS as HexString, OPENPETITION_ABI, {
-    signerManager,
+    defaultSigner: signer,
   });
 
   // Read-only dry-runs must never run as the user: pallet-revive rejects
@@ -124,8 +133,6 @@ export async function createChainDriver(options: ChainDriverOptions): Promise<Pe
   let mapped = false;
   async function ensureMapped(): Promise<void> {
     if (mapped) return;
-    const signer = signerManager.getSigner();
-    if (!signer) throw new Error('no signer available — is an account selected?');
     step('mapping account for pallet-revive');
     const result = await withTimeout(
       ensureContractAccountMapped(runtime, account, signer),

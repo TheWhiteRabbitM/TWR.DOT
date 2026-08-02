@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useProductSDK } from '@parity/product-sdk/react';
-import type { SignerAccount, SignerManager } from '@parity/product-sdk-signer';
-import type { HexString } from 'polkadot-api';
-import { getSignerManager, useSignerState } from './lib/signer';
+import type { ConnectedAccount } from './lib/signer';
+import { useHostAccount } from './lib/signer';
 import { Rabbit, useRabbitSequence } from './Rabbit';
 import { createMockDriver } from './lib/mockDriver';
 import { createChainDriver } from './lib/chainDriver';
@@ -569,7 +568,16 @@ function NewScreen({ driver, me, refresh, onTryDemo }: ScreenProps) {
 
 /* -------------------------------------------------------------------- shell */
 
-function Shell({ driver, onTryDemo }: { driver: PetitionsDriver; onTryDemo?: () => void }) {
+function Shell({
+  driver,
+  onTryDemo,
+  appAccount,
+}: {
+  driver: PetitionsDriver;
+  onTryDemo?: () => void;
+  /** Set only when signing falls back to the app-scoped account (see signer.ts). */
+  appAccount?: string | null;
+}) {
   const route = useRoute();
   const [rows, setRows] = useState<PetitionRow[]>([]);
   const [me, setMe] = useState<MyState | null>(null);
@@ -635,6 +643,15 @@ function Shell({ driver, onTryDemo }: { driver: PetitionsDriver; onTryDemo?: () 
           </p>
         )}
 
+        {!driver.mocked && appAccount && (
+          <p className="banner">
+            The Polkadot app didn't offer one of your own accounts here, so this session
+            signs with OpenPetition's own account: <span>{appAccount}</span>. It starts
+            empty — if signing fails for want of a fee, send that address a little PAS
+            from your wallet.
+          </p>
+        )}
+
         {phase === 'loading' && (
           <div className="card pad">
             <p className="empty">{step}…</p>
@@ -691,35 +708,28 @@ export function MockApp() {
 }
 
 export function HostApp() {
-  const manager = getSignerManager();
-  const signer = useSignerState();
-
-  useEffect(() => {
-    if (signer.status === 'disconnected') {
-      void manager.connect();
-    }
-  }, [manager, signer.status]);
-
-  const account = signer.selectedAccount;
+  const app = useProductSDK();
+  // The account comes from the host's accounts provider, preferring the user's
+  // own (best-funded) wallet account; `app.chain` is handed over so the balances
+  // can be compared before one is picked.
+  const { account, error } = useHostAccount(app.chain);
 
   if (!account) {
     return (
       <div className="page">
         <main className="container">
           <div className="card pad">
-            <p className="empty">
-              {signer.error ? `Wallet error: ${signer.error.message}` : 'Connecting…'}
-            </p>
+            <p className="empty">{error ? `Wallet error: ${error.message}` : 'Connecting…'}</p>
           </div>
         </main>
       </div>
     );
   }
 
-  return <Connected account={account} manager={manager} />;
+  return <Connected account={account} />;
 }
 
-function Connected({ account, manager }: { account: SignerAccount; manager: SignerManager }) {
+function Connected({ account }: { account: ConnectedAccount }) {
   const app = useProductSDK();
   const [driver, setDriver] = useState<PetitionsDriver | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -736,9 +746,9 @@ function Connected({ account, manager }: { account: SignerAccount; manager: Sign
     void createChainDriver({
       chain: app.chain,
       account: account.address,
-      h160Address: account.h160Address as HexString,
+      h160Address: account.h160Address,
       username: account.name,
-      signerManager: manager,
+      signer: account.signer,
     })
       .then((next) => {
         if (!cancelled) setDriver(next);
@@ -749,7 +759,7 @@ function Connected({ account, manager }: { account: SignerAccount; manager: Sign
     return () => {
       cancelled = true;
     };
-  }, [app, account.address, account.h160Address, account.name, manager, demo]);
+  }, [app, account.address, account.h160Address, account.name, account.signer, demo]);
 
   // Demo takes over as soon as it's chosen, even if the chain path failed.
   if (demo) return <Shell driver={demo} />;
@@ -781,5 +791,11 @@ function Connected({ account, manager }: { account: SignerAccount; manager: Sign
       </div>
     );
   }
-  return <Shell driver={driver} onTryDemo={tryDemo} />;
+  return (
+    <Shell
+      driver={driver}
+      onTryDemo={tryDemo}
+      appAccount={account.kind === 'app' ? account.address : null}
+    />
+  );
 }
