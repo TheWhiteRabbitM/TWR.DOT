@@ -4,7 +4,28 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 02 Aug 2026 11:41:27 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 02 Aug 2026 15:36:01 GMT</lastBuildDate>
+    <item>
+      <title>chirponchain</title>
+      <link>https://chirponchain.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">chirponchain</guid>
+      <pubDate>Sun, 02 Aug 2026 12:36:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>open-docs</title>
+      <link>https://open-docs.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">open-docs</guid>
+      <pubDate>Sun, 02 Aug 2026 11:51:12 GMT</pubDate>
+    </item>
+    <item>
+      <title>frenchan-app77</title>
+      <link>https://frenchan-app77.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">frenchan-app77</guid>
+      <pubDate>Sun, 02 Aug 2026 11:45:48 GMT</pubDate>
+    </item>
     <item>
       <title>my-cool-app</title>
       <link>https://my-cool-app.dev-dot.li</link>
@@ -139,30 +160,30 @@
       <pubDate>Thu, 30 Jul 2026 20:20:36 GMT</pubDate>
     </item>
     <item>
-      <title>dropforge</title>
+      <title>DropForge</title>
       <link>https://dropforge.dev-dot.li</link>
-      <description></description>
+      <description>Launch an NFT collection in one transaction. One call deploys a real ERC-721 at its own address, and the art is a pure function of algorithm, palette and seed inside a renderer contract.</description>
       <guid isPermaLink="false">dropforge</guid>
       <pubDate>Thu, 30 Jul 2026 16:40:00 GMT</pubDate>
     </item>
     <item>
-      <title>devnetpulse</title>
+      <title>DevnetPulse</title>
       <link>https://devnetpulse.dev-dot.li</link>
-      <description></description>
+      <description>An on-chain status board for the Products Devnet itself. Named reporters append probe results to a contract, so every claim carries the address that filed it and a clock for how long it held.</description>
       <guid isPermaLink="false">devnetpulse</guid>
       <pubDate>Thu, 30 Jul 2026 15:05:12 GMT</pubDate>
     </item>
     <item>
-      <title>trustgraph</title>
+      <title>TrustGraph</title>
       <link>https://trustgraph.dev-dot.li</link>
-      <description></description>
+      <description>Reputation with no verified badge. Any address can vouch for another, with a type and an expiry, and revoke it later. You never get a yes or no, you get who said what and whether it stands.</description>
       <guid isPermaLink="false">trustgraph</guid>
       <pubDate>Thu, 30 Jul 2026 15:02:48 GMT</pubDate>
     </item>
     <item>
-      <title>dripstream</title>
+      <title>DripStream</title>
       <link>https://dripstream.dev-dot.li</link>
-      <description></description>
+      <description>Payment streams in native PAS. Lock funds once and they unlock to the recipient every second. They pull whatever the clock has released; you cancel and reclaim only what has not vested yet.</description>
       <guid isPermaLink="false">dripstream</guid>
       <pubDate>Thu, 30 Jul 2026 14:58:24 GMT</pubDate>
     </item>
@@ -333,27 +354,6 @@
       <description></description>
       <guid isPermaLink="false">hello-devnet-ynrc46</guid>
       <pubDate>Mon, 27 Jul 2026 20:31:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>Quizzler</title>
-      <link>https://quizzlergame.dev-dot.li</link>
-      <description>A live social trivia game for friends.</description>
-      <guid isPermaLink="false">quizzlergame</guid>
-      <pubDate>Mon, 27 Jul 2026 19:33:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>proofoftake</title>
-      <link>https://proofoftake.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">proofoftake</guid>
-      <pubDate>Mon, 27 Jul 2026 17:19:36 GMT</pubDate>
-    </item>
-    <item>
-      <title>pennypixel</title>
-      <link>https://pennypixel.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">pennypixel</guid>
-      <pubDate>Mon, 27 Jul 2026 17:16:48 GMT</pubDate>
     </item>
   </channel>
 </rss>

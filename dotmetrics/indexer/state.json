@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11719814,
-  "updatedAt": "2026-08-02T11:38:08.418Z",
+  "lastBlock": 11726528,
+  "updatedAt": "2026-08-02T15:32:56.788Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "72eb30e6512bb97c1accf31fd6f1c26b53af7286bd153b6cb85bc2c225443c4f",
-    "cid": "bafybeiehdenuhfxdfn73ehfnja4uaqy5rbbrtdgjur34i6tionzec7gvzm",
-    "uploadedAt": "2026-08-02T11:42:45.528Z"
+    "digest": "3e1a67613f6533cb44263513e48a445f983bde7c5d932b2b52aa18779cee5fba",
+    "cid": "bafybeiamoffgmahy24xiwkncee6rvciwtjidtde6f7xzk3ruznultqfnli",
+    "uploadedAt": "2026-08-02T15:37:10.352Z"
   },
   "sitePublish": {
-    "treeHash": "c054d06f242ec8ee828733bbf3b9aa75cb5347ab1d9778b88b89aa808b9e621c",
-    "publishedAt": "2026-08-02T11:44:51.985Z"
+    "treeHash": "72a71d3a4b70a54bf5334b896ec005035f3669a13a6a8b5c20cf1f7092c2a9d4",
+    "publishedAt": "2026-08-02T15:41:28.026Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-02T11:41:27.000Z",
+    "updatedAt": "2026-08-02T15:36:01.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -105,13 +105,16 @@
       "ip-market": "alive",
       "peoplebook": "alive",
       "ping-static-test": "alive",
-      "my-cool-app": "alive"
+      "my-cool-app": "alive",
+      "chirponchain": "alive",
+      "frenchan-app77": "alive",
+      "open-docs": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-02T11:41:27.000Z",
+    "updatedAt": "2026-08-02T15:36:01.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -120,8 +123,9 @@
         "live": "alive"
       },
       "arcadeonchain": {
-        "contenthash": "bafybeictiftpkxuha4wqutgiqdewstmxbcp37wwuzgucvzylpwuspenihy",
-        "updateCount": 0,
+        "contenthash": "bafybeifkoov4h5aebq6wcqz276wzrx5ozegcabh7igntbqeawm2beqkb64",
+        "updateCount": 1,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "ascendyendor00": {
@@ -152,6 +156,11 @@
       },
       "chatgpt-guide": {
         "contenthash": "bafybeif5dqrhtrjq6yzkqq2ern7te5axjc4ghkgdsgrx42yeuzolko66ni",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "chirponchain": {
+        "contenthash": "bafybeiewyspox3wuasrey67bihcv3ze5hj62jrfpyl5ymlay25to4x4uze",
         "updateCount": 0,
         "live": "alive"
       },
@@ -194,9 +203,9 @@
         "live": "alive"
       },
       "devnetpulse": {
-        "contenthash": "bafybeicicou5tmv266atutliodfzav7bnbmd26dy3qzqesyqi6xsz6hpay",
-        "updateCount": 1,
-        "changedAt": 1785500760,
+        "contenthash": "bafybeieebul257hwpppwenfvmf6me6xqutwfzczrlor4miriy7seiohsem",
+        "updateCount": 2,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "discreetly": {
@@ -222,9 +231,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifwuyc3jjn46vpjspdl6wfodiir2u6d5i4t3bmsnnzxjvs7cg4cca",
-        "updateCount": 33,
-        "changedAt": 1785670887,
+        "contenthash": "bafybeia7za2eqwq7e5qxjg56acbioalmlwe7ssvibsa4tnfmfpz4xekoui",
+        "updateCount": 34,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -250,9 +259,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeib5qw6zxtb7bl5jjxgvbmrm5tjuicwsw7lf5xbbxpcajhanlzknny",
-        "updateCount": 25,
-        "changedAt": 1785670887,
+        "contenthash": "bafybeiar2ydlpkvqqwwzfwu6m27imu5qtofjdb3lwkwz5dtqrqmfijnkoa",
+        "updateCount": 26,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "dragon-realm": {
@@ -262,15 +271,15 @@
         "live": "alive"
       },
       "dripstream": {
-        "contenthash": "bafybeiav65slvqtixbqje3flyzedtshtx7y2j74r6g4t6cusdasvdgqjfm",
-        "updateCount": 1,
-        "changedAt": 1785500760,
+        "contenthash": "bafybeic4ncy7xpabgitsv5u65p7hoqkydjbhaovwrxzfsu464hqwotapqa",
+        "updateCount": 2,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "dropforge": {
-        "contenthash": "bafybeicy2rfkwxokwaqab3fbryjul7twijvuakyas7dmpetr6xcex6pupy",
-        "updateCount": 1,
-        "changedAt": 1785500760,
+        "contenthash": "bafybeidxjfeljgoort6rfalzr44452unc77ilqo7lw2pzyz4yxah3uhzji",
+        "updateCount": 2,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "dw3labsgame": {
@@ -293,6 +302,11 @@
         "contenthash": "bafybeicwzsiam2vnmw7uaf7j45hbialgm4lm7terfs2fibd2xk5fhiiqi4",
         "updateCount": 9,
         "changedAt": 1785470574,
+        "live": "alive"
+      },
+      "frenchan-app77": {
+        "contenthash": "bafybeidu532o6rqwb23okbqgj5uy6zbxkabar5ymurkvq7tevdnfadueke",
+        "updateCount": 0,
         "live": "alive"
       },
       "gameboyonchain": {
@@ -454,10 +468,15 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "open-docs": {
+        "contenthash": "bafybeiczru2uqw72bsy2d5kwq7tb5jfgmbiim5blvkdyiyaapbuaqellfa",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "openpetition": {
-        "contenthash": "bafybeiapiemioo7dnighlbkqlmcdzpbbtabg6tut6xib2giwy2kkkdb4xa",
-        "updateCount": 1,
-        "changedAt": 1785482486,
+        "contenthash": "bafybeifts7kdjwirdxnqovvrhufiuh2m4d7zsqmo72xdlgr7ifctp4frsy",
+        "updateCount": 2,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "pactprotocol": {
@@ -471,15 +490,15 @@
         "live": "alive"
       },
       "pennypixel": {
-        "contenthash": "bafybeib2qi7ma7jcbijcafog32ajim4kkolknjjmm52a5e5u3kuyejqnti",
-        "updateCount": 3,
-        "changedAt": 1785500760,
+        "contenthash": "bafybeicaeuz7zdmknnfiachx7cbzdob4zwgv3kux7pzzdemdofbhzwnfj4",
+        "updateCount": 4,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeidvaeomldqwwwommxn7pege3xcj633ri43tgyrmmox7y76mtgkxsu",
-        "updateCount": 3,
-        "changedAt": 1785670887,
+        "contenthash": "bafybeihe6s3qma76jlgdny7oqf3edm4h5fokxor4ptcmmymrut6mvzneoy",
+        "updateCount": 4,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "petitions": {
@@ -530,9 +549,9 @@
         "live": "alive"
       },
       "proofoftake": {
-        "contenthash": "bafybeibsx3sm5dlng5giqdhi56ta7gkb2vbc7t24pxqz3fasp6hm5pyyoe",
-        "updateCount": 3,
-        "changedAt": 1785500760,
+        "contenthash": "bafybeifkmxa224jt4wvgnlozhqvlaljmz7lyvuuww3ul6jnbe42xdvcsdm",
+        "updateCount": 4,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "provenveil": {
@@ -552,8 +571,9 @@
         "live": "alive"
       },
       "rainbow-dev": {
-        "contenthash": "bafybeibkw5idgcxkmn4a6dllxbla3bkxeg4pdnbpbidhomuejle775vgcy",
-        "updateCount": 0,
+        "contenthash": "bafybeie66bvzf6zxrzf5ekdcvp323zxhxfgz35ovvenuy4kbwikdmlcoxa",
+        "updateCount": 1,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "rainbowprobe": {
@@ -584,9 +604,9 @@
         "live": "alive"
       },
       "stealcrown": {
-        "contenthash": "bafybeicczwn43xizmn4mfjebepvof5pzond3wlgrwif42yulbs2r4xi65a",
-        "updateCount": 4,
-        "changedAt": 1785500760,
+        "contenthash": "bafybeiaizmleygo2rxnxmczbjnhv6suhpnwpttpjqalvwfpby3pudsf7sa",
+        "updateCount": 5,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "sybildrop": {
@@ -600,9 +620,9 @@
         "live": "alive"
       },
       "thebutton": {
-        "contenthash": "bafybeid33wpz45pw6rwiawu227itlw2apjiw2xwn32k4uyhoxza4uzphqa",
-        "updateCount": 1,
-        "changedAt": 1785482486,
+        "contenthash": "bafybeibodyiahl2xj3u2cwkgtfdj7j7ywsbtnbzx75sqm3lozxjssbvxzu",
+        "updateCount": 2,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "thepipersguild": {
@@ -627,9 +647,9 @@
         "live": "alive"
       },
       "trustgraph": {
-        "contenthash": "bafybeidotp7asqy4d2yglohbcti64l6dprmrenalorrnjebz6elej275sm",
-        "updateCount": 1,
-        "changedAt": 1785500760,
+        "contenthash": "bafybeih232fm4sot7p2l3jymlxbwvyb3f4u4cpkfmhfaotib5z2lehmpvu",
+        "updateCount": 2,
+        "changedAt": 1785684961,
         "live": "alive"
       },
       "web3poker": {

@@ -425,6 +425,12 @@
       "message~"
     ]
   },
+  "my-cool-app": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "my-dotkit": {
     "category": "finance",
     "source": "derived:app-text",

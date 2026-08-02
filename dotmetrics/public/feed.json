@@ -1,7 +1,34 @@
 {
-  "generatedAt": 1785670887,
-  "count": 102,
+  "generatedAt": 1785684961,
+  "count": 105,
   "apps": [
+    {
+      "label": "chirponchain",
+      "domain": "chirponchain.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785674160,
+      "url": "https://chirponchain.dev-dot.li"
+    },
+    {
+      "label": "open-docs",
+      "domain": "open-docs.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785671472,
+      "url": "https://open-docs.dev-dot.li"
+    },
+    {
+      "label": "frenchan-app77",
+      "domain": "frenchan-app77.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785671148,
+      "url": "https://frenchan-app77.dev-dot.li"
+    },
     {
       "label": "my-cool-app",
       "domain": "my-cool-app.dot",
@@ -176,36 +203,36 @@
     {
       "label": "dropforge",
       "domain": "dropforge.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "DropForge",
+      "description": "Launch an NFT collection in one transaction. One call deploys a real ERC-721 at its own address, and the art is a pure function of algorithm, palette and seed inside a renderer contract.",
+      "tier": 0,
       "firstSeenAt": 1785429600,
       "url": "https://dropforge.dev-dot.li"
     },
     {
       "label": "devnetpulse",
       "domain": "devnetpulse.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "DevnetPulse",
+      "description": "An on-chain status board for the Products Devnet itself. Named reporters append probe results to a contract, so every claim carries the address that filed it and a clock for how long it held.",
+      "tier": 0,
       "firstSeenAt": 1785423912,
       "url": "https://devnetpulse.dev-dot.li"
     },
     {
       "label": "trustgraph",
       "domain": "trustgraph.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "TrustGraph",
+      "description": "Reputation with no verified badge. Any address can vouch for another, with a type and an expiry, and revoke it later. You never get a yes or no, you get who said what and whether it stands.",
+      "tier": 0,
       "firstSeenAt": 1785423768,
       "url": "https://trustgraph.dev-dot.li"
     },
     {
       "label": "dripstream",
       "domain": "dripstream.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "DripStream",
+      "description": "Payment streams in native PAS. Lock funds once and they unlock to the recipient every second. They pull whatever the clock has released; you cancel and reclaim only what has not vested yet.",
+      "tier": 0,
       "firstSeenAt": 1785423504,
       "url": "https://dripstream.dev-dot.li"
     },
@@ -437,27 +464,27 @@
     {
       "label": "proofoftake",
       "domain": "proofoftake.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "ProofOfTake",
+      "description": "A leaderboard of takes where one account is one vote and the ranking is a contract read, not an API. No server decides the order. Post a take, vote once on each, watch the board reorder.",
+      "tier": 0,
       "firstSeenAt": 1785172776,
       "url": "https://proofoftake.dev-dot.li"
     },
     {
       "label": "pennypixel",
       "domain": "pennypixel.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "PennyPixel",
+      "description": "A 32x32 canvas nobody owns. Twenty five cents buys twenty five pixels, and a whole painting session batches into one signature. The canvas is the contract state, packed four bits per cell.",
+      "tier": 0,
       "firstSeenAt": 1785172608,
       "url": "https://pennypixel.dev-dot.li"
     },
     {
       "label": "stealcrown",
       "domain": "stealcrown.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "StealCrown",
+      "description": "One crown, one holder, and a clock that runs while you keep it. Anyone can take it from anyone, so the board ranks time held rather than money spent. Reading the throne needs no wallet.",
+      "tier": 0,
       "firstSeenAt": 1785172452,
       "url": "https://stealcrown.dev-dot.li"
     },
