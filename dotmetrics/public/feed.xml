@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 02 Aug 2026 18:21:19 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 02 Aug 2026 19:42:59 GMT</lastBuildDate>
+    <item>
+      <title>waldgeist</title>
+      <link>https://waldgeist.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">waldgeist</guid>
+      <pubDate>Sun, 02 Aug 2026 19:24:00 GMT</pubDate>
+    </item>
     <item>
       <title>chirponchain</title>
       <link>https://chirponchain.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">dotcheckapp</guid>
       <pubDate>Mon, 27 Jul 2026 20:43:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>hello-devnet-ynrc46</title>
-      <link>https://hello-devnet-ynrc46.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">hello-devnet-ynrc46</guid>
-      <pubDate>Mon, 27 Jul 2026 20:31:00 GMT</pubDate>
     </item>
   </channel>
 </rss>

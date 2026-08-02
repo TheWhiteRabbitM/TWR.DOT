@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785694879,
-  "count": 105,
+  "generatedAt": 1785699779,
+  "count": 106,
   "apps": [
+    {
+      "label": "waldgeist",
+      "domain": "waldgeist.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785698640,
+      "url": "https://waldgeist.dev-dot.li"
+    },
     {
       "label": "chirponchain",
       "domain": "chirponchain.dot",

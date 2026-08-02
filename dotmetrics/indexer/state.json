@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11731505,
-  "updatedAt": "2026-08-02T18:16:50.453Z",
+  "lastBlock": 11733976,
+  "updatedAt": "2026-08-02T19:39:47.218Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "f96c71cdf483977b903974ca0825d130fcad9bba558b9c802a0e53a66cec2838",
-    "cid": "bafybeib6dgsoimwl2a2lko6f5gvzqtrtj3xpn3dfoeyrgzrqsc3seg2cua",
-    "uploadedAt": "2026-08-02T18:22:40.612Z"
+    "digest": "0552aa5aff1217538f4b5b578e8a007b69b1083f071c824d0cfa106fe0bc945c",
+    "cid": "bafybeif6sqfjrk3vhipzyl7jfwudqr6cobgvd3rj7277vwwngrgduhmtpi",
+    "uploadedAt": "2026-08-02T19:44:11.171Z"
   },
   "sitePublish": {
     "treeHash": "bed9e2867f6604d8a8c406269a7c68bd85089f53063cc04a48e03867355b1c0d",
     "publishedAt": "2026-08-02T17:26:11.947Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-02T18:21:19.000Z",
+    "updatedAt": "2026-08-02T19:42:59.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -114,7 +114,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-02T18:21:19.000Z",
+    "updatedAt": "2026-08-02T19:42:59.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -231,9 +231,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibsfn2myjx3rnijh7qn3risttkbmoetfbbwy3hpidb5lmtee7jkwq",
-        "updateCount": 36,
-        "changedAt": 1785694879,
+        "contenthash": "bafybeidb2pcgcxql6sv35iabxsepnxvynniadw2wk63zq6fqcrbhjt374y",
+        "updateCount": 37,
+        "changedAt": 1785699779,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -469,8 +469,9 @@
         "live": "alive"
       },
       "open-docs": {
-        "contenthash": "bafybeiczru2uqw72bsy2d5kwq7tb5jfgmbiim5blvkdyiyaapbuaqellfa",
-        "updateCount": 0,
+        "contenthash": "bafybeifrkg6autwezymi4omk3gl6rhuhyjcr2x6obek6v6kbjkqmmxjx6a",
+        "updateCount": 1,
+        "changedAt": 1785699779,
         "live": "alive"
       },
       "openpetition": {
@@ -651,6 +652,11 @@
         "updateCount": 2,
         "changedAt": 1785684961,
         "live": "alive"
+      },
+      "waldgeist": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "web3poker": {
         "contenthash": "bafybeiheybqsye5kayxqspt2pa3xpuoz2bfok7x5g3zoykzq7i7qwhh2bi",
