@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11697892,
-  "updatedAt": "2026-08-01T23:14:03.825Z",
+  "lastBlock": 11699734,
+  "updatedAt": "2026-08-02T00:16:08.040Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "ca6454f7b3d2c176f560cad8c9a1cf63c75b558fb6a0dbac01961f4679b878ae",
-    "cid": "bafybeibrrozrpbsq74mwok5uvgqvkons6dinibndm3lri7bgshayoba76a",
-    "uploadedAt": "2026-08-01T23:18:24.675Z"
+    "digest": "fab6c8964b634e3df8051e8af456f8e731619baba53c34feba98155e46df4ab2",
+    "cid": "bafybeibsu55c7cpcdgtzbbigsjqrkclt2wdpfbefsm3u52u3rwtvepknfu",
+    "uploadedAt": "2026-08-02T00:22:01.233Z"
   },
   "sitePublish": {
     "treeHash": "7857df1eec1825731d30bde3edcf96d9f039e9dfd4a543fcc21bfd248a9bf3ca",
     "publishedAt": "2026-08-01T21:21:16.064Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-01T23:17:02.000Z",
+    "updatedAt": "2026-08-02T00:20:37.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -109,7 +109,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-01T23:17:03.000Z",
+    "updatedAt": "2026-08-02T00:20:37.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -220,9 +220,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibflqmqkaxws5fy2d7i5pyv3vyqrjkmkedxt5nl77u6msuyxp4mzy",
-        "updateCount": 28,
-        "changedAt": 1785626223,
+        "contenthash": "bafybeiatjrq24adcbrs5qnj7sfq6i52vkr4qsckb4xxfkvbmise7dhlwwu",
+        "updateCount": 29,
+        "changedAt": 1785630037,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -470,9 +470,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeies7eqmabxbtphd6gbwtl5ndxz6bsrpw2ej46fetqgqtnx4cadplu",
-        "updateCount": 1,
-        "changedAt": 1785626223,
+        "contenthash": "bafybeid64hu3zrsefref6fyrfkhd3tlrkqgwv3flcl7yzv2gw3vn73ifpu",
+        "updateCount": 2,
+        "changedAt": 1785630037,
         "live": "alive"
       },
       "petitions": {
@@ -534,8 +534,9 @@
         "live": "alive"
       },
       "radioactivedrums": {
-        "contenthash": "bafybeid2bthhcgdcgfoii3ryvs6jqgazthrb3bs5km53bzqi6mivyezsji",
-        "updateCount": 0,
+        "contenthash": "bafybeihgqff2w7roj3xfwwses5t47tqwesss56p4uv4isuc6vqkwjqp4ry",
+        "updateCount": 1,
+        "changedAt": 1785630037,
         "live": "alive"
       },
       "rainbow-dev": {
