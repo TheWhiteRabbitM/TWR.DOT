@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11729776,
-  "updatedAt": "2026-08-02T17:19:43.010Z",
+  "lastBlock": 11731505,
+  "updatedAt": "2026-08-02T18:16:50.453Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "7c44c707058b9d053d6c77e443de0284138d944d76b2925494f157ea3d075658",
-    "cid": "bafybeieelk2hrcg7a4repwlzklzf3hqa6mw5ljqxgqfjdq6tbhrdpjt53m",
-    "uploadedAt": "2026-08-02T17:24:05.447Z"
+    "digest": "f96c71cdf483977b903974ca0825d130fcad9bba558b9c802a0e53a66cec2838",
+    "cid": "bafybeib6dgsoimwl2a2lko6f5gvzqtrtj3xpn3dfoeyrgzrqsc3seg2cua",
+    "uploadedAt": "2026-08-02T18:22:40.612Z"
   },
   "sitePublish": {
     "treeHash": "bed9e2867f6604d8a8c406269a7c68bd85089f53063cc04a48e03867355b1c0d",
     "publishedAt": "2026-08-02T17:26:11.947Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-02T17:22:51.000Z",
+    "updatedAt": "2026-08-02T18:21:19.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -114,7 +114,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-02T17:22:52.000Z",
+    "updatedAt": "2026-08-02T18:21:19.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -231,9 +231,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiedndawe3heghr2rgffpfcaipfju5isnrow6yttpq4fimwzeyprm4",
-        "updateCount": 35,
-        "changedAt": 1785691372,
+        "contenthash": "bafybeibsfn2myjx3rnijh7qn3risttkbmoetfbbwy3hpidb5lmtee7jkwq",
+        "updateCount": 36,
+        "changedAt": 1785694879,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -259,9 +259,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeic6vtqa7j24nvuzrzgquy4g2y3icwrpfwbcfgnozssbchx35rpxmm",
-        "updateCount": 27,
-        "changedAt": 1785691372,
+        "contenthash": "bafybeif4jxtjpaqabhmdp7jnolbzopbq3g53p7olzoqux6zanztokjts2e",
+        "updateCount": 28,
+        "changedAt": 1785694879,
         "live": "alive"
       },
       "dragon-realm": {
