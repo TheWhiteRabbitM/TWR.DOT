@@ -422,7 +422,8 @@ switches.addEventListener('click', (e) => {
 document.getElementById('foot')!.innerHTML =
   `Directory read from <code>Resources.usernameOwnerOf</code> on ${esc(D.chain)}. Masks are generated from the handle. ` +
   `Claiming mints <a href="https://assethub-paseo.subscan.io/account/${esc(D.contract)}" target="_blank" rel="noopener">PeoplebookAvatars</a> ` +
-  `on the devnet Asset Hub — the rarity is rolled on chain, the image and your links live on chain. Not a judgement of anyone; addresses truncated.`;
+  `on the devnet Asset Hub — the rarity is rolled on chain, the image and your links live on chain. Not a judgement of anyone; addresses truncated.` +
+  `<span class="build">build ${esc(__BUILD__)} · 0.1 PAS</span>`;
 
 /* boot */
 hud();

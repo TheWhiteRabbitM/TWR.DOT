@@ -31,6 +31,10 @@ const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11
  *  can send it and still stay above its existential deposit — a 1 PAS value on a
  *  ~1 PAS balance fails with Revive.TransferFailed. */
 const VALUE_PLANCK = 1_000_000_000n;
+/** What a claim needs on top of the price: fee + storage deposit + the account's
+ *  minimum balance. Deliberately generous — the point is a clear refusal instead
+ *  of a `Revive.TransferFailed` after the wallet already asked for a signature. */
+const MARGIN_PLANCK = 2_500_000_000n;
 const ZERO_NODE = ('0x' + '00'.repeat(32)) as `0x${string}`;
 
 const CONNECT_MS = 12_000;
@@ -138,7 +142,29 @@ type Bound = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contract: any;
   slot: Slot;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  client: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  descriptors: any;
 };
+
+/** Free balance of the connected account, in planck, or null if it can't be read.
+ *  Used to refuse a claim we already know will revert: pallet-revive reports a
+ *  short balance as `Revive.TransferFailed`, which tells the user nothing. */
+async function freeBalance(b: Bound): Promise<bigint | null> {
+  try {
+    const api = b.client.getTypedApi(b.descriptors.devnet_asset_hub);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const acc: any = await withTimeout(api.query.System.Account.getValue(b.slot.account.address), 8_000, 'balance');
+    const free = acc?.data?.free;
+    return typeof free === 'bigint' ? free : free != null ? BigInt(free) : null;
+  } catch {
+    return null; // never block a claim just because the read failed
+  }
+}
+
+/** planck (10 decimals) → a short human string, e.g. "0.42 PAS". */
+const asPas = (v: bigint) => (Number(v) / 1e10).toLocaleString('en-US', { maximumFractionDigits: 3 }) + ' PAS';
 
 /** Connect the host chain, map the account once, and bind the contract. Shared
  *  by claim() and setProfile() so both take the exact same path. */
@@ -172,7 +198,7 @@ async function bind(): Promise<Bound | null> {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const contract = (contracts as any).createContract(runtime, ADDRESS, ABI, { signerManager: s.manager });
-  return { contract, slot: s };
+  return { contract, slot: s, client, descriptors };
 }
 
 /* -------------------------------------------------------------- the claim */
@@ -186,6 +212,18 @@ export async function claim(
   const b = await bind().catch(() => null);
   if (!b) return { ok: false, why: 'No wallet — open peoplebook inside the Polkadot app to claim.' };
   const { contract } = b;
+
+  // Refuse early if the account plainly cannot pay. Sending the value has to
+  // leave enough behind for the fee, the storage deposit and the account's
+  // minimum balance; when it doesn't, the chain answers `Revive.TransferFailed`,
+  // which reads like a bug rather than "you need more PAS".
+  const free = await freeBalance(b);
+  if (free !== null && free < VALUE_PLANCK + MARGIN_PLANCK) {
+    return {
+      ok: false,
+      why: `Not enough PAS. ${b.slot.account.address.slice(0, 6)}…${b.slot.account.address.slice(-6)} holds ${asPas(free)}; a claim needs about ${asPas(VALUE_PLANCK + MARGIN_PLANCK)} (0.1 to mint, the rest for the fee and storage deposit). Top it up from the devnet faucet and try again.`,
+    };
+  }
 
   onStep('preparing');
   const node = dotName ? namehash(dotName) : ZERO_NODE;

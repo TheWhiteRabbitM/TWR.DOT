@@ -351,3 +351,6 @@ footer code { color: #c7b8a0; }
   * { animation: none !important; }
   .card-inner, .odds-dial .seg, .mini-dial .seg { transition: none !important; }
 }
+
+/* Build stamp — tiny, but the fastest way to tell a stale bundle from a bug. */
+.build{display:block;margin-top:10px;opacity:.45;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
