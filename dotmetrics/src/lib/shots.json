@@ -233,12 +233,6 @@
     "h": 970,
     "capturedAt": 1785409233
   },
-  "ip-assets": {
-    "file": "shots/ip-assets.webp",
-    "w": 480,
-    "h": 970,
-    "capturedAt": 1785408493
-  },
   "italiarovente": {
     "file": "shots/italiarovente.webp",
     "w": 480,
@@ -340,6 +334,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785408649
+  },
+  "peoplebook": {
+    "file": "shots/peoplebook.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785657187
   },
   "pilliodot": {
     "file": "shots/pilliodot.webp",
