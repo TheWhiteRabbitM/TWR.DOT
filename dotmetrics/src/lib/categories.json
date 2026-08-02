@@ -395,12 +395,11 @@
     ]
   },
   "ip-market": {
-    "category": "finance",
-    "source": "derived:manifest",
-    "confidence": "high",
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
     "why": [
-      "market",
-      "marketplace"
+      "market~"
     ]
   },
   "italiarovente": {
