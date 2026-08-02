@@ -1,0 +1,125 @@
+/* chirp — the timeline, in the register X made familiar: a black column, hairline
+   rules instead of cards, one blue accent, and type doing the work. */
+
+:root {
+  --bg: #000;
+  --panel: #16181c;      /* raised surfaces: compose box, hover */
+  --hair: #2f3336;       /* the rule between chirps */
+  --ink: #e7e9ea;
+  --ink-2: #71767b;      /* handles, timestamps, meta */
+  --blue: #1d9bf0;
+  --blue-hi: #1a8cd8;
+  --rose: #f91880;       /* the like */
+  --green: #00ba7c;
+  --leg: #ffd400; --epi: #b24bff; --rar: #1d9bf0; --unc: #00ba7c; --com: #71767b;
+  --w: 600px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.4 -apple-system, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app { max-width: var(--w); margin: 0 auto; border-inline: 1px solid var(--hair); min-height: 100vh; }
+@media (max-width: 640px) { #app { border-inline: 0; } }
+
+/* ------------------------------------------------------------------ header */
+.top {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, .65);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--hair);
+}
+.top h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+.top .who { margin-left: auto; text-align: right; font-size: 13px; color: var(--ink-2); }
+.top .who b { display: block; color: var(--ink); font-weight: 600; }
+
+/* ------------------------------------------------------------------ avatar */
+.av { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex: none; background: var(--panel); }
+.av svg { display: block; width: 100%; height: 100%; }
+.av.sm { width: 28px; height: 28px; }
+
+/* ----------------------------------------------------------------- compose */
+.compose { display: flex; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--hair); }
+.compose .grow { flex: 1; min-width: 0; }
+.compose textarea {
+  width: 100%; border: 0; resize: none; outline: none;
+  background: transparent; color: var(--ink);
+  font: 19px/1.35 inherit; padding: 8px 0; min-height: 54px;
+}
+.compose textarea::placeholder { color: var(--ink-2); }
+.composebar { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.count { margin-left: auto; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.count.warn { color: #ffd400; }
+.count.over { color: #f4212e; }
+
+button.primary {
+  border: 0; cursor: pointer; border-radius: 999px;
+  background: var(--blue); color: #fff;
+  font: 600 15px/1 inherit; padding: 10px 18px;
+  transition: background .15s;
+}
+button.primary:hover:not(:disabled) { background: var(--blue-hi); }
+button.primary:disabled { opacity: .45; cursor: default; }
+
+button.ghost {
+  border: 1px solid var(--hair); background: transparent; color: var(--ink);
+  border-radius: 999px; font: 600 14px/1 inherit; padding: 9px 16px; cursor: pointer;
+}
+button.ghost:hover { background: var(--panel); }
+
+/* ------------------------------------------------------------------ chirps */
+.chirp { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--hair); transition: background .12s; }
+.chirp:hover { background: #080808; }
+.chirp .grow { flex: 1; min-width: 0; }
+.head { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.head .nm { font-weight: 700; }
+.head .at, .head .dot, .head .ts { color: var(--ink-2); font-size: 14px; }
+.head .edited { color: var(--ink-2); font-size: 13px; font-style: italic; }
+.body { margin-top: 2px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* the verified mark: only ever shown for a .dot the contract checked on chain */
+.tick { width: 15px; height: 15px; flex: none; color: var(--blue); }
+
+.tier { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 1px 6px; border-radius: 999px; border: 1px solid currentColor; }
+.t0 { color: var(--leg); } .t1 { color: var(--epi); } .t2 { color: var(--rar); } .t3 { color: var(--unc); } .t4 { color: var(--com); }
+
+.acts { display: flex; gap: 26px; margin-top: 8px; color: var(--ink-2); }
+.act { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; font: inherit; font-size: 13px; }
+.act:hover { color: var(--rose); }
+.act.on { color: var(--rose); }
+.act.edit:hover { color: var(--blue); }
+.act svg { width: 17px; height: 17px; }
+
+/* ------------------------------------------------------------------ states */
+.note { padding: 22px 16px; color: var(--ink-2); border-bottom: 1px solid var(--hair); }
+.note b { color: var(--ink); }
+.gate { padding: 28px 16px; border-bottom: 1px solid var(--hair); }
+.gate h2 { margin: 0 0 8px; font-size: 20px; letter-spacing: -.01em; }
+.gate p { margin: 0 0 16px; color: var(--ink-2); line-height: 1.5; }
+.gate input {
+  width: 100%; padding: 12px 14px; margin-bottom: 12px;
+  background: var(--panel); border: 1px solid var(--hair); border-radius: 8px;
+  color: var(--ink); font: inherit; outline: none;
+}
+.gate input:focus { border-color: var(--blue); }
+
+.msg { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid var(--hair); }
+.msg.bad { color: #f4212e; }
+.msg.good { color: var(--green); }
+
+.foot { padding: 20px 16px 40px; color: var(--ink-2); font-size: 13px; line-height: 1.6; }
+.foot a { color: var(--blue); text-decoration: none; }
+.foot code { font-size: 12px; }
+
+.skel { height: 90px; border-bottom: 1px solid var(--hair); background: linear-gradient(90deg, #0a0a0a, #131313, #0a0a0a); background-size: 200% 100%; animation: sh 1.2s linear infinite; }
+@keyframes sh { to { background-position: -200% 0; } }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
