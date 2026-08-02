@@ -150,7 +150,10 @@ async function connect(): Promise<Slot | null> {
   ).catch(() => undefined);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mk = (addr: string, abi: unknown) => (contracts as any).createContract(runtime, addr, abi, { signer });
+  // `signer` is not a ContractOptions key — it is silently ignored, which leaves
+  // the handle unable to sign. The real names are defaultSigner / defaultOrigin.
+  const mk = (addr: string, abi: unknown) =>
+    (contracts as any).createContract(runtime, addr, abi, { defaultSigner: signer, defaultOrigin: address });
   return { address, kind, signer, masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI) };
 }
 

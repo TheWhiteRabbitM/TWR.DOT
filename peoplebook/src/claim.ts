@@ -264,7 +264,10 @@ async function bind(): Promise<Bound | null> {
   ).catch(() => undefined);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const contract = (contracts as any).createContract(runtime, ADDRESS, ABI, { signer: s.signer });
+  const contract = (contracts as any).createContract(runtime, ADDRESS, ABI, {
+    defaultSigner: s.signer,
+    defaultOrigin: s.address,
+  });
   return { contract, slot: s, client, descriptors };
 }
 
