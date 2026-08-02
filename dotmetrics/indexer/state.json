@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11733976,
-  "updatedAt": "2026-08-02T19:39:47.218Z",
+  "lastBlock": 11736524,
+  "updatedAt": "2026-08-02T21:13:34.334Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "0552aa5aff1217538f4b5b578e8a007b69b1083f071c824d0cfa106fe0bc945c",
-    "cid": "bafybeif6sqfjrk3vhipzyl7jfwudqr6cobgvd3rj7277vwwngrgduhmtpi",
-    "uploadedAt": "2026-08-02T19:44:11.171Z"
+    "digest": "c1568563d06e2af46832caf8d2ad35a58897eb01df81849f82e9826ad1e28385",
+    "cid": "bafybeifettt3xiqqzka4cmwddmfkv3z3uap3stmognlc7zaxqso6dmp2ka",
+    "uploadedAt": "2026-08-02T21:18:23.989Z"
   },
   "sitePublish": {
-    "treeHash": "bed9e2867f6604d8a8c406269a7c68bd85089f53063cc04a48e03867355b1c0d",
-    "publishedAt": "2026-08-02T17:26:11.947Z"
+    "treeHash": "0f58c2dfb7d75f59dbe65f7a5327051b76bfd003591d637087ab13e61314f098",
+    "publishedAt": "2026-08-02T21:21:11.009Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-02T19:42:59.000Z",
+    "updatedAt": "2026-08-02T21:17:03.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -108,13 +108,14 @@
       "my-cool-app": "alive",
       "chirponchain": "alive",
       "frenchan-app77": "alive",
-      "open-docs": "alive"
+      "open-docs": "alive",
+      "waldgeist": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-02T19:42:59.000Z",
+    "updatedAt": "2026-08-02T21:17:03.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -231,9 +232,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidb2pcgcxql6sv35iabxsepnxvynniadw2wk63zq6fqcrbhjt374y",
-        "updateCount": 37,
-        "changedAt": 1785699779,
+        "contenthash": "bafybeicmcfmdssvowut6yxqvfpkfpn34q7uqgpi44eruhimmp2ynwovo3e",
+        "updateCount": 38,
+        "changedAt": 1785705423,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -469,9 +470,9 @@
         "live": "alive"
       },
       "open-docs": {
-        "contenthash": "bafybeifrkg6autwezymi4omk3gl6rhuhyjcr2x6obek6v6kbjkqmmxjx6a",
-        "updateCount": 1,
-        "changedAt": 1785699779,
+        "contenthash": "bafybeiaggmtz6vdkbbthbhxovnklr6uxupohd23sqzknk6ffkgxnhaoxhu",
+        "updateCount": 2,
+        "changedAt": 1785705423,
         "live": "alive"
       },
       "openpetition": {
@@ -654,15 +655,20 @@
         "live": "alive"
       },
       "waldgeist": {
-        "contenthash": "",
+        "contenthash": "bafybeihpiwdwz2gr64pdiqu2ohkpp3qemhjgns3mx6xx6tkibny4mbq3li",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "web3poker": {
         "contenthash": "bafybeiheybqsye5kayxqspt2pa3xpuoz2bfok7x5g3zoykzq7i7qwhh2bi",
         "updateCount": 2,
         "changedAt": 1785598013,
         "live": "alive"
+      },
+      "wheeloffortune": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "wudcommunity": {
         "contenthash": "bafybeiec5fvzjrxhgablmoagz7oeq2di7qwdsdqd7xhu4fbfae62hzxwni",

@@ -1,13 +1,22 @@
 {
-  "generatedAt": 1785699779,
-  "count": 106,
+  "generatedAt": 1785705423,
+  "count": 107,
   "apps": [
+    {
+      "label": "wheeloffortune",
+      "domain": "wheeloffortune.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785701880,
+      "url": "https://wheeloffortune.dev-dot.li"
+    },
     {
       "label": "waldgeist",
       "domain": "waldgeist.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785698640,
       "url": "https://waldgeist.dev-dot.li"
     },

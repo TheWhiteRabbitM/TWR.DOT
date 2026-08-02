@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 02 Aug 2026 19:42:59 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 02 Aug 2026 21:17:03 GMT</lastBuildDate>
+    <item>
+      <title>wheeloffortune</title>
+      <link>https://wheeloffortune.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">wheeloffortune</guid>
+      <pubDate>Sun, 02 Aug 2026 20:18:00 GMT</pubDate>
+    </item>
     <item>
       <title>waldgeist</title>
       <link>https://waldgeist.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">provenveil</guid>
       <pubDate>Mon, 27 Jul 2026 21:47:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>dotcheckapp</title>
-      <link>https://dotcheckapp.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">dotcheckapp</guid>
-      <pubDate>Mon, 27 Jul 2026 20:43:24 GMT</pubDate>
     </item>
   </channel>
 </rss>
