@@ -1,41 +1,22 @@
 /**
  * The on-chain claim + profile writes.
  *
- * Claiming mints a PeoplebookAvatars NFT to the caller on the devnet Asset Hub,
- * pays the contract's `price()` (currently 0 — free), and it rolls the rarity at
- * mint. Once you own a mask you can attach social links to it (Telegram, X, a
- * one-line bio) with setProfile — the contract only lets the token's owner do
- * it, so a profile is always vouched for by whoever holds the mask.
+ * Claiming mints a PeoplebookMasks NFT: one per account, generated from your
+ * address and non-transferable, so there is no name to squat and no mask to buy.
+ * A `.dot` label is the one identity provable on this chain, so it is handed to
+ * the contract, checked against the registry, and only then recorded. Once you
+ * hold a mask you can attach links (Telegram, X, a bio) with setProfile, which
+ * the contract keys off your own mask — there is no id to pass and no way to
+ * write someone else's.
  *
  * Everything the SDK touches — the signer, the chain connection — comes from the
  * host, so nothing here opens its own wallet or its own socket.
- *
- * WHY THE VALUE IS PLANCK, NOT price()
- *   `price()` is in the contract's 18-decimal EVM units (1 PAS = 1e18). But the
- *   value passed to a pallet-revive call is native planck (10 decimals), which
- *   revive multiplies by 1e8 to get `msg.value`. So we send 1e10 planck; inside
- *   the contract that becomes 1e18, which clears the price.
- *
- * WHY THE RETRY
- *   The SDK auto-estimates gas with a dry-run, and that estimate is occasionally
- *   a hair short — the same call reverts `Revive.OutOfGas` once and lands on the
- *   next try. So a claim retries a couple of times before it gives up.
  */
 import { keccak_256 } from '@noble/hashes/sha3';
 import ABI from './abi.json';
 
 const ADDRESS = '0x03a484cCD0f1832084dEEFca4bF6438d79Fe8db6';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
-/** 0.1 PAS in native planck (10 decimals). msg.value inside the contract = ×1e8,
- *  so this clears a price of 1e17. Kept low so a modestly-funded devnet account
- *  can send it and still stay above its existential deposit — a 1 PAS value on a
- *  ~1 PAS balance fails with Revive.TransferFailed. */
-const VALUE_PLANCK = 0n;
-/** What a claim needs on top of the price: fee + storage deposit + the account's
- *  minimum balance. Deliberately generous — the point is a clear refusal instead
- *  of a `Revive.TransferFailed` after the wallet already asked for a signature. */
-const MARGIN_PLANCK = 0n;
-const ZERO_NODE = ('0x' + '00'.repeat(32)) as `0x${string}`;
 
 const CONNECT_MS = 12_000;
 const ACCOUNT_MS = 8_000;
@@ -49,24 +30,28 @@ export type ClaimResult =
 export type Socials = { telegram: string; x: string; bio: string };
 export type ProfileResult = { ok: true } | { ok: false; why: string };
 
-const toHex = (u: Uint8Array<ArrayBufferLike>) => '0x' + Array.from(u, (b) => b.toString(16).padStart(2, '0')).join('');
-const utf8 = (s: string) => new TextEncoder().encode(s);
-const keyOf = (handle: string) => toHex(keccak_256(utf8(handle))) as `0x${string}`;
-
-/** ENS-style namehash, so the boost can prove ownership of a `.dot`. */
-export function namehash(name: string): `0x${string}` {
-  let node: Uint8Array<ArrayBufferLike> = new Uint8Array(32);
-  const clean = name.trim().toLowerCase().replace(/\.dot$/, '') + '.dot';
-  for (const label of clean.split('.').reverse()) {
-    if (!label) continue;
-    const h = keccak_256(utf8(label));
-    node = keccak_256(new Uint8Array([...node, ...h]));
-  }
-  return toHex(node) as `0x${string}`;
-}
+// The app no longer hashes a name itself: the contract recomputes the `.dot`
+// namehash and checks it against the registry, which is the only place that
+// check carries any weight.
 
 function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise<T> {
   return Promise.race([p, new Promise<T>((_, r) => setTimeout(() => r(new Error(`${what} timed out`)), ms))]);
+}
+
+/**
+ * The 20-byte address pallet-revive maps a Substrate account to.
+ *
+ * Contract mappings like `maskOf` are keyed by that H160, NOT by the ss58 string
+ * the wallet reports — passing the ss58 straight through silently reads the
+ * wrong slot, so an account that HAS a mask looks like it has none. revive uses
+ * the Ethereum derivation: keccak256(public key), last 20 bytes. (Verified
+ * against a known pair before relying on it.)
+ */
+async function h160Of(ss58: string): Promise<string> {
+  const papi = await import('polkadot-api');
+  const pk = papi.AccountId().enc(ss58);
+  const h = keccak_256(pk).slice(12, 32);
+  return '0x' + Array.from(h, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -250,24 +235,6 @@ type Bound = {
   descriptors: any;
 };
 
-/** Free balance of the connected account, in planck, or null if it can't be read.
- *  Used to refuse a claim we already know will revert: pallet-revive reports a
- *  short balance as `Revive.TransferFailed`, which tells the user nothing. */
-async function freeBalance(b: Bound): Promise<bigint | null> {
-  try {
-    const api = b.client.getTypedApi(b.descriptors.devnet_asset_hub);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const acc: any = await withTimeout(api.query.System.Account.getValue(b.slot.address), 8_000, 'balance');
-    const free = acc?.data?.free;
-    return typeof free === 'bigint' ? free : free != null ? BigInt(free) : null;
-  } catch {
-    return null; // never block a claim just because the read failed
-  }
-}
-
-/** planck (10 decimals) → a short human string, e.g. "0.42 PAS". */
-const asPas = (v: bigint) => (Number(v) / 1e10).toLocaleString('en-US', { maximumFractionDigits: 3 }) + ' PAS';
-
 /** Connect the host chain, map the account once, and bind the contract. Shared
  *  by claim() and setProfile() so both take the exact same path. */
 async function bind(): Promise<Bound | null> {
@@ -337,6 +304,7 @@ export async function claim(
   try {
     res = await withTimeout(
       contract.claim.tx(label, {
+        signer: b.slot.signer,
         gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
         storageDepositLimit: 10n ** 18n,
       }),
@@ -353,7 +321,7 @@ export async function claim(
   if (res && res.ok === false) return { ok: false, why: revertReason(res) };
 
   try {
-    const id = (await contract.maskOf.query(b.slot.address))?.value;
+    const id = (await contract.maskOf.query(await h160Of(b.slot.address)))?.value;
     const tier = (await contract.tierOf.query(id))?.value;
     const verified = String((await contract.verifiedName.query(id))?.value ?? '');
     onStep('done');
@@ -369,7 +337,7 @@ export async function myMask(): Promise<{ id: number; tier: number; verified: st
   const b = await bind().catch(() => null);
   if (!b) return null;
   try {
-    const id = Number((await b.contract.maskOf.query(b.slot.address))?.value ?? 0);
+    const id = Number((await b.contract.maskOf.query(await h160Of(b.slot.address)))?.value ?? 0);
     if (!id) return null;
     const tier = Number((await b.contract.tierOf.query(BigInt(id)))?.value ?? 4);
     const verified = String((await b.contract.verifiedName.query(BigInt(id)))?.value ?? '');
@@ -408,6 +376,7 @@ export async function setProfile(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res: any = await withTimeout(
       contract.setProfile.tx(tg, x, bio, {
+        signer: b.slot.signer,
         gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
         storageDepositLimit: 10n ** 18n,
       }),

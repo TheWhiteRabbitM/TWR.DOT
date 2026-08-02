@@ -15,6 +15,7 @@
  * nobody funds. So we go through the accounts provider and prefer the user's own
  * accounts, falling back to the app-scoped one — and say which is in use.
  */
+import { keccak_256 } from '@noble/hashes/sha3';
 import MASKS_ABI from './masks-abi.json';
 import CHIRP_ABI from './chirp-abi.json';
 
@@ -55,6 +56,14 @@ export type Ok<T> = { ok: true; value: T };
 
 function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise<T> {
   return Promise.race([p, new Promise<T>((_, r) => setTimeout(() => r(new Error(`${what} timed out`)), ms))]);
+}
+
+/** pallet-revive's account -> contract address mapping: keccak256(public key),
+ *  last 20 bytes. Contract mappings are keyed by this, never by the ss58. */
+async function h160Of(ss58: string): Promise<string> {
+  const papi = await import('polkadot-api');
+  const pk = papi.AccountId().enc(ss58);
+  return '0x' + Array.from(keccak_256(pk).slice(12, 32), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -164,10 +173,10 @@ export async function me(): Promise<Me | null> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     try { return (await (c as any)[m].query(...a))?.value; } catch { return undefined; }
   };
-  // maskOf is keyed by the H160 the runtime maps this account to, so ask the
-  // contract rather than guessing the address form.
+  // maskOf is keyed by the H160 pallet-revive maps this account to — the ss58 the
+  // wallet reports would read the wrong slot and make a held mask look absent.
   let mask = 0;
-  try { mask = Number((await q(s.masks, 'maskOf', s.address)) ?? 0); } catch { mask = 0; }
+  try { mask = Number((await q(s.masks, 'maskOf', await h160Of(s.address))) ?? 0); } catch { mask = 0; }
   let name = '', tier = 4;
   if (mask) {
     name = String((await q(s.masks, 'verifiedName', BigInt(mask))) ?? '');
