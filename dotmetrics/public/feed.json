@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1785630037,
+  "generatedAt": 1785643412,
   "count": 100,
   "apps": [
     {
@@ -23,9 +23,9 @@
     {
       "label": "ip-market",
       "domain": "ip-market.dot",
-      "displayName": "IP Market by Soft.Law",
-      "description": "Intellectual property assets and licenses marketplace.",
-      "tier": 0,
+      "displayName": "",
+      "description": "",
+      "tier": 1,
       "firstSeenAt": 1785582864,
       "url": "https://ip-market.dev-dot.li"
     },
