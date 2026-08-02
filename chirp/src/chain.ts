@@ -112,6 +112,17 @@ async function connect(): Promise<Slot | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ap: any = await withTimeout(host.getAccountsProvider() as any, CONNECT_MS, 'wallet').catch(() => null);
   if (!ap) return null;
+  // Ask the host for permission to submit transactions BEFORE signing anything.
+  // SignerManager used to do this on connect; going through the accounts provider
+  // to reach the user's own wallet dropped it, and without it a signing request
+  // simply hangs — the wallet sheet never appears. A refusal is not fatal here:
+  // the signing path reports what actually went wrong.
+  await withTimeout(
+    Promise.resolve(host.requestPermission({ tag: 'ChainSubmit', value: undefined })),
+    CONNECT_MS,
+    'chain submit permission',
+  ).catch(() => undefined);
+
   const ss58 = (pk: Uint8Array) => papi.AccountId().dec(pk) as string;
 
   let address = '';
