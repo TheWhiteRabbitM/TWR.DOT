@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 02 Aug 2026 06:55:17 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 02 Aug 2026 09:29:35 GMT</lastBuildDate>
+    <item>
+      <title>ping-static-test</title>
+      <link>https://ping-static-test.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">ping-static-test</guid>
+      <pubDate>Sun, 02 Aug 2026 07:44:24 GMT</pubDate>
+    </item>
     <item>
       <title>hello-world-pricey-app</title>
       <link>https://hello-world-pricey-app.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">stealcrown</guid>
       <pubDate>Mon, 27 Jul 2026 17:14:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>Oblv Calendar</title>
-      <link>https://oblv-wg-calendar.dev-dot.li</link>
-      <description>Calendrier du dashboard : le mois en un coup d’œil, l’agenda du jour, saisie en une ligne (jour, heure, récurrence), tout en local.</description>
-      <guid isPermaLink="false">oblv-wg-calendar</guid>
-      <pubDate>Mon, 27 Jul 2026 09:39:12 GMT</pubDate>
     </item>
   </channel>
 </rss>

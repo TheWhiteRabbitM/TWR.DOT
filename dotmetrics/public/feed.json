@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785653717,
-  "count": 100,
+  "generatedAt": 1785662975,
+  "count": 101,
   "apps": [
+    {
+      "label": "ping-static-test",
+      "domain": "ping-static-test.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785656664,
+      "url": "https://ping-static-test.dev-dot.li"
+    },
     {
       "label": "hello-world-pricey-app",
       "domain": "hello-world-pricey-app.dot",
