@@ -10,7 +10,7 @@
  */
 import './style.css';
 import data from './data.json';
-import { claim, setProfile, warmUp, signerInfo, myMask, type ClaimStep, type Socials } from './claim';
+import { claim, setProfile, warmUp, signerInfo, myMask, diagnose, type ClaimStep, type Socials } from './claim';
 
 /** The mask this account holds — the app is about YOURS, not a handle you pick. */
 let MINE: { id: number; tier: number; verified: string; socials: Socials } | null = null;
@@ -384,7 +384,20 @@ document.getElementById('foot')!.innerHTML =
   `Your mask is minted by <a href="https://assethub-paseo.subscan.io/account/0x03a484cCD0f1832084dEEFca4bF6438d79Fe8db6" target="_blank" rel="noopener">PeoplebookMasks</a> ` +
   `on the devnet Asset Hub: one per account, generated from your address, and <b>not transferable</b> — so nobody can claim or buy someone else's identity. ` +
   `A <b>.dot</b> is the one name provable here, so the contract checks it against the registry before showing it. Rarity is rolled on chain; the image and your links live on chain. Addresses truncated.` +
-  `<span class="build">build ${esc(__BUILD__)} · free</span>`;
+  `<span class="build">build ${esc(__BUILD__)} · free · <a href="#" id="diag">diagnostics</a></span>`;
+
+// A claim that hangs reports nothing, because every layer here fails quietly.
+// This prints what each step actually returned, so a stuck signature can be read
+// off the screen instead of guessed at.
+document.getElementById('diag')?.addEventListener('click', async (e) => {
+  e.preventDefault();
+  const box = document.getElementById('foot')!;
+  const pre = document.createElement('pre');
+  pre.style.cssText = 'white-space:pre-wrap;text-align:left;font-size:11px;opacity:.85;margin-top:12px';
+  pre.textContent = 'running…';
+  box.appendChild(pre);
+  pre.textContent = (await diagnose()).join('\n');
+});
 
 /* boot */
 hud();

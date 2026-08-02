@@ -94,6 +94,8 @@ type Slot = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   signer: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  manager?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   masks: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   chirp: any;
@@ -136,15 +138,29 @@ async function connect(): Promise<Slot | null> {
     const a = (r?.value ?? []).find((x: any) => x?.publicKey);
     if (a) { address = ss58(a.publicKey); signer = ap.getLegacyAccountSigner({ publicKey: a.publicKey, name: a.name }); }
   } catch { /* fall through */ }
+  // Fallback: SignerManager on the app-scoped account. NOT
+  // ap.getProductAccountSigner() — that signer never raises the wallet sheet in
+  // this host, so a write hangs until it times out with nothing to report.
+  // SignerManager drives the same account through its own connect handshake and
+  // does get a prompt.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let manager: any = null;
   if (!signer) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const r: any = await withTimeout(Promise.resolve(ap.getProductAccount('chirp.dot', 0)), ACCOUNT_MS, 'app account');
-      const pa = r?.value;
-      if (pa) {
-        address = pa.address ?? (pa.publicKey ? ss58(pa.publicKey) : '');
-        signer = ap.getProductAccountSigner(pa);
-        kind = 'app';
+      const signerPkg = await import('@parity/product-sdk-signer');
+      manager = new signerPkg.SignerManager({ dappName: 'chirponchain.dot' });
+      await withTimeout(manager.connect(), CONNECT_MS, 'wallet').catch(() => undefined);
+      const deadline = Date.now() + ACCOUNT_MS;
+      for (;;) {
+        const st = manager.getState();
+        let acc = st.selectedAccount ?? null;
+        if (!acc && st.accounts[0]) {
+          const picked = manager.selectAccount(st.accounts[0].address);
+          if (picked.ok) acc = picked.value;
+        }
+        if (acc) { address = acc.address; signer = manager.getSigner(); kind = 'app'; break; }
+        if (Date.now() > deadline) break;
+        await new Promise((r) => setTimeout(r, 250));
       }
     } catch { /* none */ }
   }
@@ -163,9 +179,12 @@ async function connect(): Promise<Slot | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   // `signer` is not a ContractOptions key — it is silently ignored, which leaves
   // the handle unable to sign. The real names are defaultSigner / defaultOrigin.
-  const mk = (addr: string, abi: unknown) =>
-    (contracts as any).createContract(runtime, addr, abi, { defaultSigner: signer, defaultOrigin: address });
-  return { address, kind, signer, masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI) };
+  const opts = manager
+    ? { signerManager: manager, defaultOrigin: address }
+    : { defaultSigner: signer, defaultOrigin: address };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mk = (addr: string, abi: unknown) => (contracts as any).createContract(runtime, addr, abi, opts);
+  return { address, kind, signer, manager, masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI) };
 }
 
 function session(): Promise<Slot | null> {
@@ -275,17 +294,17 @@ async function send(fn: (s: Slot) => Promise<any>): Promise<Ok<void> | Fail> {
 /** Claim the mask for this account. One per account, and it cannot be moved —
  *  pass a `.dot` label you own to have the contract verify and record it. */
 export function claimMask(dotLabel = ''): Promise<Ok<void> | Fail> {
-  return send((s) => s.masks.claim.tx(dotLabel.trim().replace(/\.dot$/i, ''), { ...LIMITS, signer: s.signer }));
+  return send((s) => s.masks.claim.tx(dotLabel.trim().replace(/\.dot$/i, ''), { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) }));
 }
 
 export function post(mask: number, body: string, replyTo = 0): Promise<Ok<void> | Fail> {
-  return send((s) => s.chirp.chirp.tx(BigInt(mask), body, BigInt(replyTo), { ...LIMITS, signer: s.signer }));
+  return send((s) => s.chirp.chirp.tx(BigInt(mask), body, BigInt(replyTo), { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) }));
 }
 
 export function edit(id: number, body: string): Promise<Ok<void> | Fail> {
-  return send((s) => s.chirp.edit.tx(BigInt(id), body, { ...LIMITS, signer: s.signer }));
+  return send((s) => s.chirp.edit.tx(BigInt(id), body, { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) }));
 }
 
 export function like(id: number): Promise<Ok<void> | Fail> {
-  return send((s) => s.chirp.like.tx(BigInt(id), { ...LIMITS, signer: s.signer }));
+  return send((s) => s.chirp.like.tx(BigInt(id), { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) }));
 }

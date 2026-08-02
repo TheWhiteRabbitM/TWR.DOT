@@ -105,6 +105,11 @@ type Slot = {
   address: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   signer: any;
+  /** Present on the SignerManager path; the contract prefers it, because the
+   *  manager resolves the account at call time and drives the host's own
+   *  prompt. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  manager?: any;
   /** 'wallet' = one of the user's own accounts; 'app' = the host-derived one. */
   kind: SignerKind;
   name?: string;
@@ -159,16 +164,29 @@ async function connect(): Promise<Slot | null> {
     }
   } catch { /* fall through to the app account */ }
 
-  // Fallback: the app-scoped account. It works, but it starts empty, so the UI
-  // has to say so rather than letting a claim fail with a cryptic revert.
+  // Fallback: SignerManager, on the app-scoped account.
+  //
+  // Not `ap.getProductAccountSigner(pa)` directly — that signer never raises the
+  // wallet sheet in this host, so a claim just hangs until it times out with
+  // nothing to report. SignerManager drives the same app-scoped account through
+  // its own connect handshake and DOES get a prompt (it is how this app reached
+  // a real on-chain error before the accounts-provider rewrite). It is only a
+  // fallback because it cannot reach the user's own wallet at all.
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const r: any = await withTimeout(Promise.resolve(ap.getProductAccount('peoplebook.dot', 0)), ACCOUNT_MS, 'app account');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pa: any = r?.value;
-    if (pa) {
-      const address = pa.address ?? (pa.publicKey ? ss58(pa.publicKey) : null);
-      if (address) return { address, signer: ap.getProductAccountSigner(pa), kind: 'app' };
+    const signerPkg = await import('@parity/product-sdk-signer');
+    const manager = new signerPkg.SignerManager({ dappName: 'peoplebook.dot' });
+    await withTimeout(manager.connect(), CONNECT_MS, 'wallet').catch(() => undefined);
+    const deadline = Date.now() + ACCOUNT_MS;
+    for (;;) {
+      const st = manager.getState();
+      let account: import('@parity/product-sdk-signer').SignerAccount | null = st.selectedAccount ?? null;
+      if (!account && st.accounts[0]) {
+        const picked = manager.selectAccount(st.accounts[0].address);
+        if (picked.ok) account = picked.value;
+      }
+      if (account) return { address: account.address, signer: manager.getSigner(), manager, kind: 'app' };
+      if (Date.now() > deadline) break;
+      await new Promise((r) => setTimeout(r, 250));
     }
   } catch { /* no account at all */ }
   return null;
@@ -275,10 +293,14 @@ async function bind(): Promise<Bound | null> {
   ).catch(() => undefined);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const contract = (contracts as any).createContract(runtime, ADDRESS, ABI, {
-    defaultSigner: s.signer,
-    defaultOrigin: s.address,
-  });
+  const contract = (contracts as any).createContract(
+    runtime,
+    ADDRESS,
+    ABI,
+    s.manager
+      ? { signerManager: s.manager, defaultOrigin: s.address }
+      : { defaultSigner: s.signer, defaultOrigin: s.address },
+  );
   return { contract, slot: s, client, descriptors };
 }
 
@@ -318,7 +340,7 @@ export async function claim(
   try {
     res = await withTimeout(
       contract.claim.tx(label, {
-        signer: b.slot.signer,
+        ...(b.slot.manager ? { signerManager: b.slot.manager } : { signer: b.slot.signer }),
         gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
         storageDepositLimit: 10n ** 18n,
       }),
@@ -390,7 +412,7 @@ export async function setProfile(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res: any = await withTimeout(
       contract.setProfile.tx(tg, x, bio, {
-        signer: b.slot.signer,
+        ...(b.slot.manager ? { signerManager: b.slot.manager } : { signer: b.slot.signer }),
         gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
         storageDepositLimit: 10n ** 18n,
       }),
@@ -407,4 +429,77 @@ export async function setProfile(
   }
   onStatus('Saved on chain.');
   return { ok: true };
+}
+
+/* ---------------------------------------------------------- diagnostics */
+
+/**
+ * Walk the whole signing path and report what each step ACTUALLY returned.
+ *
+ * Three blind fixes in a row failed to move a claim that hangs at "approve in
+ * your wallet" without ever erroring, because every layer here fails quietly:
+ * an unknown option is dropped, a refused permission resolves, a wrong address
+ * reads an empty slot. This makes each step state its own result so the failure
+ * can be read off the screen instead of guessed at.
+ */
+export async function diagnose(): Promise<string[]> {
+  const out: string[] = [];
+  const add = (k: string, v: unknown) => out.push(`${k}: ${typeof v === 'string' ? v : safeJson(v)}`);
+  try {
+    const host = await import('@parity/product-sdk-host');
+    const papi = await import('polkadot-api');
+
+    const inside = await host.isInsideContainer().catch((e) => 'threw ' + String(e).slice(0, 60));
+    add('inside host', inside);
+    if (inside !== true) { add('verdict', 'not running inside the Polkadot app — nothing can sign'); return out; }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ap: any = await (host.getAccountsProvider() as any).catch((e: unknown) => { add('accountsProvider threw', String(e).slice(0, 80)); return null; });
+    add('accountsProvider', ap ? 'ok' : 'null');
+    if (!ap) return out;
+
+    // The permission we normally request and ignore — here we report it.
+    try {
+      const perm = await Promise.resolve(host.requestPermission({ tag: 'ChainSubmit', value: undefined }));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p: any = perm;
+      add('ChainSubmit permission', p?.success === false || p?.ok === false ? 'REFUSED ' + safeJson(p) : safeJson(p));
+    } catch (e) {
+      add('ChainSubmit permission', 'threw ' + String(e).slice(0, 90));
+    }
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const r: any = await Promise.resolve(ap.getLegacyAccounts());
+      add('wallet accounts', (r?.value ?? []).length);
+    } catch (e) { add('wallet accounts', 'threw ' + String(e).slice(0, 70)); }
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const r: any = await Promise.resolve(ap.getProductAccount('peoplebook.dot', 0));
+      const pa = r?.value;
+      add('app account', pa ? (pa.address ?? papi.AccountId().dec(pa.publicKey)) : 'none');
+      add('app signer', pa ? (ap.getProductAccountSigner(pa) ? 'built' : 'null') : 'n/a');
+    } catch (e) { add('app account', 'threw ' + String(e).slice(0, 70)); }
+
+    const s = await getSlot().catch(() => null);
+    add('chosen account', s ? `${s.address} (${s.kind})` : 'NONE — this is why nothing signs');
+    add('signer present', s ? !!s.signer : false);
+    if (s) add('its H160', await h160Of(s.address));
+
+    const provider = await host.getHostProvider(GENESIS as `0x${string}`).catch(() => null);
+    add('chain provider', provider ? 'ok' : 'null');
+
+    const b = await bind().catch((e) => { add('bind threw', String(e).slice(0, 80)); return null; });
+    add('contract bound', !!b);
+    if (b) {
+      try { add('my mask', String((await b.contract.maskOf.query(await h160Of(b.slot.address)))?.value)); }
+      catch (e) { add('maskOf query', 'threw ' + String(e).slice(0, 70)); }
+      try { add('totalSupply', String((await b.contract.totalSupply.query())?.value)); }
+      catch { add('totalSupply', 'unreadable'); }
+    }
+  } catch (e) {
+    add('diagnose threw', String(e).slice(0, 120));
+  }
+  return out;
 }
