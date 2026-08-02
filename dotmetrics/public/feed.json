@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785662975,
-  "count": 101,
+  "generatedAt": 1785670887,
+  "count": 102,
   "apps": [
+    {
+      "label": "my-cool-app",
+      "domain": "my-cool-app.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785669528,
+      "url": "https://my-cool-app.dev-dot.li"
+    },
     {
       "label": "ping-static-test",
       "domain": "ping-static-test.dot",
