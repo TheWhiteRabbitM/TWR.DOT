@@ -10,7 +10,7 @@
  */
 import './style.css';
 import data from './data.json';
-import { claim, setProfile, warmUp, walletAddress, type ClaimStep, type Socials } from './claim';
+import { claim, setProfile, warmUp, signerInfo, type ClaimStep, type Socials } from './claim';
 
 type User = { name: string; owner: string; tier?: number; social?: Socials };
 const D = data as { chain: string; genesis: string; contract: string; stats: Record<string, number>; users: User[] };
@@ -429,11 +429,17 @@ document.getElementById('foot')!.innerHTML =
 hud();
 render();
 warmUp();
-walletAddress().then((addr) => {
+signerInfo().then((info) => {
   const w = document.getElementById('wallet')!, t = document.getElementById('wtext')!;
-  if (!addr) { t.textContent = 'OPEN IN THE POLKADOT APP'; return; }
+  if (!info) { t.textContent = 'OPEN IN THE POLKADOT APP'; return; }
+  const { address: addr, kind } = info;
   w.classList.add('on');
-  t.textContent = addr.slice(0, 6) + '…' + addr.slice(-6);
+  // Say WHICH account pays. An app-scoped account is one the host derives for
+  // peoplebook — it is not the wallet the person funded, so a claim from it
+  // fails until it is topped up. Naming it beats a cryptic on-chain revert.
+  t.innerHTML = kind === 'app'
+    ? `APP ACCOUNT · ${esc(addr.slice(0, 6))}…${esc(addr.slice(-6))}<small style="display:block;opacity:.7">fund this address to claim</small>`
+    : `${esc(addr.slice(0, 6))}…${esc(addr.slice(-6))}`;
   // The Polkadot app connects the account that IS your identity, so if it owns a
   // registered handle we can recognise you and point the machine at YOUR mask.
   const me = D.users.find((u) => u.owner === truncOwner(addr));

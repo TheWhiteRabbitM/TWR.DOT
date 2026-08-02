@@ -69,17 +69,40 @@ function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise<T> {
   return Promise.race([p, new Promise<T>((_, r) => setTimeout(() => r(new Error(`${what} timed out`)), ms))]);
 }
 
-/** Turn a `.tx()` failure result into a reason worth showing. The SDK puts the
- *  detail in `.error`/`.dispatchError`, not always in a string, so dig it out. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function safeJson(v: any): string {
+  if (v == null) return '';
+  try {
+    return JSON.stringify(v, (_k, x) => (typeof x === 'bigint' ? x.toString() : x));
+  } catch {
+    return String(v);
+  }
+}
+
+/** Turn a `.tx()` failure result into a reason worth showing.
+ *
+ *  The SDK answers with `err(Error)`, and `Error.prototype.message` is a
+ *  NON-ENUMERABLE own property — so JSON.stringify()ing the error drops the one
+ *  field that says what happened, leaving `{"isSdkError":true,"source":"tx"}`.
+ *  Read the message first and fall back to the structured fields. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function revertReason(res: any): string {
-  const raw = res?.dispatchError ?? res?.error ?? res?.formatted ?? res?.value ?? res;
-  let d: string;
-  try {
-    d = typeof raw === 'string' ? raw : JSON.stringify(raw, (_k, v) => (typeof v === 'bigint' ? v.toString() : v));
-  } catch {
-    d = String(raw);
-  }
+  const e = res?.error ?? res;
+  const bits = [
+    e?.message,
+    e?.name,
+    e?.formatted ?? res?.formatted,
+    typeof (e?.dispatchError ?? res?.dispatchError) === 'string'
+      ? (e?.dispatchError ?? res?.dispatchError)
+      : safeJson(e?.dispatchError ?? res?.dispatchError),
+  ].filter(Boolean);
+  const d = bits.join(' | ') || safeJson(res);
+
+  if (/SigningRejected|rejected|cancel/i.test(d)) return 'You cancelled the signature.';
+  if (/Timeout/i.test(d)) return 'Timed out waiting for the block — the claim may still land. Reopen in a moment before retrying.';
+  if (/SignerMissing|no signer/i.test(d)) return 'No account connected — reopen peoplebook inside the Polkadot app.';
+  if (/Inability to pay|Invalid Transaction/i.test(d)) return 'The signing account cannot pay the fee. Top it up with a little PAS and retry.';
+  if (/PermissionDenied|permission/i.test(d)) return 'The Polkadot app refused the request — check peoplebook’s permissions.';
   if (/HandleTaken|taken/i.test(d)) return 'This mask has already been claimed.';
   if (/Underpaid/i.test(d)) return 'The payment did not clear the price.';
   if (/TransferFailed/i.test(d)) return 'Not enough PAS: your account can’t send the payment and stay above its minimum balance. Top up a little PAS and retry.';
@@ -92,36 +115,115 @@ function revertReason(res: any): string {
 /* ------------------------------------------------------------- the signer */
 
 let slot: Promise<Slot | null> | null = null;
+export type SignerKind = 'wallet' | 'app';
 type Slot = {
-  manager: import('@parity/product-sdk-signer').SignerManager;
-  account: import('@parity/product-sdk-signer').SignerAccount;
+  address: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  signer: any;
+  /** 'wallet' = one of the user's own accounts; 'app' = the host-derived one. */
+  kind: SignerKind;
+  name?: string;
 };
 
+/**
+ * Pick the account that will sign and PAY.
+ *
+ * The obvious call — `new SignerManager({ dappName })` — never touches the
+ * user's wallet: the host derives an APP-SCOPED account for peoplebook.dot and
+ * hands that back. Nobody ever funds that account, so a paid claim dies with
+ * `Revive.TransferFailed` no matter how low the price goes, and the mask would
+ * be minted to an address the person cannot see. So go through the accounts
+ * provider directly and prefer the user's REAL accounts (`getLegacyAccounts`),
+ * choosing the best-funded one; the app-scoped account is only a fallback for
+ * hosts that expose no wallet accounts at all.
+ */
 async function connect(): Promise<Slot | null> {
-  const [host, signerPkg] = await Promise.all([
+  const [host, papi] = await Promise.all([
     import('@parity/product-sdk-host'),
-    import('@parity/product-sdk-signer'),
+    import('polkadot-api'),
   ]);
   if (!(await host.isInsideContainer().catch(() => false))) return null; // no host, no claim
 
-  const manager = new signerPkg.SignerManager({ dappName: 'peoplebook.dot' });
-  await withTimeout(manager.connect(), CONNECT_MS, 'wallet').catch(() => undefined);
-  const deadline = Date.now() + ACCOUNT_MS;
-  let account: import('@parity/product-sdk-signer').SignerAccount | null = null;
-  for (;;) {
-    const s = manager.getState();
-    if (s.selectedAccount) { account = s.selectedAccount; break; }
-    const first = s.accounts[0];
-    if (first) { const p = manager.selectAccount(first.address); if (p.ok) { account = p.value; break; } }
-    if (Date.now() > deadline) break;
-    await new Promise((r) => setTimeout(r, 250));
-  }
-  return account ? { manager, account } : null;
+  // The provider's methods answer with a ResultAsync (thenable, not a Promise),
+  // so this boundary is deliberately untyped.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ap: any = await withTimeout(host.getAccountsProvider() as any, CONNECT_MS, 'wallet').catch(() => null);
+  if (!ap) return null;
+  const ss58 = (pk: Uint8Array) => papi.AccountId().dec(pk) as string;
+
+  // The user's own accounts first.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const r: any = await withTimeout(Promise.resolve(ap.getLegacyAccounts()), ACCOUNT_MS, 'accounts');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const accounts: any[] = (r?.value ?? []).filter((a: { publicKey?: Uint8Array }) => a?.publicKey);
+    if (accounts.length) {
+      const best = await richest(accounts.map((a: any) => ({ ...a, address: ss58(a.publicKey) })));
+      return { address: best.address, signer: ap.getLegacyAccountSigner({ publicKey: best.publicKey, name: best.name }), kind: 'wallet', name: best.name };
+    }
+  } catch { /* fall through to the app account */ }
+
+  // Fallback: the app-scoped account. It works, but it starts empty, so the UI
+  // has to say so rather than letting a claim fail with a cryptic revert.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const r: any = await withTimeout(Promise.resolve(ap.getProductAccount('peoplebook.dot', 0)), ACCOUNT_MS, 'app account');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pa: any = r?.value;
+    if (pa) {
+      const address = pa.address ?? (pa.publicKey ? ss58(pa.publicKey) : null);
+      if (address) return { address, signer: ap.getProductAccountSigner(pa), kind: 'app' };
+    }
+  } catch { /* no account at all */ }
+  return null;
 }
 
+/** Of the user's accounts, the one that can actually pay. Balance reads are best
+ *  effort — if they all fail we just take the first, which is the old behaviour. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function richest<T extends { address: string } & Record<string, any>>(accounts: T[]): Promise<T> {
+  if (accounts.length === 1) return accounts[0];
+  try {
+    const [papi, descriptors, host] = await Promise.all([
+      import('polkadot-api'),
+      import('@parity/product-sdk-descriptors/devnet-asset-hub'),
+      import('@parity/product-sdk-host'),
+    ]);
+    const provider = await withTimeout(host.getHostProvider(GENESIS as `0x${string}`), CONNECT_MS, 'chain');
+    if (!provider) return accounts[0];
+    const api = papi.createClient(provider).getTypedApi(descriptors.devnet_asset_hub);
+    const withBalance = await Promise.all(
+      accounts.slice(0, 6).map(async (a) => {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const acc: any = await withTimeout(api.query.System.Account.getValue(a.address), 6_000, 'balance');
+          return { a, free: BigInt(acc?.data?.free ?? 0) };
+        } catch {
+          return { a, free: 0n };
+        }
+      }),
+    );
+    withBalance.sort((x, y) => (y.free > x.free ? 1 : y.free < x.free ? -1 : 0));
+    return withBalance[0].a;
+  } catch {
+    return accounts[0];
+  }
+}
+
+/** Only a SUCCESSFUL connection is memoised. Caching a failure would make one
+ *  bad boot permanent: every later retry would return the same dead session. */
 function getSlot(): Promise<Slot | null> {
-  if (!slot) slot = connect().catch(() => null);
+  if (!slot) {
+    slot = connect().catch(() => null);
+    void slot.then((s) => { if (!s) slot = null; });
+  }
   return slot;
+}
+
+/** Which account is signing, for the UI: a real wallet account or the app's. */
+export async function signerInfo(): Promise<{ address: string; kind: SignerKind; name?: string } | null> {
+  const s = await getSlot().catch(() => null);
+  return s ? { address: s.address, kind: s.kind, name: s.name } : null;
 }
 
 /** Start connecting early — the host handshake takes seconds it can spend while
@@ -133,7 +235,7 @@ export function warmUp(): void {
 /** The connected account's address, or null when there is no host/wallet. */
 export async function walletAddress(): Promise<string | null> {
   const s = await getSlot().catch(() => null);
-  return s?.account.address ?? null;
+  return s?.address ?? null;
 }
 
 /* ----------------------------------------------- a bound contract handle */
@@ -155,7 +257,7 @@ async function freeBalance(b: Bound): Promise<bigint | null> {
   try {
     const api = b.client.getTypedApi(b.descriptors.devnet_asset_hub);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const acc: any = await withTimeout(api.query.System.Account.getValue(b.slot.account.address), 8_000, 'balance');
+    const acc: any = await withTimeout(api.query.System.Account.getValue(b.slot.address), 8_000, 'balance');
     const free = acc?.data?.free;
     return typeof free === 'bigint' ? free : free != null ? BigInt(free) : null;
   } catch {
@@ -184,20 +286,18 @@ async function bind(): Promise<Bound | null> {
   const client = papi.createClient(provider);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const runtime = (contracts as any).createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
-  const signer = s.manager.getSigner();
-  if (!signer) return null;
 
   // pallet-revive rejects an unmapped origin; a fresh account is unmapped. This
   // maps it the first time only.
   await withTimeout(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (contracts as any).ensureContractAccountMapped(runtime, s.account.address, signer),
+    (contracts as any).ensureContractAccountMapped(runtime, s.address, s.signer),
     30_000,
     'account mapping',
   ).catch(() => undefined);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const contract = (contracts as any).createContract(runtime, ADDRESS, ABI, { signerManager: s.manager });
+  const contract = (contracts as any).createContract(runtime, ADDRESS, ABI, { signer: s.signer });
   return { contract, slot: s, client, descriptors };
 }
 
@@ -221,7 +321,13 @@ export async function claim(
   if (free !== null && free < VALUE_PLANCK + MARGIN_PLANCK) {
     return {
       ok: false,
-      why: `Not enough PAS. ${b.slot.account.address.slice(0, 6)}…${b.slot.account.address.slice(-6)} holds ${asPas(free)}; a claim needs about ${asPas(VALUE_PLANCK + MARGIN_PLANCK)} (0.1 to mint, the rest for the fee and storage deposit). Top it up from the devnet faucet and try again.`,
+      why:
+        `Not enough PAS. ${b.slot.kind === 'app' ? 'peoplebook’s app account' : 'Your account'} ` +
+        `${b.slot.address} holds ${asPas(free)}; a claim needs about ${asPas(VALUE_PLANCK + MARGIN_PLANCK)} ` +
+        `(0.1 to mint, the rest for the fee and storage deposit). ` +
+        (b.slot.kind === 'app'
+          ? 'This is an address the Polkadot app derived for peoplebook, not your wallet — send it a little PAS from your wallet, then try again.'
+          : 'Top it up from the devnet faucet and try again.'),
     };
   }
 
