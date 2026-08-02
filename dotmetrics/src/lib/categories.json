@@ -825,6 +825,14 @@
     "confidence": "none",
     "why": []
   },
+  "wheeloffortune": {
+    "category": "curiosities",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "fortune~"
+    ]
+  },
   "wudcommunity": {
     "category": "social",
     "source": "derived:manifest",
