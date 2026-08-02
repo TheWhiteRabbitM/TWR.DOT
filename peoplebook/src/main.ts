@@ -2,7 +2,7 @@
  * peoplebook — COIN-OP // THE MASK MACHINE
  *
  * The directory and the generated masks are static; the CLAIM is real. You crank
- * the machine, it takes 0.1 PAS through the wallet, the contract mints an NFT and
+ * the machine, it costs nothing but gas, the contract mints an NFT and
  * rolls its rarity on chain, and a capsule cracks open into a foil card. Once you
  * own a mask you can attach your links (Telegram, X, a bio) — written on chain by
  * the token owner via setProfile, and shown on the card. Claimed handles carry the
@@ -10,12 +10,15 @@
  */
 import './style.css';
 import data from './data.json';
-import { claim, setProfile, warmUp, signerInfo, type ClaimStep, type Socials } from './claim';
+import { claim, setProfile, warmUp, signerInfo, myMask, type ClaimStep, type Socials } from './claim';
+
+/** The mask this account holds — the app is about YOURS, not a handle you pick. */
+let MINE: { id: number; tier: number; verified: string; socials: Socials } | null = null;
+let MYADDR = '';
 
 type User = { name: string; owner: string; tier?: number; social?: Socials };
 const D = data as { chain: string; genesis: string; contract: string; stats: Record<string, number>; users: User[] };
 const N = D.users.length;
-const byName = new Map(D.users.map((u) => [u.name, u]));
 
 const app = document.getElementById('app')!;
 const esc = (s: string) =>
@@ -61,8 +64,6 @@ const DIAL = [
   { cls: 'epi', base: 10, boost: 15 },
   { cls: 'leg', base: 3, boost: 5 },
 ];
-const claimed = new Map<string, number>(); // handle -> tier, from chain + this session
-for (const u of D.users) if (typeof u.tier === 'number') claimed.set(u.name, u.tier);
 
 const split = (name: string): [string, string] => {
   const m = name.match(/^(.*?)(\.[0-9]+)$/);
@@ -70,9 +71,6 @@ const split = (name: string): [string, string] => {
 };
 const tgUrl = (h: string) => 'https://t.me/' + encodeURIComponent(h.replace(/^@/, ''));
 const xUrl = (h: string) => 'https://x.com/' + encodeURIComponent(h.replace(/^@/, ''));
-/** Same truncation the build uses on People owners, so a connected account can
- *  be matched back to its handle: first6…last6. */
-const truncOwner = (s: string) => (s.length > 14 ? s.slice(0, 6) + '…' + s.slice(-6) : s);
 
 /* ---- page ---- */
 const dialSegs = (boost: boolean) => DIAL.map((d) => `<span class="seg ${d.cls}" style="flex-basis:${boost ? d.boost : d.base}%"></span>`).join('');
@@ -89,14 +87,14 @@ app.innerHTML = `
           <div class="odds-dial">${dialSegs(false)}</div>
         </div>
         <div class="controls">
-          <div class="slot"><span class="slotmouth"></span><span class="slotlbl">INSERT<br>0.1 PAS</span></div>
+          <div class="slot"><span class="slotmouth"></span><span class="slotlbl">FREE<br>PLAY</span></div>
           <button class="pull" id="crank">TURN<small>crank a random mask</small></button>
         </div>
         <div class="tray" id="tray"></div>
       </div>
       <div class="pitch">
         <h1 class="headline">Claim your<br>mask.</h1>
-        <p class="lede">167 handles on the devnet — every one wears a generated mask. Crank yours on chain for <span class="pas">0.1 PAS</span> and the machine rolls its rarity. Own a <b>.dot</b>? Slot it in for better odds. Then pin your <b>Telegram</b> and <b>X</b> to it.</p>
+        <p class="lede">167 handles on the devnet — every one wears a generated mask. Crank yours on chain — <span class="pas">free</span>, you only sign — and the machine rolls its rarity. Own a <b>.dot</b>? Slot it in for better odds. Then pin your <b>Telegram</b> and <b>X</b> to it.</p>
         <div class="connect" id="wallet"><span class="led"></span><span id="wtext">CONNECT</span></div>
         <div class="scoreboard" id="hud"></div>
       </div>
@@ -109,10 +107,7 @@ app.innerHTML = `
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input id="q" type="search" placeholder="Find a handle" autocomplete="off" spellcheck="false" aria-label="Search handles">
         </label>
-        <div class="switches" id="switches">
-          <button data-f="" class="on">All</button><button data-f="sealed">Unclaimed</button><button data-f="claimed">Claimed</button>
-          <button data-f="0">Leg</button><button data-f="1">Epic</button><button data-f="2">Rare</button><button data-f="3">Unc</button><button data-f="4">Com</button>
-        </div>
+
       </div>
       <div class="binder" id="grid"></div>
     </section>
@@ -143,7 +138,7 @@ app.innerHTML = `
         <div class="plabel">Bio</div><input id="pbio" placeholder="one line about you" maxlength="160" autocomplete="off">
         <button class="psave" id="psave">Save links to chain</button>
       </div>
-      <button class="pull small" id="lbgo">TURN · 0.1 PAS</button>
+      <button class="pull small" id="lbgo">TURN</button>
       <div class="acts" id="acts" hidden></div>
     </div>
   </div>`;
@@ -162,7 +157,6 @@ function hud() {
     [D.stats.people, 'recognised people', 0],
     [N, 'registered handles', 0],
     [D.stats.activeMembers, 'active ring members', 0],
-    [claimed.size, 'avatars claimed', 1],
   ].map(([v, l, hot]) => `<div class="cell${hot ? ' hot' : ''}"><b data-n="${v}">0</b><span>${l}</span></div>`).join('');
   el.querySelectorAll<HTMLElement>('.cell b[data-n]').forEach((b) => {
     const target = +b.dataset.n!;
@@ -177,10 +171,6 @@ function hud() {
 const grid = document.getElementById('grid')!;
 const countEl = document.getElementById('count')!;
 const q = document.getElementById('q') as HTMLInputElement;
-const switches = document.getElementById('switches')!;
-let curFilter = '';
-/** The handle that belongs to the connected identity, once recognised. */
-let myHandle: string | null = null;
 
 function socialChips(u: User): string {
   const s = u.social;
@@ -190,35 +180,22 @@ function socialChips(u: User): string {
   if (s.x) bits.push(`<a class="social" href="${esc(xUrl(s.x))}" target="_blank" rel="noopener">𝕏 ${esc(s.x)}</a>`);
   return bits.join('');
 }
+/** A row in the directory. Read-only on purpose: these are people who registered
+ *  a handle on the People chain, and a mask now belongs to an account rather
+ *  than to a name — so there is nothing here to claim, and nothing to squat. */
 function card(u: User, i: number): string {
   const [b, s] = split(u.name);
-  const t = claimed.get(u.name);
-  const isYou = u.name === myHandle;
-  const cls = (t !== undefined ? `card claimed t${t}` : 'card unclaimed') + (isYou ? ' you' : '');
+  const cls = 'card unclaimed';
   const style = `animation-delay:${Math.min(i * 10, 380)}ms`;
-  let foot: string;
-  if (t !== undefined) {
-    const chips = socialChips(u);
-    foot = `<span class="gem">${TIERS[t].name}</span><div class="socials">${chips}<button class="editlinks" data-edit="${esc(u.name)}">${chips ? 'Edit' : '+ Links'}</button></div>`;
-  } else {
-    foot = `<button class="claimbtn" data-claim="${esc(u.name)}">Crank · 0.1 PAS</button>`;
-  }
+  const foot = socialChips(u);
   return `<div class="sleeve" style="${style}"><div class="${cls}"><div class="tab"></div>
-    ${isYou ? '<span class="youtag">YOU</span>' : ''}
     <div class="art">${avatar(u.name)}</div>
     <div class="who"><div class="handle">${esc(b)}<span class="sfx">${esc(s)}</span></div><div class="owner">${esc(u.owner)}</div></div>
     <div class="foot">${foot}</div></div></div>`;
 }
 function visible(): User[] {
-  const t = q.value.trim().toLowerCase(), f = curFilter;
-  return D.users.filter((u) => {
-    if (t && !u.name.toLowerCase().includes(t)) return false;
-    const c = claimed.get(u.name);
-    if (f === 'sealed') return c === undefined;
-    if (f === 'claimed') return c !== undefined;
-    if (f) return String(c) === f;
-    return true;
-  });
+  const t = q.value.trim().toLowerCase();
+  return t ? D.users.filter((u) => u.name.toLowerCase().includes(t)) : D.users;
 }
 function render() {
   const list = visible();
@@ -261,7 +238,7 @@ function loop() {
 const STEP_TEXT: Record<ClaimStep, string> = {
   connecting: 'Connecting your wallet…',
   preparing: 'Loading the capsule…',
-  signing: 'Approve the 0.1 PAS payment in your wallet…',
+  signing: 'Approve the claim in your wallet…',
   minting: 'Cranking the machine…',
   done: '',
 };
@@ -287,12 +264,14 @@ function reveal(handle: string, tier: number) {
 }
 
 /* open the chamber in 'claim' (sealed → crank) or 'edit' (owned mask → links) */
-function openSheet(handle: string, mode: 'claim' | 'edit') {
-  current = handle;
-  const [b, s] = split(handle);
+function openSheet(mode: 'claim' | 'edit') {
+  current = MYADDR;
+  // The chamber is always about YOUR mask now, so it is titled by the name you
+  // proved rather than by a handle you picked off a list.
+  const [b, s] = MINE?.verified ? [MINE.verified, '.dot'] : ['your mask', ''];
   sizeFx(); lb.classList.add('on');
   sheet.classList.remove('rolling'); sheet.style.removeProperty('--tc');
-  document.getElementById('cback')!.innerHTML = avatar(handle) + '<span class="seal">SEALED</span>';
+  document.getElementById('cback')!.innerHTML = avatar(MYADDR || 'you') + '<span class="seal">SEALED</span>';
   document.getElementById('cfront')!.innerHTML = '';
   document.getElementById('cc')!.classList.remove('flipped');
   document.getElementById('burst')!.hidden = true;
@@ -303,11 +282,10 @@ function openSheet(handle: string, mode: 'claim' | 'edit') {
   prof.hidden = true;
 
   if (mode === 'edit') {
-    const t = claimed.get(handle) ?? 4;
-    reveal(handle, t);
-    ptg.value = byName.get(handle)?.social?.telegram ?? '';
-    px.value = byName.get(handle)?.social?.x ?? '';
-    pbio.value = byName.get(handle)?.social?.bio ?? '';
+    reveal(MYADDR, MINE?.tier ?? 4);
+    ptg.value = MINE?.socials.telegram ?? '';
+    px.value = MINE?.socials.x ?? '';
+    pbio.value = MINE?.socials.bio ?? '';
     prof.hidden = false;
     minidial.hidden = true; dotInput.hidden = true;
     goBtn.hidden = true;
@@ -316,16 +294,16 @@ function openSheet(handle: string, mode: 'claim' | 'edit') {
   } else {
     minidial.hidden = false; setDial(minidial, false);
     dotInput.hidden = false; dotInput.value = '';
-    goBtn.hidden = false; goBtn.disabled = false; goBtn.textContent = 'TURN · 0.1 PAS'; goBtn.dataset.mode = 'go';
+    goBtn.hidden = false; goBtn.disabled = false; goBtn.textContent = 'TURN'; goBtn.dataset.mode = 'go';
   }
 }
 
-async function runClaim(handle: string) {
+async function runClaim() {
   const stEl = document.getElementById('lbst')!;
   goBtn.disabled = true; dotInput.hidden = true; minidial.hidden = true;
   sheet.classList.add('rolling');
 
-  const res = await claim(handle, dotInput.value || undefined, (step) => { stEl.textContent = STEP_TEXT[step]; });
+  const res = await claim(dotInput.value || undefined, (step) => { stEl.textContent = STEP_TEXT[step]; });
   sheet.classList.remove('rolling');
 
   if (!res.ok) {
@@ -334,37 +312,37 @@ async function runClaim(handle: string) {
     return;
   }
 
-  claimed.set(handle, res.tier);
-  reveal(handle, res.tier);
-  stEl.textContent = 'Minted — your mask is yours. Pin your links (optional):';
+  MINE = { id: res.id, tier: res.tier, verified: res.verified, socials: { telegram: '', x: '', bio: '' } };
+  reveal(MYADDR, res.tier);
+  stEl.textContent = res.verified
+    ? `Minted — ${res.verified}.dot verified against the registry. Pin your links (optional):`
+    : 'Minted — bound to your account, and it cannot be moved. Pin your links (optional):';
   goBtn.hidden = true;
   ptg.value = ''; px.value = ''; pbio.value = '';
   prof.hidden = false; psave.disabled = false; psave.textContent = 'Save links to chain';
-  showActs(handle);
+  showActs();
   hud(); render();
 }
 
-function showActs(handle: string) {
+function showActs() {
   acts.hidden = false;
   acts.innerHTML = `<button class="primary" data-done="1">Done</button>`;
-  void handle;
 }
 
-async function runSave(handle: string) {
+async function runSave() {
   const stEl = document.getElementById('lbst')!;
   psave.disabled = true;
   const s: Socials = { telegram: ptg.value.trim(), x: px.value.trim(), bio: pbio.value.trim() };
-  const res = await setProfile(handle, s, (m) => { stEl.textContent = m; });
+  const res = await setProfile(s, (m) => { stEl.textContent = m; });
   if (!res.ok) {
     stEl.textContent = res.why;
     psave.disabled = false;
     return;
   }
-  const u = byName.get(handle);
-  if (u) u.social = { telegram: s.telegram.replace(/^@/, ''), x: s.x.replace(/^@/, ''), bio: s.bio };
+  if (MINE) MINE.socials = { telegram: s.telegram.replace(/^@/, ''), x: s.x.replace(/^@/, ''), bio: s.bio };
   stEl.textContent = 'Saved on chain ✓';
   psave.textContent = 'Saved ✓';
-  showActs(handle);
+  showActs();
   render();
 }
 
@@ -372,67 +350,52 @@ function closeLb() { lb.classList.remove('on'); parts = []; current = null; rend
 
 goBtn.addEventListener('click', () => {
   if (goBtn.dataset.mode === 'done') return closeLb();
-  if (current) runClaim(current);
+  runClaim();
 });
-psave.addEventListener('click', () => { if (current) runSave(current); });
+psave.addEventListener('click', () => { runSave(); });
 acts.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('[data-done]')) closeLb(); });
 document.getElementById('lbx')!.addEventListener('click', closeLb);
 dotInput.addEventListener('input', () => setDial(minidial, !!dotInput.value.trim()));
 lb.addEventListener('click', (e) => { if (e.target === lb) closeLb(); });
 addEventListener('resize', () => { if (lb.classList.contains('on')) sizeFx(); });
 
-grid.addEventListener('click', (e) => {
-  const t = e.target as HTMLElement;
-  const c = t.closest<HTMLElement>('[data-claim]');
-  if (c) return openSheet(c.dataset.claim!, 'claim');
-  const ed = t.closest<HTMLElement>('[data-edit]');
-  if (ed) return openSheet(ed.dataset.edit!, 'edit');
-});
 document.getElementById('crank')!.addEventListener('click', () => {
-  // If we've recognised the connected identity, crank goes straight to YOUR mask
-  // (claim it, or edit its links if you already own it). Otherwise, don't propose
-  // a stranger — send them to search for their own handle.
-  if (myHandle) return openSheet(myHandle, claimed.has(myHandle) ? 'edit' : 'claim');
-  document.querySelector('.registry')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  q.focus();
-  q.placeholder = 'type your handle to claim your mask';
+  // The machine only ever deals in YOUR mask: claim it, or edit its links if you
+  // already hold one. With no account connected there is nothing to crank.
+  if (!MYADDR) {
+    document.querySelector('.registry')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    return;
+  }
+  openSheet(MINE ? 'edit' : 'claim');
 });
 
-/** We recognised the connected account as a registered handle: make the whole
- *  machine about claiming YOUR mask instead of a random one. */
-function recognise(me: User) {
-  myHandle = me.name;
-  const [b, s] = split(me.name);
-  document.getElementById('wtext')!.innerHTML = `YOU · ${esc(b)}<span style="opacity:.6">${esc(s)}</span>`;
+/** Put the connected account, and whatever mask it holds, on the machine. */
+function showMine() {
   const crank = document.getElementById('crank')!;
-  crank.innerHTML = claimed.has(me.name)
-    ? `YOUR MASK<small>${esc(me.name)} · pin your links</small>`
-    : `CLAIM<small>your mask · ${esc(me.name)}</small>`;
-  render(); // re-render so your card shows the YOU marker + highlight
+  if (!MYADDR) { crank.innerHTML = 'TURN<small>open in the Polkadot app</small>'; return; }
+  crank.innerHTML = MINE
+    ? `YOUR MASK<small>${MINE.verified ? esc(MINE.verified) + '.dot · ' : ''}pin your links</small>`
+    : 'CLAIM<small>your mask · one per account</small>';
 }
 q.addEventListener('input', render);
-switches.addEventListener('click', (e) => {
-  const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-f]');
-  if (!btn) return;
-  curFilter = btn.dataset.f!;
-  switches.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === btn));
-  render();
-});
 
 document.getElementById('foot')!.innerHTML =
-  `Directory read from <code>Resources.usernameOwnerOf</code> on ${esc(D.chain)}. Masks are generated from the handle. ` +
-  `Claiming mints <a href="https://assethub-paseo.subscan.io/account/${esc(D.contract)}" target="_blank" rel="noopener">PeoplebookAvatars</a> ` +
-  `on the devnet Asset Hub — the rarity is rolled on chain, the image and your links live on chain. Not a judgement of anyone; addresses truncated.` +
-  `<span class="build">build ${esc(__BUILD__)} · 0.1 PAS</span>`;
+  `The directory is read from <code>Resources.usernameOwnerOf</code> on ${esc(D.chain)} — who registered a handle, nothing more. ` +
+  `Your mask is minted by <a href="https://assethub-paseo.subscan.io/account/0x03a484cCD0f1832084dEEFca4bF6438d79Fe8db6" target="_blank" rel="noopener">PeoplebookMasks</a> ` +
+  `on the devnet Asset Hub: one per account, generated from your address, and <b>not transferable</b> — so nobody can claim or buy someone else's identity. ` +
+  `A <b>.dot</b> is the one name provable here, so the contract checks it against the registry before showing it. Rarity is rolled on chain; the image and your links live on chain. Addresses truncated.` +
+  `<span class="build">build ${esc(__BUILD__)} · free</span>`;
 
 /* boot */
 hud();
 render();
 warmUp();
-signerInfo().then((info) => {
+showMine();
+signerInfo().then(async (info) => {
   const w = document.getElementById('wallet')!, t = document.getElementById('wtext')!;
   if (!info) { t.textContent = 'OPEN IN THE POLKADOT APP'; return; }
   const { address: addr, kind } = info;
+  MYADDR = addr;
   w.classList.add('on');
   // Say WHICH account pays. An app-scoped account is one the host derives for
   // peoplebook — it is not the wallet the person funded, so a claim from it
@@ -440,8 +403,8 @@ signerInfo().then((info) => {
   t.innerHTML = kind === 'app'
     ? `APP ACCOUNT · ${esc(addr.slice(0, 6))}…${esc(addr.slice(-6))}<small style="display:block;opacity:.7">fund this address to claim</small>`
     : `${esc(addr.slice(0, 6))}…${esc(addr.slice(-6))}`;
-  // The Polkadot app connects the account that IS your identity, so if it owns a
-  // registered handle we can recognise you and point the machine at YOUR mask.
-  const me = D.users.find((u) => u.owner === truncOwner(addr));
-  if (me) recognise(me);
+  // Whatever mask this account already holds, so the machine opens on yours.
+  MINE = await myMask().catch(() => null);
+  showMine();
+  hud();
 });

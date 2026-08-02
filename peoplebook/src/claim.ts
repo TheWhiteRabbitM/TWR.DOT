@@ -2,7 +2,7 @@
  * The on-chain claim + profile writes.
  *
  * Claiming mints a PeoplebookAvatars NFT to the caller on the devnet Asset Hub,
- * pays the contract's `price()` (1 PAS), and the contract rolls the rarity at
+ * pays the contract's `price()` (currently 0 — free), and it rolls the rarity at
  * mint. Once you own a mask you can attach social links to it (Telegram, X, a
  * one-line bio) with setProfile — the contract only lets the token's owner do
  * it, so a profile is always vouched for by whoever holds the mask.
@@ -24,17 +24,17 @@
 import { keccak_256 } from '@noble/hashes/sha3';
 import ABI from './abi.json';
 
-const ADDRESS = '0xA56Fab4B4900FcccCd6ca8B064d8663eDfaa5bac';
+const ADDRESS = '0x03a484cCD0f1832084dEEFca4bF6438d79Fe8db6';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
 /** 0.1 PAS in native planck (10 decimals). msg.value inside the contract = ×1e8,
  *  so this clears a price of 1e17. Kept low so a modestly-funded devnet account
  *  can send it and still stay above its existential deposit — a 1 PAS value on a
  *  ~1 PAS balance fails with Revive.TransferFailed. */
-const VALUE_PLANCK = 1_000_000_000n;
+const VALUE_PLANCK = 0n;
 /** What a claim needs on top of the price: fee + storage deposit + the account's
  *  minimum balance. Deliberately generous — the point is a clear refusal instead
  *  of a `Revive.TransferFailed` after the wallet already asked for a signature. */
-const MARGIN_PLANCK = 2_500_000_000n;
+const MARGIN_PLANCK = 0n;
 const ZERO_NODE = ('0x' + '00'.repeat(32)) as `0x${string}`;
 
 const CONNECT_MS = 12_000;
@@ -43,7 +43,7 @@ const CLAIM_MS = 120_000;
 
 export type ClaimStep = 'connecting' | 'preparing' | 'signing' | 'minting' | 'done';
 export type ClaimResult =
-  | { ok: true; tier: number }
+  | { ok: true; tier: number; id: number; verified: string }
   | { ok: false; why: string };
 
 export type Socials = { telegram: string; x: string; bio: string };
@@ -303,9 +303,21 @@ async function bind(): Promise<Bound | null> {
 
 /* -------------------------------------------------------------- the claim */
 
+/**
+ * Claim THE mask for this account — one each, and it cannot be transferred.
+ *
+ * There is deliberately no handle argument any more. The first contract took any
+ * handle string, which meant anyone could claim someone else's devnet identity
+ * (and, through chirp, post as them); devnet handles live on the People chain,
+ * which this contract cannot read, so there was no way to check. Removing the
+ * name removes the thing worth squatting.
+ *
+ * A  label IS provable here: the contract recomputes its namehash and asks
+ * the registry who owns it, records it only if that is you, and shifts the rarity
+ * roll toward the rare end as a reward for a proven name.
+ */
 export async function claim(
-  handle: string,
-  dotName: string | undefined,
+  dotLabel: string | undefined,
   onStep: (s: ClaimStep) => void,
 ): Promise<ClaimResult> {
   onStep('connecting');
@@ -313,37 +325,18 @@ export async function claim(
   if (!b) return { ok: false, why: 'No wallet — open peoplebook inside the Polkadot app to claim.' };
   const { contract } = b;
 
-  // Refuse early if the account plainly cannot pay. Sending the value has to
-  // leave enough behind for the fee, the storage deposit and the account's
-  // minimum balance; when it doesn't, the chain answers `Revive.TransferFailed`,
-  // which reads like a bug rather than "you need more PAS".
-  const free = await freeBalance(b);
-  if (free !== null && free < VALUE_PLANCK + MARGIN_PLANCK) {
-    return {
-      ok: false,
-      why:
-        `Not enough PAS. ${b.slot.kind === 'app' ? 'peoplebook’s app account' : 'Your account'} ` +
-        `${b.slot.address} holds ${asPas(free)}; a claim needs about ${asPas(VALUE_PLANCK + MARGIN_PLANCK)} ` +
-        `(0.1 to mint, the rest for the fee and storage deposit). ` +
-        (b.slot.kind === 'app'
-          ? 'This is an address the Polkadot app derived for peoplebook, not your wallet — send it a little PAS from your wallet, then try again.'
-          : 'Top it up from the devnet faucet and try again.'),
-    };
-  }
-
   onStep('preparing');
-  const node = dotName ? namehash(dotName) : ZERO_NODE;
+  const label = (dotLabel ?? '').trim().toLowerCase().replace(/[.]dot$/, '');
 
   onStep('signing');
-  // EXPLICIT LIMITS skip .tx()'s own dry-run so the wallet actually prompts (a
-  // short estimate otherwise reverts OutOfGas before any signature). Unused
-  // weight isn't charged; the storage deposit is reserved, not spent.
+  // Explicit limits skip .tx()'s own dry-run, which comes back short and would
+  // revert OutOfGas before the wallet is ever asked to sign. Claiming is free,
+  // so no value rides along.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let res: any;
   try {
     res = await withTimeout(
-      contract.claim.tx(handle, node, {
-        value: VALUE_PLANCK,
+      contract.claim.tx(label, {
         gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
         storageDepositLimit: 10n ** 18n,
       }),
@@ -357,30 +350,47 @@ export async function claim(
   }
 
   onStep('minting');
-  // `.tx()` reports a dispatch failure in its RESULT, not by throwing — surface
-  // the real reason instead of a blank "tx not ok". A revert is deterministic,
-  // so there is nothing to retry.
   if (res && res.ok === false) return { ok: false, why: revertReason(res) };
 
-  // Read the rolled tier back for this handle.
   try {
-    const id = (await contract.tokenOfHandle.query(keyOf(handle)))?.value;
+    const id = (await contract.maskOf.query(b.slot.address))?.value;
     const tier = (await contract.tierOf.query(id))?.value;
+    const verified = String((await contract.verifiedName.query(id))?.value ?? '');
     onStep('done');
-    return { ok: true, tier: Number(tier) };
+    return { ok: true, tier: Number(tier), id: Number(id), verified };
   } catch {
     onStep('done');
-    return { ok: true, tier: 4 }; // minted; couldn't read the tier back — treat as common visually
+    return { ok: true, tier: 4, id: 0, verified: '' };
+  }
+}
+
+/** The mask this account holds, if any — so the page can open on your own mask. */
+export async function myMask(): Promise<{ id: number; tier: number; verified: string; socials: Socials } | null> {
+  const b = await bind().catch(() => null);
+  if (!b) return null;
+  try {
+    const id = Number((await b.contract.maskOf.query(b.slot.address))?.value ?? 0);
+    if (!id) return null;
+    const tier = Number((await b.contract.tierOf.query(BigInt(id)))?.value ?? 4);
+    const verified = String((await b.contract.verifiedName.query(BigInt(id)))?.value ?? '');
+    let socials: Socials = { telegram: '', x: '', bio: '' };
+    try {
+      const p = (await b.contract.profileOf.query(BigInt(id)))?.value;
+      const g = (k: string, i: number) => String((Array.isArray(p) ? p[i] : (p as Record<string, unknown>)?.[k]) ?? '');
+      socials = { telegram: g('telegram', 0), x: g('x', 1), bio: g('bio', 2) };
+    } catch { /* no profile yet */ }
+    return { id, tier, verified, socials };
+  } catch {
+    return null;
   }
 }
 
 /* ------------------------------------------------------------- the profile */
 
-/** Attach Telegram / X / bio to a mask you own. The contract enforces that only
- *  the token owner can write, so a non-owner gets a clean rejection. Editing is
- *  free — no mint price, just gas. Empty strings clear a field. */
+/** Attach Telegram / X / bio to YOUR mask. The contract keys the profile off the
+ *  caller's own mask, so there is no id to pass and no way to write someone
+ *  else's. Free — just gas. Empty strings clear a field. */
 export async function setProfile(
-  handle: string,
   s: Socials,
   onStatus: (msg: string) => void,
 ): Promise<ProfileResult> {
@@ -389,40 +399,26 @@ export async function setProfile(
   if (!b) return { ok: false, why: 'No wallet — open peoplebook inside the Polkadot app.' };
   const { contract } = b;
 
-  let id: bigint;
-  try {
-    const raw = (await contract.tokenOfHandle.query(keyOf(handle)))?.value;
-    id = BigInt(raw ?? 0);
-  } catch {
-    return { ok: false, why: 'Could not read this mask on chain.' };
-  }
-  if (!id) return { ok: false, why: 'This mask has not been claimed yet.' };
-
   const tg = (s.telegram || '').replace(/^@/, '').slice(0, 32);
   const x = (s.x || '').replace(/^@/, '').slice(0, 32);
   const bio = (s.bio || '').slice(0, 160);
 
   onStatus('Approve the update in your wallet…');
   try {
-    // Explicit limits skip the dry-run so the wallet actually prompts (same
-    // reason as claim()); setProfile isn't payable, so no value.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res: any = await withTimeout(
-      contract.setProfile.tx(id, tg, x, bio, {
+      contract.setProfile.tx(tg, x, bio, {
         gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
         storageDepositLimit: 10n ** 18n,
       }),
       CLAIM_MS,
       'setProfile',
     );
-    if (res?.ok === false) {
-      const raw = res.dispatchError ?? res.error ?? res.formatted ?? res;
-      throw new Error(typeof raw === 'string' ? raw : JSON.stringify(raw, (_k, v) => (typeof v === 'bigint' ? v.toString() : v)));
-    }
+    if (res?.ok === false) return { ok: false, why: revertReason(res) };
   } catch (e) {
     const m = String((e as Error).message || e);
     if (/rejected|cancel/i.test(m)) return { ok: false, why: 'You cancelled the signature.' };
-    if (/NotOwner|not owner|owner/i.test(m)) return { ok: false, why: 'Only the mask owner can edit its links.' };
+    if (/NoMask/i.test(m)) return { ok: false, why: 'Claim your mask first.' };
     if (/BadProfile|invalid/i.test(m)) return { ok: false, why: 'Those links have characters the chain won’t store.' };
     return { ok: false, why: m.slice(0, 120) || 'The update did not land.' };
   }
