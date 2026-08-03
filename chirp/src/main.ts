@@ -17,7 +17,7 @@ import { keccak_256 } from '@noble/hashes/sha3';
 import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
-  claimMask, saveProfile, suggestedName, forgetWho,
+  claimMask, saveProfile, suggestedName, forgetWho, connections,
   CHIRP, MASKS, type Post, type Me, type Who,
 } from './chain';
 
@@ -93,7 +93,8 @@ const I = {
 /* -------------------------------------------------------------------- state */
 type View =
   | { k: 'home' } | { k: 'search' } | { k: 'notif' }
-  | { k: 'profile'; mask: number } | { k: 'thread'; id: number };
+  | { k: 'profile'; mask: number } | { k: 'thread'; id: number }
+  | { k: 'people'; mask: number; of: 'followers' | 'following' };
 
 let ME: Me | null = null;
 let ALL: Post[] = [];
@@ -113,6 +114,10 @@ let flash: { text: string; bad?: boolean } | null = null;
 /** How much of the feed is loaded. The chain has no cursor, so this is simply
  *  how far back from the newest chirp we have read. */
 let page = 25;
+let CONN: { followers: Who[]; followingList: Who[] } = { followers: [], followingList: [] };
+/** True while a refresh is in flight, so the header can say so instead of the
+ *  app looking frozen. */
+let busy = false;
 
 /** What you were writing, kept across a failed signature and a closed app. A
  *  post that costs a signature must not be able to eat the text you typed. */
@@ -235,15 +240,35 @@ function profileView(): string {
       ${x ? `<a href="https://x.com/${encodeURIComponent(x)}" target="_blank" rel="noopener">𝕏 ${esc(x)}</a>` : ''}
       <span class="tier t${who.tier}">${TIERS[who.tier]}</span>
     </div>
-    <div class="pstats"><b>${followers}</b> followers · <b>${posts.length}</b> chirps</div>
+    <div class="pstats">
+      <a data-conn="followers" data-mask="${who.mask}"><b>${followers}</b> followers</a> ·
+      <a data-conn="following" data-mask="${who.mask}"><b>${CONN.followingList.length}</b> following</a> ·
+      <b>${posts.length}</b> chirps
+    </div>
   </section>` + list(posts, 'No chirps yet.');
 }
 
+function peopleView(): string {
+  if (view.k !== 'people') return '';
+  const rows = view.of === 'followers' ? CONN.followers : CONN.followingList;
+  return `<div class="sechead">${view.of === 'followers' ? 'Followers' : 'Following'}</div>`
+    + (rows.length ? rows.map((w) => personRow(w)).join('')
+      : `<div class="note">${view.of === 'followers' ? 'Nobody yet.' : 'Not following anyone yet.'}</div>`);
+}
+
 function threadView(): string {
+  // Replies to replies are shown indented under the one they answer, so a
+  // conversation reads as a conversation instead of a flat pile.
+  const byParent = new Map<number, Post[]>();
+  for (const r of ALL) if (r.replyTo) byParent.set(r.replyTo, [...(byParent.get(r.replyTo) ?? []), r]);
+  const branch = (id: number, depth: number): string =>
+    (byParent.get(id) ?? []).map((r) =>
+      `<div class="branch" style="--d:${Math.min(depth, 4)}">${card(r)}</div>` + branch(r.id, depth + 1)).join('');
   return TH.parents.map((p) => card(p)).join('')
     + (TH.post ? card(TH.post, true) : '')
     + `<div class="sechead">Replies</div>`
-    + list(TH.replies, 'No replies yet. Be the first.');
+    + (byParent.get(view.k === 'thread' ? view.id : 0)?.length ? branch(view.k === 'thread' ? view.id : 0, 0)
+      : '<div class="note">No replies yet. Be the first.</div>');
 }
 
 function gate(): string {
@@ -259,13 +284,14 @@ function gate(): string {
 /* ------------------------------------------------------------------- chrome */
 
 function header(): string {
-  const back = view.k === 'thread' || view.k === 'profile'
+  const back = view.k === 'thread' || view.k === 'profile' || view.k === 'people'
     ? `<button class="iconbtn" id="back" aria-label="Back">${I.back}</button>` : '';
   const title = view.k === 'thread' ? 'Thread' : view.k === 'profile' ? 'Profile'
+    : view.k === 'people' ? (view.of === 'followers' ? 'Followers' : 'Following')
     : view.k === 'search' ? 'Search' : view.k === 'notif' ? 'Notifications' : 'chirp';
   const who = !ME ? '<span>open in the Polkadot app</span>'
     : `<b>${ME.mask ? esc(nm(ME as unknown as Who)) : 'no mask yet'}</b><span>${esc(short(ME.address))}</span>`;
-  return `<header class="top">${back}<h1>${title}</h1>
+  return `<header class="top">${back}<h1>${title}${busy ? '<span class="dotspin" aria-label="Loading"></span>' : ''}</h1>
     <div class="who">${who}</div>
     ${ME?.mask ? `<button class="iconbtn" id="settings" aria-label="Settings">${I.gear}</button>` : ''}
   </header>`;
@@ -343,6 +369,7 @@ function render() {
     : view.k === 'search' ? searchView()
     : view.k === 'notif' ? notifView()
     : view.k === 'profile' ? profileView()
+    : view.k === 'people' ? peopleView()
     : threadView();
   app.innerHTML = header()
     + (flash ? `<div class="msg ${flash.bad ? 'bad' : 'good'}">${esc(flash.text)}</div>` : '')
@@ -383,11 +410,17 @@ async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: strin
  *  leaving it, and a thread can be linked to. */
 function hashOf(v: View): string {
   return v.k === 'home' ? '#/' : v.k === 'search' ? '#/search' : v.k === 'notif' ? '#/notifications'
-    : v.k === 'profile' ? '#/u/' + v.mask : '#/t/' + v.id;
+    : v.k === 'profile' ? '#/u/' + v.mask
+    : v.k === 'people' ? '#/u/' + v.mask + '/' + v.of
+    : '#/t/' + v.id;
 }
 function viewOf(hash: string): View {
   const h = hash.replace(/^#\/?/, '');
-  if (h.startsWith('u/')) return { k: 'profile', mask: Number(h.slice(2)) || 0 };
+  if (h.startsWith('u/')) {
+    const [n, sub] = h.slice(2).split('/');
+    if (sub === 'followers' || sub === 'following') return { k: 'people', mask: Number(n) || 0, of: sub };
+    return { k: 'profile', mask: Number(n) || 0 };
+  }
   if (h.startsWith('t/')) return { k: 'thread', id: Number(h.slice(2)) || 0 };
   if (h.startsWith('search')) return { k: 'search' };
   if (h.startsWith('notifications')) return { k: 'notif' };
@@ -501,7 +534,9 @@ function wire() {
     const p = findPost(Number(b.dataset.share));
     if (!p) return;
     const text = `${nm(p.who, p.mask)} on chirp: "${p.body}"`;
-    const url = `https://assethub-paseo.subscan.io/account/${CHIRP}`;
+    // Link to the chirp itself. Pointing at the contract explorer was technically
+    // true and useless: nobody wants to read a storage dump of your post.
+    const url = `${location.origin}${location.pathname}#/t/${p.id}`;
     try {
       if (navigator.share) await navigator.share({ text, url });
       else { await navigator.clipboard.writeText(`${text} — ${url}`); flash = { text: 'Copied.' }; render(); }
@@ -512,6 +547,10 @@ function wire() {
   }));
   app.querySelectorAll<HTMLElement>('[data-who]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation(); goProfile(Number(b.dataset.who));
+  }));
+  app.querySelectorAll<HTMLElement>('[data-conn]').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    go({ k: 'people', mask: Number(b.dataset.mask), of: b.dataset.conn as 'followers' | 'following' });
   }));
   app.querySelectorAll<HTMLElement>('[data-q]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation(); query = b.dataset.q ?? ''; go({ k: 'search' });
@@ -536,7 +575,9 @@ function wire() {
 }
 
 async function refresh() {
+  busy = true; render();
   ALL = await loadAll(page).catch(() => ALL);
+  if (view.k === 'people' || view.k === 'profile') CONN = await connections(view.mask).catch(() => CONN);
   if (view.k === 'thread') TH = await thread(view.id).catch(() => TH);
   if (view.k === 'profile') PROF = await profile(view.mask).catch(() => PROF);
   if (view.k === 'search' && !PEOPLE.length) PEOPLE = await people().catch(() => []);
@@ -547,6 +588,7 @@ async function refresh() {
     NOTIF = await notifications(ME.mask).catch(() => NOTIF); // keep the badge honest
   }
   if (ME?.mask) FOLLOW = await following().catch(() => FOLLOW);
+  busy = false;
   render();
 }
 
@@ -569,7 +611,8 @@ warmUp();
 view = viewOf(location.hash);
 (async () => {
   ME = await me().catch(() => null);
-  ALL = await loadAll(page).catch(() => []);
-  if (ME?.mask) FOLLOW = await following().catch(() => FOLLOW);
-  render();
+  // Go through refresh() rather than loading the feed by hand: a deep link — a
+  // shared thread, someone's profile — has to arrive with ITS data, not with an
+  // empty shell and a timeline nobody asked for.
+  await refresh();
 })();

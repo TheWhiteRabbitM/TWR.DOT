@@ -323,6 +323,44 @@ export async function following(): Promise<Set<number>> {
   return set;
 }
 
+/**
+ * Who follows a mask, and who it follows.
+ *
+ * The contract keys follows by (account, mask), so there is no list to read —
+ * but every account that can follow is the owner of a mask, and the mask supply
+ * is enumerable. So the set of candidates IS knowable: walk the masks, ask who
+ * owns each, and ask the contract about that pair. It is a scan, but a bounded
+ * one, and it beats showing a number nobody can open.
+ */
+export async function connections(mask: number): Promise<{ followers: Who[]; followingList: Who[] }> {
+  const { masks, chirp } = await handles();
+  if (!masks || !chirp) return { followers: [], followingList: [] };
+  const total = Number((await q(masks, 'totalSupply')) ?? 0);
+  const ids = Array.from({ length: total }, (_, i) => i + 1);
+
+  const owners = new Map<number, string>();
+  for (let i = 0; i < ids.length; i += 10) {
+    const slice = ids.slice(i, i + 10);
+    const got = await Promise.all(slice.map((n) => q(masks, 'ownerOf', BigInt(n))));
+    slice.forEach((n, k) => { const o = got[k]; if (o) owners.set(n, String(o)); });
+  }
+
+  const [followsMe, iFollow] = await Promise.all([
+    Promise.all(ids.map((n) => (owners.has(n) ? q(chirp, 'follows', owners.get(n), BigInt(mask)) : undefined))),
+    Promise.all(ids.map((n) => (owners.has(mask) ? q(chirp, 'follows', owners.get(mask), BigInt(n)) : undefined))),
+  ]);
+
+  const pickWho = async (flags: unknown[]) => {
+    const wanted = ids.filter((_, i) => Boolean(flags[i]));
+    const out: Who[] = [];
+    for (let i = 0; i < wanted.length; i += 10) {
+      out.push(...(await Promise.all(wanted.slice(i, i + 10).map((n) => whoOf(masks, n)))));
+    }
+    return out;
+  };
+  return { followers: await pickWho(followsMe), followingList: await pickWho(iFollow) };
+}
+
 /** A profile: who they are, what they wrote, and how they connect. */
 export async function profile(mask: number): Promise<{
   who: Who; bio: string; telegram: string; x: string;

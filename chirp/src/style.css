@@ -231,3 +231,15 @@ main { padding-bottom: 88px; }           /* clear the bottom bar */
   display: grid; place-items: center; }
 
 body.locked { overflow: hidden; }
+
+/* ---- connection lists, nested replies, busy indicator ---- */
+.pstats a { color: inherit; text-decoration: none; cursor: pointer; }
+.pstats a:hover { text-decoration: underline; }
+
+/* a reply sits under the one it answers, one step in per level */
+.branch { padding-left: calc(var(--d, 0) * 22px); border-left: 1px solid transparent; }
+.branch .chirp { border-left: 2px solid var(--hair); }
+
+.dotspin { display: inline-block; width: 7px; height: 7px; margin-left: 8px; border-radius: 50%;
+  background: var(--blue); vertical-align: middle; animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
