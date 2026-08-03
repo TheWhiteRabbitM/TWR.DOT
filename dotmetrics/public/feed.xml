@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Mon, 03 Aug 2026 15:26:56 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 03 Aug 2026 18:13:36 GMT</lastBuildDate>
+    <item>
+      <title>the-nicotine</title>
+      <link>https://the-nicotine.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">the-nicotine</guid>
+      <pubDate>Mon, 03 Aug 2026 15:40:48 GMT</pubDate>
+    </item>
     <item>
       <title>my-dotter</title>
       <link>https://my-dotter.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">mini-lucky-smoke</guid>
       <pubDate>Tue, 28 Jul 2026 17:05:36 GMT</pubDate>
-    </item>
-    <item>
-      <title>oblv-vault</title>
-      <link>https://oblv-vault.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">oblv-vault</guid>
-      <pubDate>Tue, 28 Jul 2026 15:52:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

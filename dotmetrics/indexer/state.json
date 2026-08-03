@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11767856,
-  "updatedAt": "2026-08-03T15:23:47.534Z",
+  "lastBlock": 11772728,
+  "updatedAt": "2026-08-03T18:10:21.032Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "fd865661c07dd235dbd3c9741a1224afb2ae3d2dc9cbf66ca488db43d6b948f2",
-    "cid": "bafybeih5vhxuzd3ka2qw2hjk3qauhqs52zwehf37zmwtlx7mkjzbfp6rce",
-    "uploadedAt": "2026-08-03T15:28:30.205Z"
+    "digest": "fb75ac4b3e2dd44eb19c2ed6d7dc2b4b35be2047d3c650bf107401b3089830a2",
+    "cid": "bafybeidynjt4wcqirhjn7kp3wlaiq3tcfk3r5uuid6itm5b5sruqo42dtu",
+    "uploadedAt": "2026-08-03T18:14:48.899Z"
   },
   "sitePublish": {
     "treeHash": "5375fddd3eb4476ef907be6962dfc0fb67b1e2deb49b0f9b82a3eb1b14faf9fd",
     "publishedAt": "2026-08-03T15:30:44.952Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-03T15:26:56.000Z",
+    "updatedAt": "2026-08-03T18:13:35.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -117,7 +117,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-03T15:26:56.000Z",
+    "updatedAt": "2026-08-03T18:13:36.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -163,9 +163,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeieqmh5ptvupr2yuxjegmmuii7eclbrmm6knk2dkqfaum5a4n7jopm",
-        "updateCount": 2,
-        "changedAt": 1785769994,
+        "contenthash": "bafybeif23ahybwabwa7epsqffa5vajyzzm2xhwipkuzwhpfqux54swtqi4",
+        "updateCount": 3,
+        "changedAt": 1785780816,
         "live": "alive"
       },
       "chopdotproof01": {
@@ -235,9 +235,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiees3nngs6potzogwbamfpfnzydpsa2p6tnxzfwrgjkd47rp7exiu",
-        "updateCount": 45,
-        "changedAt": 1785770816,
+        "contenthash": "bafybeideu4gaypnjpwypkqiphswhyqihonpjj4huk2xze7zfdh3hskzwrq",
+        "updateCount": 46,
+        "changedAt": 1785780816,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -257,15 +257,15 @@
         "live": "unknown"
       },
       "dotify-test01": {
-        "contenthash": "bafybeids6l5sf5nxtkh5smw7of7ipahdislxhu6xffxpo5vuq2uu36srym",
-        "updateCount": 5,
-        "changedAt": 1785770816,
+        "contenthash": "bafybeibnsqreyaf3zcsrsiqeefd2awmexblekqimzdiwwpm7ouw7k6ccoe",
+        "updateCount": 6,
+        "changedAt": 1785780816,
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeifmbnjyzawynbyoz7bpy2fgzudgjwrqhm3h6vzhpqq423g3sdud4i",
-        "updateCount": 32,
-        "changedAt": 1785770816,
+        "contenthash": "bafybeic2y3sfnt7mtbr7lqbe7pefw2i3mlrsouewjh74lsenee3gaezz64",
+        "updateCount": 33,
+        "changedAt": 1785780816,
         "live": "alive"
       },
       "dragon-realm": {
@@ -528,8 +528,9 @@
         "live": "alive"
       },
       "peoplewiki": {
-        "contenthash": "bafybeibggvsan3jn77pl5yjugew2nrubrfhe3kvna5aki4upaa7gvwx4fy",
-        "updateCount": 0,
+        "contenthash": "bafybeibdsv4zp4e2gxafjiml3k2fwvrocqtdupa74m37suxcedfctmq7wi",
+        "updateCount": 1,
+        "changedAt": 1785780816,
         "live": "alive"
       },
       "petitions": {
@@ -649,6 +650,11 @@
         "contenthash": "bafybeid7gfpcjvsci23xir6w3x65pzkpbimocx6lfwr2sixhia2dgcjyju",
         "updateCount": 0,
         "live": "alive"
+      },
+      "the-nicotine": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "thebutton": {
         "contenthash": "bafybeigp6qfauoadpz5hj76xzn4dsb5p22kvmgmcrjbsxaajci6x2bhl5i",

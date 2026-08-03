@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785770816,
-  "count": 112,
+  "generatedAt": 1785780816,
+  "count": 113,
   "apps": [
+    {
+      "label": "the-nicotine",
+      "domain": "the-nicotine.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785771648,
+      "url": "https://the-nicotine.dev-dot.li"
+    },
     {
       "label": "my-dotter",
       "domain": "my-dotter.dot",
