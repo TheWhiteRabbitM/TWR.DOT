@@ -17,7 +17,7 @@ import { keccak_256 } from '@noble/hashes/sha3';
 import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
-  claimMask, saveProfile, suggestedName, forgetWho, connections,
+  claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle,
   CHIRP, MASKS, type Post, type Me, type Who,
 } from './chain';
 
@@ -56,8 +56,14 @@ const ago = (t: number) => {
   return Math.floor(s / 86400) + 'd';
 };
 const when = (t: number) => new Date(t * 1000).toLocaleString();
-const nm = (w?: Who, mask = 0) => w?.name || (w?.verified ? w.verified + '.dot' : 'mask #' + (w?.mask || mask));
-const at = (w?: Who, mask = 0) => (w?.verified ? '@' + w.verified + '.dot' : '@mask' + (w?.mask || mask));
+const nm = (w?: Who, mask = 0) => w?.name || w?.handle || (w?.verified ? w.verified + '.dot' : 'mask #' + (w?.mask || mask));
+/** The @ line, in order of how much it says: the People username the holder
+ *  claimed here, then a .dot the contract proved, then the mask number — which
+ *  says least but is the only one nobody could have chosen. */
+const at = (w?: Who, mask = 0) =>
+  w?.handle ? '@' + w.handle
+    : w?.verified ? '@' + w.verified + '.dot'
+      : '@mask' + (w?.mask || mask);
 
 /**
  * Turn a chirp's text into something you can act on: @handles, .dot names and
@@ -118,6 +124,12 @@ let CONN: { followers: Who[]; followingList: Who[] } = { followers: [], followin
 /** True while a refresh is in flight, so the header can say so instead of the
  *  app looking frozen. */
 let busy = false;
+/** Set when a read failed. The app used to keep showing the last good data with
+ *  no hint it was stale, which is worse than an error: you cannot tell a quiet
+ *  network from a quiet timeline. */
+let loadError = '';
+/** A destructive action waiting for a yes. Deleting was one tap and permanent. */
+let confirmDelete: number | null = null;
 
 /** What you were writing, kept across a failed signature and a closed app. A
  *  post that costs a signature must not be able to eat the text you typed. */
@@ -144,8 +156,8 @@ const findPost = (id: number) => [...ALL, ...TH.replies, ...TH.parents, TH.post]
 function actions(p: Post): string {
   return `<div class="acts">
     <button class="act reply" data-reply="${p.id}">${I.reply}<span>${p.replies || ''}</span></button>
-    <button class="act rep${p.reposted ? ' on' : ''}" data-repost="${p.id}">${I.repost}<span>${p.reposts || ''}</span></button>
-    <button class="act like${p.liked ? ' on' : ''}" data-like="${p.id}">${I.like}<span>${p.likes || ''}</span></button>
+    <button class="act rep${p.reposted ? ' on' : ''}" data-repost="${p.id}" aria-pressed="${p.reposted ? 'true' : 'false'}" aria-label="Repost">${I.repost}<span>${p.reposts || ''}</span></button>
+    <button class="act like${p.liked ? ' on' : ''}" data-like="${p.id}" aria-pressed="${p.liked ? 'true' : 'false'}" aria-label="Like">${I.like}<span>${p.likes || ''}</span></button>
     <button class="act share" data-share="${p.id}">${I.share}</button>
   </div>`;
 }
@@ -171,6 +183,12 @@ function card(p: Post, big = false): string {
           <div class="head"><span class="nm">${esc(nm(p.quoted.who, p.quoted.mask))}</span>${p.quoted.who?.verified ? TICK : ''}
           <span class="at">${esc(at(p.quoted.who, p.quoted.mask))}</span></div>
           <div class="body">${rich(p.quoted.body)}</div></div>` : ''}
+        ${big ? `<div class="detail-time">${esc(when(p.time))}</div>
+        <div class="statrow">
+          <span><b>${p.replies}</b> replies</span>
+          <span><b>${p.reposts}</b> reposts</span>
+          <span><b>${p.likes}</b> likes</span>
+        </div>` : ''}
         ${actions(p)}
       </div>
     </div>
@@ -319,11 +337,30 @@ function overlay(): string {
       <label>.dot ${ME.verified ? '<span class="okmark">verified ✓</span>' : ''}</label>
       <input value="${ME.verified ? esc(ME.verified) + '.dot' : ''}" placeholder="set when you claimed your mask" disabled>
       ${ME.verified ? '' : '<p class="hint">A .dot is checked when the mask is claimed, and that check is what earns the tick — it cannot be added afterwards.</p>'}
+      <label>People chain username</label>
+      <input id="s_handle" maxlength="32" value="${esc(ME.handle)}" placeholder="e.g. watanabe.01">
+      <button class="link" id="usehandle">use the one the app knows</button>
+      <p class="hint">This is the @ name people see. It is unique — first to claim it keeps it — and only
+      you can set it, because your mask cannot be moved. It carries <b>no tick</b>: Asset Hub cannot read
+      the People chain, so nothing here can prove the username is yours. Only a .dot is checked.</p>
       <label>Bio</label><input id="s_bio" maxlength="160" value="${esc(ME.bio)}" placeholder="one line about you">
       <label>Telegram</label><input id="s_tg" maxlength="32" value="${esc(ME.telegram)}" placeholder="handle, without @">
       <label>X</label><input id="s_x" maxlength="32" value="${esc(ME.x)}" placeholder="handle, without @">
       <button class="primary wide" id="savep">Save on chain</button>
       <p class="hint">The name is yours to choose and proves nothing — which is exactly why the tick is reserved for the .dot the contract verified.</p>
+    </div></div>`;
+  }
+  if (confirmDelete) {
+    const p = findPost(confirmDelete);
+    return `<div class="scrim" id="scrim"><div class="pane">
+      <div class="panehead"><b>Delete this chirp?</b></div>
+      <p class="hint">It stops showing everywhere and its replies lose their parent. The row stays
+      on chain — nothing there truly disappears — but you cannot undo this from the app.</p>
+      ${p ? `<div class="quoted"><div class="body">${esc(p.body)}</div></div>` : ''}
+      <div class="confirmrow">
+        <button class="ghost" id="cancel-del">Keep it</button>
+        <button class="primary danger-btn" id="do-del">Delete</button>
+      </div>
     </div></div>`;
   }
   if (menuFor) {
@@ -363,7 +400,7 @@ function render() {
   const key = hashOf(view);
   if (app.querySelector('main')) scrollAt.set(key, scrollY);
   // A sheet is over the column; let it scroll, not the timeline behind it.
-  document.body.classList.toggle('locked', Boolean(sheet || settingsOpen || menuFor));
+  document.body.classList.toggle('locked', Boolean(sheet || settingsOpen || menuFor || confirmDelete));
 
   const body = view.k === 'home' ? homeView()
     : view.k === 'search' ? searchView()
@@ -372,7 +409,9 @@ function render() {
     : view.k === 'people' ? peopleView()
     : threadView();
   app.innerHTML = header()
-    + (flash ? `<div class="msg ${flash.bad ? 'bad' : 'good'}">${esc(flash.text)}</div>` : '')
+    + (flash ? `<div class="msg ${flash.bad ? 'bad' : 'good'}" role="status" aria-live="polite">${esc(flash.text)}<button class="x-flash" id="dismiss" aria-label="Dismiss">✕</button></div>` : '')
+    + (loadError ? `<div class="msg bad" role="alert">Could not read the chain — showing what was already loaded.
+        <button class="link" id="retry">Try again</button></div>` : '')
     + `<main>${body}</main>`
     + `<footer class="foot">
         Every chirp — replies, quotes and reposts included — is a row in the
@@ -441,9 +480,16 @@ function wire() {
   document.getElementById('editprof')?.addEventListener('click', () => { settingsOpen = true; render(); });
   document.getElementById('closepane')?.addEventListener('click', () => { settingsOpen = false; sheet = null; menuFor = null; render(); });
   document.getElementById('scrim')?.addEventListener('click', (e) => {
-    if (e.target === document.getElementById('scrim')) { settingsOpen = false; sheet = null; menuFor = null; render(); }
+    if (e.target === document.getElementById('scrim')) { settingsOpen = false; sheet = null; menuFor = null; confirmDelete = null; render(); }
   });
   document.getElementById('fab')?.addEventListener('click', () => { sheet = { mode: 'new' }; render(); });
+  document.getElementById('dismiss')?.addEventListener('click', () => { flash = null; render(); });
+  document.getElementById('retry')?.addEventListener('click', () => refresh());
+  document.getElementById('cancel-del')?.addEventListener('click', () => { confirmDelete = null; render(); });
+  document.getElementById('do-del')?.addEventListener('click', () => {
+    const id = confirmDelete!; confirmDelete = null;
+    act(() => remove(id), 'Deleted on chain.');
+  });
   document.getElementById('loadmore')?.addEventListener('click', (e) => {
     const b = e.currentTarget as HTMLButtonElement;
     b.disabled = true; b.textContent = 'Loading…';
@@ -493,9 +539,28 @@ function wire() {
 
   document.getElementById('savep')?.addEventListener('click', () => {
     const g = (id: string) => (document.getElementById(id) as HTMLInputElement)?.value ?? '';
-    const [name, tg, x, bio] = [g('s_name'), g('s_tg'), g('s_x'), g('s_bio')];
+    const [name, tg, x, bio, handle] = [g('s_name'), g('s_tg'), g('s_x'), g('s_bio'), g('s_handle')];
+    const wantHandle = handle.trim().replace(/^@/, '');
     settingsOpen = false;
-    act(async () => { const r = await saveProfile(name, tg, x, bio); if (r.ok) { forgetWho(); ME = await me(); } return r; }, 'Saved on chain.');
+    act(async () => {
+      const r = await saveProfile(name, tg, x, bio);
+      if (!r.ok) return r;
+      // The handle lives in its own contract, so it is a second signature — only
+      // asked for when it actually changed.
+      if (wantHandle && wantHandle !== ME?.handle) {
+        const h = await setHandle(ME!.mask, wantHandle);
+        if (!h.ok) return { ok: false, why: /TakenAlready|ContractReverted/i.test(h.why) ? 'That username is already taken by another mask.' : h.why };
+      }
+      forgetWho();
+      ME = await me();
+      return r;
+    }, 'Saved on chain.');
+  });
+  document.getElementById('usehandle')?.addEventListener('click', async () => {
+    const n = await suggestedName();
+    const el = document.getElementById('s_handle') as HTMLInputElement | null;
+    if (el && n) el.value = n;
+    if (!n) { flash = { text: 'The host did not report a People chain username.', bad: true }; render(); }
   });
   document.getElementById('usepeople')?.addEventListener('click', async () => {
     const n = await suggestedName();
@@ -561,7 +626,7 @@ function wire() {
     if (m === 'close' || !p) return render();
     if (m === 'edit') { sheet = { mode: 'edit', target: p }; return render(); }
     if (m === 'quote') { sheet = { mode: 'quote', target: p }; return render(); }
-    if (m === 'del') return act(() => remove(p.id), 'Deleted on chain.');
+    if (m === 'del') { confirmDelete = p.id; return render(); }
     if (m === 'who') return goProfile(p.mask);
     if (m === 'copy') { void navigator.clipboard.writeText(p.body); flash = { text: 'Copied.' }; return render(); }
     if (m === 'chain') { window.open(`https://assethub-paseo.subscan.io/account/${CHIRP}`, '_blank'); return render(); }
@@ -575,8 +640,8 @@ function wire() {
 }
 
 async function refresh() {
-  busy = true; render();
-  ALL = await loadAll(page).catch(() => ALL);
+  busy = true; loadError = ''; render();
+  ALL = await loadAll(page).catch((e) => { loadError = String(e?.message ?? e).slice(0, 120) || 'The chain did not answer.'; return ALL; });
   if (view.k === 'people' || view.k === 'profile') CONN = await connections(view.mask).catch(() => CONN);
   if (view.k === 'thread') TH = await thread(view.id).catch(() => TH);
   if (view.k === 'profile') PROF = await profile(view.mask).catch(() => PROF);
@@ -595,8 +660,8 @@ async function refresh() {
 /* ------------------------------------------------------------------ keyboard */
 // Escape closes whatever is open; Cmd/Ctrl+Enter sends what is being written.
 addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && (sheet || settingsOpen || menuFor)) {
-    sheet = null; settingsOpen = false; menuFor = null; render();
+  if (e.key === 'Escape' && (sheet || settingsOpen || menuFor || confirmDelete)) {
+    sheet = null; settingsOpen = false; menuFor = null; confirmDelete = null; render();
   }
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
     const b = document.getElementById('ssend') as HTMLButtonElement | null;

@@ -17,9 +17,13 @@
 import { keccak_256 } from '@noble/hashes/sha3';
 import MASKS_ABI from './masks-abi.json';
 import CHIRP_ABI from './chirp-abi.json';
+import HANDLES_ABI from './handles-abi.json';
 
 export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
 export const CHIRP = '0x37A7CE834428636815b2746408343574aD13be7C';
+/** The @name registry. Separate from the masks contract because identity gained
+ *  this field after masks and chirps already held content. */
+export const HANDLES = '0x7C61D99564C61e667C6Fd5D41aC2466327ea4109';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
 const IDENTITY_DAPP = 'peoplebook.dot';
 
@@ -54,7 +58,18 @@ export type Post = {
   reposted?: boolean;
 };
 
-export type Who = { mask: number; name: string; verified: string; tier: number };
+export type Who = {
+  mask: number;
+  name: string;
+  /** A .dot the CONTRACT checked against the registry — the only thing that
+   *  earns a tick. */
+  verified: string;
+  /** The People chain username this mask goes by. Unique across masks and only
+   *  settable by the holder, but NOT proof of anything: Asset Hub cannot read
+   *  the People chain, so nobody can check it here. Shown without a tick. */
+  handle: string;
+  tier: number;
+};
 export type Me = Who & { address: string; kind: 'wallet' | 'app'; telegram: string; x: string; bio: string };
 export type Fail = { ok: false; why: string };
 export type Ok<T = void> = { ok: true; value: T };
@@ -94,7 +109,7 @@ type Slot = {
   h160: string;
   kind: 'wallet' | 'app';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  signer: any; manager?: any; masks: any; chirp: any;
+  signer: any; manager?: any; masks: any; chirp: any; handles: any;
 };
 let slot: Promise<Slot | null> | null = null;
 
@@ -168,7 +183,10 @@ async function connect(): Promise<Slot | null> {
   const opts = manager ? { signerManager: manager, defaultOrigin: address } : { defaultSigner: signer, defaultOrigin: address };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mk = (addr: string, abi: unknown) => (contracts as any).createContract(runtime, addr, abi, opts);
-  return { address, h160: await h160Of(address), kind, signer, manager, masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI) };
+  return {
+    address, h160: await h160Of(address), kind, signer, manager,
+    masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
+  };
 }
 
 function session(): Promise<Slot | null> {
@@ -199,7 +217,7 @@ function pub() {
       const rt = (contracts as any).createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mk = (a: string, abi: unknown) => (contracts as any).createContract(rt, a, abi);
-      return { chirp: mk(CHIRP, CHIRP_ABI), masks: mk(MASKS, MASKS_ABI) };
+      return { chirp: mk(CHIRP, CHIRP_ABI), masks: mk(MASKS, MASKS_ABI), handles: mk(HANDLES, HANDLES_ABI) };
     })().catch(() => null);
     void reader.then((r) => { if (!r) reader = null; });
   }
@@ -208,7 +226,9 @@ function pub() {
 
 async function handles() {
   const s = await session().catch(() => null);
-  return s ? { chirp: s.chirp, masks: s.masks, me: s.h160 } : { ...(await pub() ?? { chirp: null, masks: null }), me: '' };
+  return s
+    ? { chirp: s.chirp, masks: s.masks, handles: s.handles, me: s.h160 }
+    : { ...(await pub() ?? { chirp: null, masks: null, handles: null }), me: '' };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -220,18 +240,20 @@ const pick = (v: any, key: string, i: number) => (Array.isArray(v) ? v[i] : v?.[
  *  and over and each lookup is two chain reads. */
 const whoCache = new Map<number, Who>();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function whoOf(masks: any, mask: number): Promise<Who> {
+async function whoOf(masks: any, mask: number, handlesC?: any): Promise<Who> {
   const hit = whoCache.get(mask);
   if (hit) return hit;
-  const [v, t, p] = await Promise.all([
+  const hc = handlesC ?? (await handles()).handles;
+  const [v, t, p, h] = await Promise.all([
     q(masks, 'verifiedName', BigInt(mask)),
     q(masks, 'tierOf', BigInt(mask)),
     q(masks, 'profileOf', BigInt(mask)),
+    hc ? q(hc, 'handleOf', BigInt(mask)) : Promise.resolve(undefined),
   ]);
   const verified = String(v ?? '');
   const tier = Number(t ?? 4);
   const name = String(pick(p, 'displayName', 0) ?? '');
-  const who: Who = { mask, name, verified, tier };
+  const who: Who = { mask, name, verified, handle: String(h ?? ''), tier };
   whoCache.set(mask, who);
   return who;
 }
@@ -368,7 +390,7 @@ export async function profile(mask: number): Promise<{
 }> {
   const { masks } = await handles();
   const s = await session().catch(() => null);
-  const who = masks ? await whoOf(masks, mask) : { mask, name: '', verified: '', tier: 4 };
+  const who = masks ? await whoOf(masks, mask) : { mask, name: '', verified: '', handle: '', tier: 4 };
   const p = masks ? await q(masks, 'profileOf', BigInt(mask)) : undefined;
   const all = await loadAll();
   const followers = Number((await q((await handles()).chirp, 'followerCount', BigInt(mask))) ?? 0);
@@ -434,7 +456,7 @@ export async function me(): Promise<Me | null> {
   const s = await session().catch(() => null);
   if (!s) return null;
   const mask = Number((await q(s.masks, 'maskOf', s.h160)) ?? 0);
-  if (!mask) return { address: s.address, kind: s.kind, mask: 0, name: '', verified: '', tier: 4, telegram: '', x: '', bio: '' };
+  if (!mask) return { address: s.address, kind: s.kind, mask: 0, name: '', verified: '', handle: '', tier: 4, telegram: '', x: '', bio: '' };
   const who = await whoOf(s.masks, mask);
   const p = await q(s.masks, 'profileOf', BigInt(mask));
   return {
@@ -489,6 +511,13 @@ export function saveProfile(name: string, telegram: string, x: string, bio: stri
   return send((s, o) => s.masks.setProfile.tx(
     name.slice(0, 40), telegram.replace(/^@/, '').slice(0, 32), x.replace(/^@/, '').slice(0, 32), bio.slice(0, 160), o,
   ));
+}
+
+/** Attach the People chain username this mask goes by. First come first served
+ *  across masks; the app offers only what the host says is yours, but the chain
+ *  cannot check that, so it is never shown with a tick. */
+export function setHandle(mask: number, handle: string): Promise<Ok | Fail> {
+  return send((s, o) => s.handles.setHandle.tx(BigInt(mask), handle.trim().replace(/^@/, ''), o));
 }
 
 export function post(mask: number, body: string, replyTo = 0, quoteOf = 0): Promise<Ok | Fail> {

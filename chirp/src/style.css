@@ -243,3 +243,17 @@ body.locked { overflow: hidden; }
 .dotspin { display: inline-block; width: 7px; height: 7px; margin-left: 8px; border-radius: 50%;
   background: var(--blue); vertical-align: middle; animation: pulse 1s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+
+/* ---- confirmation, stale-read notice, post detail stats ---- */
+.confirmrow { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+.danger-btn { background: #f4212e; }
+.danger-btn:hover:not(:disabled) { background: #d81b28; }
+
+.msg { display: flex; align-items: center; gap: 10px; }
+.x-flash { margin-left: auto; background: none; border: 0; color: inherit; opacity: .6; cursor: pointer; font-size: 15px; }
+.x-flash:hover { opacity: 1; }
+.msg .link { background: none; border: 0; color: var(--blue); font: inherit; cursor: pointer; padding: 0; text-decoration: underline; }
+
+.detail-time { color: var(--ink-2); font-size: 14px; margin-top: 12px; }
+.statrow { display: flex; gap: 20px; padding: 12px 0; margin-top: 8px; border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); color: var(--ink-2); font-size: 14px; }
+.statrow b { color: var(--ink); }
