@@ -62,17 +62,32 @@ const gifCache = new Map<string, string>();
 export async function gifBlob(url: string): Promise<string> {
   const hit = gifCache.get(url);
   if (hit !== undefined) return hit;
+
+  // Two attempts, cheapest first. A plain CORS fetch is what the Remote
+  // permission grants; `no-cors` gets an opaque response whose bytes we cannot
+  // read, so it is not worth trying. If CORS is refused, an <img> tag is still
+  // worth one go — image loading and fetch are governed by DIFFERENT policies,
+  // and which of the two a container blocks is not something to assume.
   try {
     const r = await fetch(url, { referrerPolicy: 'no-referrer', mode: 'cors' });
-    if (!r.ok) throw new Error(String(r.status));
-    const b = await r.blob();
-    const local = URL.createObjectURL(b);
-    gifCache.set(url, local);
-    return local;
-  } catch {
-    gifCache.set(url, '');   // remember the refusal; do not ask on every render
-    return '';
-  }
+    if (r.ok) {
+      const local = URL.createObjectURL(await r.blob());
+      gifCache.set(url, local);
+      return local;
+    }
+  } catch { /* fall through to the tag */ }
+
+  const direct = await new Promise<string>((res) => {
+    const img = new Image();
+    img.referrerPolicy = 'no-referrer';
+    const done = (v: string) => res(v);
+    img.onload = () => done(url);       // it renders: use the URL as-is
+    img.onerror = () => done('');
+    setTimeout(() => done(''), 6000);
+    img.src = url;
+  });
+  gifCache.set(url, direct);            // remember either answer; do not re-ask per render
+  return direct;
 }
 
 /** Is this a link a keyboard would have inserted for a GIF? */
@@ -467,10 +482,22 @@ export async function askNotifications(): Promise<boolean> {
 export async function openUrl(url: string): Promise<boolean> {
   const host = await import('@parity/product-sdk-host').catch(() => null);
   if (host) {
-    const r = await host.navigateTo(url).catch(() => null);
+    // navigateTo can hang rather than answer, so it is raced: a link that has
+    // not opened in three seconds has not opened.
+    const r = await withTimeout(Promise.resolve(host.navigateTo(url)), 3000, 'navigate').catch(() => null);
     if (r && (r as { ok?: boolean }).ok !== false) return true;
   }
-  try { window.open(url, '_blank', 'noopener'); return true; } catch { return false; }
+  // Outside the container this is the whole story. Inside it, popups are
+  // blocked, so this returns a window that is instantly null.
+  try {
+    const w = window.open(url, '_blank', 'noopener');
+    if (w) return true;
+  } catch { /* blocked */ }
+  // Last resort: put it on the clipboard, so the person has the address rather
+  // than a tap that did nothing. The caller shows it too — silence is the one
+  // outcome that leaves somebody stuck.
+  try { await navigator.clipboard.writeText(url); } catch { /* no clipboard either */ }
+  return false;
 }
 
 /** Deliver one notification now. Silent when the host has no manager for it. */

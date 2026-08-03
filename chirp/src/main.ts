@@ -222,6 +222,8 @@ let FOLLOWERS = new Map<number, number>();
 let whyFor: number | null = null;
 /** Which chirp the share sheet is open for. */
 let shareFor: number | null = null;
+/** A link the container refused to open, shown so it can at least be read. */
+let linkFor: string | null = null;
 /** Where the picture upload got to. Shown, because when it fails inside a
  *  container it fails silently and there is nothing to go on otherwise. */
 let pfpStep: { text: string; bad?: boolean } | null = null;
@@ -769,6 +771,15 @@ function overlay(): string {
       <p class="hint">The name is yours to choose and proves nothing — which is exactly why the tick is reserved for the .dot the contract verified.</p>
     </div></div>`;
   }
+  if (linkFor) {
+    return `<div class="scrim" id="scrim"><div class="pane">
+      <div class="panehead"><b>This app cannot open links</b><button class="iconbtn" id="linkclose">✕</button></div>
+      <p class="hint">The Polkadot app refused to hand this address to a browser, and a container has no
+      second window of its own. Here it is — it is already on your clipboard.</p>
+      <div class="linkbox">${esc(linkFor)}</div>
+      <button class="primary wide" id="linkcopy">Copy it again</button>
+    </div></div>`;
+  }
   if (shareFor) {
     const p = findPost(shareFor);
     return `<div class="scrim" id="scrim"><div class="menu">
@@ -821,7 +832,16 @@ function overlay(): string {
   if (menuFor) {
     const p = findPost(menuFor);
     if (!p) return '';
-    const mine = ME && p.author.toLowerCase() === ME.address.toLowerCase();
+    // Compared on the MASK, not on the address.
+    //
+    // `p.author` is the H160 pallet-revive recorded as msg.sender; `ME.address`
+    // is the ss58 the wallet reports. Those two are different encodings of
+    // different things and were never equal, so Edit and Delete never appeared
+    // for anybody — the contract would have accepted both all along.
+    //
+    // The mask is the better test anyway: it is the identity the post carries,
+    // and it stays right when the call went through a proxy.
+    const mine = Boolean(ME?.mask) && p.mask === ME!.mask;
     return `<div class="scrim" id="scrim"><div class="menu">
       ${mine ? `<button data-m="edit" data-id="${p.id}">Edit chirp</button>
                 <button class="danger" data-m="del" data-id="${p.id}">Delete chirp</button>` : ''}
@@ -1223,10 +1243,18 @@ function wire() {
   document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
   document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
   document.getElementById('gostats')?.addEventListener('click', () => go({ k: 'stats' }));
-  app.querySelectorAll<HTMLElement>('[data-url]').forEach((a) => a.addEventListener('click', (e) => {
+  app.querySelectorAll<HTMLElement>('[data-url]').forEach((a) => a.addEventListener('click', async (e) => {
     e.stopPropagation(); e.preventDefault();
-    void openUrl(a.dataset.url ?? '');
+    const u = a.dataset.url ?? '';
+    // If the container will not open it, say so and show the address. A tap
+    // that silently does nothing is the worst of the three outcomes.
+    if (!(await openUrl(u))) { linkFor = u; render(); }
   }));
+  document.getElementById('linkclose')?.addEventListener('click', () => { linkFor = null; render(); });
+  document.getElementById('linkcopy')?.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(linkFor ?? '').catch(() => undefined);
+    linkFor = null; flash = { text: 'Address copied.' }; render();
+  });
   app.querySelectorAll<HTMLElement>('[data-why]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
     whyFor = whyFor === Number(b.dataset.why) ? null : Number(b.dataset.why);
