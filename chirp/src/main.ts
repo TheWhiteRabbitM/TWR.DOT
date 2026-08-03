@@ -18,7 +18,7 @@ import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
-  askNotifications, notify, openUrl, gifUrl,
+  askNotifications, notify, openUrl, gifUrl, cachedFeed,
   pictureOf, setPicture, clearPicture, renewPicture, forgetPicture,
   notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
   followerCounts, interestsFrom, statsFor,
@@ -343,7 +343,14 @@ function replyingTo(p: Post): string {
   return `<div class="ctx small">Replying to <a class="mention" data-who="${parent.mask}">${esc(at(parent.who, parent.mask))}</a></div>`;
 }
 
-const list = (ps: Post[], empty: string) => (ps.length ? ps.map((p) => card(p)).join('') : `<div class="note">${empty}</div>`);
+/** A list, or — while a read is still in flight and we have nothing — skeletons.
+ *  Never the empty message: "no chirps yet" is a claim, and an app that has not
+ *  finished looking is in no position to make it. */
+const list = (ps: Post[], empty: string) => (ps.length
+  ? ps.map((p) => card(p)).join('')
+  : busy
+    ? '<div class="skel"></div><div class="skel"></div><div class="skel"></div>'
+    : `<div class="note">${empty}</div>`);
 
 /* -------------------------------------------------------------------- views */
 
@@ -1186,7 +1193,8 @@ function wire() {
 async function refresh() {
   busy = true; loadError = ''; FRESH = [];  // a full read supersedes anything held back
   render();
-  ALL = await loadAll(page).catch((e) => { loadError = String(e?.message ?? e).slice(0, 120) || 'The chain did not answer.'; return ALL; });
+  ALL = await loadAll(page, (soFar) => { ALL = soFar; render(); })
+    .catch((e) => { loadError = String(e?.message ?? e).slice(0, 120) || 'The chain did not answer.'; return ALL; });
   if (view.k === 'people' || view.k === 'profile') CONN = await connections(view.mask).catch(() => CONN);
   if (view.k === 'thread') TH = await thread(view.id).catch(() => TH);
   // ALL is handed on rather than re-read: both of these used to fetch the whole
@@ -1360,12 +1368,22 @@ addEventListener('keydown', (e) => {
 addEventListener('hashchange', () => { view = viewOf(location.hash); refresh(); });
 
 /* --------------------------------------------------------------------- boot */
-app.innerHTML = header() + '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
-warmUp();
 view = viewOf(location.hash);
+warmUp();
+// Paint the last feed we had, immediately. It is public data we already read,
+// it is replaced the moment the chain answers, and it is the difference between
+// opening the app and opening three grey rectangles.
+ALL = cachedFeed();
+render();
+if (!ALL.length) app.innerHTML = header() + '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
+
 (async () => {
+  // The feed does NOT wait for the wallet: it reads over the public RPC while
+  // the handshake is still going. Identity fills in when it arrives.
+  const first = refresh();
   ME = await me().catch(() => null);
   ACT = await actingAs().catch(() => null);
+  await first;
   // Go through refresh() rather than loading the feed by hand: a deep link — a
   // shared thread, someone's profile — has to arrive with ITS data, not with an
   // empty shell and a timeline nobody asked for.

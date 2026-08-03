@@ -304,11 +304,29 @@ export async function actingAs(): Promise<{ signer: string; real: string | null 
 function session(): Promise<Slot | null> {
   if (!slot) {
     slot = connect().catch(() => null);
-    void slot.then((s) => { if (!s) slot = null; }); // never memoise a failure
+    void slot.then((s) => {
+      if (!s) { slot = null; return; }   // never memoise a failure
+      ready = s;                          // reads can stop using the public RPC
+    });
   }
   return slot;
 }
-export function warmUp(): void { void session(); }
+/**
+ * Start both connections at once, as early as anything can.
+ *
+ * Measured: the same read of twenty-five chirps takes 8678ms the first time,
+ * 924ms the second and 198ms the third. Almost none of that is the reads — it
+ * is a one-off cost paid on the first use of a client: the websocket, and the
+ * runtime metadata. Batching, caching and parallelism were all attacking the
+ * cheap part.
+ *
+ * So the public reader is opened the instant this module is imported, before
+ * the app has decided anything, in parallel with the host handshake. Neither
+ * blocks the other and neither blocks the first paint.
+ */
+void pub();
+
+export function warmUp(): void { void session(); void pub(); }
 
 /* ------------------------------------------------------------ notifications */
 // The host owns the notification surface — the OS permission and the delivery
@@ -496,11 +514,35 @@ function pub() {
   return reader;
 }
 
+/**
+ * Contract handles for READING.
+ *
+ * It deliberately does NOT wait for the host. Connecting takes six to ten
+ * seconds — the wallet handshake, the permission sheets, a full scan of the
+ * proxy map — and none of that is needed to read a public chain. Waiting for it
+ * meant the timeline could not start loading until the slowest part of the app
+ * had finished, which is most of why opening chirp felt like it had hung.
+ *
+ * So: if the session is already up, use it (its reads carry your account, so
+ * `liked` and `reposted` come back filled in). If it is not, read over the
+ * public RPC right now and let the session finish in the background; the next
+ * refresh has it. The cost is that the very first paint may not know what you
+ * liked, which is a far smaller sin than a blank screen for ten seconds.
+ */
+let ready: Slot | null = null;
+
 async function handles() {
+  if (ready) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, me: ready.h160 };
+  void session();   // keep it warming, but do not wait on it
+  const p = await pub();
+  return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null }), me: '' };
+}
+
+/** Handles for reads that are meaningless without an account — following, and
+ *  anything keyed by who you are. These do wait. */
+async function myHandles() {
   const s = await session().catch(() => null);
-  return s
-    ? { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, me: s.h160 }
-    : { ...(await pub() ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null }), me: '' };
+  return s ?? null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -511,23 +553,38 @@ const pick = (v: any, key: string, i: number) => (Array.isArray(v) ? v[i] : v?.[
 /** The identity behind a mask, cached — a timeline hits the same few masks over
  *  and over and each lookup is two chain reads. */
 const whoCache = new Map<number, Who>();
+/** In-flight lookups, so twenty-five chirps by the same author cause ONE set of
+ *  reads rather than twenty-five identical ones racing each other. The cache
+ *  alone did not help: within a batch none of them had returned yet. */
+const whoPending = new Map<number, Promise<Who>>();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function whoOf(masks: any, mask: number, handlesC?: any): Promise<Who> {
+function whoOf(masks: any, mask: number, handlesC?: any): Promise<Who> {
   const hit = whoCache.get(mask);
-  if (hit) return hit;
-  const hc = handlesC ?? (await handles()).handles;
-  const [v, t, p, h] = await Promise.all([
-    q(masks, 'verifiedName', BigInt(mask)),
-    q(masks, 'tierOf', BigInt(mask)),
-    q(masks, 'profileOf', BigInt(mask)),
-    hc ? q(hc, 'handleOf', BigInt(mask)) : Promise.resolve(undefined),
-  ]);
-  const verified = String(v ?? '');
-  const tier = Number(t ?? 4);
-  const name = String(pick(p, 'displayName', 0) ?? '');
-  const who: Who = { mask, name, verified, handle: String(h ?? ''), tier };
-  whoCache.set(mask, who);
-  return who;
+  if (hit) return Promise.resolve(hit);
+  const flight = whoPending.get(mask);
+  if (flight) return flight;                 // already asking; wait on that one
+
+  const p = (async () => {
+    const hc = handlesC ?? (await handles()).handles;
+    const [v, t, pr, h] = await Promise.all([
+      q(masks, 'verifiedName', BigInt(mask)),
+      q(masks, 'tierOf', BigInt(mask)),
+      q(masks, 'profileOf', BigInt(mask)),
+      hc ? q(hc, 'handleOf', BigInt(mask)) : Promise.resolve(undefined),
+    ]);
+    const who: Who = {
+      mask,
+      name: String(pick(pr, 'displayName', 0) ?? ''),
+      verified: String(v ?? ''),
+      handle: String(h ?? ''),
+      tier: Number(t ?? 4),
+    };
+    whoCache.set(mask, who);
+    return who;
+  })();
+  whoPending.set(mask, p);
+  void p.finally(() => whoPending.delete(mask));
+  return p;
 }
 export function forgetWho(mask?: number) { if (mask) whoCache.delete(mask); else whoCache.clear(); }
 
@@ -573,20 +630,58 @@ async function readPost(chirp: any, masks: any, me: string, id: number, depth = 
  * size that is cheaper than being clever, and it keeps every view consistent
  * with the others.
  */
-export async function loadAll(limit = 300): Promise<Post[]> {
+/**
+ * The last feed we read, kept on the device so opening chirp shows something at
+ * once instead of three grey rectangles.
+ *
+ * It is a cache of public data, not a source of truth: it is painted, then
+ * replaced by whatever the chain actually says, and it is never written to the
+ * chain or used to decide anything. Old enough and it is ignored — a stale
+ * timeline presented as current would be worse than a slow one.
+ */
+const CACHE = 'chirp.feed';
+const CACHE_MS = 6 * 3600 * 1000;
+
+export function cachedFeed(): Post[] {
+  try {
+    const raw = JSON.parse(localStorage.getItem(CACHE) ?? 'null');
+    if (!raw || Date.now() - raw.at > CACHE_MS) return [];
+    return raw.posts as Post[];
+  } catch { return []; }
+}
+
+function cacheFeed(posts: Post[]) {
+  try {
+    // Only the newest slice: the whole timeline in localStorage is a quota
+    // error waiting to happen, and nobody scrolls to the bottom on a cold open.
+    localStorage.setItem(CACHE, JSON.stringify({ at: Date.now(), posts: posts.slice(0, 40) }));
+  } catch { /* private mode, or full */ }
+}
+
+export async function loadAll(limit = 300, onBatch?: (soFar: Post[]) => void): Promise<Post[]> {
   const { chirp, masks, me } = await handles();
   if (!chirp) return [];
   const total = Number((await q(chirp, 'count')) ?? 0);
   const ids: number[] = [];
   for (let id = total; id > 0 && ids.length < limit; id--) ids.push(id);
   // Batched rather than one-at-a-time: sequential reads made the feed crawl as
-  // soon as there were more than a handful of posts. Ten at a time keeps the
-  // node from being hammered while staying an order of magnitude faster.
+  // soon as there were more than a handful of posts.
+  //
+  // The batch is 25, not 10. Each round trip costs roughly a second whatever is
+  // in it, so the count of ROUNDS is what the wait actually is: twenty-five
+  // chirps at ten a time is three rounds of reads plus their author lookups,
+  // and at twenty-five it is one. The node is doing the same total work either
+  // way — it is only being asked to do more of it at once.
+  const B = 25;
   const out: Post[] = [];
-  for (let i = 0; i < ids.length; i += 10) {
-    const batch = await Promise.all(ids.slice(i, i + 10).map((id) => readPost(chirp, masks, me, id)));
+  for (let i = 0; i < ids.length; i += B) {
+    const batch = await Promise.all(ids.slice(i, i + B).map((id) => readPost(chirp, masks, me, id)));
     for (const p of batch) if (p && !p.deleted) out.push(p);
+    // Hand back each batch as it lands. Waiting for the last of three hundred
+    // before showing the first ten is most of what "slow" meant here.
+    onBatch?.(out.slice());
   }
+  cacheFeed(out);
   return out;
 }
 
@@ -845,7 +940,10 @@ export async function profile(mask: number, feed?: Post[]): Promise<{
 }> {
   const h = await handles();
   const { masks } = h;
-  const s = await session().catch(() => null);
+  // `ready`, not session(): opening a profile must not wait on the wallet
+  // handshake. Without it the two "is this me / do I follow them" lines are
+  // simply absent for a few seconds, which beats an empty page.
+  const s = ready;
   const who = masks ? await whoOf(masks, mask) : { mask, name: '', verified: '', handle: '', tier: 4 };
   const p = masks ? await q(masks, 'profileOf', BigInt(mask)) : undefined;
   // Same as notifications: opening a profile re-read the entire timeline.
@@ -1139,9 +1237,8 @@ export async function notedChirps(): Promise<Map<number, Note>> {
 }
 
 async function myMask(): Promise<number> {
-  const s = await session().catch(() => null);
-  if (!s) return 0;
-  return Number((await q(s.masks, 'maskOf', s.h160)) ?? 0);
+  if (!ready) return 0;   // reads must not queue behind the handshake
+  return Number((await q(ready.masks, 'maskOf', ready.h160)) ?? 0);
 }
 
 export function addNote(chirpId: number, mask: number, kind: number, body: string): Promise<Ok | Fail> {
