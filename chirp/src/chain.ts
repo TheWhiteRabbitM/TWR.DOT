@@ -110,6 +110,21 @@ type Slot = {
   kind: 'wallet' | 'app';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   signer: any; manager?: any; masks: any; chirp: any; handles: any;
+  /** The typed api, needed to wrap a contract call in Proxy.proxy. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  api: any;
+  /**
+   * The account this session acts FOR, when the signer has been made its proxy.
+   *
+   * The host signs with an account it derives per app, which is nobody in
+   * particular. If the person adds that account as a proxy of their real one,
+   * every call can be sent through Proxy.proxy and the contract sees the REAL
+   * account as msg.sender — verified on chain: a delegate successfully called a
+   * function gated on `ownerOf(mask) == msg.sender` for a mask it does not own.
+   * That makes the mask belong to the same AccountId32 that owns the People
+   * username, which is what finally connects the two.
+   */
+  real: string | null;
 };
 let slot: Promise<Slot | null> | null = null;
 
@@ -183,10 +198,43 @@ async function connect(): Promise<Slot | null> {
   const opts = manager ? { signerManager: manager, defaultOrigin: address } : { defaultSigner: signer, defaultOrigin: address };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mk = (addr: string, abi: unknown) => (contracts as any).createContract(runtime, addr, abi, opts);
+  const api = client.getTypedApi(descriptors.devnet_asset_hub);
+  const real = await proxiedAccount(api, address);
+  // Identity is read for whoever we act as, so a mask claimed through the proxy
+  // is found again.
+  const who = real ?? address;
   return {
-    address, h160: await h160Of(address), kind, signer, manager,
+    address, h160: await h160Of(who), kind, signer, manager, api, real,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
   };
+}
+
+/**
+ * Find the account our signer has been made a proxy of, if any.
+ *
+ * The Proxy pallet is keyed the other way — real -> delegates — so there is no
+ * direct lookup and the map has to be scanned. It is a few hundred rows on this
+ * chain, read once per session. Ambiguity is resolved by taking none: if the
+ * signer can act for more than one account, guessing which one you meant would
+ * be worse than staying yourself.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function proxiedAccount(api: any, delegate: string): Promise<string | null> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rows: any[] = await withTimeout(api.query.Proxy.Proxies.getEntries(), 15_000, 'proxies');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mine = rows.filter((e: any) => (e?.value?.[0] ?? []).some((d: any) => String(d?.delegate) === delegate));
+    return mine.length === 1 ? String(mine[0]?.keyArgs?.[0] ?? '') || null : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Who the app is acting as, for the UI to say so plainly. */
+export async function actingAs(): Promise<{ signer: string; real: string | null } | null> {
+  const s = await session().catch(() => null);
+  return s ? { signer: s.address, real: s.real } : null;
 }
 
 function session(): Promise<Slot | null> {
@@ -487,13 +535,45 @@ export async function suggestedName(): Promise<string> {
 
 /* ------------------------------------------------------------------- writes */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function send(fn: (s: Slot, o: any) => Promise<any>): Promise<Ok | Fail> {
+/**
+ * Submit a contract call.
+ *
+ * Plain when the signer is acting for itself. When it is somebody's proxy the
+ * call is BUILT but not signed (`.prepare()`), then wrapped in Proxy.proxy so
+ * the contract sees the real account as msg.sender. The gas dry-run is given the
+ * same origin, or it would price the call for the wrong account.
+ */
+async function send(
+  which: 'masks' | 'chirp' | 'handles',
+  method: string,
+  args: unknown[],
+): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
   if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
-  const o = { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const c = (s as any)[which];
   try {
-    const res = await withTimeout(fn(s, o), TX_MS, 'transaction');
+    if (!s.real) {
+      const o = { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const res: any = await withTimeout(c[method].tx(...args, o), TX_MS, 'transaction');
+      if (res && res.ok === false) return { ok: false, why: reason(res) };
+      return { ok: true, value: undefined };
+    }
+    const prepared = await withTimeout(
+      c[method].prepare(...args, { ...LIMITS, origin: s.real }), TX_MS, 'preparing',
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const inner: any = (prepared as any)?.value ?? prepared;
+    const call = inner?.decodedCall ?? inner?.call ?? inner;
+    if (!call) return { ok: false, why: 'Could not build the call to send through your proxy.' };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res: any = await withTimeout(
+      s.api.tx.Proxy.proxy({ real: { type: 'Id', value: s.real }, force_proxy_type: undefined, call })
+        .signAndSubmit(s.signer),
+      TX_MS,
+      'transaction',
+    );
     if (res && res.ok === false) return { ok: false, why: reason(res) };
     return { ok: true, value: undefined };
   } catch (e) {
@@ -502,34 +582,34 @@ async function send(fn: (s: Slot, o: any) => Promise<any>): Promise<Ok | Fail> {
 }
 
 export function claimMask(dotLabel = ''): Promise<Ok | Fail> {
-  return send((s, o) => s.masks.claim.tx(dotLabel.trim().replace(/\.dot$/i, ''), o));
+  return send('masks', 'claim', [dotLabel.trim().replace(/\.dot$/i, '')]);
 }
 
 /** Your public details. The name is free text you choose — the tick belongs to a
  *  `.dot`, which the contract verifies, and to nothing else. */
 export function saveProfile(name: string, telegram: string, x: string, bio: string): Promise<Ok | Fail> {
-  return send((s, o) => s.masks.setProfile.tx(
-    name.slice(0, 40), telegram.replace(/^@/, '').slice(0, 32), x.replace(/^@/, '').slice(0, 32), bio.slice(0, 160), o,
-  ));
+  return send('masks', 'setProfile', [
+    name.slice(0, 40), telegram.replace(/^@/, '').slice(0, 32), x.replace(/^@/, '').slice(0, 32), bio.slice(0, 160),
+  ]);
 }
 
 /** Attach the People chain username this mask goes by. First come first served
  *  across masks; the app offers only what the host says is yours, but the chain
  *  cannot check that, so it is never shown with a tick. */
 export function setHandle(mask: number, handle: string): Promise<Ok | Fail> {
-  return send((s, o) => s.handles.setHandle.tx(BigInt(mask), handle.trim().replace(/^@/, ''), o));
+  return send('handles', 'setHandle', [BigInt(mask), handle.trim().replace(/^@/, '')]);
 }
 
 export function post(mask: number, body: string, replyTo = 0, quoteOf = 0): Promise<Ok | Fail> {
-  return send((s, o) => s.chirp.chirp.tx(BigInt(mask), body, BigInt(replyTo), BigInt(quoteOf), o));
+  return send('chirp', 'chirp', [BigInt(mask), body, BigInt(replyTo), BigInt(quoteOf)]);
 }
 
 export function edit(id: number, body: string): Promise<Ok | Fail> {
-  return send((s, o) => s.chirp.edit.tx(BigInt(id), body, o));
+  return send('chirp', 'edit', [BigInt(id), body]);
 }
 
 export function remove(id: number): Promise<Ok | Fail> {
-  return send((s, o) => s.chirp.remove.tx(BigInt(id), o));
+  return send('chirp', 'remove', [BigInt(id)]);
 }
 
 /** A heart is a toggle: ask the chain what you already did rather than guessing,
@@ -538,7 +618,7 @@ export async function toggleLike(id: number): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
   if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
   const already = Boolean(await q(s.chirp, 'liked', BigInt(id), s.h160));
-  return send((x, o) => (already ? x.chirp.unlike.tx(BigInt(id), o) : x.chirp.like.tx(BigInt(id), o)));
+  return send('chirp', already ? 'unlike' : 'like', [BigInt(id)]);
 }
 
 /** Reposting again retracts the repost you made — the contract remembers which
@@ -548,15 +628,15 @@ export async function toggleRepost(id: number, mask: number): Promise<Ok | Fail>
   if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
   const mine = Number((await q(s.chirp, 'repostOf', BigInt(id), s.h160)) ?? 0);
   return mine
-    ? send((x, o) => x.chirp.remove.tx(BigInt(mine), o))
-    : send((x, o) => x.chirp.chirp.tx(BigInt(mask), '', 0n, BigInt(id), o));
+    ? send('chirp', 'remove', [BigInt(mine)])
+    : send('chirp', 'chirp', [BigInt(mask), '', 0n, BigInt(id)]);
 }
 
 export async function toggleFollow(mask: number): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
   if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
   const on = Boolean(await q(s.chirp, 'follows', s.h160, BigInt(mask)));
-  return send((x, o) => x.chirp.follow.tx(BigInt(mask), !on, o));
+  return send('chirp', 'follow', [BigInt(mask), !on]);
 }
 
 export async function isFollowing(mask: number): Promise<boolean> {

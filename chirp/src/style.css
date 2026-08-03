@@ -257,3 +257,8 @@ body.locked { overflow: hidden; }
 .detail-time { color: var(--ink-2); font-size: 14px; margin-top: 12px; }
 .statrow { display: flex; gap: 20px; padding: 12px 0; margin-top: 8px; border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); color: var(--ink-2); font-size: 14px; }
 .statrow b { color: var(--ink); }
+
+/* ---- the proxy link ---- */
+.hint code { background: var(--panel); padding: 2px 6px; border-radius: 6px; font-size: 12px; overflow-wrap: anywhere; }
+.hint.linked { color: var(--green); }
+.hint.linked code { color: var(--ink); }

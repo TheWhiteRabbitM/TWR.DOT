@@ -17,7 +17,7 @@ import { keccak_256 } from '@noble/hashes/sha3';
 import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
-  claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle,
+  claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
   CHIRP, MASKS, type Post, type Me, type Who,
 } from './chain';
 
@@ -124,6 +124,9 @@ let CONN: { followers: Who[]; followingList: Who[] } = { followers: [], followin
 /** True while a refresh is in flight, so the header can say so instead of the
  *  app looking frozen. */
 let busy = false;
+/** The account that signs, and the one it acts for when it has been made a
+ *  proxy. Two different things, and the difference is the whole point. */
+let ACT: { signer: string; real: string | null } | null = null;
 /** Set when a read failed. The app used to keep showing the last good data with
  *  no hint it was stale, which is worse than an error: you cannot tell a quiet
  *  network from a quiet timeline. */
@@ -346,6 +349,19 @@ function overlay(): string {
       <label>Bio</label><input id="s_bio" maxlength="160" value="${esc(ME.bio)}" placeholder="one line about you">
       <label>Telegram</label><input id="s_tg" maxlength="32" value="${esc(ME.telegram)}" placeholder="handle, without @">
       <label>X</label><input id="s_x" maxlength="32" value="${esc(ME.x)}" placeholder="handle, without @">
+      <label>Account</label>
+      ${ACT?.real
+        ? `<p class="hint linked"><b>Linked.</b> chirp signs with the account the Polkadot app derived for it,
+            and sends every call through your proxy, so the chain records
+            <code>${esc(short(ACT.real))}</code> — <b>your</b> account — as the author.
+            That is the same AccountId your People chain username belongs to, so anyone can check the two match.</p>`
+        : `<p class="hint">chirp signs with <code>${esc(short(ACT?.signer ?? ''))}</code>, an account the Polkadot app
+            derived for this app. It is nobody in particular, which is why your @ name cannot be proven.
+            <br><br><b>To post as your real account</b>, add that address as a <b>proxy</b> of yours — one transaction,
+            from a wallet holding your identity account:<br>
+            <code>Proxy.addProxy(delegate = ${esc(ACT?.signer ?? '')}, type = Any, delay = 0)</code>
+            <br><br>chirp notices it by itself and starts acting for you. Verified on this chain: a delegate can call a
+            contract function gated on ownership of something only the real account holds.</p>`}
       <button class="primary wide" id="savep">Save on chain</button>
       <p class="hint">The name is yours to choose and proves nothing — which is exactly why the tick is reserved for the .dot the contract verified.</p>
     </div></div>`;
@@ -676,6 +692,7 @@ warmUp();
 view = viewOf(location.hash);
 (async () => {
   ME = await me().catch(() => null);
+  ACT = await actingAs().catch(() => null);
   // Go through refresh() rather than loading the feed by hand: a deep link — a
   // shared thread, someone's profile — has to arrive with ITS data, not with an
   // empty shell and a timeline nobody asked for.
