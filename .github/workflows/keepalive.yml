@@ -64,6 +64,14 @@ jobs:
           # is committed, so a plain build renews with the last-known directory.
           - dir: peoplebook
             name: peoplebook.dot
+          # These two have no refresh job of their own at all: they are
+          # published only when we change them, so nothing renews them. Both
+          # read their content from contracts rather than from a data file, so
+          # a plain build renews the bundle without any prestep.
+          - dir: chirp
+            name: chirponchain.dot
+          - dir: peoplewiki
+            name: peoplewiki.dot
     steps:
       - uses: actions/checkout@v4
 
