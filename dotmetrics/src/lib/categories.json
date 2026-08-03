@@ -435,6 +435,24 @@
     "confidence": "none",
     "why": []
   },
+  "mini-lucky": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "mini-lucky-dev": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "mini-lucky-loc": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "mini-lucky-smoke": {
     "category": "social",
     "source": "derived:app-text",
@@ -458,6 +476,12 @@
       "tokens~",
       "wallet~"
     ]
+  },
+  "my-dotter": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "na87u9srwgblr61": {
     "category": "other",
@@ -597,6 +621,12 @@
     "category": "social",
     "source": "owner",
     "confidence": "declared",
+    "why": []
+  },
+  "peoplewiki": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
     "why": []
   },
   "petitions": {
