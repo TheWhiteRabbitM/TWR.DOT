@@ -59,6 +59,20 @@ const when = (t: number) => new Date(t * 1000).toLocaleString();
 const nm = (w?: Who, mask = 0) => w?.name || (w?.verified ? w.verified + '.dot' : 'mask #' + (w?.mask || mask));
 const at = (w?: Who, mask = 0) => (w?.verified ? '@' + w.verified + '.dot' : '@mask' + (w?.mask || mask));
 
+/**
+ * Turn a chirp's text into something you can act on: @handles, .dot names and
+ * #tags become taps into search, bare links become links. Escaping happens
+ * FIRST and the linkifier only ever inserts markup around already-escaped text,
+ * so a post can never inject anything.
+ */
+function rich(text: string): string {
+  return esc(text)
+    .replace(/https?:\/\/[^\s<]+/g, (u) => `<a href="${u}" target="_blank" rel="noopener nofollow">${u}</a>`)
+    .replace(/(^|\s)(@[A-Za-z0-9_.-]{2,40})/g, (_m, sp, h) => `${sp}<a class="mention" data-q="${h.slice(1)}">${h}</a>`)
+    .replace(/(^|\s)([A-Za-z0-9-]{2,40}\.dot)\b/g, (_m, sp, d) => `${sp}<a class="mention" data-q="${d}">${d}</a>`)
+    .replace(/(^|\s)(#[A-Za-z0-9_]{1,40})/g, (_m, sp, t) => `${sp}<a class="mention" data-q="${t.slice(1)}">${t}</a>`);
+}
+
 const TICK = `<svg class="tick" viewBox="0 0 24 24" fill="currentColor"><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81C14.67 2.63 13.43 1.75 12 1.75s-2.67.88-3.34 2.19c-1.39-.46-2.9-.2-3.91.81s-1.27 2.52-.81 3.91C2.63 9.33 1.75 10.57 1.75 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.27 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.34-2.19c1.39.46 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z"/></svg>`;
 const S = (d: string, f = 'none') => `<svg viewBox="0 0 24 24" fill="${f}" stroke="currentColor" stroke-width="2">${d}</svg>`;
 const I = {
@@ -118,6 +132,7 @@ function card(p: Post, big = false): string {
     <div class="row">
       <div class="av" data-who="${shown.mask}">${avatar(shown.author)}</div>
       <div class="grow">
+        ${p.replyTo && !big ? replyingTo(p) : ''}
         <div class="head">
           <span class="nm" data-who="${shown.mask}">${esc(nm(shown.who, shown.mask))}</span>${shown.who?.verified ? TICK : ''}
           <span class="at">${esc(at(shown.who, shown.mask))}</span>
@@ -125,15 +140,23 @@ function card(p: Post, big = false): string {
           ${p.edited ? '<span class="edited">· edited</span>' : ''}
           <button class="more" data-more="${p.id}" aria-label="More">${I.more}</button>
         </div>
-        <div class="body">${esc(shown.body)}</div>
+        <div class="body">${rich(shown.body)}</div>
         ${!repost && p.quoted ? `<div class="quoted">
           <div class="head"><span class="nm">${esc(nm(p.quoted.who, p.quoted.mask))}</span>${p.quoted.who?.verified ? TICK : ''}
           <span class="at">${esc(at(p.quoted.who, p.quoted.mask))}</span></div>
-          <div class="body">${esc(p.quoted.body)}</div></div>` : ''}
+          <div class="body">${rich(p.quoted.body)}</div></div>` : ''}
         ${actions(p)}
       </div>
     </div>
   </article>`;
+}
+
+/** "Replying to @someone" — without it a reply in a thread reads as if it were
+ *  addressed to nobody. */
+function replyingTo(p: Post): string {
+  const parent = ALL.find((x) => x.id === p.replyTo);
+  if (!parent) return '';
+  return `<div class="ctx small">Replying to <a class="mention" data-who="${parent.mask}">${esc(at(parent.who, parent.mask))}</a></div>`;
 }
 
 const list = (ps: Post[], empty: string) => (ps.length ? ps.map((p) => card(p)).join('') : `<div class="note">${empty}</div>`);
@@ -322,10 +345,31 @@ async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: strin
   await refresh();
 }
 
-function goProfile(mask: number) { view = { k: 'profile', mask }; refresh(); }
+/** The view as a URL, so the phone's back button walks the app instead of
+ *  leaving it, and a thread can be linked to. */
+function hashOf(v: View): string {
+  return v.k === 'home' ? '#/' : v.k === 'search' ? '#/search' : v.k === 'notif' ? '#/notifications'
+    : v.k === 'profile' ? '#/u/' + v.mask : '#/t/' + v.id;
+}
+function viewOf(hash: string): View {
+  const h = hash.replace(/^#\/?/, '');
+  if (h.startsWith('u/')) return { k: 'profile', mask: Number(h.slice(2)) || 0 };
+  if (h.startsWith('t/')) return { k: 'thread', id: Number(h.slice(2)) || 0 };
+  if (h.startsWith('search')) return { k: 'search' };
+  if (h.startsWith('notifications')) return { k: 'notif' };
+  return { k: 'home' };
+}
+/** Navigate. Pushing the hash is what makes Back work; the hashchange handler
+ *  is the single place a view is ever applied, so the two cannot drift. */
+function go(v: View) {
+  const h = hashOf(v);
+  if (location.hash === h) { view = v; refresh(); return; }
+  location.hash = h;
+}
+function goProfile(mask: number) { go({ k: 'profile', mask }); }
 
 function wire() {
-  document.getElementById('back')?.addEventListener('click', () => { view = { k: 'home' }; refresh(); });
+  document.getElementById('back')?.addEventListener('click', () => history.back());
   document.getElementById('settings')?.addEventListener('click', () => { settingsOpen = true; render(); });
   document.getElementById('editprof')?.addEventListener('click', () => { settingsOpen = true; render(); });
   document.getElementById('closepane')?.addEventListener('click', () => { settingsOpen = false; sheet = null; menuFor = null; render(); });
@@ -336,8 +380,8 @@ function wire() {
 
   app.querySelectorAll<HTMLElement>('[data-nav]').forEach((b) => b.addEventListener('click', () => {
     const k = b.dataset.nav!;
-    if (k === 'profile') { if (ME?.mask) goProfile(ME.mask); else { view = { k: 'home' }; refresh(); } return; }
-    view = { k: k as 'home' | 'search' | 'notif' }; refresh();
+    if (k === 'profile') { if (ME?.mask) goProfile(ME.mask); else go({ k: 'home' }); return; }
+    go({ k: k as 'home' | 'search' | 'notif' });
   }));
   app.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => {
     tab = b.dataset.tab as 'foryou' | 'following'; render();
@@ -384,7 +428,12 @@ function wire() {
   });
 
   app.querySelectorAll<HTMLElement>('[data-like]').forEach((b) => b.addEventListener('click', (e) => {
-    e.stopPropagation(); act(() => toggleLike(Number(b.dataset.like)), 'Done.');
+    e.stopPropagation();
+    const p = findPost(Number(b.dataset.like));
+    // Move the heart now and reconcile after: a like that waits for a block
+    // feels broken even when it is working.
+    if (p) { p.liked = !p.liked; p.likes += p.liked ? 1 : -1; render(); }
+    act(() => toggleLike(Number(b.dataset.like)), p?.liked ? 'Liked.' : 'Like removed.');
   }));
   app.querySelectorAll<HTMLElement>('[data-repost]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -416,6 +465,9 @@ function wire() {
   app.querySelectorAll<HTMLElement>('[data-who]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation(); goProfile(Number(b.dataset.who));
   }));
+  app.querySelectorAll<HTMLElement>('[data-q]').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation(); query = b.dataset.q ?? ''; go({ k: 'search' });
+  }));
   app.querySelectorAll<HTMLElement>('[data-m]').forEach((b) => b.addEventListener('click', () => {
     const m = b.dataset.m, id = Number(b.dataset.id), p = id ? findPost(id) : undefined;
     menuFor = null;
@@ -431,7 +483,7 @@ function wire() {
   app.querySelectorAll<HTMLElement>('[data-open]').forEach((c) => c.addEventListener('click', () => {
     const id = Number(c.dataset.open);
     if (view.k === 'thread' && TH.post?.id === id) return;
-    view = { k: 'thread', id }; refresh();
+    go({ k: 'thread', id });
   }));
 }
 
@@ -445,9 +497,23 @@ async function refresh() {
   render();
 }
 
+/* ------------------------------------------------------------------ keyboard */
+// Escape closes whatever is open; Cmd/Ctrl+Enter sends what is being written.
+addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && (sheet || settingsOpen || menuFor)) {
+    sheet = null; settingsOpen = false; menuFor = null; render();
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    const b = document.getElementById('ssend') as HTMLButtonElement | null;
+    if (b && !b.disabled) b.click();
+  }
+});
+addEventListener('hashchange', () => { view = viewOf(location.hash); refresh(); });
+
 /* --------------------------------------------------------------------- boot */
 app.innerHTML = header() + '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
 warmUp();
+view = viewOf(location.hash);
 (async () => {
   ME = await me().catch(() => null);
   ALL = await loadAll().catch(() => []);

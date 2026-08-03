@@ -212,3 +212,9 @@ main { padding-bottom: 88px; }           /* clear the bottom bar */
 .compose-pane textarea { min-height: 130px; }
 .chirp .av { cursor: pointer; }
 .head .nm { cursor: pointer; }
+
+/* ---- live text and reply context ---- */
+.mention, .body a { color: var(--blue); text-decoration: none; cursor: pointer; }
+.mention:hover, .body a:hover { text-decoration: underline; }
+.ctx.small { padding: 0 0 4px; font-weight: 400; font-size: 13.5px; }
+.ctx.small .mention { font-weight: 400; }

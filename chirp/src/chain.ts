@@ -223,9 +223,13 @@ const whoCache = new Map<number, Who>();
 async function whoOf(masks: any, mask: number): Promise<Who> {
   const hit = whoCache.get(mask);
   if (hit) return hit;
-  const verified = String((await q(masks, 'verifiedName', BigInt(mask))) ?? '');
-  const tier = Number((await q(masks, 'tierOf', BigInt(mask))) ?? 4);
-  const p = await q(masks, 'profileOf', BigInt(mask));
+  const [v, t, p] = await Promise.all([
+    q(masks, 'verifiedName', BigInt(mask)),
+    q(masks, 'tierOf', BigInt(mask)),
+    q(masks, 'profileOf', BigInt(mask)),
+  ]);
+  const verified = String(v ?? '');
+  const tier = Number(t ?? 4);
   const name = String(pick(p, 'displayName', 0) ?? '');
   const who: Who = { mask, name, verified, tier };
   whoCache.set(mask, who);
@@ -235,7 +239,14 @@ export function forgetWho(mask?: number) { if (mask) whoCache.delete(mask); else
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function readPost(chirp: any, masks: any, me: string, id: number, depth = 1): Promise<Post | null> {
-  const m = await q(chirp, 'meta', BigInt(id));
+  // meta, body and the two "did I" flags do not depend on each other, so they go
+  // out together: a post used to cost four sequential round-trips.
+  const [m, bodyText, likedFlag, repostFlag] = await Promise.all([
+    q(chirp, 'meta', BigInt(id)),
+    q(chirp, 'body', BigInt(id)),
+    me ? q(chirp, 'liked', BigInt(id), me) : Promise.resolve(undefined),
+    me ? q(chirp, 'repostOf', BigInt(id), me) : Promise.resolve(undefined),
+  ]);
   if (!m) return null;
   const post: Post = {
     id,
@@ -249,12 +260,12 @@ async function readPost(chirp: any, masks: any, me: string, id: number, depth = 
     likes: Number(pick(m, 'likes', 7) ?? 0),
     replies: Number(pick(m, 'replies', 8) ?? 0),
     reposts: Number(pick(m, 'reposts', 9) ?? 0),
-    body: String((await q(chirp, 'body', BigInt(id))) ?? ''),
+    body: String(bodyText ?? ''),
   };
   post.who = await whoOf(masks, post.mask);
   if (me) {
-    post.liked = Boolean(await q(chirp, 'liked', BigInt(id), me));
-    post.reposted = Number((await q(chirp, 'repostOf', BigInt(id), me)) ?? 0) > 0;
+    post.liked = Boolean(likedFlag);
+    post.reposted = Number(repostFlag ?? 0) > 0;
   }
   if (post.quoteOf && depth > 0) post.quoted = (await readPost(chirp, masks, me, post.quoteOf, depth - 1)) ?? undefined;
   return post;
@@ -272,10 +283,15 @@ export async function loadAll(limit = 300): Promise<Post[]> {
   const { chirp, masks, me } = await handles();
   if (!chirp) return [];
   const total = Number((await q(chirp, 'count')) ?? 0);
+  const ids: number[] = [];
+  for (let id = total; id > 0 && ids.length < limit; id--) ids.push(id);
+  // Batched rather than one-at-a-time: sequential reads made the feed crawl as
+  // soon as there were more than a handful of posts. Ten at a time keeps the
+  // node from being hammered while staying an order of magnitude faster.
   const out: Post[] = [];
-  for (let id = total; id > 0 && out.length < limit; id--) {
-    const p = await readPost(chirp, masks, me, id);
-    if (p && !p.deleted) out.push(p);
+  for (let i = 0; i < ids.length; i += 10) {
+    const batch = await Promise.all(ids.slice(i, i + 10).map((id) => readPost(chirp, masks, me, id)));
+    for (const p of batch) if (p && !p.deleted) out.push(p);
   }
   return out;
 }
@@ -285,8 +301,11 @@ export async function people(): Promise<Who[]> {
   const { masks } = await handles();
   if (!masks) return [];
   const total = Number((await q(masks, 'totalSupply')) ?? 0);
+  const ids = Array.from({ length: total }, (_, i) => i + 1);
   const out: Who[] = [];
-  for (let i = 1; i <= total; i++) out.push(await whoOf(masks, i));
+  for (let i = 0; i < ids.length; i += 10) {
+    out.push(...(await Promise.all(ids.slice(i, i + 10).map((n) => whoOf(masks, n)))));
+  }
   return out;
 }
 
@@ -296,8 +315,11 @@ export async function following(): Promise<Set<number>> {
   const s = await session().catch(() => null);
   if (!s) return new Set();
   const total = Number((await q(s.masks, 'totalSupply')) ?? 0);
+  const flags = await Promise.all(
+    Array.from({ length: total }, (_, i) => q(s.chirp, 'follows', s.h160, BigInt(i + 1))),
+  );
   const set = new Set<number>();
-  for (let i = 1; i <= total; i++) if (await q(s.chirp, 'follows', s.h160, BigInt(i))) set.add(i);
+  flags.forEach((on, i) => { if (on) set.add(i + 1); });
   return set;
 }
 
@@ -362,12 +384,10 @@ export async function thread(id: number): Promise<{ parents: Post[]; post: Post 
     parents.unshift(p);
     up = p.replyTo;
   }
-  const total = Number((await q(chirp, 'count')) ?? 0);
-  const replies: Post[] = [];
-  for (let i = 1; i <= total; i++) {
-    const p = await readPost(chirp, masks, me, i, 0);
-    if (p && !p.deleted && p.replyTo === id) replies.push(p);
-  }
+  // The replies come out of the one feed read the app already does, instead of
+  // walking every chirp again for each thread opened.
+  const all = await loadAll();
+  const replies = all.filter((p) => p.replyTo === id);
   return { parents, post, replies };
 }
 
