@@ -113,17 +113,27 @@ jobs:
           [ -z "$CID" ] && { echo "::error::bulletin upload failed" >&2; exit 1; }
           echo "new directory CID: $CID"
 
-          # Move the mutable pointer the page reads at runtime. The CLI's exit
-          # code gates the submit; the read-back below is the confirmation that
-          # counts — a set we cannot read back over eth_call did not happen,
-          # whatever the CLI printed. A few retries absorb propagation lag.
-          dotns text set dotmetrics.dot directory "$CID" --env devnet 2>&1 | tr -d '\r' | tee /tmp/set.log
+          # Move the mutable pointer the page reads at runtime.
+          #
+          # The read-back is the only confirmation that counts — a set we cannot
+          # read back over eth_call did not happen, whatever the CLI printed —
+          # so the submit itself is NOT allowed to end the job. It used to be:
+          # `set -e` plus pipefail meant one bad exit code killed the run, and
+          # took dot-store with it (`needs: refresh`).
+          #
+          # It kills it for a transient reason. The upload above spends a nonce
+          # on the same account, and `dotns text set` is a second process that
+          # reads the nonce before that transaction is in a block: it signs the
+          # same number, the upload lands first, and the chain answers
+          # {"type":"Invalid","value":{"type":"Stale"}}. The next attempt reads
+          # the nonce the upload actually left behind and goes through.
           CONFIRMED=""
-          for i in 1 2 3; do
+          for i in 1 2 3 4 5; do
+            dotns text set dotmetrics.dot directory "$CID" --env devnet 2>&1 | tr -d '\r' | tee /tmp/set.log || true
             GOT=$(node indexer/read-record.mjs dotmetrics.dot directory || true)
             [ "$GOT" = "$CID" ] && { CONFIRMED=yes; break; }
-            echo "read-back attempt $i: record is '$GOT', want '$CID' — retrying"
-            sleep 6
+            echo "set attempt $i: record is '$GOT', want '$CID' — retrying"
+            sleep 12
           done
           [ -z "$CONFIRMED" ] && { echo "::error::directory record set did NOT confirm on read-back" >&2; exit 1; }
           echo "record confirmed: dotmetrics.dot directory -> $CID"
@@ -183,6 +193,13 @@ jobs:
   # costs zero transactions and says so.
   store:
     needs: refresh
+    # `needs` is here to order the two jobs, not to gate one on the other's luck.
+    # The store copies data the job above has already committed, so a failure
+    # after that commit — a record that would not move, a chain that stopped
+    # answering — is no reason to leave the shelves stale for an hour. If the
+    # commit never happened, the tree hash is unchanged and this job publishes
+    # nothing and costs nothing, which is the right outcome either way.
+    if: always() && needs.refresh.result != 'cancelled'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     defaults:
