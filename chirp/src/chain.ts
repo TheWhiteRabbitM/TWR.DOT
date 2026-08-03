@@ -496,14 +496,6 @@ export async function notify(text: string, deeplink?: string): Promise<boolean> 
 // identical key: renewal is a read followed by a write of the SAME bytes, which
 // costs no transaction and never touches the contract. See renewPfp.
 
-const HEX = (b: Uint8Array) => '0x' + Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
-const UNHEX = (h: string) => {
-  const s = h.startsWith('0x') ? h.slice(2) : h;
-  const out = new Uint8Array(s.length >> 1);
-  for (let i = 0; i < out.length; i++) out[i] = parseInt(s.substr(i * 2, 2), 16);
-  return out;
-};
-
 /** Resolved pictures, so a timeline showing one person forty times fetches once. */
 const pfpCache = new Map<number, string>();
 /** Masks already looked up and found to have none — otherwise every render
@@ -543,7 +535,8 @@ export async function pictureOf(mask: number): Promise<string> {
   const raw = pfp ? await q(pfp, 'pfpOf', BigInt(mask)) : undefined;
   const key = typeof raw === 'string' ? raw : (raw as { asHex?: () => string })?.asHex?.() ?? '';
   if (!key || key === '0x') { noPfp.add(mask); return ''; }
-  const bytes = await fetchPreimage(new TextDecoder().decode(UNHEX(key)));
+  // The stored bytes ARE the key; hand them back as the hex the host expects.
+  const bytes = await fetchPreimage(key.startsWith('0x') ? key : '0x' + key);
   if (!bytes) { noPfp.add(mask); return ''; }
   const url = 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes));
   pfpCache.set(mask, url);
@@ -566,10 +559,19 @@ export async function setPicture(mask: number, bytes: Uint8Array): Promise<Ok | 
     return { ok: false, why: reason({ error: e }) };
   }
   if (!key) return { ok: false, why: 'The app accepted the picture but returned no key.' };
-  // The key is stored as its own text, not as parsed bytes: its width is the
-  // host's business, and a shape we merely assume would break silently.
-  const r = await send('pfp', 'setPfp', [BigInt(mask), HEX(new TextEncoder().encode(key))]);
+  // Store the key's BYTES, not the text of the key.
+  //
+  // The host returns a hex string — "0x" plus sixty-four characters for a
+  // 32-byte hash. Encoding that text as UTF-8 gives sixty-six bytes, and the
+  // contract accepts sixty-four, so every upload reverted on BadKey after the
+  // picture had already been uploaded. The bytes it stands for are thirty-two.
+  const r = await send('pfp', 'setPfp', [BigInt(mask), key.startsWith('0x') ? key : '0x' + key]);
   if (r.ok) { pfpCache.set(mask, 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes))); noPfp.delete(mask); }
+  // The generic revert text talks about posts, which is nonsense while setting a
+  // picture — and that is exactly what it told the first person who tried.
+  if (!r.ok && /contract refused/i.test(r.why)) {
+    return { ok: false, why: `The picture contract refused the key (${key.length} chars). The upload itself worked.` };
+  }
   return r;
 }
 
@@ -589,7 +591,8 @@ export async function renewPicture(mask: number): Promise<boolean> {
   const raw = pfp ? await q(pfp, 'pfpOf', BigInt(mask)) : undefined;
   const key = typeof raw === 'string' ? raw : (raw as { asHex?: () => string })?.asHex?.() ?? '';
   if (!key || key === '0x') return false;
-  const bytes = await fetchPreimage(new TextDecoder().decode(UNHEX(key)));
+  // The stored bytes ARE the key; hand them back as the hex the host expects.
+  const bytes = await fetchPreimage(key.startsWith('0x') ? key : '0x' + key);
   if (!bytes) return false;                       // already gone; nothing to renew
   const mgr = await preimages();
   if (!mgr) return false;
