@@ -1,0 +1,25 @@
+{
+  "name": "peoplewiki",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5188",
+    "build": "tsc --noEmit && vite build",
+    "fetch": "node tools/fetch-data.mjs"
+  },
+  "dependencies": {
+    "@noble/hashes": "^1.5.0",
+    "@parity/product-sdk": "^0.19.1",
+    "@parity/product-sdk-descriptors": "^0.8.0",
+    "@parity/product-sdk-host": "^0.14.1",
+    "@parity/product-sdk-signer": "^0.11.1",
+    "polkadot-api": "^2.2.1"
+  },
+  "devDependencies": {
+    "@polkadot/api": "^16.4.8",
+    "@polkadot/util-crypto": "^13.5.6",
+    "playwright": "^1.62.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.0"
+  }
+}
