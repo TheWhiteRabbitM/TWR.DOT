@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11747741,
-  "updatedAt": "2026-08-03T04:01:27.798Z",
+  "lastBlock": 11754580,
+  "updatedAt": "2026-08-03T07:53:07.143Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "1912ad878250b1e1d4731f8f6ce8d97f918dec00ba72c5b53121a1cedcae67c8",
-    "cid": "bafybeihocpzd7utkpmbydcsngcmel2okogmtehgc35bu3qnlgqned46epi",
-    "uploadedAt": "2026-08-03T04:05:42.469Z"
+    "digest": "6c1caf1a60628fe9384c05b491495dd943a75930d00989e8e0636dbf64744e2c",
+    "cid": "bafybeifk5dyxtrzbtnia2a7spy2vqrvqple3yc4257dzlzyyz7pevolcgy",
+    "uploadedAt": "2026-08-03T07:59:07.863Z"
   },
   "sitePublish": {
     "treeHash": "793567265638b589f7756073aec1923cd6eb8a4d6a5d49b2fd94379af6afe690",
     "publishedAt": "2026-08-02T22:21:03.376Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-03T04:04:32.000Z",
+    "updatedAt": "2026-08-03T07:57:43.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -115,7 +115,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-03T04:04:33.000Z",
+    "updatedAt": "2026-08-03T07:57:43.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -161,8 +161,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeiewyspox3wuasrey67bihcv3ze5hj62jrfpyl5ymlay25to4x4uze",
-        "updateCount": 0,
+        "contenthash": "bafybeicap2ernson7wubyztq7a6e67vj6tkjz6ouykghvqpgrambeuhjqe",
+        "updateCount": 1,
+        "changedAt": 1785743863,
         "live": "alive"
       },
       "chopdotproof01": {
@@ -232,9 +233,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeieeble5aa3x675jouodm34h3pqhvupdwgu2unxbkhmhvpdkqwco2a",
-        "updateCount": 42,
-        "changedAt": 1785729873,
+        "contenthash": "bafybeibpqetzmanoeobpijhx3z7aak56wiqodgp3gfawqb5vguojidq6em",
+        "updateCount": 43,
+        "changedAt": 1785743863,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -470,9 +471,9 @@
         "live": "alive"
       },
       "open-docs": {
-        "contenthash": "bafybeiaggmtz6vdkbbthbhxovnklr6uxupohd23sqzknk6ffkgxnhaoxhu",
-        "updateCount": 2,
-        "changedAt": 1785705423,
+        "contenthash": "bafybeicmv53a3n7oh3qq26ehfm4mb2uhouwl2q2yqp2cxphallyeh6bwky",
+        "updateCount": 3,
+        "changedAt": 1785743863,
         "live": "alive"
       },
       "openpetition": {
