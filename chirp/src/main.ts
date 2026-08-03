@@ -18,10 +18,11 @@ import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
-  askNotifications, notify,
+  askNotifications, notify, openUrl, gifUrl,
   pictureOf, setPicture, clearPicture, renewPicture, forgetPicture,
-  notesOn, notedChirps, addNote, rateNote, rank,
-  CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note,
+  notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
+  followerCounts, interestsFrom, statsFor,
+  CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note, type Stats,
 } from './chain';
 
 const app = document.getElementById('app')!;
@@ -105,7 +106,17 @@ const at = (w?: Who, mask = 0) =>
  */
 function rich(text: string): string {
   return esc(text)
-    .replace(/https?:\/\/[^\s<]+/g, (u) => `<a href="${u}" target="_blank" rel="noopener nofollow">${u}</a>`)
+    // A GIF from the phone keyboard arrives as a link, so it is shown as one —
+    // no bytes on Bulletin, no bytes on chain, just the text that was already
+    // in the chirp. Only the keyboards' own hosts are rendered this way; every
+    // other link stays a link.
+    //
+    // data-url rather than href: inside the Polkadot app there is no second
+    // window, so an anchor with target="_blank" is a link that does nothing at
+    // all. The host opens it for us through navigateTo.
+    .replace(/https?:\/\/[^\s<]+/g, (u) => (gifUrl(u)
+      ? `<a class="ext gifwrap" data-url="${u}"><img class="gif" src="${u}" alt="GIF" loading="lazy" referrerpolicy="no-referrer"></a>`
+      : `<a class="ext" data-url="${u}">${u}</a>`))
     .replace(/(^|\s)(@[A-Za-z0-9_.-]{2,40})/g, (_m, sp, h) => `${sp}<a class="mention" data-q="${h.slice(1)}">${h}</a>`)
     .replace(/(^|\s)([A-Za-z0-9-]{2,40}\.dot)\b/g, (_m, sp, d) => `${sp}<a class="mention" data-q="${d}">${d}</a>`)
     .replace(/(^|\s)(#[A-Za-z0-9_]{1,40})/g, (_m, sp, t) => `${sp}<a class="mention" data-q="${t.slice(1)}">${t}</a>`);
@@ -130,7 +141,7 @@ const I = {
 
 /* -------------------------------------------------------------------- state */
 type View =
-  | { k: 'home' } | { k: 'search' } | { k: 'notif' } | { k: 'saved' }
+  | { k: 'home' } | { k: 'search' } | { k: 'notif' } | { k: 'saved' } | { k: 'stats' }
   | { k: 'profile'; mask: number } | { k: 'thread'; id: number }
   | { k: 'people'; mask: number; of: 'followers' | 'following' };
 
@@ -179,6 +190,10 @@ let NOTED = new Map<number, Note>();
 let THNOTES: Note[] = [];
 /** The note being written or rated, if any. */
 let noteSheet: null | { chirpId: number; kind: number } = null;
+/** Follower counts, for the ranker and the numbers page. */
+let FOLLOWERS = new Map<number, number>();
+/** Which chirp's ranking is being explained, if any. */
+let whyFor: number | null = null;
 
 /** What you were writing, kept across a failed signature and a closed app. A
  *  post that costs a signature must not be able to eat the text you typed. */
@@ -277,10 +292,28 @@ function card(p: Post, big = false): string {
           <span><b>${p.likes}</b> likes</span>
         </div>` : ''}
         ${noteStrip(p.id)}
+        ${whyFor === p.id ? whyBox(p) : ''}
         ${actions(p)}
       </div>
     </div>
   </article>`;
+}
+
+/**
+ * Why this chirp is where it is.
+ *
+ * A ranked feed that will not explain itself is the thing people object to, and
+ * the explanation here is cheap because the ranker is arithmetic rather than a
+ * model — every term can be named and shown with its value.
+ */
+function whyBox(p: Post): string {
+  const w = rankWhy(p, FOLLOW, NOTED, signals());
+  return `<div class="why">
+    <div class="why-h">Why you are seeing this</div>
+    ${w.parts.map((x) => `<div class="why-r"><span>${esc(x.label)}</span><b>${x.value.toFixed(2)}</b></div>`).join('')}
+    <div class="why-r total"><span>score</span><b>${w.total.toFixed(2)}</b></div>
+    <div class="why-f">Nothing here comes from watching you read. Every term is a public act or the clock.</div>
+  </div>`;
 }
 
 /**
@@ -314,6 +347,15 @@ const list = (ps: Post[], empty: string) => (ps.length ? ps.map((p) => card(p)).
 
 /* -------------------------------------------------------------------- views */
 
+/** What the ranker knows. Recomputed per render, which is cheap, and never
+ *  stored anywhere: your topics are derived from public acts and stay here. */
+function signals() {
+  return {
+    followers: FOLLOWERS,
+    interests: ME?.mask ? interestsFrom(ALL, ME.mask, new Set(ALL.filter((p) => p.liked).map((p) => p.id))) : undefined,
+  };
+}
+
 function homeView(): string {
   // Muting hides them from the timeline, not from the chain: open their profile
   // and everything is still there. A mute is "not in my feed", not censorship,
@@ -324,7 +366,7 @@ function homeView(): string {
   // ranked, and says so.
   const shown = tab === 'following'
     ? top.filter((p) => FOLLOW.has(p.mask))
-    : rank(top, FOLLOW, NOTED);
+    : rank(top, FOLLOW, NOTED, signals());
   return `<div class="tabs">
       <button class="tab${tab === 'foryou' ? ' on' : ''}" data-tab="foryou">For you</button>
       <button class="tab${tab === 'following' ? ' on' : ''}" data-tab="following">Following</button>
@@ -393,6 +435,41 @@ function searchView(): string {
     + (t ? `<div class="sechead">Chirps</div>` + list(posts, 'Nothing matches that.') : '');
 }
 
+/**
+ * Your numbers.
+ *
+ * Note what is not here: impressions, views, reach, watch time. Those require a
+ * server watching people read, and there is no server. A number for them would
+ * have to be made up, and a made-up number with a chart under it is worse than
+ * no page at all. Everything below is counted from chirps and follows that are
+ * already public — you could recount it yourself from the contract.
+ */
+function statsView(): string {
+  if (!ME?.mask) return '<div class="note">Claim a mask to see your numbers.</div>';
+  const s = statsFor(ME.mask, ALL, FOLLOWERS.get(ME.mask) ?? 0, FOLLOW.size, ALL.filter((p) => p.liked).length);
+  const peak = Math.max(1, ...s.days.map((d) => d.posts + d.got));
+  const big = (n: number, l: string) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`;
+  return `<div class="sechead">Your numbers</div>
+    <div class="statgrid">
+      ${big(s.chirps, 'chirps')}${big(s.replies, 'replies')}
+      ${big(s.followers, 'followers')}${big(s.following, 'following')}
+      ${big(s.likesGot, 'likes received')}${big(s.repliesGot, 'replies received')}
+      ${big(s.repostsGot, 'reposts')}${big(Number(s.perChirp.toFixed(1)), 'engagement per chirp')}
+    </div>
+    <div class="sechead">The last fortnight</div>
+    <div class="bars">${s.days.map((d) => `<div class="bar" title="${d.day}: ${d.posts} chirps, ${d.got} engagement">
+      <div class="b-got" style="height:${(d.got / peak) * 100}%"></div>
+      <div class="b-post" style="height:${(d.posts / peak) * 100}%"></div>
+    </div>`).join('')}</div>
+    <div class="barkey"><span class="k-post"></span> chirps <span class="k-got"></span> engagement received</div>
+    ${s.bestHour ? `<div class="note small">You chirp most around ${String(s.bestHour.hour).padStart(2, '0')}:00 — ${s.bestHour.n} of them.</div>` : ''}
+    ${s.topics.length ? `<div class="sechead">What you write about</div>
+      <div class="chips">${s.topics.map((t) => `<span class="chip" data-q="${esc(t.word)}">${esc(t.word)} <b>${t.n}</b></span>`).join('')}</div>` : ''}
+    ${s.top.length ? `<div class="sechead">Your most engaged chirps</div>${s.top.map((p) => card(p)).join('')}` : ''}
+    <div class="note small">Counted from the contract, not from watching you. There are no impressions here
+    because nothing records who read what — a number for that would have to be invented.</div>`;
+}
+
 /** The saved chirps. Kept on the device on purpose: a bookmark is a note to
  *  yourself, and putting it on a public chain would publish what you are
  *  quietly interested in to everybody, forever. */
@@ -439,8 +516,8 @@ function profileView(): string {
     <div class="at">${esc(at(who))}</div>
     ${bio ? `<p class="bio">${esc(bio)}</p>` : ''}
     <div class="plinks">
-      ${telegram ? `<a href="https://t.me/${encodeURIComponent(telegram)}" target="_blank" rel="noopener">✆ ${esc(telegram)}</a>` : ''}
-      ${x ? `<a href="https://x.com/${encodeURIComponent(x)}" target="_blank" rel="noopener">𝕏 ${esc(x)}</a>` : ''}
+      ${telegram ? `<a class="ext" data-url="https://t.me/${encodeURIComponent(telegram)}">✆ ${esc(telegram)}</a>` : ''}
+      ${x ? `<a class="ext" data-url="https://x.com/${encodeURIComponent(x)}">𝕏 ${esc(x)}</a>` : ''}
       <span class="tier t${who.tier}">${TIERS[who.tier]}</span>
     </div>
     <div class="pstats">
@@ -448,6 +525,7 @@ function profileView(): string {
       <a data-conn="following" data-mask="${who.mask}"><b>${CONN.followingList.length}</b> following</a> ·
       <b>${posts.length}</b> chirps
       ${isMe && marks.size ? ` · <a id="gosaved"><b>${marks.size}</b> bookmarked</a>` : ''}
+      ${isMe ? ' · <a id="gostats">your numbers</a>' : ''}
     </div>
   </section>` + list(posts, 'No chirps yet.');
 }
@@ -538,13 +616,14 @@ function header(): string {
     ? `<button class="iconbtn" id="back" aria-label="Back">${I.back}</button>` : '';
   const title = view.k === 'thread' ? 'Thread' : view.k === 'profile' ? 'Profile'
     : view.k === 'people' ? (view.of === 'followers' ? 'Followers' : 'Following')
-    : view.k === 'search' ? 'Search' : view.k === 'notif' ? 'Notifications' : 'chirp';
+    : view.k === 'search' ? 'Search' : view.k === 'notif' ? 'Notifications'
+    : view.k === 'saved' ? 'Bookmarks' : view.k === 'stats' ? 'Your numbers' : 'chirp';
   const who = !ME ? '<span>open in the Polkadot app</span>'
     : `<b>${ME.mask ? esc(nm(ME as unknown as Who)) : 'no mask yet'}</b><span>${esc(short(ME.address))}</span>`;
   // The mark stands in for the word only where the word would be the app's own
   // name; on a thread or a profile the title is doing real work and is left alone.
   const mark = title === 'chirp'
-    ? `<svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="20" cy="44" r="4.5" fill="currentColor"/><g fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"><path d="M20 30 A14 14 0 0 1 34 44"/><path d="M20 20 A24 24 0 0 1 44 44"/></g></svg>` : '';
+    ? `<svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 13h28a8 8 0 0 1 8 8v18a8 8 0 0 1-8 8H32l-12 9v-9h-2a8 8 0 0 1-8-8V21a8 8 0 0 1 8-8z" fill="currentColor"/><circle cx="32" cy="30" r="6.5" fill="var(--bg)"/></svg>` : '';
   return `<header class="top">${back}<h1>${mark}${title}${busy ? '<span class="dotspin" aria-label="Loading"></span>' : ''}</h1>
     <div class="who">${who}</div>
     ${ME?.mask ? `<button class="iconbtn" id="settings" aria-label="Settings">${I.gear}</button>` : ''}
@@ -571,9 +650,12 @@ function overlay(): string {
       <div class="pfprow">
         <div class="pfpnow">${avatar('0x' + ME.mask.toString(16).padStart(40, '0'), ME.mask)}</div>
         <div>
-          <button class="ghost small" id="pickpfp">Choose a picture</button>
+          <!-- A REAL, visible file input. It used to be hidden behind a button
+               that called .click() on it, which is the one pattern a mobile
+               webview tends to swallow: the picker never opened and the button
+               looked dead. Let the platform draw its own control. -->
+          <input type="file" id="pfpfile" accept="image/*" class="filein">
           ${PIC.get(ME.mask) ? '<button class="ghost small" id="clearpfp">Remove</button>' : ''}
-          <input type="file" id="pfpfile" accept="image/*" hidden>
         </div>
       </div>
       <p class="hint">Cropped square and shrunk to 256px here, then stored on the Bulletin chain — the app
@@ -659,6 +741,7 @@ function overlay(): string {
                 <button class="danger" data-m="del" data-id="${p.id}">Delete chirp</button>` : ''}
       <button data-m="quote" data-id="${p.id}">Quote</button>
       <button data-m="mark" data-id="${p.id}">${marks.has(p.id) ? 'Remove bookmark' : 'Bookmark'}</button>
+      <button data-m="why" data-id="${p.id}">Why am I seeing this?</button>
       ${ME?.mask ? `<button data-m="note" data-id="${p.id}">Add context</button>` : ''}
       <button data-m="who" data-id="${p.id}">View profile</button>
       ${mine ? '' : `<button data-m="mute" data-id="${p.id}">${muted.has(p.mask) ? 'Unmute' : 'Mute'} ${esc(at(p.who, p.mask))}</button>`}
@@ -696,6 +779,7 @@ function render() {
 
   const body = view.k === 'home' ? homeView()
     : view.k === 'saved' ? savedView()
+    : view.k === 'stats' ? statsView()
     : view.k === 'search' ? searchView()
     : view.k === 'notif' ? notifView()
     : view.k === 'profile' ? profileView()
@@ -708,8 +792,8 @@ function render() {
     + `<main>${body}</main>`
     + `<footer class="foot">
         Every chirp — replies, quotes and reposts included — is a row in the
-        <a href="https://assethub-paseo.subscan.io/account/${CHIRP}" target="_blank" rel="noopener">Chirp contract</a> on the devnet
-        Asset Hub. You post as a <a href="https://assethub-paseo.subscan.io/account/${MASKS}" target="_blank" rel="noopener">mask</a>
+        <a class="ext" data-url="https://assethub-paseo.subscan.io/account/${CHIRP}">Chirp contract</a> on the devnet
+        Asset Hub. You post as a <a class="ext" data-url="https://assethub-paseo.subscan.io/account/${MASKS}">mask</a>
         bound to your account and non-transferable, so a chirp can only come from its author. Text only, 280 characters, no server.
         <span style="display:block;margin-top:10px;opacity:.6">build ${esc(__BUILD__)}</span>
       </footer>`
@@ -813,7 +897,7 @@ async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: strin
  *  leaving it, and a thread can be linked to. */
 function hashOf(v: View): string {
   return v.k === 'home' ? '#/' : v.k === 'search' ? '#/search'
-    : v.k === 'notif' ? '#/notifications' : v.k === 'saved' ? '#/saved'
+    : v.k === 'notif' ? '#/notifications' : v.k === 'saved' ? '#/saved' : v.k === 'stats' ? '#/stats'
     : v.k === 'profile' ? '#/u/' + v.mask
     : v.k === 'people' ? '#/u/' + v.mask + '/' + v.of
     : '#/t/' + v.id;
@@ -829,6 +913,7 @@ function viewOf(hash: string): View {
   if (h.startsWith('search')) return { k: 'search' };
   if (h.startsWith('notifications')) return { k: 'notif' };
   if (h.startsWith('saved')) return { k: 'saved' };
+  if (h.startsWith('stats')) return { k: 'stats' };
   return { k: 'home' };
 }
 /** Navigate. Pushing the hash is what makes Back work; the hashchange handler
@@ -1010,6 +1095,7 @@ function wire() {
     if (m === 'quote') { sheet = { mode: 'quote', target: p }; return render(); }
     if (m === 'del') { confirmDelete = p.id; return render(); }
     if (m === 'who') return goProfile(p.mask);
+    if (m === 'why') { whyFor = whyFor === p.id ? null : p.id; return render(); }
     if (m === 'mark') { marks.toggle(p.id); flash = { text: marks.has(p.id) ? 'Bookmarked on this device.' : 'Bookmark removed.' }; return render(); }
     if (m === 'mute') { muted.toggle(p.mask); flash = { text: muted.has(p.mask) ? 'Muted on this device.' : 'Unmuted.' }; return render(); }
     if (m === 'note') { noteSheet = { chirpId: p.id, kind: 0 }; return render(); }
@@ -1018,14 +1104,23 @@ function wire() {
       flash = { text: 'Link copied.' }; return render();
     }
     if (m === 'copy') { void navigator.clipboard.writeText(p.body); flash = { text: 'Copied.' }; return render(); }
-    if (m === 'chain') { window.open(`https://assethub-paseo.subscan.io/account/${CHIRP}`, '_blank'); return render(); }
+    if (m === 'chain') { void openUrl(`https://assethub-paseo.subscan.io/account/${CHIRP}`); return render(); }
     render();
   }));
   document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
   document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
+  document.getElementById('gostats')?.addEventListener('click', () => go({ k: 'stats' }));
+  app.querySelectorAll<HTMLElement>('[data-url]').forEach((a) => a.addEventListener('click', (e) => {
+    e.stopPropagation(); e.preventDefault();
+    void openUrl(a.dataset.url ?? '');
+  }));
+  app.querySelectorAll<HTMLElement>('[data-why]').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    whyFor = whyFor === Number(b.dataset.why) ? null : Number(b.dataset.why);
+    render();
+  }));
 
   /* ------------------------------------------------------------- pictures */
-  document.getElementById('pickpfp')?.addEventListener('click', () => document.getElementById('pfpfile')?.click());
   document.getElementById('pfpfile')?.addEventListener('change', async (e) => {
     const f = (e.target as HTMLInputElement).files?.[0];
     if (!f || !ME?.mask) return;
@@ -1105,6 +1200,7 @@ async function refresh() {
     NOTIF = await notifications(ME.mask, ALL).catch(() => NOTIF); // keep the badge honest
   }
   await refreshNotes().catch(() => undefined);
+  FOLLOWERS = await followerCounts().catch(() => FOLLOWERS);
   if (ME?.mask) FOLLOW = await following().catch(() => FOLLOW);
   busy = false;
   render();
@@ -1137,6 +1233,61 @@ async function refreshNotes() {
   NOTED = await notedChirps().catch(() => NOTED);
   if (view.k === 'thread') THNOTES = await notesOn(view.id).catch(() => THNOTES);
 }
+
+/* ------------------------------------------------------------ pull to refresh */
+//
+// Only from the very top, and only for a real downward drag: anything looser
+// fights the scroll on a long timeline, which is worse than not having it. The
+// indicator follows the finger with resistance so the gesture feels attached to
+// something rather than triggering at an invisible threshold.
+const PULL_TRIGGER = 72;
+let pullFrom = -1;
+let pulled = 0;
+
+function pullEl(): HTMLElement {
+  let el = document.getElementById('pull');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'pull';
+    el.className = 'pull';
+    el.innerHTML = '<div class="pull-spin"></div>';
+    document.body.appendChild(el);
+  }
+  return el;
+}
+
+function setPull(px: number, spinning = false) {
+  const el = pullEl();
+  el.style.transform = `translate(-50%, ${Math.min(px, PULL_TRIGGER + 20)}px)`;
+  el.style.opacity = String(Math.min(1, px / 40));
+  el.classList.toggle('ready', px >= PULL_TRIGGER);
+  el.classList.toggle('spinning', spinning);
+}
+
+addEventListener('touchstart', (e) => {
+  // A sheet open, or already scrolled: not a pull.
+  if (sheet || settingsOpen || noteSheet || menuFor || scrollY > 2 || busy) { pullFrom = -1; return; }
+  pullFrom = e.touches[0].clientY;
+}, { passive: true });
+
+addEventListener('touchmove', (e) => {
+  if (pullFrom < 0) return;
+  const dy = e.touches[0].clientY - pullFrom;
+  if (dy <= 0) { pulled = 0; setPull(0); return; }
+  // Square-root resistance: the first pixels move freely, the last ones do not,
+  // which is what makes a pull feel like it is pulling against something.
+  pulled = Math.sqrt(dy) * 9;
+  setPull(pulled);
+}, { passive: true });
+
+addEventListener('touchend', () => {
+  if (pullFrom < 0) return;
+  const go = pulled >= PULL_TRIGGER;
+  pullFrom = -1; pulled = 0;
+  if (!go) return setPull(0);
+  setPull(PULL_TRIGGER, true);
+  void refresh().finally(() => setPull(0));
+});
 
 /* ---------------------------------------------------------------- live feed */
 // The chain has no subscription we can lean on here, so the feed asks. It asks

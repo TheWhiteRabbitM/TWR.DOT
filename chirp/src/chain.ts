@@ -34,6 +34,25 @@ export const PFP = '0x6f3f9d84161f0bd0eb9d6524a5a2e5089b565470';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
 const IDENTITY_DAPP = 'peoplebook.dot';
 
+/**
+ * The only outside hosts chirp will load anything from.
+ *
+ * A GIF chosen from a phone keyboard is pasted as a link, so it costs nothing on
+ * chain and nothing on Bulletin — but rendering it fetches from somebody else's
+ * server, and that server then knows a reader's IP and roughly when they read.
+ * Hence a fixed list rather than "any image URL": the trade is worth making for
+ * the two services keyboards actually use, and not worth making for the web.
+ */
+export const GIF_HOSTS = ['media.tenor.com', 'tenor.com', 'media.giphy.com', 'i.giphy.com', 'giphy.com'];
+/** Is this a link a keyboard would have inserted for a GIF? */
+export function gifUrl(u: string): boolean {
+  try {
+    const h = new URL(u).hostname.toLowerCase();
+    if (!GIF_HOSTS.includes(h)) return false;
+    return /\.(gif|webp|mp4)($|\?)/i.test(u) || /\/media\//.test(u) || h.startsWith('media.');
+  } catch { return false; }
+}
+
 const CONNECT_MS = 12_000;
 const ACCOUNT_MS = 8_000;
 const TX_MS = 120_000;
@@ -103,6 +122,11 @@ function reason(res: any): string {
   if (/SigningRejected|rejected|cancel/i.test(d)) return 'You cancelled the signature.';
   if (/Timeout/i.test(d)) return 'Timed out waiting for the block — it may still land.';
   if (/Inability to pay|TransferFailed/i.test(d)) return 'The signing account cannot pay the fee.';
+  // Naming the call is useless to the person holding the phone; what they need
+  // to know is that this build of the app cannot sign with a wallet account.
+  if (/Not implemented|createTransactionWithLegacyAccount/i.test(d)) {
+    return 'This build of the Polkadot app cannot sign with your wallet account. chirp will use the account the app derives for it instead — try again.';
+  }
   // Custom Solidity errors are not decoded on this path — the chain says only
   // that the call reverted, so name what this app can actually hit.
   if (/ContractReverted/i.test(d)) return 'The contract refused it — the post may be deleted, or not yours to change.';
@@ -135,6 +159,23 @@ type Slot = {
 };
 let slot: Promise<Slot | null> | null = null;
 
+/**
+ * Set when the host hands us a legacy account it cannot actually sign with.
+ *
+ * Some builds expose getLegacyAccounts() and getLegacyAccountSigner() and then
+ * answer every submission with
+ *   createTransactionWithLegacyAccount failed: HostFailure: Not implemented
+ * A signer exists, so "no signer, fall back" never fired — the app looked
+ * connected and failed at the first write, every time. Once seen, we stop
+ * asking for the wallet account and take the app-derived one instead, and the
+ * choice is remembered so the next launch does not repeat the dead end.
+ */
+const NOLEGACY = 'chirp.nolegacy';
+const legacyBroken = {
+  get: () => { try { return localStorage.getItem(NOLEGACY) === '1'; } catch { return false; } },
+  set: () => { try { localStorage.setItem(NOLEGACY, '1'); } catch { /* private mode */ } },
+};
+
 async function connect(): Promise<Slot | null> {
   const [host, papi, contracts, descriptors] = await Promise.all([
     import('@parity/product-sdk-host'),
@@ -150,6 +191,19 @@ async function connect(): Promise<Slot | null> {
   // Without this the host never raises a signing sheet and a write hangs silently.
   await withTimeout(Promise.resolve(host.requestPermission({ tag: 'ChainSubmit', value: undefined })), CONNECT_MS, 'permission')
     .catch(() => undefined);
+  // And this one is its exact twin for preimages: without PreimageSubmit the
+  // host refuses remote_preimage_submit, so a picture upload cannot even begin.
+  // Asked here rather than at upload time so the person is not interrupted by a
+  // second permission sheet in the middle of choosing a photo.
+  await withTimeout(Promise.resolve(host.requestPermission({ tag: 'PreimageSubmit', value: undefined })), CONNECT_MS, 'preimage permission')
+    .catch(() => undefined);
+  // Outbound access, only for the hosts phone keyboards insert GIFs from. A GIF
+  // picked from the keyboard arrives as a LINK, so it costs nothing on Bulletin
+  // — but showing it means fetching from a third party, which the container
+  // blocks unless the domains are declared. Nothing else is listed: this is the
+  // whole outside world chirp can reach.
+  await withTimeout(Promise.resolve(host.requestPermission({ tag: 'Remote', value: { domains: GIF_HOSTS } })), CONNECT_MS, 'remote permission')
+    .catch(() => undefined);
 
   const ss58 = (pk: Uint8Array) => papi.AccountId().dec(pk) as string;
   let address = '';
@@ -159,13 +213,15 @@ async function connect(): Promise<Slot | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let manager: any = null;
 
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const r: any = await withTimeout(Promise.resolve(ap.getLegacyAccounts()), ACCOUNT_MS, 'accounts');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const a = (r?.value ?? []).find((x: any) => x?.publicKey);
-    if (a) { address = ss58(a.publicKey); signer = ap.getLegacyAccountSigner({ publicKey: a.publicKey, name: a.name }); }
-  } catch { /* fall through */ }
+  if (!legacyBroken.get()) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const r: any = await withTimeout(Promise.resolve(ap.getLegacyAccounts()), ACCOUNT_MS, 'accounts');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const a = (r?.value ?? []).find((x: any) => x?.publicKey);
+      if (a) { address = ss58(a.publicKey); signer = ap.getLegacyAccountSigner({ publicKey: a.publicKey, name: a.name }); }
+    } catch { /* fall through */ }
+  }
 
   // Fallback: SignerManager on the app-scoped account. NOT getProductAccountSigner —
   // that signer never raises the wallet sheet, so a write hangs until it times out.
@@ -267,6 +323,25 @@ export async function askNotifications(): Promise<boolean> {
   const r = await host.requestDevicePermission('Notifications').catch(() => null);
   // The host answers with a Result, and a granted:false is a no, not an error.
   return Boolean(r && (r as any).ok && (r as any).value);
+}
+
+/**
+ * Open a link.
+ *
+ * Inside the Polkadot app an ordinary anchor with target="_blank" does nothing
+ * at all — the container has no second window to open, so the tap is swallowed
+ * and the link looks broken. The host resolves destinations itself through
+ * navigateTo: an https:// URL opens outside, and a .dot address routes to
+ * another app inside the container. Outside the host we fall back to the
+ * browser, so the same code works in a plain tab.
+ */
+export async function openUrl(url: string): Promise<boolean> {
+  const host = await import('@parity/product-sdk-host').catch(() => null);
+  if (host) {
+    const r = await host.navigateTo(url).catch(() => null);
+    if (r && (r as { ok?: boolean }).ok !== false) return true;
+  }
+  try { window.open(url, '_blank', 'noopener'); return true; } catch { return false; }
 }
 
 /** Deliver one notification now. Silent when the host has no manager for it. */
@@ -533,18 +608,169 @@ export async function loadAll(limit = 300): Promise<Post[]> {
  *               of the feed for a week
  *   penalty     a chirp carrying a note that bridged is pushed down, not hidden
  */
-export function rank(posts: Post[], follow: Set<number>, noted: Map<number, Note>, now = Date.now() / 1000): Post[] {
+export type RankSignals = {
+  /** followers per mask, so a voice many people chose to hear carries further */
+  followers?: Map<number, number>;
+  /** the words you have engaged with, weighted — your own topics, not a profile */
+  interests?: Map<string, number>;
+};
+
+/** Why a chirp is where it is, so the feed can be asked and answer. */
+export type Why = { total: number; parts: { label: string; value: number }[] };
+
+export function rankWhy(
+  p: Post, follow: Set<number>, noted: Map<number, Note>, sig: RankSignals = {}, now = Date.now() / 1000,
+): Why {
   const HALF_LIFE = 12 * 3600;
-  const score = (p: Post) => {
-    const engagement = p.likes + p.replies * 2.5 + p.reposts * 2;
-    const affinity = (follow.has(p.mask) ? 6 : 0) + (p.quoted && follow.has(p.quoted.mask) ? 2 : 0);
-    const decay = Math.pow(0.5, Math.max(0, now - p.time) / HALF_LIFE);
-    const penalty = noted.has(p.id) ? 0.35 : 1;
-    // +1 so a chirp with no engagement still ranks by recency rather than tying
-    // at zero with every other silent one.
-    return (engagement + affinity + 1) * decay * penalty;
+
+  const engagement = p.likes + p.replies * 2.5 + p.reposts * 2;
+  const affinity = (follow.has(p.mask) ? 6 : 0) + (p.quoted && follow.has(p.quoted.mask) ? 2 : 0);
+
+  // Reach, from the follower count — but through a logarithm, so a hundred
+  // followers is worth about twice ten rather than ten times. Straight
+  // multiplication would hand the whole timeline to whoever is biggest, which
+  // is the failure mode people already complain about.
+  const reach = Math.log10(1 + (sig.followers?.get(p.mask) ?? 0)) * 3;
+
+  // Subject matter: the words you have actually liked, replied to or written,
+  // counted from the chain and kept on the device. Not a behavioural profile —
+  // no dwell time, no scroll telemetry, nothing that is not a public act.
+  let interest = 0;
+  if (sig.interests?.size) {
+    for (const w of words(p.body)) interest += sig.interests.get(w) ?? 0;
+    interest = Math.min(interest, 8);   // capped, or one hot word owns the feed
+  }
+
+  // Two content signals X uses that cost nothing to compute honestly: a chirp
+  // that started a conversation, and one that is all tags and no substance.
+  const conversation = p.replies >= 3 ? 3 : 0;
+  const spammy = (p.body.match(/#/g)?.length ?? 0) > 4 || p.body.length < 4 ? 0.4 : 1;
+
+  const decay = Math.pow(0.5, Math.max(0, now - p.time) / HALF_LIFE);
+  const noteDrag = noted.has(p.id) ? 0.35 : 1;
+
+  // +1 so a chirp with no engagement still ranks by recency rather than tying
+  // at zero with every other silent one.
+  const base = engagement + affinity + reach + interest + conversation + 1;
+  return {
+    total: base * decay * spammy * noteDrag,
+    parts: [
+      { label: 'engagement', value: engagement },
+      { label: 'you follow them', value: affinity },
+      { label: 'reach', value: reach },
+      { label: 'your topics', value: interest },
+      { label: 'started a conversation', value: conversation },
+      { label: 'recency', value: decay },
+      { label: 'context added', value: noteDrag },
+      { label: 'thin or tag-stuffed', value: spammy },
+    ].filter((x) => x.value !== 0 && x.value !== 1),
   };
-  return [...posts].sort((a, b) => score(b) - score(a));
+}
+
+export function rank(
+  posts: Post[], follow: Set<number>, noted: Map<number, Note>, sig: RankSignals = {}, now = Date.now() / 1000,
+): Post[] {
+  return [...posts].sort((a, b) => rankWhy(b, follow, noted, sig, now).total - rankWhy(a, follow, noted, sig, now).total);
+}
+
+/** Words worth indexing: no punctuation, no one-letter noise, no stop words. */
+const STOP = new Set('the a an and or but of to in on for with is are was were be been it its this that these those i you he she we they at as by from not no so if then than there here what who which when how why all any can will just dont do does did have has had my your our their more most some such only own same too very'.split(' '));
+export function words(s: string): string[] {
+  return [...new Set(
+    s.toLowerCase().replace(/https?:\/\/\S+/g, ' ').match(/[a-z0-9#][a-z0-9_'-]{2,}/g) ?? [],
+  )].filter((w) => !STOP.has(w));
+}
+
+/**
+ * What you have shown interest in, derived only from public acts: the chirps
+ * you wrote, liked or replied to. It is computed here and never leaves the
+ * device — the chain already knows all of it, but nobody needs a tidy summary
+ * of your preferences sitting anywhere.
+ */
+export function interestsFrom(all: Post[], myMask: number, liked: Set<number>): Map<string, number> {
+  const out = new Map<string, number>();
+  const bump = (s: string, w: number) => { for (const t of words(s)) out.set(t, (out.get(t) ?? 0) + w); };
+  for (const p of all) {
+    if (p.mask === myMask) bump(p.body, 1.5);          // what you write says most
+    else if (liked.has(p.id)) bump(p.body, 1);
+  }
+  return out;
+}
+
+/** Follower counts for every mask, for the ranker and the stats page. */
+export async function followerCounts(): Promise<Map<number, number>> {
+  const { masks, chirp } = await handles();
+  const out = new Map<number, number>();
+  if (!masks || !chirp) return out;
+  const total = Number((await q(masks, 'totalSupply')) ?? 0);
+  for (let i = 1; i <= total; i += 20) {
+    const ids = Array.from({ length: Math.min(20, total - i + 1) }, (_, k) => i + k);
+    const got = await Promise.all(ids.map((n) => q(chirp, 'followerCount', BigInt(n))));
+    ids.forEach((n, k) => out.set(n, Number(got[k] ?? 0)));
+  }
+  return out;
+}
+
+/**
+ * Your numbers.
+ *
+ * Everything here is counted from chirps and follows that are already public,
+ * so there is nothing to collect and nothing to leak. Note what is ABSENT:
+ * impressions, views, reach, watch time. Those need a server watching people
+ * read, and there is no server — a number for them would have to be invented,
+ * and an invented number on an analytics page is a lie with a chart on it.
+ */
+export type Stats = {
+  chirps: number; replies: number; likesGot: number; repliesGot: number; repostsGot: number;
+  likesGave: number; followers: number; following: number;
+  /** engagement per chirp, the only ratio that means anything without views */
+  perChirp: number;
+  /** your busiest hour of the day, 0-23, and how many chirps landed in it */
+  bestHour: { hour: number; n: number } | null;
+  /** last 14 days, oldest first: chirps you wrote and engagement you received */
+  days: { day: string; posts: number; got: number }[];
+  /** your most engaged chirps */
+  top: Post[];
+  /** the words you use, most first */
+  topics: { word: string; n: number }[];
+};
+
+export function statsFor(mask: number, all: Post[], followers: number, following: number, likesGave: number): Stats {
+  const mine = all.filter((p) => p.mask === mask && !p.deleted);
+  const roots = mine.filter((p) => !p.replyTo);
+  const likesGot = mine.reduce((n, p) => n + p.likes, 0);
+  const repliesGot = mine.reduce((n, p) => n + p.replies, 0);
+  const repostsGot = mine.reduce((n, p) => n + p.reposts, 0);
+
+  const byHour = new Map<number, number>();
+  for (const p of mine) {
+    const h = new Date(p.time * 1000).getHours();
+    byHour.set(h, (byHour.get(h) ?? 0) + 1);
+  }
+  const best = [...byHour].sort((a, b) => b[1] - a[1])[0];
+
+  const days: { day: string; posts: number; got: number }[] = [];
+  const dayKey = (t: number) => new Date(t * 1000).toISOString().slice(0, 10);
+  const today = Math.floor(Date.now() / 1000);
+  for (let d = 13; d >= 0; d--) {
+    const key = dayKey(today - d * 86400);
+    const on = mine.filter((p) => dayKey(p.time) === key);
+    days.push({ day: key, posts: on.length, got: on.reduce((n, p) => n + p.likes + p.replies + p.reposts, 0) });
+  }
+
+  const counts = new Map<string, number>();
+  for (const p of mine) for (const w of words(p.body)) counts.set(w, (counts.get(w) ?? 0) + 1);
+
+  return {
+    chirps: roots.length,
+    replies: mine.length - roots.length,
+    likesGot, repliesGot, repostsGot, likesGave, followers, following,
+    perChirp: mine.length ? (likesGot + repliesGot + repostsGot) / mine.length : 0,
+    bestHour: best ? { hour: best[0], n: best[1] } : null,
+    days,
+    top: [...mine].sort((a, b) => (b.likes + b.replies + b.reposts) - (a.likes + a.replies + a.reposts)).slice(0, 5),
+    topics: [...counts].map(([word, n]) => ({ word, n })).sort((a, b) => b.n - a.n).slice(0, 10),
+  };
 }
 
 /** Everyone who holds a mask — the people you can search and follow. */
@@ -935,10 +1161,15 @@ export function rateNote(id: number, mask: number, value: number): Promise<Ok | 
  * the contract sees the real account as msg.sender. The gas dry-run is given the
  * same origin, or it would price the call for the wrong account.
  */
+/** The host said it cannot sign with the wallet account it just handed us. */
+const isNotImplemented = (why: string) =>
+  /Not implemented|createTransactionWithLegacyAccount/i.test(why);
+
 async function send(
   which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp',
   method: string,
   args: unknown[],
+  retried = false,
 ): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
   if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
@@ -949,7 +1180,18 @@ async function send(
       const o = { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res: any = await withTimeout(c[method].tx(...args, o), TX_MS, 'transaction');
-      if (res && res.ok === false) return { ok: false, why: reason(res) };
+      if (res && res.ok === false) {
+        const why = reason(res);
+        // The wallet account cannot sign on this host build. Remember it, drop
+        // the session, and come back on the app-derived account — which is a
+        // DIFFERENT identity, so the caller is told rather than silently moved.
+        if (isNotImplemented(why) && !retried && !s.manager) {
+          legacyBroken.set();
+          slot = null;
+          return send(which, method, args, true);
+        }
+        return { ok: false, why };
+      }
       return { ok: true, value: undefined };
     }
     const prepared = await withTimeout(
@@ -969,7 +1211,13 @@ async function send(
     if (res && res.ok === false) return { ok: false, why: reason(res) };
     return { ok: true, value: undefined };
   } catch (e) {
-    return { ok: false, why: reason({ error: e }) };
+    const why = reason({ error: e });
+    if (isNotImplemented(why) && !retried && !s.manager) {
+      legacyBroken.set();
+      slot = null;
+      return send(which, method, args, true);
+    }
+    return { ok: false, why };
   }
 }
 
