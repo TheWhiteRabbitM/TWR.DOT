@@ -130,7 +130,7 @@ const I = {
 
 /* -------------------------------------------------------------------- state */
 type View =
-  | { k: 'home' } | { k: 'search' } | { k: 'notif' }
+  | { k: 'home' } | { k: 'search' } | { k: 'notif' } | { k: 'saved' }
   | { k: 'profile'; mask: number } | { k: 'thread'; id: number }
   | { k: 'people'; mask: number; of: 'followers' | 'following' };
 
@@ -205,6 +205,30 @@ const push = {
   get: () => { try { return localStorage.getItem(PUSH) ?? ''; } catch { return ''; } },
   set: (v: 'on' | 'off') => { try { localStorage.setItem(PUSH, v); } catch { /* private mode */ } },
 };
+/**
+ * Bookmarks and mutes: this device's business and nobody else's.
+ *
+ * Both are deliberately off chain. A bookmark on a public chain announces what
+ * you are quietly interested in, forever, to everyone — and a mute list
+ * announces who you cannot stand. Neither is worth a transaction, and both are
+ * worth keeping private.
+ */
+function localSet(key: string) {
+  const read = () => { try { return new Set<number>(JSON.parse(localStorage.getItem(key) ?? '[]')); } catch { return new Set<number>(); } };
+  const set = read();
+  return {
+    has: (id: number) => set.has(id),
+    get size() { return set.size; },
+    toggle(id: number) {
+      set.has(id) ? set.delete(id) : set.add(id);
+      try { localStorage.setItem(key, JSON.stringify([...set])); } catch { /* private mode */ }
+      return set.has(id);
+    },
+  };
+}
+const marks = localSet('chirp.marks');
+const muted = localSet('chirp.muted');
+
 /** The newest id already pushed, so the same mention is not announced twice. */
 const PUSHED = 'chirp.pushed';
 const pushed = {
@@ -291,7 +315,10 @@ const list = (ps: Post[], empty: string) => (ps.length ? ps.map((p) => card(p)).
 /* -------------------------------------------------------------------- views */
 
 function homeView(): string {
-  const top = ALL.filter((p) => !p.replyTo);
+  // Muting hides them from the timeline, not from the chain: open their profile
+  // and everything is still there. A mute is "not in my feed", not censorship,
+  // and this app could not censor anything if it wanted to.
+  const top = ALL.filter((p) => !p.replyTo && !muted.has(p.mask));
   // Following stays strictly chronological — that is the point of it, and X
   // breaking that promise is the complaint people actually have. For you is
   // ranked, and says so.
@@ -308,20 +335,80 @@ function homeView(): string {
     + (ALL.length >= page ? '<button class="more-btn" id="loadmore">Show older chirps</button>' : '');
 }
 
+/**
+ * What is being talked about, counted from the feed the app already holds.
+ *
+ * No trending service and no window into anyone's behaviour: it is the tags in
+ * the chirps, weighted by how recent they are, so a tag used all week does not
+ * outrank one people are using now. Nothing here leaves the device.
+ */
+function trends(): { tag: string; n: number; hot: number }[] {
+  const now = Date.now() / 1000;
+  const seenTags = new Map<string, { n: number; hot: number }>();
+  for (const p of ALL) {
+    if (p.deleted) continue;
+    const weight = Math.pow(0.5, Math.max(0, now - p.time) / (24 * 3600));
+    for (const m of new Set(p.body.match(/#[A-Za-z0-9_]{1,40}/g) ?? [])) {
+      const k = m.slice(1).toLowerCase();
+      const cur = seenTags.get(k) ?? { n: 0, hot: 0 };
+      seenTags.set(k, { n: cur.n + 1, hot: cur.hot + weight });
+    }
+  }
+  return [...seenTags].map(([tag, v]) => ({ tag, ...v })).sort((a, b) => b.hot - a.hot).slice(0, 8);
+}
+
+/**
+ * Who to follow. Not "people like you" — we have no behavioural profile and are
+ * not about to build one. It is the two things the chain plainly says: who the
+ * people you already follow are following, and who has been writing.
+ */
+function suggestions(): Who[] {
+  if (!ME?.mask) return [];
+  const posts = new Map<number, number>();
+  for (const p of ALL) if (!p.deleted) posts.set(p.mask, (posts.get(p.mask) ?? 0) + 1);
+  return PEOPLE
+    .filter((w) => w.mask !== ME!.mask && !FOLLOW.has(w.mask) && !muted.has(w.mask))
+    .map((w) => ({ w, score: (posts.get(w.mask) ?? 0) + (CONN.followingList.some((f) => f.mask === w.mask) ? 5 : 0) }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map((x) => x.w);
+}
+
 function searchView(): string {
   const t = query.trim().toLowerCase();
-  const who = t ? PEOPLE.filter((w) => (w.name + ' ' + w.verified + ' mask' + w.mask).toLowerCase().includes(t)) : PEOPLE;
+  const who = t ? PEOPLE.filter((w) => (w.name + ' ' + w.handle + ' ' + w.verified + ' mask' + w.mask).toLowerCase().includes(t)) : PEOPLE;
   const posts = t ? ALL.filter((p) => p.body.toLowerCase().includes(t)) : [];
+  const tr = trends(), sug = suggestions();
   return `<div class="searchbar"><input id="q" placeholder="Search people and chirps" value="${esc(query)}" autocomplete="off"></div>`
+    + (!t && tr.length ? `<div class="sechead">What is happening</div>`
+      + tr.map((x, i) => `<div class="trend" data-q="${esc(x.tag)}">
+          <div class="tr-rank">${i + 1}</div>
+          <div><div class="tr-tag">#${esc(x.tag)}</div>
+          <div class="tr-n">${x.n} chirp${x.n === 1 ? '' : 's'}</div></div>
+        </div>`).join('') : '')
+    + (!t && sug.length ? `<div class="sechead">Who to follow</div>`
+      + sug.map((w) => personRow(w, true)).join('') : '')
     + (who.length ? `<div class="sechead">People</div>` + who.slice(0, 20).map((w) => personRow(w)).join('') : '')
     + (t ? `<div class="sechead">Chirps</div>` + list(posts, 'Nothing matches that.') : '');
 }
 
-function personRow(w: Who): string {
+/** The saved chirps. Kept on the device on purpose: a bookmark is a note to
+ *  yourself, and putting it on a public chain would publish what you are
+ *  quietly interested in to everybody, forever. */
+function savedView(): string {
+  const rows = ALL.filter((p) => marks.has(p.id));
+  return `<div class="sechead">Bookmarks</div>`
+    + list(rows, 'Nothing saved yet. Bookmark a chirp from its ⋯ menu.')
+    + `<div class="note small">Bookmarks stay on this device. A chain would make them public, and what you save is nobody's business.</div>`;
+}
+
+function personRow(w: Who, withFollow = false): string {
   return `<div class="prow" data-who="${w.mask}">
     <div class="av">${avatar('0x' + w.mask.toString(16).padStart(40, '0'), w.mask)}</div>
     <div class="grow"><div class="head"><span class="nm">${esc(nm(w))}</span>${w.verified ? TICK : ''}</div>
     <div class="at">${esc(at(w))} · <span class="tier t${w.tier}">${TIERS[w.tier]}</span></div></div>
+    ${withFollow && ME?.mask ? `<button class="primary small" data-follow="${w.mask}">Follow</button>` : ''}
   </div>`;
 }
 
@@ -360,6 +447,7 @@ function profileView(): string {
       <a data-conn="followers" data-mask="${who.mask}"><b>${followers}</b> followers</a> ·
       <a data-conn="following" data-mask="${who.mask}"><b>${CONN.followingList.length}</b> following</a> ·
       <b>${posts.length}</b> chirps
+      ${isMe && marks.size ? ` · <a id="gosaved"><b>${marks.size}</b> bookmarked</a>` : ''}
     </div>
   </section>` + list(posts, 'No chirps yet.');
 }
@@ -570,7 +658,11 @@ function overlay(): string {
       ${mine ? `<button data-m="edit" data-id="${p.id}">Edit chirp</button>
                 <button class="danger" data-m="del" data-id="${p.id}">Delete chirp</button>` : ''}
       <button data-m="quote" data-id="${p.id}">Quote</button>
+      <button data-m="mark" data-id="${p.id}">${marks.has(p.id) ? 'Remove bookmark' : 'Bookmark'}</button>
+      ${ME?.mask ? `<button data-m="note" data-id="${p.id}">Add context</button>` : ''}
       <button data-m="who" data-id="${p.id}">View profile</button>
+      ${mine ? '' : `<button data-m="mute" data-id="${p.id}">${muted.has(p.mask) ? 'Unmute' : 'Mute'} ${esc(at(p.who, p.mask))}</button>`}
+      <button data-m="link" data-id="${p.id}">Copy link</button>
       <button data-m="copy" data-id="${p.id}">Copy text</button>
       <button data-m="chain" data-id="${p.id}">View on chain</button>
       <button data-m="close">Cancel</button>
@@ -603,6 +695,7 @@ function render() {
   document.body.classList.toggle('locked', Boolean(sheet || settingsOpen || menuFor || confirmDelete || repostFor));
 
   const body = view.k === 'home' ? homeView()
+    : view.k === 'saved' ? savedView()
     : view.k === 'search' ? searchView()
     : view.k === 'notif' ? notifView()
     : view.k === 'profile' ? profileView()
@@ -719,7 +812,8 @@ async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: strin
 /** The view as a URL, so the phone's back button walks the app instead of
  *  leaving it, and a thread can be linked to. */
 function hashOf(v: View): string {
-  return v.k === 'home' ? '#/' : v.k === 'search' ? '#/search' : v.k === 'notif' ? '#/notifications'
+  return v.k === 'home' ? '#/' : v.k === 'search' ? '#/search'
+    : v.k === 'notif' ? '#/notifications' : v.k === 'saved' ? '#/saved'
     : v.k === 'profile' ? '#/u/' + v.mask
     : v.k === 'people' ? '#/u/' + v.mask + '/' + v.of
     : '#/t/' + v.id;
@@ -734,6 +828,7 @@ function viewOf(hash: string): View {
   if (h.startsWith('t/')) return { k: 'thread', id: Number(h.slice(2)) || 0 };
   if (h.startsWith('search')) return { k: 'search' };
   if (h.startsWith('notifications')) return { k: 'notif' };
+  if (h.startsWith('saved')) return { k: 'saved' };
   return { k: 'home' };
 }
 /** Navigate. Pushing the hash is what makes Back work; the hashchange handler
@@ -915,11 +1010,19 @@ function wire() {
     if (m === 'quote') { sheet = { mode: 'quote', target: p }; return render(); }
     if (m === 'del') { confirmDelete = p.id; return render(); }
     if (m === 'who') return goProfile(p.mask);
+    if (m === 'mark') { marks.toggle(p.id); flash = { text: marks.has(p.id) ? 'Bookmarked on this device.' : 'Bookmark removed.' }; return render(); }
+    if (m === 'mute') { muted.toggle(p.mask); flash = { text: muted.has(p.mask) ? 'Muted on this device.' : 'Unmuted.' }; return render(); }
+    if (m === 'note') { noteSheet = { chirpId: p.id, kind: 0 }; return render(); }
+    if (m === 'link') {
+      void navigator.clipboard.writeText(`${location.origin}${location.pathname}#/t/${p.id}`);
+      flash = { text: 'Link copied.' }; return render();
+    }
     if (m === 'copy') { void navigator.clipboard.writeText(p.body); flash = { text: 'Copied.' }; return render(); }
     if (m === 'chain') { window.open(`https://assethub-paseo.subscan.io/account/${CHIRP}`, '_blank'); return render(); }
     render();
   }));
   document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
+  document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
 
   /* ------------------------------------------------------------- pictures */
   document.getElementById('pickpfp')?.addEventListener('click', () => document.getElementById('pfpfile')?.click());
