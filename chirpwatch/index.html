@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>chirpwatch</title>
+<meta name="description" content="Are the chirp contracts answering, and are their numbers moving? Read live from Asset Hub, with no indexer in between.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0b0c'/%3E%3Cg stroke='%2300ba7c' stroke-width='5' stroke-linecap='round' fill='none'%3E%3Cpath d='M10 40h9l7-16 8 26 7-18 5 8h8'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+  /* A status board, so it is built like one: no chrome, no animation, numbers
+     large enough to read across a desk, and the only colour reserved for
+     "something is wrong". */
+  :root {
+    --bg:#000; --panel:#111214; --hair:#2a2c30; --ink:#e7e9ea; --ink-2:#8b9096;
+    --ok:#00ba7c; --bad:#f4212e; --warn:#ffd400; --blue:#1d9bf0;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 -apple-system,"Segoe UI",system-ui,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:860px; margin:0 auto; padding:22px 16px 64px; }
+  header { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+  h1 { font-size:20px; font-weight:800; letter-spacing:-.02em; margin:0; }
+  .sub { color:var(--ink-2); font-size:14px; }
+  .lead { color:var(--ink-2); font-size:14px; margin:10px 0 22px; max-width:62ch; }
+
+  .bar { display:flex; align-items:center; gap:10px; padding:12px 14px; border:1px solid var(--hair); border-radius:12px; margin-bottom:18px; }
+  .dot { width:10px; height:10px; border-radius:50%; background:var(--ink-2); flex:none; }
+  .dot.ok { background:var(--ok); } .dot.bad { background:var(--bad); } .dot.warn { background:var(--warn); }
+  .bar .grow { flex:1; min-width:0; }
+  .bar b { font-weight:600; }
+  .bar small { color:var(--ink-2); display:block; font-size:13px; }
+
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-2); font-weight:600; padding:0 8px 8px 0; }
+  td { padding:12px 8px 12px 0; border-top:1px solid var(--hair); vertical-align:top; }
+  td.n { font-variant-numeric:tabular-nums; font-weight:700; font-size:18px; white-space:nowrap; }
+  td.n small { display:block; font-weight:400; font-size:12px; color:var(--ink-2); }
+  .name { font-weight:600; }
+  .addr { color:var(--ink-2); font-size:12px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; overflow-wrap:anywhere; }
+  .addr a { color:var(--blue); text-decoration:none; }
+  .ms { color:var(--ink-2); font-size:12px; font-variant-numeric:tabular-nums; }
+  .err { color:var(--bad); font-size:13px; }
+  .up { color:var(--ok); }
+  .foot { color:var(--ink-2); font-size:13px; line-height:1.6; margin-top:28px; border-top:1px solid var(--hair); padding-top:18px; }
+  .foot code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>chirpwatch</h1>
+    <span class="sub">the contracts behind chirp, read live</span>
+  </header>
+  <p class="lead">
+    Every number here is an <code>eth_call</code> to the contract itself, made by this page, in your browser.
+    There is no indexer, no cache and no server in between — which is the point: a monitor that reports what
+    a middleman told it cannot tell you the middleman is the thing that broke.
+  </p>
+
+  <div class="bar" id="chainbar">
+    <span class="dot" id="chaindot"></span>
+    <span class="grow"><b id="chainstate">Checking the chain…</b><small id="chainnote">&nbsp;</small></span>
+    <span class="ms" id="chainms"></span>
+  </div>
+
+  <table>
+    <thead><tr><th style="width:44%">Contract</th><th>Reads</th><th style="width:22%">Answer</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <p class="foot">
+    A contract that answers is not the same as a contract that is right, and this page only claims the first.
+    What it catches is the failure that actually happens here: a read that stops returning, a counter that
+    stops moving, a chain that stops answering at all. Growth since your last visit is kept on this device —
+    nothing about you is sent anywhere, because there is nowhere to send it.
+    <br><br>
+    <span id="stamp"></span>
+  </p>
+</div>
+
+<script type="module">
+/*
+ * chirpwatch — is the chain answering, and are the numbers moving?
+ *
+ * Deliberately dependency-free and build-free: one file, no framework, no
+ * bundler. A monitor that needs a toolchain to stay alive is one more thing
+ * that can be broken while it is meant to be telling you something is broken.
+ *
+ * Reads go over the EVM-compatible RPC because that is the one that answers
+ * eth_call on this chain. Note that events do NOT work that way here —
+ * eth_getLogs returns nothing and activity lives in Substrate
+ * `revive.ContractEmitted` — so this page reports counters rather than a
+ * transaction feed, and says so rather than showing an empty list.
+ */
+const RPC = 'https://paseo-assethub-rpc.laissez-faire.trade';
+
+const CONTRACTS = [
+  { name: 'Chirp2', what: 'posts, likes, follows', addr: '0x37A7CE834428636815b2746408343574aD13be7C',
+    reads: [{ label: 'chirps', sel: '0x06661abd' }] },
+  { name: 'PeoplebookMasks2', what: 'identities', addr: '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a',
+    reads: [{ label: 'masks', sel: '0x18160ddd' }] },
+  { name: 'ChirpNotes', what: 'context and ratings', addr: '0xf3584d1b59fb8759f4c6572e3a13c8a7af79c0cc',
+    reads: [{ label: 'notes', sel: '0x06661abd' }, { label: 'ratings', sel: '0x2826f6a5' }] },
+  { name: 'PeopleWiki', what: 'what we learned', addr: '0x0465Db2133a6A3B096Eb6e39E44daa31EF3E37AA',
+    reads: [{ label: 'entries', sel: '0x06661abd' }] },
+  { name: 'PeoplePFP', what: 'profile pictures', addr: '0x6f3f9d84161f0bd0eb9d6524a5a2e5089b565470',
+    // No counter on this one; asking for mask 1's key proves it answers.
+    reads: [{ label: 'answers', sel: '0x98b9c5d0' + '1'.padStart(64, '0'), kind: 'alive' }] },
+  { name: 'PeopleHandles', what: '@names', addr: '0x7C61D99564C61e667C6Fd5D41aC2466327ea4109',
+    reads: [{ label: 'answers', sel: '0x49491987' + '1'.padStart(64, '0'), kind: 'alive' }] },
+];
+
+const rpc = async (method, params) => {
+  const t = Date.now();
+  const r = await fetch(RPC, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+  }).then((x) => x.json());
+  return { ms: Date.now() - t, result: r.result, error: r.error };
+};
+
+const call = (to, data) => rpc('eth_call', [{ to, data }, 'latest']);
+
+/** Growth since the last visit, kept here and nowhere else. */
+const LAST = 'chirpwatch.last';
+const readLast = () => { try { return JSON.parse(localStorage.getItem(LAST) || '{}'); } catch { return {}; } };
+const writeLast = (v) => { try { localStorage.setItem(LAST, JSON.stringify(v)); } catch {} };
+
+function since(key, now, prev) {
+  const was = prev[key];
+  if (typeof was !== 'number' || now === was) return '';
+  const d = now - was;
+  return `<small class="${d > 0 ? 'up' : ''}">${d > 0 ? '+' : ''}${d} since you last looked</small>`;
+}
+
+async function tick() {
+  const prev = readLast();
+  const next = {};
+
+  const head = await rpc('eth_blockNumber', []);
+  const dot = document.getElementById('chaindot');
+  const state = document.getElementById('chainstate');
+  const note = document.getElementById('chainnote');
+  document.getElementById('chainms').textContent = head.ms + ' ms';
+  if (head.result) {
+    const n = Number(BigInt(head.result));
+    dot.className = 'dot ok';
+    state.textContent = 'Asset Hub is answering';
+    const moved = typeof prev.block === 'number' ? n - prev.block : null;
+    note.textContent = `block ${n.toLocaleString()}${moved !== null ? ` — ${moved} since you last looked` : ''}`;
+    next.block = n;
+  } else {
+    dot.className = 'dot bad';
+    state.textContent = 'The chain did not answer';
+    note.textContent = head.error ? JSON.stringify(head.error).slice(0, 120) : 'no result';
+  }
+
+  const rows = [];
+  for (const c of CONTRACTS) {
+    const cells = [];
+    let bad = false;
+    let slowest = 0;
+    for (const r of c.reads) {
+      const res = await call(c.addr, r.sel);
+      slowest = Math.max(slowest, res.ms);
+      if (!res.result) {
+        bad = true;
+        cells.push(`<div class="err">${r.label}: ${res.error ? String(res.error.message || res.error.code) : 'no answer'}</div>`);
+        continue;
+      }
+      if (r.kind === 'alive') {
+        cells.push(`<div class="n">answering</div>`);
+        continue;
+      }
+      const n = Number(BigInt(res.result));
+      const key = c.name + '.' + r.label;
+      next[key] = n;
+      cells.push(`<div class="n">${n.toLocaleString()} <small>${r.label}</small>${since(key, n, prev)}</div>`);
+    }
+    rows.push(`<tr>
+      <td><div class="name">${c.name}</div><div class="addr">${c.what} · <a href="https://assethub-paseo.subscan.io/account/${c.addr}" target="_blank" rel="noopener">${c.addr}</a></div></td>
+      <td>${cells.join('')}</td>
+      <td><span class="dot ${bad ? 'bad' : 'ok'}"></span> <span class="ms">${slowest} ms</span></td>
+    </tr>`);
+  }
+  document.getElementById('rows').innerHTML = rows.join('');
+  writeLast(next);
+  document.getElementById('stamp').textContent = 'Last read ' + new Date().toLocaleTimeString() + '. Re-reads every 30 seconds while this page is in front.';
+}
+
+tick();
+setInterval(() => { if (document.visibilityState === 'visible') tick(); }, 30000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') tick(); });
+</script>
+</body>
+</html>
