@@ -123,3 +123,44 @@ button.ghost:hover { background: var(--panel); }
 @keyframes sh { to { background-position: -200% 0; } }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---- conversation: quotes, threads, menus, settings ---- */
+.chirp .row { display: flex; gap: 12px; }
+.chirp.big .body { font-size: 20px; line-height: 1.35; }
+.ctx { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: 13px; font-weight: 600; padding: 0 0 6px 52px; }
+.ctx svg { width: 15px; height: 15px; }
+
+.more { margin-left: auto; background: none; border: 0; color: var(--ink-2); cursor: pointer; padding: 2px; }
+.more svg { width: 16px; height: 16px; }
+.more:hover { color: var(--blue); }
+
+.quoted { border: 1px solid var(--hair); border-radius: 14px; padding: 10px 12px; margin-top: 10px; }
+.quoted .head { font-size: 14px; }
+.quoted .body { font-size: 14px; color: var(--ink); }
+
+.act.rep:hover, .act.rep.on { color: var(--green); }
+.act.share:hover { color: var(--blue); }
+.act.reply:hover { color: var(--blue); }
+
+.iconbtn { background: none; border: 0; color: var(--ink); cursor: pointer; padding: 6px; border-radius: 999px; }
+.iconbtn:hover { background: var(--panel); }
+.iconbtn svg { width: 19px; height: 19px; display: block; }
+
+/* sheets sit over the column, as they do on a phone */
+.scrim { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.7); display: grid; place-items: center; padding: 16px; }
+.pane, .menu { width: min(560px, 100%); background: var(--bg); border: 1px solid var(--hair); border-radius: 16px; padding: 16px; max-height: 88vh; overflow: auto; }
+.panehead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 17px; }
+.pane label { display: block; margin: 14px 0 6px; font-size: 13px; color: var(--ink-2); }
+.pane input, .pane textarea { width: 100%; background: var(--panel); border: 1px solid var(--hair); border-radius: 10px; color: var(--ink); font: inherit; padding: 11px 13px; outline: none; }
+.pane input:focus, .pane textarea:focus { border-color: var(--blue); }
+.pane input:disabled { opacity: .6; }
+.pane textarea { min-height: 90px; resize: none; font-size: 18px; margin-top: 12px; }
+.pane .link { background: none; border: 0; color: var(--blue); font: inherit; font-size: 13px; padding: 6px 0; cursor: pointer; }
+.pane .hint { color: var(--ink-2); font-size: 12.5px; line-height: 1.5; margin: 8px 0 0; }
+.okmark { color: var(--green); font-size: 12px; }
+.primary.wide { width: 100%; margin-top: 18px; }
+
+.menu { padding: 8px; }
+.menu button { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--ink); font: inherit; font-size: 15px; padding: 14px 12px; border-radius: 10px; cursor: pointer; }
+.menu button:hover { background: var(--panel); }
+.menu button.danger { color: #f4212e; }
