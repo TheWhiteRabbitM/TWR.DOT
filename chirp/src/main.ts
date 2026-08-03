@@ -110,6 +110,27 @@ let settingsOpen = false;
 let menuFor: number | null = null;
 let query = '';
 let flash: { text: string; bad?: boolean } | null = null;
+/** How much of the feed is loaded. The chain has no cursor, so this is simply
+ *  how far back from the newest chirp we have read. */
+let page = 25;
+
+/** What you were writing, kept across a failed signature and a closed app. A
+ *  post that costs a signature must not be able to eat the text you typed. */
+const DRAFT = 'chirp.draft';
+const draft = {
+  get: () => { try { return localStorage.getItem(DRAFT) ?? ''; } catch { return ''; } },
+  set: (v: string) => { try { v ? localStorage.setItem(DRAFT, v) : localStorage.removeItem(DRAFT); } catch { /* private mode */ } },
+};
+
+/** The newest chirp id you have already seen in Notifications, so the bell can
+ *  say how much is new. Kept locally: the chain has no read-state, and inventing
+ *  one on chain would cost a transaction per glance. */
+const SEEN = 'chirp.seen';
+const seen = {
+  get: () => { try { return Number(localStorage.getItem(SEEN) ?? 0); } catch { return 0; } },
+  set: (v: number) => { try { localStorage.setItem(SEEN, String(v)); } catch { /* private mode */ } },
+};
+const unread = () => NOTIF.filter((p) => p.id > seen.get()).length;
 
 const findPost = (id: number) => [...ALL, ...TH.replies, ...TH.parents, TH.post].find((p) => p && p.id === id) as Post | undefined;
 
@@ -171,7 +192,8 @@ function homeView(): string {
       <button class="tab${tab === 'following' ? ' on' : ''}" data-tab="following">Following</button>
     </div>`
     + (ME && !ME.mask ? gate() : '')
-    + list(shown, tab === 'following' ? 'Nothing here yet — follow someone from their profile.' : 'No chirps yet.');
+    + list(shown, tab === 'following' ? 'Nothing here yet — follow someone from their profile.' : 'No chirps yet.')
+    + (ALL.length >= page ? '<button class="more-btn" id="loadmore">Show older chirps</button>' : '');
 }
 
 function searchView(): string {
@@ -255,7 +277,7 @@ function nav(): string {
   return `<nav class="bottom">
     ${item('home', I.home, 'Home', view.k === 'home')}
     ${item('search', I.search, 'Search', view.k === 'search')}
-    ${item('notif', I.bell, 'Notifications', view.k === 'notif')}
+    ${item('notif', I.bell + (unread() ? `<span class="badge">${unread() > 9 ? '9+' : unread()}</span>` : ''), 'Notifications', view.k === 'notif')}
     ${item('profile', I.person, 'Profile', view.k === 'profile')}
   </nav>
   ${ME?.mask ? `<button class="fab" id="fab" aria-label="New chirp">${I.plus}</button>` : ''}`;
@@ -300,13 +322,23 @@ function overlay(): string {
     ${t && sheet.mode !== 'edit' ? `<div class="quoted">
       <div class="head"><span class="nm">${esc(nm(t.who, t.mask))}</span><span class="at">${esc(at(t.who, t.mask))}</span></div>
       <div class="body">${esc(t.body)}</div></div>` : ''}
-    <textarea id="stxt" maxlength="400" placeholder="${sheet.mode === 'reply' ? 'Post your reply' : sheet.mode === 'quote' ? 'Add a comment' : "What's happening on chain?"}">${sheet.mode === 'edit' && t ? esc(t.body) : ''}</textarea>
+    <textarea id="stxt" maxlength="400" placeholder="${sheet.mode === 'reply' ? 'Post your reply' : sheet.mode === 'quote' ? 'Add a comment' : "What's happening on chain?"}">${sheet.mode === 'edit' && t ? esc(t.body) : sheet.mode === 'new' ? esc(draft.get()) : ''}</textarea>
     <div class="composebar"><span class="count" id="scount">280</span>
       <button class="primary" id="ssend">${sheet.mode === 'edit' ? 'Save' : title === 'New chirp' ? 'Chirp' : title}</button></div>
   </div></div>`;
 }
 
+/** Where the reader was, per view. Re-rendering replaces the whole column, so
+ *  without this a like halfway down the feed threw you back to the top — the
+ *  optimistic update made that worse, not better, because it renders twice. */
+const scrollAt = new Map<string, number>();
+
 function render() {
+  const key = hashOf(view);
+  if (app.querySelector('main')) scrollAt.set(key, scrollY);
+  // A sheet is over the column; let it scroll, not the timeline behind it.
+  document.body.classList.toggle('locked', Boolean(sheet || settingsOpen || menuFor));
+
   const body = view.k === 'home' ? homeView()
     : view.k === 'search' ? searchView()
     : view.k === 'notif' ? notifView()
@@ -324,6 +356,8 @@ function render() {
       </footer>`
     + nav() + overlay();
   wire();
+  // Put the reader back where they were, unless a sheet is taking focus.
+  if (!sheet && !settingsOpen) scrollTo({ top: scrollAt.get(key) ?? 0 });
 }
 
 /* ------------------------------------------------------------------- wiring */
@@ -377,6 +411,12 @@ function wire() {
     if (e.target === document.getElementById('scrim')) { settingsOpen = false; sheet = null; menuFor = null; render(); }
   });
   document.getElementById('fab')?.addEventListener('click', () => { sheet = { mode: 'new' }; render(); });
+  document.getElementById('loadmore')?.addEventListener('click', (e) => {
+    const b = e.currentTarget as HTMLButtonElement;
+    b.disabled = true; b.textContent = 'Loading…';
+    page += 25;
+    refresh();
+  });
 
   app.querySelectorAll<HTMLElement>('[data-nav]').forEach((b) => b.addEventListener('click', () => {
     const k = b.dataset.nav!;
@@ -400,13 +440,21 @@ function wire() {
   if (stxt && ssend && scnt && sheet) {
     counter(stxt, scnt, ssend, sheet.mode === 'quote');
     const s = sheet;
+    // Keep a new chirp as it is typed, so a refused signature or a closed app
+    // does not swallow it.
+    if (s.mode === 'new') stxt.addEventListener('input', () => draft.set(stxt.value));
     ssend.addEventListener('click', () => {
       const v = stxt.value.trim();
       sheet = null;
+      if (s.mode === 'new') draft.set('');
       if (s.mode === 'edit' && s.target) return act(() => edit(s.target!.id, v), 'Updated on chain.');
       if (s.mode === 'reply' && s.target) return act(() => post(ME!.mask, v, s.target!.id, 0), 'Replied on chain.');
       if (s.mode === 'quote' && s.target) return act(() => post(ME!.mask, v, 0, s.target!.id), 'Quoted on chain.');
-      return act(() => post(ME!.mask, v), 'Posted on chain.');
+      return act(async () => {
+        const r = await post(ME!.mask, v);
+        if (!r.ok) draft.set(v); // hand the words back
+        return r;
+      }, 'Posted on chain.');
     });
   }
 
@@ -488,11 +536,16 @@ function wire() {
 }
 
 async function refresh() {
-  ALL = await loadAll().catch(() => ALL);
+  ALL = await loadAll(page).catch(() => ALL);
   if (view.k === 'thread') TH = await thread(view.id).catch(() => TH);
   if (view.k === 'profile') PROF = await profile(view.mask).catch(() => PROF);
   if (view.k === 'search' && !PEOPLE.length) PEOPLE = await people().catch(() => []);
-  if (view.k === 'notif') NOTIF = await notifications(ME?.mask ?? 0).catch(() => NOTIF);
+  if (view.k === 'notif') {
+    NOTIF = await notifications(ME?.mask ?? 0).catch(() => NOTIF);
+    if (NOTIF.length) seen.set(Math.max(seen.get(), ...NOTIF.map((p) => p.id)));
+  } else if (ME?.mask) {
+    NOTIF = await notifications(ME.mask).catch(() => NOTIF); // keep the badge honest
+  }
   if (ME?.mask) FOLLOW = await following().catch(() => FOLLOW);
   render();
 }
@@ -516,7 +569,7 @@ warmUp();
 view = viewOf(location.hash);
 (async () => {
   ME = await me().catch(() => null);
-  ALL = await loadAll().catch(() => []);
+  ALL = await loadAll(page).catch(() => []);
   if (ME?.mask) FOLLOW = await following().catch(() => FOLLOW);
   render();
 })();
