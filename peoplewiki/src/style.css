@@ -74,12 +74,22 @@ a:hover { text-decoration: underline; }
   padding: 7px 14px; min-width: 220px; transition: border-color .15s;
 }
 .search:focus-within { border-color: var(--blue); }
+/* 220px of search plus the brand does not fit a phone. Below that the field
+   takes what is left instead of forcing the bar wider than the screen. */
+@media (max-width: 560px) {
+  .bar { gap: 10px; padding: 0 16px; }
+  .brand small { display: none; }
+  .search { min-width: 0; flex: 1; }
+}
 .search input { border: 0; background: none; outline: none; color: var(--ink); font: inherit; font-size: 15px; width: 100%; }
 .search svg { width: 15px; height: 15px; color: var(--ink-3); flex: none; }
 
 /* ------------------------------------------------------------------ layout */
 .shell { display: grid; grid-template-columns: var(--w-side) minmax(0, 1fr); gap: 40px; max-width: 1080px; margin: 0 auto; padding: 34px 22px 90px; }
-@media (max-width: 860px) { .shell { grid-template-columns: 1fr; gap: 0; padding-top: 20px; } }
+/* minmax(0, 1fr), never plain 1fr: a grid item's min-width defaults to `auto`,
+   so the column grows to fit its widest content instead of clipping it. That is
+   what turned the horizontal topic strip into a 1430px-wide page. */
+@media (max-width: 860px) { .shell { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 20px 16px 90px; } }
 
 /* the sidebar IS the table of contents: one topic per line, count beside it */
 .side { position: sticky; top: 74px; align-self: start; }
@@ -94,8 +104,13 @@ a:hover { text-decoration: underline; }
 .side button.on { background: var(--bg-2); font-weight: 600; }
 .side button .n { margin-left: auto; color: var(--ink-3); font-size: 13px; font-variant-numeric: tabular-nums; }
 @media (max-width: 860px) {
-  .side .list { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
-  .side button { width: auto; white-space: nowrap; border: 1px solid var(--hair); }
+  /* The table of contents becomes a strip that scrolls in its OWN box. Without
+     min-width:0 the strip cannot be narrower than its content, so it pushes the
+     page wide instead of scrolling inside itself. */
+  .side { min-width: 0; }
+  .side .list { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .side .list::-webkit-scrollbar { display: none; }
+  .side button { width: auto; flex: none; white-space: nowrap; border: 1px solid var(--hair); }
 }
 
 /* ------------------------------------------------------------------ hero */
