@@ -9,6 +9,8 @@
   },
   "devDependencies": {
     "@parity/hardhat-polkadot": "^0.3.0",
+    "@polkadot-labs/hdkd": "^0.0.29",
+    "@polkadot-labs/hdkd-helpers": "^0.0.31",
     "@types/node": "^22.15.3",
     "hardhat": "^2.26.0",
     "ts-node": "^10.9.2",
