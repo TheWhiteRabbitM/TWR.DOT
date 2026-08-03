@@ -1352,3 +1352,12 @@ textarea {
     transition: none !important;
   }
 }
+
+/* The developer, when the chain knows a person behind the address. The name
+   leads and the handle trails it in the meta colour — the same order chirp uses,
+   so the two apps do not disagree about how a person is written. */
+.devlink { display: inline-flex; align-items: baseline; gap: 6px; color: inherit; text-decoration: none; }
+.devlink:hover { text-decoration: underline; }
+.devat { color: var(--ink-2, #86868b); font-size: .92em; }
+.devtick { color: #0a84ff; font-size: .9em; }
+.devrow { margin-top: 6px; font-family: inherit; }

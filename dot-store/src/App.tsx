@@ -13,7 +13,8 @@ import {
 } from './lib/catalog';
 import { appCount, minStatus } from './lib/chain';
 import { APP_REVIEWS, DEMO_ENABLED } from './lib/config';
-import { openDotApp } from './lib/host-nav';
+import { openDotApp, openExternal } from './lib/host-nav';
+import { creatorOf, creatorAt, creatorName, creatorLink, type Creator } from './lib/creators';
 import { openAppChat } from './lib/host-chat';
 import { requestHostPermissions } from './lib/host-permissions';
 import { LANGS, getLang, locale, setLang, t, useLang, type Lang } from './lib/i18n';
@@ -360,10 +361,48 @@ function MetricsBar({ app, r, lang }: { app: CatalogApp; r: AppRating | undefine
       <div className="metric">
         <span className="metric-k">{t('meta.developer')}</span>
         <span className="metric-v metric-word metric-mono">
-          {app.owner ? shortAddr(app.owner) : t('meta.unknown')}
+          <Developer owner={app.owner} />
         </span>
       </div>
     </div>
+  );
+}
+
+/**
+ * The developer, as a person when the chain knows one.
+ *
+ * The catalog holds the H160 that owns the `.dot`, and that is the same key
+ * PeoplebookMasks2 files identities under — so the two join with no registry
+ * and nobody's cooperation. When the owner has claimed a mask we show the name
+ * they published and link to their timeline; when they have not, which is most
+ * of them, it stays the address it always was.
+ *
+ * The tick is only ever a `.dot` the masks contract checked. A display name is
+ * free text and a People handle cannot be verified from Asset Hub, so neither
+ * gets one.
+ */
+function Developer({ owner }: { owner: string }) {
+  useLang();   // redraw when the language changes
+  const [who, setWho] = useState<Creator | null>(null);
+  useEffect(() => {
+    let live = true;
+    if (owner) void creatorOf(owner).then((c) => { if (live) setWho(c); });
+    return () => { live = false; };
+  }, [owner]);
+
+  if (!owner) return <>{t('meta.unknown')}</>;
+  if (!who) return <>{shortAddr(owner)}</>;
+  return (
+    <a
+      className="devlink"
+      href={creatorLink(who)}
+      onClick={(e) => { e.preventDefault(); void openExternal(creatorLink(who)); }}
+      title={owner}
+    >
+      {creatorName(who)}
+      {who.verified ? <span className="devtick" aria-label="verified .dot">✓</span> : null}
+      <span className="devat">{creatorAt(who)}</span>
+    </a>
   );
 }
 
@@ -691,7 +730,10 @@ function Detail({
           </div>
           <div>
             <dt>{t('info.owner')}</dt>
-            <dd className="mono">{app.owner || t('info.none')}</dd>
+            <dd className="mono">
+              {app.owner || t('info.none')}
+              {app.owner ? <div className="devrow"><Developer owner={app.owner} /></div> : null}
+            </dd>
           </div>
           <div>
             <dt>{t('info.registered')}</dt>
