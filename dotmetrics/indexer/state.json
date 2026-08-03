@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11754580,
-  "updatedAt": "2026-08-03T07:53:07.143Z",
+  "lastBlock": 11767215,
+  "updatedAt": "2026-08-03T15:08:24.908Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "6c1caf1a60628fe9384c05b491495dd943a75930d00989e8e0636dbf64744e2c",
-    "cid": "bafybeifk5dyxtrzbtnia2a7spy2vqrvqple3yc4257dzlzyyz7pevolcgy",
-    "uploadedAt": "2026-08-03T07:59:07.863Z"
+    "digest": "33ac46f79deb8f015f0280e681c64905baea0d9ba265211bcf5059084991fb95",
+    "cid": "bafybeihxqgwyam4sq6vfubsldexfuzkmfopfxrayqctweu4n64t72htcrq",
+    "uploadedAt": "2026-08-03T15:14:25.362Z"
   },
   "sitePublish": {
-    "treeHash": "793567265638b589f7756073aec1923cd6eb8a4d6a5d49b2fd94379af6afe690",
-    "publishedAt": "2026-08-02T22:21:03.376Z"
+    "treeHash": "84b185bd5f1b4c15e0d9de30b2a4d43b7f9d1366cd593fad62e1a3ef642ec374",
+    "publishedAt": "2026-08-03T15:17:21.308Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-03T07:57:43.000Z",
+    "updatedAt": "2026-08-03T15:13:14.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -109,13 +109,15 @@
       "chirponchain": "alive",
       "frenchan-app77": "alive",
       "open-docs": "alive",
-      "waldgeist": "alive"
+      "waldgeist": "alive",
+      "my-dotter": "alive",
+      "peoplewiki": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-03T07:57:43.000Z",
+    "updatedAt": "2026-08-03T15:13:14.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -161,9 +163,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeicap2ernson7wubyztq7a6e67vj6tkjz6ouykghvqpgrambeuhjqe",
-        "updateCount": 1,
-        "changedAt": 1785743863,
+        "contenthash": "bafybeieqmh5ptvupr2yuxjegmmuii7eclbrmm6knk2dkqfaum5a4n7jopm",
+        "updateCount": 2,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "chopdotproof01": {
@@ -211,9 +213,9 @@
         "live": "alive"
       },
       "discreetly": {
-        "contenthash": "bafybeiaqlrrwiueouowmaxvhyzyixpehe64q5voegix6pxxuudhwutmqvm",
-        "updateCount": 2,
-        "changedAt": 1785500760,
+        "contenthash": "bafybeiaesp3pt3gwvpnzvrpevratog34vgvksm4n7wzened6qeecfx2pai",
+        "updateCount": 3,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "docs": {
@@ -233,9 +235,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibpqetzmanoeobpijhx3z7aak56wiqodgp3gfawqb5vguojidq6em",
-        "updateCount": 43,
-        "changedAt": 1785743863,
+        "contenthash": "bafybeiewnppunht2x7nh24t2uhr7wzfwj2eofk4uswnkva7c3thi5bqznq",
+        "updateCount": 44,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -261,9 +263,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeibhxrxeyaqss4tvdlhynaofktywabz5fx5t3kagytgosvygpytgaa",
-        "updateCount": 30,
-        "changedAt": 1785712718,
+        "contenthash": "bafybeid37wpctnzpanzlmhtv6s3h3pyrh7ygg4xt5jvswgitmct5tujdce",
+        "updateCount": 31,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "dragon-realm": {
@@ -394,6 +396,21 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "mini-lucky": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "mini-lucky-dev": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "mini-lucky-loc": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "mini-lucky-smoke": {
         "contenthash": "bafybeigkxuo47vkt4o2mjr2cfinswytrdo4yom3wobx75lan7gcczxkfke",
         "updateCount": 0,
@@ -406,6 +423,11 @@
       },
       "my-dotkit": {
         "contenthash": "bafybeiftwhwr7yl4ap7ya7iaf3gbw4dxa663aedi7qcmea3otl5calnz6q",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "my-dotter": {
+        "contenthash": "bafybeib5ntd3u7hk62cs45djxudxvq2gpeave6sd5lm2zauil45b3cf35a",
         "updateCount": 0,
         "live": "alive"
       },
@@ -471,15 +493,15 @@
         "live": "alive"
       },
       "open-docs": {
-        "contenthash": "bafybeicmv53a3n7oh3qq26ehfm4mb2uhouwl2q2yqp2cxphallyeh6bwky",
-        "updateCount": 3,
-        "changedAt": 1785743863,
+        "contenthash": "bafybeidxaswocdkejikpzq7xguojgkee3uf4u3rqosjdrw2gdxvxs3a37q",
+        "updateCount": 4,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "openpetition": {
-        "contenthash": "bafybeifts7kdjwirdxnqovvrhufiuh2m4d7zsqmo72xdlgr7ifctp4frsy",
-        "updateCount": 2,
-        "changedAt": 1785684961,
+        "contenthash": "bafybeigirsm4tihkldh5m6jywgt5ehxnxhmtweyeb6wde2qnboofa5vx6u",
+        "updateCount": 3,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "pactprotocol": {
@@ -499,9 +521,14 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeihe6s3qma76jlgdny7oqf3edm4h5fokxor4ptcmmymrut6mvzneoy",
-        "updateCount": 4,
-        "changedAt": 1785684961,
+        "contenthash": "bafybeihhafguj5ylrjsrsehwfi7ihegvmvsptx3lkxv5hyluznv27h6vsi",
+        "updateCount": 5,
+        "changedAt": 1785769994,
+        "live": "alive"
+      },
+      "peoplewiki": {
+        "contenthash": "bafybeibggvsan3jn77pl5yjugew2nrubrfhe3kvna5aki4upaa7gvwx4fy",
+        "updateCount": 0,
         "live": "alive"
       },
       "petitions": {
@@ -574,9 +601,9 @@
         "live": "alive"
       },
       "rainbow-dev": {
-        "contenthash": "bafybeie66bvzf6zxrzf5ekdcvp323zxhxfgz35ovvenuy4kbwikdmlcoxa",
-        "updateCount": 1,
-        "changedAt": 1785684961,
+        "contenthash": "bafybeigs62a6m3rol634kvduobjqwe7vkoa256fvto24x7knf255uv5i2a",
+        "updateCount": 2,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "rainbowprobe": {
@@ -623,9 +650,9 @@
         "live": "alive"
       },
       "thebutton": {
-        "contenthash": "bafybeibodyiahl2xj3u2cwkgtfdj7j7ywsbtnbzx75sqm3lozxjssbvxzu",
-        "updateCount": 2,
-        "changedAt": 1785684961,
+        "contenthash": "bafybeigp6qfauoadpz5hj76xzn4dsb5p22kvmgmcrjbsxaajci6x2bhl5i",
+        "updateCount": 3,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "thepipersguild": {
@@ -644,9 +671,9 @@
         "live": "alive"
       },
       "truereviews": {
-        "contenthash": "bafybeie6o6zd5o4dcshneqym7c6ua6dy6p4dfg334uhwoskxinzdv4tmti",
-        "updateCount": 1,
-        "changedAt": 1785482486,
+        "contenthash": "bafybeif2evfzk5uqjzwf737wtijkscjye5s45enjyswxkhwzmyoo5iva44",
+        "updateCount": 2,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "trustgraph": {
@@ -673,9 +700,9 @@
         "live": "unknown"
       },
       "wudcommunity": {
-        "contenthash": "bafybeiec5fvzjrxhgablmoagz7oeq2di7qwdsdqd7xhu4fbfae62hzxwni",
-        "updateCount": 2,
-        "changedAt": 1785500760,
+        "contenthash": "bafybeicl457ynvcm7wgthboejuxu3nucnvrxctog3wfo3lxuclb2qm3piy",
+        "updateCount": 3,
+        "changedAt": 1785769994,
         "live": "alive"
       },
       "yechops-preview": {

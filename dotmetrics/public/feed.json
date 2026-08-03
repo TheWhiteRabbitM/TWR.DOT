@@ -1,7 +1,52 @@
 {
-  "generatedAt": 1785743863,
-  "count": 107,
+  "generatedAt": 1785769994,
+  "count": 112,
   "apps": [
+    {
+      "label": "my-dotter",
+      "domain": "my-dotter.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785765444,
+      "url": "https://my-dotter.dev-dot.li"
+    },
+    {
+      "label": "peoplewiki",
+      "domain": "peoplewiki.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785759444,
+      "url": "https://peoplewiki.dev-dot.li"
+    },
+    {
+      "label": "mini-lucky-loc",
+      "domain": "mini-lucky-loc.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785743976,
+      "url": "https://mini-lucky-loc.dev-dot.li"
+    },
+    {
+      "label": "mini-lucky-dev",
+      "domain": "mini-lucky-dev.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785743688,
+      "url": "https://mini-lucky-dev.dev-dot.li"
+    },
+    {
+      "label": "mini-lucky",
+      "domain": "mini-lucky.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785743532,
+      "url": "https://mini-lucky.dev-dot.li"
+    },
     {
       "label": "wheeloffortune",
       "domain": "wheeloffortune.dot",
@@ -32,9 +77,9 @@
     {
       "label": "open-docs",
       "domain": "open-docs.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "opendocs",
+      "description": "Collaborative documents with verifiable save points.",
+      "tier": 0,
       "firstSeenAt": 1785671472,
       "url": "https://open-docs.dev-dot.li"
     },
