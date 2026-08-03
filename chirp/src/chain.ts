@@ -44,6 +44,37 @@ const IDENTITY_DAPP = 'peoplebook.dot';
  * the two services keyboards actually use, and not worth making for the web.
  */
 export const GIF_HOSTS = ['media.tenor.com', 'tenor.com', 'media.giphy.com', 'i.giphy.com', 'giphy.com'];
+/**
+ * Fetch a GIF and hand back a local blob URL.
+ *
+ * Pointing an `<img src>` at a remote host does not work inside the container:
+ * the page's own image policy blocks it before any permission is consulted, so
+ * the tag stays empty and the chirp looks like it lost its picture. The chat
+ * SDK gets away with a bare URL because the HOST renders it, outside this
+ * sandbox — that method does not transfer to an app drawing its own timeline.
+ *
+ * What does transfer: `fetch`, which is exactly what the Remote permission
+ * grants. Fetch the bytes, wrap them in a blob URL, and point the tag at that —
+ * now same-origin, and nothing is blocked. If the fetch is refused, the caller
+ * shows a link instead of a broken frame.
+ */
+const gifCache = new Map<string, string>();
+export async function gifBlob(url: string): Promise<string> {
+  const hit = gifCache.get(url);
+  if (hit !== undefined) return hit;
+  try {
+    const r = await fetch(url, { referrerPolicy: 'no-referrer', mode: 'cors' });
+    if (!r.ok) throw new Error(String(r.status));
+    const b = await r.blob();
+    const local = URL.createObjectURL(b);
+    gifCache.set(url, local);
+    return local;
+  } catch {
+    gifCache.set(url, '');   // remember the refusal; do not ask on every render
+    return '';
+  }
+}
+
 /** Is this a link a keyboard would have inserted for a GIF? */
 export function gifUrl(u: string): boolean {
   try {
@@ -320,11 +351,15 @@ function session(): Promise<Slot | null> {
  * runtime metadata. Batching, caching and parallelism were all attacking the
  * cheap part.
  *
- * So the public reader is opened the instant this module is imported, before
- * the app has decided anything, in parallel with the host handshake. Neither
- * blocks the other and neither blocks the first paint.
+ * So the public reader is opened as early as anything can open it, in parallel
+ * with the host handshake. Neither blocks the other and neither blocks paint.
+ *
+ * On a microtask, NOT inline: `pub` closes over a `let` declared further down
+ * this file, so calling it while the module body is still running hits the
+ * temporal dead zone and throws — which took the whole module with it and left
+ * an empty page with nothing in the console.
  */
-void pub();
+queueMicrotask(() => { void pub(); });
 
 export function warmUp(): void { void session(); void pub(); }
 
@@ -332,6 +367,27 @@ export function warmUp(): void { void session(); void pub(); }
 // The host owns the notification surface — the OS permission and the delivery
 // both. We ask for the permission only when the person has asked to be told,
 // never on load: a prompt nobody invited is the reason these get denied.
+
+/**
+ * Ask for everything a picture might need, and report what was granted.
+ *
+ * A photo picker in a container is not one permission but a chain of them, and
+ * which link is missing is invisible from in here: the tap simply does nothing.
+ * So ask for all of them, and hand the caller the answers so the UI can say
+ * which one was refused instead of showing a dead button.
+ */
+export async function pictureRights(): Promise<Record<string, boolean>> {
+  const host = await import('@parity/product-sdk-host').catch(() => null);
+  if (!host) return {};
+  const out: Record<string, boolean> = {};
+  for (const k of ['Camera', 'Clipboard'] as const) {
+    const r = await host.requestDevicePermission(k).catch(() => null);
+    out[k] = Boolean(r && (r as any).ok && (r as any).value);
+  }
+  const p = await host.requestPermission({ tag: 'PreimageSubmit', value: undefined }).catch(() => null);
+  out.PreimageSubmit = Boolean(p && (p as any).ok && (p as any).value);
+  return out;
+}
 
 /** Ask the host for the Notifications permission. False if refused, or if the
  *  app is running outside the host (a browser tab has no such surface). */

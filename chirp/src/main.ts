@@ -18,8 +18,8 @@ import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
-  askNotifications, notify, openUrl, gifUrl, cachedFeed,
-  pictureOf, setPicture, clearPicture, renewPicture, forgetPicture,
+  askNotifications, notify, openUrl, gifUrl, gifBlob, cachedFeed,
+  pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, pictureRights,
   notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
   followerCounts, interestsFrom, statsFor,
   CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note, type Stats,
@@ -114,12 +114,34 @@ function rich(text: string): string {
     // data-url rather than href: inside the Polkadot app there is no second
     // window, so an anchor with target="_blank" is a link that does nothing at
     // all. The host opens it for us through navigateTo.
-    .replace(/https?:\/\/[^\s<]+/g, (u) => (gifUrl(u)
-      ? `<a class="ext gifwrap" data-url="${u}"><img class="gif" src="${u}" alt="GIF" loading="lazy" referrerpolicy="no-referrer"></a>`
-      : `<a class="ext" data-url="${u}">${u}</a>`))
+    .replace(/https?:\/\/[^\s<]+/g, (u) => (gifUrl(u) ? gifTag(u) : `<a class="ext" data-url="${u}">${u}</a>`))
     .replace(/(^|\s)(@[A-Za-z0-9_.-]{2,40})/g, (_m, sp, h) => `${sp}<a class="mention" data-q="${h.slice(1)}">${h}</a>`)
     .replace(/(^|\s)([A-Za-z0-9-]{2,40}\.dot)\b/g, (_m, sp, d) => `${sp}<a class="mention" data-q="${d}">${d}</a>`)
     .replace(/(^|\s)(#[A-Za-z0-9_]{1,40})/g, (_m, sp, t) => `${sp}<a class="mention" data-q="${t.slice(1)}">${t}</a>`);
+}
+
+/** GIFs already fetched into local blob URLs, and the ones that were refused. */
+const GIFS = new Map<string, string>();
+let gifTimer: ReturnType<typeof setTimeout> | null = null;
+
+/**
+ * A GIF, once we hold the bytes. Until then it is a link that says what it is —
+ * never an empty frame, and never a silent nothing: if the container refuses
+ * the fetch, tapping it hands the URL to the host, which opens it outside.
+ */
+function gifTag(u: string): string {
+  const local = GIFS.get(u);
+  if (local) return `<a class="ext gifwrap" data-url="${u}"><img class="gif" src="${local}" alt="GIF"></a>`;
+  if (local === undefined) {
+    GIFS.set(u, '');            // claim it before the async call, or every render refires
+    void gifBlob(u).then((b) => {
+      if (!b) return;
+      GIFS.set(u, b);
+      if (gifTimer) return;
+      gifTimer = setTimeout(() => { gifTimer = null; render(); }, 120);
+    });
+  }
+  return `<a class="ext gifchip" data-url="${u}">GIF — tap to open</a>`;
 }
 
 const TICK = `<svg class="tick" viewBox="0 0 24 24" fill="currentColor"><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81C14.67 2.63 13.43 1.75 12 1.75s-2.67.88-3.34 2.19c-1.39-.46-2.9-.2-3.91.81s-1.27 2.52-.81 3.91C2.63 9.33 1.75 10.57 1.75 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.27 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.34-2.19c1.39.46 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z"/></svg>`;
@@ -129,6 +151,10 @@ const I = {
   repost: S('<path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>'),
   like: S('<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8z"/>'),
   share: S('<path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/>'),
+  // Bars, not an eye: an eye promises views, and nothing here counts views.
+  stats: S('<path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/>'),
+  bookmark: S('<path d="M6 3h12a1 1 0 0 1 1 1v17l-7-5-7 5V4a1 1 0 0 1 1-1z"/>'),
+  marked: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-5-7 5V4a1 1 0 0 1 1-1z"/></svg>`,
   more: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>`,
   home: S('<path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
   search: S('<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>'),
@@ -194,6 +220,22 @@ let noteSheet: null | { chirpId: number; kind: number } = null;
 let FOLLOWERS = new Map<number, number>();
 /** Which chirp's ranking is being explained, if any. */
 let whyFor: number | null = null;
+/** Which chirp the share sheet is open for. */
+let shareFor: number | null = null;
+/** Where the picture upload got to. Shown, because when it fails inside a
+ *  container it fails silently and there is nothing to go on otherwise. */
+let pfpStep: { text: string; bad?: boolean } | null = null;
+
+/**
+ * A link to a chirp that works when it leaves the app.
+ *
+ * `location.origin` inside the container is the bundle's own address — a CID
+ * gateway URL, or something the host made up. Pasting that into a message gives
+ * the other person a link to nothing. The .dot name is the address that resolves
+ * for everyone, and the host routes it back into the app when it is tapped from
+ * inside.
+ */
+const chirpLink = (id: number) => `https://chirponchain.dot/#/t/${id}`;
 
 /** What you were writing, kept across a failed signature and a closed app. A
  *  post that costs a signature must not be able to eat the text you typed. */
@@ -255,12 +297,29 @@ const findPost = (id: number) => [...ALL, ...TH.replies, ...TH.parents, TH.post]
 
 /* -------------------------------------------------------------------- cards */
 
+/**
+ * The action row, laid out the way X lays it out.
+ *
+ * Four evenly spread icons was the wrong shape: X gives the counted actions
+ * equal columns and pushes the uncounted pair — bookmark and share — to the
+ * right edge, so the eye reads "what people did" separately from "what I can
+ * do with it". Counts sit in the flow whether or not they are zero, so a row
+ * does not reflow the moment the first like lands.
+ *
+ * There is a stats entry, and it shows engagement rather than views. X puts
+ * impressions there; we have none and will not invent them.
+ */
 function actions(p: Post): string {
+  const engaged = p.likes + p.replies + p.reposts;
   return `<div class="acts">
-    <button class="act reply" data-reply="${p.id}">${I.reply}<span>${p.replies || ''}</span></button>
+    <button class="act reply" data-reply="${p.id}" aria-label="Reply">${I.reply}<span>${p.replies || ''}</span></button>
     <button class="act rep${p.reposted ? ' on' : ''}" data-repost="${p.id}" aria-pressed="${p.reposted ? 'true' : 'false'}" aria-label="Repost">${I.repost}<span>${p.reposts || ''}</span></button>
     <button class="act like${p.liked ? ' on' : ''}" data-like="${p.id}" aria-pressed="${p.liked ? 'true' : 'false'}" aria-label="Like">${I.like}<span>${p.likes || ''}</span></button>
-    <button class="act share" data-share="${p.id}">${I.share}</button>
+    <button class="act stats" data-why="${p.id}" aria-label="Why am I seeing this">${I.stats}<span>${engaged || ''}</span></button>
+    <div class="acts-end">
+      <button class="act bmk${marks.has(p.id) ? ' on' : ''}" data-mark="${p.id}" aria-label="Bookmark">${marks.has(p.id) ? I.marked : I.bookmark}</button>
+      <button class="act share" data-share="${p.id}" aria-label="Share">${I.share}</button>
+    </div>
   </div>`;
 }
 
@@ -659,12 +718,20 @@ function overlay(): string {
         <div>
           <!-- A REAL, visible file input. It used to be hidden behind a button
                that called .click() on it, which is the one pattern a mobile
-               webview tends to swallow: the picker never opened and the button
-               looked dead. Let the platform draw its own control. -->
+               webview swallows: the picker never opened and the button looked
+               dead. Let the platform draw its own control. -->
           <input type="file" id="pfpfile" accept="image/*" class="filein">
           ${PIC.get(ME.mask) ? '<button class="ghost small" id="clearpfp">Remove</button>' : ''}
         </div>
       </div>
+      <!-- A second way in, because the first one may simply not exist here.
+           Some containers have no file chooser at all, and then a file input is
+           furniture. Pasting works through the clipboard instead, which is a
+           different permission and a different code path. -->
+      <div class="pasted" id="pastepfp" contenteditable="true" tabindex="0"
+           aria-label="Paste a picture here">Or paste a picture here</div>
+      ${pfpStep ? `<p class="hint ${pfpStep.bad ? 'bad' : ''}">${esc(pfpStep.text)}</p>` : ''}
+      <button class="link" id="pfprights">Check what the app allows</button>
       <p class="hint">Cropped square and shrunk to 256px here, then stored on the Bulletin chain — the app
       uploads it for you, so you need no storage account of your own. Bulletin keeps data for about a
       fortnight, so chirp quietly re-uploads the same picture each time you open it, which costs nothing
@@ -700,6 +767,18 @@ function overlay(): string {
             contract function gated on ownership of something only the real account holds.</p>`}
       <button class="primary wide" id="savep">Save on chain</button>
       <p class="hint">The name is yours to choose and proves nothing — which is exactly why the tick is reserved for the .dot the contract verified.</p>
+    </div></div>`;
+  }
+  if (shareFor) {
+    const p = findPost(shareFor);
+    return `<div class="scrim" id="scrim"><div class="menu">
+      <button data-sh="native">Share…</button>
+      <button data-sh="copy">Copy link</button>
+      <button data-sh="copytext">Copy chirp and link</button>
+      ${ME?.mask ? '<button data-sh="quote">Quote it</button>' : ''}
+      <button data-sh="chain">View on chain</button>
+      <div class="menu-note">${p ? esc(chirpLink(p.id)) : ''}</div>
+      <button data-sh="close">Cancel</button>
     </div></div>`;
   }
   if (noteSheet && ME?.mask) {
@@ -1072,14 +1151,41 @@ function wire() {
     e.stopPropagation();
     const p = findPost(Number(b.dataset.share));
     if (!p) return;
+    shareFor = p.id; render();
+  }));
+  app.querySelectorAll<HTMLElement>('[data-mark]').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    marks.toggle(Number(b.dataset.mark));
+    render();
+  }));
+  app.querySelectorAll<HTMLElement>('[data-sh]').forEach((b) => b.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const p = findPost(shareFor ?? 0);
+    if (!p) { shareFor = null; return render(); }
+    const how = b.dataset.sh;
+    if (how === 'close') { shareFor = null; return render(); }
+    const url = chirpLink(p.id);
     const text = `${nm(p.who, p.mask)} on chirp: "${p.body}"`;
-    // Link to the chirp itself. Pointing at the contract explorer was technically
-    // true and useless: nobody wants to read a storage dump of your post.
-    const url = `${location.origin}${location.pathname}#/t/${p.id}`;
-    try {
-      if (navigator.share) await navigator.share({ text, url });
-      else { await navigator.clipboard.writeText(`${text} — ${url}`); flash = { text: 'Copied.' }; render(); }
-    } catch { /* dismissed */ }
+    shareFor = null;
+    if (how === 'copy') {
+      await navigator.clipboard.writeText(url).catch(() => undefined);
+      flash = { text: 'Link copied.' };
+    } else if (how === 'copytext') {
+      await navigator.clipboard.writeText(`${text}\n${url}`).catch(() => undefined);
+      flash = { text: 'Chirp and link copied.' };
+    } else if (how === 'native') {
+      // The webview may or may not have a share sheet. If it does not, this
+      // throws and we say so rather than appearing to have done something.
+      try {
+        if (navigator.share) await navigator.share({ text, url });
+        else { await navigator.clipboard.writeText(url); flash = { text: 'No share sheet here — link copied instead.' }; }
+      } catch { /* dismissed by the person, which is not a failure */ }
+    } else if (how === 'quote') {
+      sheet = { mode: 'quote', target: p };
+    } else if (how === 'chain') {
+      void openUrl(`https://assethub-paseo.subscan.io/account/${CHIRP}`);
+    }
+    render();
   }));
   app.querySelectorAll<HTMLElement>('[data-more]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation(); menuFor = Number(b.dataset.more); render();
@@ -1130,14 +1236,25 @@ function wire() {
   /* ------------------------------------------------------------- pictures */
   document.getElementById('pfpfile')?.addEventListener('change', async (e) => {
     const f = (e.target as HTMLInputElement).files?.[0];
-    if (!f || !ME?.mask) return;
-    flash = { text: 'Preparing the picture…' }; render();
-    const bytes = await squareWebp(f).catch(() => null);
-    if (!bytes) { flash = { text: 'That file could not be read as an image.', bad: true }; return render(); }
-    flash = { text: 'Uploading…' }; render();
-    const r = await setPicture(ME.mask, bytes);
-    if (r.ok) { PIC.set(ME.mask, 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes))); flash = { text: 'Picture set.' }; }
-    else flash = { text: r.why, bad: true };
+    if (!f) { pfpStep = { text: 'The picker closed without a file.', bad: true }; return render(); }
+    await usePicture(f);
+  });
+  // Paste: the clipboard route, for containers with no file chooser.
+  document.getElementById('pastepfp')?.addEventListener('paste', async (e) => {
+    e.preventDefault();
+    const items = [...((e as ClipboardEvent).clipboardData?.items ?? [])];
+    const img = items.find((i) => i.type.startsWith('image/'));
+    if (!img) { pfpStep = { text: 'Nothing on the clipboard looked like an image.', bad: true }; return render(); }
+    const f = img.getAsFile();
+    if (f) await usePicture(f);
+  });
+  document.getElementById('pfprights')?.addEventListener('click', async () => {
+    pfpStep = { text: 'Asking…' }; render();
+    const r = await pictureRights();
+    const said = Object.entries(r).map(([k, v]) => `${k}: ${v ? 'yes' : 'no'}`).join(', ');
+    pfpStep = Object.keys(r).length
+      ? { text: `The app answered — ${said}.`, bad: Object.values(r).some((v) => !v) }
+      : { text: 'No host here: pictures need the Polkadot app.', bad: true };
     render();
   });
   document.getElementById('clearpfp')?.addEventListener('click', async () => {
@@ -1222,6 +1339,32 @@ async function refresh() {
  * the page is drawn at, doubled for a retina screen, and nothing is served by
  * uploading more — Bulletin has a quota and this has to be renewed forever.
  */
+/**
+ * Take a picture from wherever it came — the file chooser or the clipboard —
+ * and put it on chain, narrating each step.
+ *
+ * The narration is not decoration. Inside a container every one of these steps
+ * can fail without saying anything: no picker, no clipboard, no permission, no
+ * preimage service. A person tapping a dead button has nothing to report and
+ * nothing to try; a person who can see it stopped at "uploading" does.
+ */
+async function usePicture(f: File) {
+  if (!ME?.mask) return;
+  pfpStep = { text: `Got ${f.name || 'the image'} — ${Math.round(f.size / 1024)} KB. Resizing…` }; render();
+  const bytes = await squareWebp(f).catch(() => null);
+  if (!bytes) { pfpStep = { text: 'That file could not be decoded as an image.', bad: true }; return render(); }
+  pfpStep = { text: `Resized to ${bytes.length} bytes. Uploading to Bulletin…` }; render();
+  const r = await setPicture(ME.mask, bytes);
+  if (r.ok) {
+    PIC.set(ME.mask, 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes)));
+    picWanted.delete(ME.mask);
+    pfpStep = { text: 'Picture set.' };
+  } else {
+    pfpStep = { text: r.why, bad: true };
+  }
+  render();
+}
+
 async function squareWebp(file: File, size = 256): Promise<Uint8Array> {
   const bmp = await createImageBitmap(file);
   const side = Math.min(bmp.width, bmp.height);

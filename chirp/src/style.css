@@ -93,12 +93,50 @@ button.ghost:hover { background: var(--panel); }
 .tier { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 1px 6px; border-radius: 999px; border: 1px solid currentColor; }
 .t0 { color: var(--leg); } .t1 { color: var(--epi); } .t2 { color: var(--rar); } .t3 { color: var(--unc); } .t4 { color: var(--com); }
 
-.acts { display: flex; gap: 26px; margin-top: 8px; color: var(--ink-2); }
-.act { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; font: inherit; font-size: 13px; }
-.act:hover { color: var(--rose); }
-.act.on { color: var(--rose); }
+/* The action row.
+   A fixed gap left four icons bunched at the left of a wide phone and gave the
+   count no room of its own. X gives the counted actions equal columns and pins
+   the uncounted pair to the right edge, which separates "what people did" from
+   "what I can do with it". The count keeps its width whether or not it has a
+   number in it, so the row does not jump the moment the first like lands. */
+.acts { display: flex; align-items: center; margin-top: 10px; margin-right: -8px; color: var(--ink-2); }
+.acts > .act { flex: 1 1 0; justify-content: flex-start; }
+.acts-end { display: flex; margin-left: auto; }
+.act {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 0; cursor: pointer; color: inherit; font: inherit; font-size: 13px;
+  /* A 17px glyph is not a tap target. The padding makes one without moving it. */
+  padding: 6px 8px; margin: -6px 0; border-radius: 999px; min-width: 0;
+  /* A fixed box, so a filled icon and a stroked one do not sit at different
+     heights — the row was visibly ragged where the bookmark was. */
+  height: 30px; line-height: 1;
+  transition: color .12s, background .12s;
+}
+.act span { min-width: 12px; text-align: left; font-variant-numeric: tabular-nums; }
+.act svg { width: 17px; height: 17px; flex: none; }
+
+/* Each action keeps its own colour, the way X does — the row is read by hue
+   before it is read by shape. */
+.act.reply:hover, .act.stats:hover, .act.bmk:hover, .act.share:hover { color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, transparent); }
+.act.rep:hover, .act.rep.on { color: var(--green); }
+.act.rep:hover { background: color-mix(in srgb, var(--green) 12%, transparent); }
+.act.like:hover, .act.like.on { color: var(--rose); }
+.act.like:hover { background: color-mix(in srgb, var(--rose) 12%, transparent); }
+.act.bmk.on { color: var(--blue); }
 .act.edit:hover { color: var(--blue); }
-.act svg { width: 17px; height: 17px; }
+
+.menu-note { padding: 10px 16px; color: var(--ink-2); font-size: 12px; overflow-wrap: anywhere; border-top: 1px solid var(--hair); }
+
+/* Paste target for a picture, for containers with no file chooser at all. */
+.pasted {
+  border: 1px dashed var(--hair); border-radius: 12px; padding: 14px;
+  color: var(--ink-2); font-size: 14px; margin-top: 10px; min-height: 46px; outline: none;
+}
+.pasted:focus { border-color: var(--blue); color: var(--ink); }
+.hint.bad { color: var(--rose); }
+
+/* A GIF we could not fetch: a link that says what it is, never an empty frame. */
+.gifchip { display: inline-block; margin-top: 8px; padding: 8px 14px; border: 1px solid var(--hair); border-radius: 999px; font-size: 13px; }
 
 /* ------------------------------------------------------------------ states */
 .note { padding: 22px 16px; color: var(--ink-2); border-bottom: 1px solid var(--hair); }
