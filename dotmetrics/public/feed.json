@@ -1,7 +1,52 @@
 {
-  "generatedAt": 1785780816,
-  "count": 113,
+  "generatedAt": 1785787625,
+  "count": 118,
   "apps": [
+    {
+      "label": "my-first-app",
+      "domain": "my-first-app.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785787140,
+      "url": "https://my-first-app.dev-dot.li"
+    },
+    {
+      "label": "my-tutorial-app",
+      "domain": "my-tutorial-app.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785786000,
+      "url": "https://my-tutorial-app.dev-dot.li"
+    },
+    {
+      "label": "polkaroulette00",
+      "domain": "polkaroulette00.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785785628,
+      "url": "https://polkaroulette00.dev-dot.li"
+    },
+    {
+      "label": "my-first-page",
+      "domain": "my-first-page.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785784908,
+      "url": "https://my-first-page.dev-dot.li"
+    },
+    {
+      "label": "tutorial-deploy",
+      "domain": "tutorial-deploy.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785783900,
+      "url": "https://tutorial-deploy.dev-dot.li"
+    },
     {
       "label": "the-nicotine",
       "domain": "the-nicotine.dot",

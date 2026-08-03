@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11772728,
-  "updatedAt": "2026-08-03T18:10:21.032Z",
+  "lastBlock": 11776072,
+  "updatedAt": "2026-08-03T20:02:54.994Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "fb75ac4b3e2dd44eb19c2ed6d7dc2b4b35be2047d3c650bf107401b3089830a2",
-    "cid": "bafybeidynjt4wcqirhjn7kp3wlaiq3tcfk3r5uuid6itm5b5sruqo42dtu",
-    "uploadedAt": "2026-08-03T18:14:48.899Z"
+    "digest": "3360d5cb8eed53edb4bfb3dab1b862e1f6b137faa4a0afc0c18bd068ba2d0b87",
+    "cid": "bafybeicy5n4iwi3wbijhhiswvu2t3btvcxjyieehx274e7a2x3zjikeqbm",
+    "uploadedAt": "2026-08-03T20:08:15.877Z"
   },
   "sitePublish": {
-    "treeHash": "5375fddd3eb4476ef907be6962dfc0fb67b1e2deb49b0f9b82a3eb1b14faf9fd",
-    "publishedAt": "2026-08-03T15:30:44.952Z"
+    "treeHash": "bd441bfec81c65d840ab03873701fa41bce9ed4cd50bd9c0e3a8aa2b340efb48",
+    "publishedAt": "2026-08-03T20:10:30.668Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-03T18:13:35.000Z",
+    "updatedAt": "2026-08-03T20:07:05.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -111,13 +111,18 @@
       "open-docs": "alive",
       "waldgeist": "alive",
       "my-dotter": "alive",
-      "peoplewiki": "alive"
+      "peoplewiki": "alive",
+      "my-first-app": "alive",
+      "my-first-page": "alive",
+      "my-tutorial-app": "alive",
+      "polkaroulette00": "alive",
+      "tutorial-deploy": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-03T18:13:36.000Z",
+    "updatedAt": "2026-08-03T20:07:05.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -235,9 +240,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeideu4gaypnjpwypkqiphswhyqihonpjj4huk2xze7zfdh3hskzwrq",
-        "updateCount": 46,
-        "changedAt": 1785780816,
+        "contenthash": "bafybeiglk6dvvuqpftplvotebmjluaazs7vbhsa2ig34albmvx6lueulxq",
+        "updateCount": 47,
+        "changedAt": 1785787625,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -427,9 +432,24 @@
         "live": "alive"
       },
       "my-dotter": {
-        "contenthash": "bafybeihk4rpxtxjnqf2xfwhvsqwo42o2iu3fbwdasqm4ean3ed62intvle",
-        "updateCount": 1,
-        "changedAt": 1785770816,
+        "contenthash": "bafybeihi7tck24q6gjws4yzfuvk46bneiz2wsafvdg6m73zgfvtymkrs2q",
+        "updateCount": 2,
+        "changedAt": 1785787625,
+        "live": "alive"
+      },
+      "my-first-app": {
+        "contenthash": "bafybeibq5skbnxfdp7apaawun3256evwgw44ij7lho74wn5u5lztkartte",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "my-first-page": {
+        "contenthash": "bafybeifgx4irfzw3fr7bxdgfiitgiimudefmbesbk7nbj7dflxrzotagaa",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "my-tutorial-app": {
+        "contenthash": "bafybeiex2qwovnceuevuo3omcnc3gicxf4dve5pewnywpgiy7oqeapjeay",
+        "updateCount": 0,
         "live": "alive"
       },
       "na87u9srwgblr61": {
@@ -580,6 +600,11 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "polkaroulette00": {
+        "contenthash": "bafybeienh3lvhqydlxqezdfyd3ko6adn7zqlo2d3tqf32f66zpnvujcj2q",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "proofoftake": {
         "contenthash": "bafybeifkmxa224jt4wvgnlozhqvlaljmz7lyvuuww3ul6jnbe42xdvcsdm",
         "updateCount": 4,
@@ -687,6 +712,11 @@
         "contenthash": "bafybeih232fm4sot7p2l3jymlxbwvyb3f4u4cpkfmhfaotib5z2lehmpvu",
         "updateCount": 2,
         "changedAt": 1785684961,
+        "live": "alive"
+      },
+      "tutorial-deploy": {
+        "contenthash": "bafybeia44pdaxz3erdjbqtvorngwdfzphsoivx2r5hu4qsyuib2dwlvu6q",
+        "updateCount": 0,
         "live": "alive"
       },
       "waldgeist": {

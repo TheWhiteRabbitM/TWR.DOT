@@ -797,6 +797,12 @@
       "score~"
     ]
   },
+  "the-nicotine": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "thebutton": {
     "category": "identity",
     "source": "derived:manifest",
