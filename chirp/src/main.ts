@@ -115,6 +115,9 @@ let tab: 'foryou' | 'following' = 'foryou';
 let sheet: null | { mode: 'new' | 'reply' | 'quote' | 'edit'; target?: Post } = null;
 let settingsOpen = false;
 let menuFor: number | null = null;
+/** Repost is two different acts — passing something on unchanged, and saying
+ *  something about it. X puts both behind the same button, and so does this. */
+let repostFor: number | null = null;
 let query = '';
 let flash: { text: string; bad?: boolean } | null = null;
 /** How much of the feed is loaded. The chain has no cursor, so this is simply
@@ -379,6 +382,14 @@ function overlay(): string {
       </div>
     </div></div>`;
   }
+  if (repostFor) {
+    const p = findPost(repostFor);
+    return `<div class="scrim" id="scrim"><div class="menu">
+      <button data-rp="repost">${p?.reposted ? 'Undo repost' : 'Repost'}</button>
+      <button data-rp="quote">Quote</button>
+      <button data-rp="close">Cancel</button>
+    </div></div>`;
+  }
   if (menuFor) {
     const p = findPost(menuFor);
     if (!p) return '';
@@ -416,7 +427,7 @@ function render() {
   const key = hashOf(view);
   if (app.querySelector('main')) scrollAt.set(key, scrollY);
   // A sheet is over the column; let it scroll, not the timeline behind it.
-  document.body.classList.toggle('locked', Boolean(sheet || settingsOpen || menuFor || confirmDelete));
+  document.body.classList.toggle('locked', Boolean(sheet || settingsOpen || menuFor || confirmDelete || repostFor));
 
   const body = view.k === 'home' ? homeView()
     : view.k === 'search' ? searchView()
@@ -496,7 +507,7 @@ function wire() {
   document.getElementById('editprof')?.addEventListener('click', () => { settingsOpen = true; render(); });
   document.getElementById('closepane')?.addEventListener('click', () => { settingsOpen = false; sheet = null; menuFor = null; render(); });
   document.getElementById('scrim')?.addEventListener('click', (e) => {
-    if (e.target === document.getElementById('scrim')) { settingsOpen = false; sheet = null; menuFor = null; confirmDelete = null; render(); }
+    if (e.target === document.getElementById('scrim')) { settingsOpen = false; sheet = null; menuFor = null; confirmDelete = null; repostFor = null; render(); }
   });
   document.getElementById('fab')?.addEventListener('click', () => { sheet = { mode: 'new' }; render(); });
   document.getElementById('dismiss')?.addEventListener('click', () => { flash = null; render(); });
@@ -599,8 +610,15 @@ function wire() {
   }));
   app.querySelectorAll<HTMLElement>('[data-repost]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
-    const p = findPost(Number(b.dataset.repost));
-    if (p) act(() => toggleRepost(p.id, ME!.mask), p.reposted ? 'Repost undone.' : 'Reposted.');
+    if (!ME?.mask) { flash = { text: 'Claim a mask first.', bad: true }; return render(); }
+    repostFor = Number(b.dataset.repost); render();
+  }));
+  app.querySelectorAll<HTMLElement>('[data-rp]').forEach((b) => b.addEventListener('click', () => {
+    const what = b.dataset.rp, p = repostFor ? findPost(repostFor) : undefined;
+    repostFor = null;
+    if (!p || what === 'close') return render();
+    if (what === 'quote') { sheet = { mode: 'quote', target: p }; return render(); }
+    act(() => toggleRepost(p.id, ME!.mask), p.reposted ? 'Repost undone.' : 'Reposted.');
   }));
   app.querySelectorAll<HTMLElement>('[data-reply]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -676,8 +694,8 @@ async function refresh() {
 /* ------------------------------------------------------------------ keyboard */
 // Escape closes whatever is open; Cmd/Ctrl+Enter sends what is being written.
 addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && (sheet || settingsOpen || menuFor || confirmDelete)) {
-    sheet = null; settingsOpen = false; menuFor = null; confirmDelete = null; render();
+  if (e.key === 'Escape' && (sheet || settingsOpen || menuFor || confirmDelete || repostFor)) {
+    sheet = null; settingsOpen = false; menuFor = null; confirmDelete = null; repostFor = null; render();
   }
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
     const b = document.getElementById('ssend') as HTMLButtonElement | null;
