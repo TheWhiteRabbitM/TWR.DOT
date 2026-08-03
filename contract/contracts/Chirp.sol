@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-/// @notice The peoplebook mask NFT (account-bound, soulbound) — only its owner
-///         check is used here, which is what makes a chirp unforgeable: a mask
-///         cannot be squatted or bought, so posting as one means being its
-///         account. (returns
-///         an address, like peoplebook's own registry call). The handle and the
-///         avatar are resolved by the reader from peoplebook, so Chirp never has
-///         to receive a dynamic string back from a cross-contract call.
+/// @notice The peoplebook mask NFT: account-bound and non-transferable. Only its
+///         owner check is used here, and that is what makes a chirp unforgeable —
+///         a mask cannot be squatted or bought, so posting as one means being the
+///         account it belongs to. It returns an address, so Chirp never has to
+///         receive a dynamic string back from a cross-contract call.
 interface IPeoplebook {
     function ownerOf(uint256 id) external view returns (address);
 }
@@ -40,7 +38,7 @@ contract Chirp {
     event Followed(address indexed follower, uint256 indexed mask, bool on, uint256 count);
 
     IPeoplebook public constant PEOPLEBOOK =
-        IPeoplebook(0x03a484cCD0f1832084dEEFca4bF6438d79Fe8db6);
+        IPeoplebook(0x03A484cCd0F1832084Deefca4bF6438d79fE8db6);
 
     struct Chip {
         uint256 mask;      // the peoplebook token this was posted as

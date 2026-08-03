@@ -20,8 +20,17 @@ import MASKS_ABI from './masks-abi.json';
 import CHIRP_ABI from './chirp-abi.json';
 
 export const MASKS = '0x03a484cCD0f1832084dEEFca4bF6438d79Fe8db6';
-export const CHIRP = '0x953143419c03d3786dce04d53e9ed199a16a82e0';
+export const CHIRP = '0x3efbcdaa821489e230a1329d9a347ec607bd0df3';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
+
+/**
+ * The host derives a SEPARATE account per app name, so asking as 'chirponchain.dot'
+ * produced a different identity from peoplebook's — a mask claimed in one app was
+ * invisible in the other, and posting with it reverted. The mask is meant to be
+ * the person, not the app, so every app in this ecosystem asks the host for the
+ * SAME product account. Changing this string changes who you are.
+ */
+const IDENTITY_DAPP = 'peoplebook.dot';
 
 const CONNECT_MS = 12_000;
 const ACCOUNT_MS = 8_000;
@@ -154,7 +163,7 @@ async function connect(): Promise<Slot | null> {
   if (!signer) {
     try {
       const signerPkg = await import('@parity/product-sdk-signer');
-      manager = new signerPkg.SignerManager({ dappName: 'chirponchain.dot' });
+      manager = new signerPkg.SignerManager({ dappName: IDENTITY_DAPP });
       await withTimeout(manager.connect(), CONNECT_MS, 'wallet').catch(() => undefined);
       const deadline = Date.now() + ACCOUNT_MS;
       for (;;) {
