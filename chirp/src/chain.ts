@@ -207,6 +207,61 @@ const legacyBroken = {
   set: () => { try { localStorage.setItem(NOLEGACY, '1'); } catch { /* private mode */ } },
 };
 
+/**
+ * Sign from a browser, with a wallet extension, when there is no host at all.
+ *
+ * Opened through the gateway rather than the Polkadot app, chirp has nobody to
+ * ask who you are — the timeline reads fine and every button is dead, which is
+ * a shop window, not an app. A browser extension closes that: it signs against
+ * Asset Hub directly.
+ *
+ * And it is the SAME person. A mask is bound to an AccountId, and the contract
+ * is keyed by that account's H160 — so the extension holding the account that
+ * claimed the mask reaches exactly the same identity the app reaches. Nothing
+ * is duplicated, nothing has to be linked.
+ *
+ * What it cannot do: preimages and notifications, which are host services with
+ * no chain equivalent. So a picture cannot be set from here. The rest can.
+ *
+ * Never used inside the container — in there the host is the only right answer,
+ * and asking an extension to sign would create a second identity for no reason.
+ */
+async function browserSlot(): Promise<Slot | null> {
+  const [papi, pjs, contracts, descriptors] = await Promise.all([
+    import('polkadot-api'),
+    import('@polkadot-api/pjs-signer'),
+    import('@parity/product-sdk/contracts'),
+    import('@parity/product-sdk-descriptors/devnet-asset-hub'),
+  ]);
+  const names = pjs.getInjectedExtensions();
+  if (!names.length) return null;                    // no extension: read-only
+  const ext = await pjs.connectInjectedExtension(names[0], 'chirp').catch(() => null);
+  if (!ext) return null;
+  const accounts = ext.getAccounts();
+  if (!accounts.length) return null;                 // extension present, nothing shared
+  const acc = accounts[0];
+
+  const ws = await import('polkadot-api/ws');
+  const client = papi.createClient(ws.getWsProvider('wss://asset-hub-paseo-rpc.n.dwellir.com'));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const runtime = (contracts as any).createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
+  const address = acc.address;
+  const signer = acc.polkadotSigner;
+  await withTimeout(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (contracts as any).ensureContractAccountMapped(runtime, address, signer), 30_000, 'mapping',
+  ).catch(() => undefined);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mk = (addr: string, abi: unknown) => (contracts as any).createContract(runtime, addr, abi, { defaultSigner: signer, defaultOrigin: address });
+  const api = client.getTypedApi(descriptors.devnet_asset_hub);
+  const real = await proxiedAccount(api, address);
+  return {
+    address, h160: await h160Of(real ?? address), kind: 'wallet', signer, api, real,
+    masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
+    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI),
+  };
+}
+
 async function connect(): Promise<Slot | null> {
   const [host, papi, contracts, descriptors] = await Promise.all([
     import('@parity/product-sdk-host'),
@@ -214,7 +269,7 @@ async function connect(): Promise<Slot | null> {
     import('@parity/product-sdk/contracts'),
     import('@parity/product-sdk-descriptors/devnet-asset-hub'),
   ]);
-  if (!(await host.isInsideContainer().catch(() => false))) return null;
+  if (!(await host.isInsideContainer().catch(() => false))) return browserSlot().catch(() => null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ap: any = await withTimeout(host.getAccountsProvider() as any, CONNECT_MS, 'wallet').catch(() => null);
@@ -1325,7 +1380,7 @@ async function send(
   retried = false,
 ): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
-  if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
+  if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const c = (s as any)[which];
   try {
@@ -1409,7 +1464,7 @@ export function remove(id: number): Promise<Ok | Fail> {
  *  because liking twice reverts. */
 export async function toggleLike(id: number): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
-  if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
+  if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
   const already = Boolean(await q(s.chirp, 'liked', BigInt(id), s.h160));
   return send('chirp', already ? 'unlike' : 'like', [BigInt(id)]);
 }
@@ -1418,7 +1473,7 @@ export async function toggleLike(id: number): Promise<Ok | Fail> {
  *  chirp was yours, so this undoes rather than piling copies up. */
 export async function toggleRepost(id: number, mask: number): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
-  if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
+  if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
   const mine = Number((await q(s.chirp, 'repostOf', BigInt(id), s.h160)) ?? 0);
   return mine
     ? send('chirp', 'remove', [BigInt(mine)])
@@ -1427,7 +1482,7 @@ export async function toggleRepost(id: number, mask: number): Promise<Ok | Fail>
 
 export async function toggleFollow(mask: number): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
-  if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
+  if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
   const on = Boolean(await q(s.chirp, 'follows', s.h160, BigInt(mask)));
   return send('chirp', 'follow', [BigInt(mask), !on]);
 }

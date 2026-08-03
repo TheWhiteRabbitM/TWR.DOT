@@ -684,7 +684,7 @@ function header(): string {
     : view.k === 'people' ? (view.of === 'followers' ? 'Followers' : 'Following')
     : view.k === 'search' ? 'Search' : view.k === 'notif' ? 'Notifications'
     : view.k === 'saved' ? 'Bookmarks' : view.k === 'stats' ? 'Your numbers' : 'chirp';
-  const who = !ME ? '<span>open in the Polkadot app</span>'
+  const who = !ME ? '<span>reading only — open in the Polkadot app, or connect a wallet extension</span>'
     : `<b>${ME.mask ? esc(nm(ME as unknown as Who)) : 'no mask yet'}</b><span>${esc(short(ME.address))}</span>`;
   // The mark stands in for the word only where the word would be the app's own
   // name; on a thread or a profile the title is doing real work and is left alone.
