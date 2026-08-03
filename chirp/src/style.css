@@ -264,3 +264,13 @@ body.locked { overflow: hidden; }
 .hint code { background: var(--panel); padding: 2px 6px; border-radius: 6px; font-size: 12px; overflow-wrap: anywhere; }
 .hint.linked { color: var(--green); }
 .hint.linked code { color: var(--ink); }
+
+/* ---- @mention suggestions ---- */
+.mentions { border: 1px solid var(--hair); border-radius: 12px; margin-top: 8px; overflow: hidden; max-height: 264px; overflow-y: auto; }
+.mrow { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: 0; cursor: pointer;
+  color: var(--ink); font: inherit; padding: 9px 12px; text-align: left; }
+.mrow:hover, .mrow.on { background: var(--panel); }
+.mav { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; flex: none; }
+.mav svg { width: 100%; height: 100%; display: block; }
+.mnm { font-weight: 600; }
+.mat { color: var(--ink-2); font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

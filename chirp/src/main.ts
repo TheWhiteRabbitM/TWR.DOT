@@ -413,6 +413,7 @@ function overlay(): string {
       <div class="head"><span class="nm">${esc(nm(t.who, t.mask))}</span><span class="at">${esc(at(t.who, t.mask))}</span></div>
       <div class="body">${esc(t.body)}</div></div>` : ''}
     <textarea id="stxt" maxlength="400" placeholder="${sheet.mode === 'reply' ? 'Post your reply' : sheet.mode === 'quote' ? 'Add a comment' : "What's happening on chain?"}">${sheet.mode === 'edit' && t ? esc(t.body) : sheet.mode === 'new' ? esc(draft.get()) : ''}</textarea>
+    <div class="mentions" id="mbox" hidden role="listbox" aria-label="People"></div>
     <div class="composebar"><span class="count" id="scount">280</span>
       <button class="primary" id="ssend">${sheet.mode === 'edit' ? 'Save' : title === 'New chirp' ? 'Chirp' : title}</button></div>
   </div></div>`;
@@ -463,6 +464,77 @@ function counter(ta: HTMLTextAreaElement, out: HTMLElement, btn: HTMLButtonEleme
     btn.disabled = (!allowEmpty && !ta.value.trim()) || n < 0;
   };
   ta.addEventListener('input', sync); sync(); ta.focus();
+}
+
+/**
+ * Suggest people while an @name is being typed, the way X does.
+ *
+ * This deliberately does NOT go through render(): the app redraws the whole
+ * column on any state change, which would throw away the caret mid-word. It
+ * owns one box and writes to it directly, so typing stays typing.
+ */
+function attachMentions(ta: HTMLTextAreaElement, box: HTMLElement) {
+  let matches: Who[] = [];
+  let sel = 0;
+
+  const close = () => { box.hidden = true; box.innerHTML = ''; matches = []; sel = 0; };
+
+  /** The @token the caret is sitting in, if any. */
+  const token = () => {
+    const pos = ta.selectionStart ?? 0;
+    const m = ta.value.slice(0, pos).match(/(?:^|\s)@([A-Za-z0-9_.-]{0,40})$/);
+    return m ? { q: m[1].toLowerCase(), start: pos - m[1].length - 1, end: pos } : null;
+  };
+
+  const paint = () => {
+    if (!matches.length) return close();
+    box.hidden = false;
+    box.innerHTML = matches.map((w, i) => `<button class="mrow${i === sel ? ' on' : ''}" data-pick="${i}" role="option" aria-selected="${i === sel}">
+        <span class="mav">${avatar('0x' + w.mask.toString(16).padStart(40, '0'))}</span>
+        <span class="mnm">${esc(nm(w))}</span><span class="mat">${esc(at(w))}</span>
+      </button>`).join('');
+    box.querySelectorAll<HTMLElement>('[data-pick]').forEach((b) =>
+      b.addEventListener('mousedown', (e) => { e.preventDefault(); choose(Number(b.dataset.pick)); }));
+  };
+
+  const choose = (i: number) => {
+    const t = token();
+    const w = matches[i];
+    if (!t || !w) return close();
+    // The handle is what a reader can act on, so that is what goes in — a
+    // display name is not unique and would point at nobody.
+    const handle = w.handle || (w.verified ? w.verified + '.dot' : 'mask' + w.mask);
+    const before = ta.value.slice(0, t.start);
+    const after = ta.value.slice(t.end);
+    ta.value = before + '@' + handle + ' ' + after;
+    const caret = (before + '@' + handle + ' ').length;
+    ta.setSelectionRange(caret, caret);
+    ta.dispatchEvent(new Event('input'));   // keep the counter and the draft honest
+    close();
+    ta.focus();
+  };
+
+  const search = () => {
+    const t = token();
+    if (!t) return close();
+    const pool = PEOPLE.length ? PEOPLE : [];
+    matches = pool
+      .filter((w) => (w.handle + ' ' + w.name + ' ' + w.verified + ' mask' + w.mask).toLowerCase().includes(t.q))
+      .slice(0, 6);
+    sel = 0;
+    paint();
+  };
+
+  ta.addEventListener('input', search);
+  ta.addEventListener('click', search);
+  ta.addEventListener('blur', () => setTimeout(close, 120));
+  ta.addEventListener('keydown', (e) => {
+    if (box.hidden || !matches.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); sel = (sel + 1) % matches.length; paint(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); sel = (sel - 1 + matches.length) % matches.length; paint(); }
+    else if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); choose(sel); }
+    else if (e.key === 'Escape') { e.stopPropagation(); close(); }  // close the list, not the composer
+  });
 }
 
 async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: string) {
@@ -545,6 +617,13 @@ function wire() {
   const scnt = document.getElementById('scount');
   if (stxt && ssend && scnt && sheet) {
     counter(stxt, scnt, ssend, sheet.mode === 'quote');
+    const mbox = document.getElementById('mbox');
+    if (mbox) {
+      attachMentions(stxt, mbox);
+      // Fetch the directory once, in the background: the first @ should not wait
+      // for the chain, and by the time a name is half typed it is here.
+      if (!PEOPLE.length) void people().then((p) => { PEOPLE = p; }).catch(() => undefined);
+    }
     const s = sheet;
     // Keep a new chirp as it is typed, so a refused signature or a closed app
     // does not swallow it.
