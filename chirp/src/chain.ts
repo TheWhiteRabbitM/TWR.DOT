@@ -260,6 +260,80 @@ async function readPost(chirp: any, masks: any, me: string, id: number, depth = 
   return post;
 }
 
+/**
+ * Every post, newest first, read once and reused.
+ *
+ * The profile, search, the Following tab and notifications are all slices of the
+ * same list, so it is fetched once per refresh instead of once per view. At this
+ * size that is cheaper than being clever, and it keeps every view consistent
+ * with the others.
+ */
+export async function loadAll(limit = 300): Promise<Post[]> {
+  const { chirp, masks, me } = await handles();
+  if (!chirp) return [];
+  const total = Number((await q(chirp, 'count')) ?? 0);
+  const out: Post[] = [];
+  for (let id = total; id > 0 && out.length < limit; id--) {
+    const p = await readPost(chirp, masks, me, id);
+    if (p && !p.deleted) out.push(p);
+  }
+  return out;
+}
+
+/** Everyone who holds a mask — the people you can search and follow. */
+export async function people(): Promise<Who[]> {
+  const { masks } = await handles();
+  if (!masks) return [];
+  const total = Number((await q(masks, 'totalSupply')) ?? 0);
+  const out: Who[] = [];
+  for (let i = 1; i <= total; i++) out.push(await whoOf(masks, i));
+  return out;
+}
+
+/** The masks you follow. The contract keys follows by (you, mask), so this asks
+ *  about each mask rather than reading a list that does not exist on chain. */
+export async function following(): Promise<Set<number>> {
+  const s = await session().catch(() => null);
+  if (!s) return new Set();
+  const total = Number((await q(s.masks, 'totalSupply')) ?? 0);
+  const set = new Set<number>();
+  for (let i = 1; i <= total; i++) if (await q(s.chirp, 'follows', s.h160, BigInt(i))) set.add(i);
+  return set;
+}
+
+/** A profile: who they are, what they wrote, and how they connect. */
+export async function profile(mask: number): Promise<{
+  who: Who; bio: string; telegram: string; x: string;
+  followers: number; posts: Post[]; isMe: boolean; iFollow: boolean;
+}> {
+  const { masks } = await handles();
+  const s = await session().catch(() => null);
+  const who = masks ? await whoOf(masks, mask) : { mask, name: '', verified: '', tier: 4 };
+  const p = masks ? await q(masks, 'profileOf', BigInt(mask)) : undefined;
+  const all = await loadAll();
+  const followers = Number((await q((await handles()).chirp, 'followerCount', BigInt(mask))) ?? 0);
+  const myMask = s ? Number((await q(s.masks, 'maskOf', s.h160)) ?? 0) : 0;
+  return {
+    who,
+    bio: String(pick(p, 'bio', 3) ?? ''),
+    telegram: String(pick(p, 'telegram', 1) ?? ''),
+    x: String(pick(p, 'x', 2) ?? ''),
+    followers,
+    posts: all.filter((z) => z.mask === mask),
+    isMe: myMask === mask,
+    iFollow: s ? Boolean(await q(s.chirp, 'follows', s.h160, BigInt(mask))) : false,
+  };
+}
+
+/** What happened to you: replies and quotes of your posts, newest first. There
+ *  is no notification store on chain, so this is derived from the feed. */
+export async function notifications(myMask: number): Promise<Post[]> {
+  if (!myMask) return [];
+  const all = await loadAll();
+  const mine = new Set(all.filter((p) => p.mask === myMask).map((p) => p.id));
+  return all.filter((p) => p.mask !== myMask && ((p.replyTo && mine.has(p.replyTo)) || (p.quoteOf && mine.has(p.quoteOf))));
+}
+
 /** The timeline, newest first. Replies are left out of the main feed — they
  *  belong to their thread, exactly as they do on X. */
 export async function feed(limit = 30): Promise<Post[]> {
