@@ -78,6 +78,12 @@ function reason(res: any): string {
   if (/NotYourMask/i.test(d)) return 'That mask is not yours.';
   if (/NotAuthor/i.test(d)) return 'Only the author can edit a chirp.';
   if (/AlreadyLiked/i.test(d)) return 'You already liked this.';
+  // Custom Solidity errors are not decoded here — the chain just says the call
+  // reverted. Name the conditions this app can actually hit so the message is
+  // worth reading.
+  if (/ContractReverted/i.test(d)) {
+    return 'The contract refused it — usually a chirp you have already liked, an edit on a post that is not yours, or an empty/too-long chirp.';
+  }
   if (/BadLength/i.test(d)) return 'A chirp is 1 to 280 characters.';
   if (/AlreadyClaimed/i.test(d)) return 'This account already has a mask.';
   if (/NoMask/i.test(d)) return 'Claim a mask first.';
@@ -305,6 +311,16 @@ export function edit(id: number, body: string): Promise<Ok<void> | Fail> {
   return send((s) => s.chirp.edit.tx(BigInt(id), body, { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) }));
 }
 
-export function like(id: number): Promise<Ok<void> | Fail> {
-  return send((s) => s.chirp.like.tx(BigInt(id), { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) }));
+/** A heart is a toggle. The contract has separate like/unlike and reverts if you
+ *  like twice, so ask the chain what you already did rather than guessing — a
+ *  second tap should undo, not fail. */
+export async function like(id: number): Promise<Ok<void> | Fail> {
+  const s = await session().catch(() => null);
+  if (!s) return { ok: false, why: 'No wallet — open chirp inside the Polkadot app.' };
+  let already = false;
+  try {
+    already = Boolean((await s.chirp.liked.query(BigInt(id), await h160Of(s.address)))?.value);
+  } catch { /* fall through and try to like */ }
+  const opts = { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) };
+  return send((x) => (already ? x.chirp.unlike.tx(BigInt(id), opts) : x.chirp.like.tx(BigInt(id), opts)));
 }
