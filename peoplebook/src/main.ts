@@ -133,6 +133,7 @@ app.innerHTML = `
       <input id="lbdot" placeholder="your .dot for better odds (optional)" autocomplete="off" spellcheck="false" hidden>
       <div class="st" id="lbst"></div>
       <div class="prof" id="prof" hidden>
+        <div class="plabel">Public name</div><input id="pname" placeholder="the name people see" maxlength="40" autocomplete="off">
         <div class="plabel">Telegram</div><input id="ptg" placeholder="handle (without @)" maxlength="32" autocomplete="off" spellcheck="false">
         <div class="plabel">X</div><input id="px" placeholder="handle (without @)" maxlength="32" autocomplete="off" spellcheck="false">
         <div class="plabel">Bio</div><input id="pbio" placeholder="one line about you" maxlength="160" autocomplete="off">
@@ -213,6 +214,7 @@ const dotInput = document.getElementById('lbdot') as HTMLInputElement;
 const prof = document.getElementById('prof')!;
 const acts = document.getElementById('acts')!;
 const minidial = document.getElementById('minidial')!;
+const pname = document.getElementById('pname') as HTMLInputElement;
 const ptg = document.getElementById('ptg') as HTMLInputElement;
 const px = document.getElementById('px') as HTMLInputElement;
 const pbio = document.getElementById('pbio') as HTMLInputElement;
@@ -283,6 +285,7 @@ function openSheet(mode: 'claim' | 'edit') {
 
   if (mode === 'edit') {
     reveal(MYADDR, MINE?.tier ?? 4);
+    pname.value = MINE?.socials.name ?? '';
     ptg.value = MINE?.socials.telegram ?? '';
     px.value = MINE?.socials.x ?? '';
     pbio.value = MINE?.socials.bio ?? '';
@@ -312,13 +315,13 @@ async function runClaim() {
     return;
   }
 
-  MINE = { id: res.id, tier: res.tier, verified: res.verified, socials: { telegram: '', x: '', bio: '' } };
+  MINE = { id: res.id, tier: res.tier, verified: res.verified, socials: { name: '', telegram: '', x: '', bio: '' } };
   reveal(MYADDR, res.tier);
   stEl.textContent = res.verified
     ? `Minted — ${res.verified}.dot verified against the registry. Pin your links (optional):`
     : 'Minted — bound to your account, and it cannot be moved. Pin your links (optional):';
   goBtn.hidden = true;
-  ptg.value = ''; px.value = ''; pbio.value = '';
+  pname.value = ''; ptg.value = ''; px.value = ''; pbio.value = '';
   prof.hidden = false; psave.disabled = false; psave.textContent = 'Save links to chain';
   showActs();
   hud(); render();
@@ -332,14 +335,14 @@ function showActs() {
 async function runSave() {
   const stEl = document.getElementById('lbst')!;
   psave.disabled = true;
-  const s: Socials = { telegram: ptg.value.trim(), x: px.value.trim(), bio: pbio.value.trim() };
+  const s: Socials = { name: pname.value.trim(), telegram: ptg.value.trim(), x: px.value.trim(), bio: pbio.value.trim() };
   const res = await setProfile(s, (m) => { stEl.textContent = m; });
   if (!res.ok) {
     stEl.textContent = res.why;
     psave.disabled = false;
     return;
   }
-  if (MINE) MINE.socials = { telegram: s.telegram.replace(/^@/, ''), x: s.x.replace(/^@/, ''), bio: s.bio };
+  if (MINE) MINE.socials = { name: s.name, telegram: s.telegram.replace(/^@/, ''), x: s.x.replace(/^@/, ''), bio: s.bio };
   stEl.textContent = 'Saved on chain ✓';
   psave.textContent = 'Saved ✓';
   showActs();
@@ -381,7 +384,7 @@ q.addEventListener('input', render);
 
 document.getElementById('foot')!.innerHTML =
   `The directory is read from <code>Resources.usernameOwnerOf</code> on ${esc(D.chain)} — who registered a handle, nothing more. ` +
-  `Your mask is minted by <a href="https://assethub-paseo.subscan.io/account/0x03a484cCD0f1832084dEEFca4bF6438d79Fe8db6" target="_blank" rel="noopener">PeoplebookMasks</a> ` +
+  `Your mask is minted by <a href="https://assethub-paseo.subscan.io/account/0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a" target="_blank" rel="noopener">PeoplebookMasks</a> ` +
   `on the devnet Asset Hub: one per account, generated from your address, and <b>not transferable</b> — so nobody can claim or buy someone else's identity. ` +
   `A <b>.dot</b> is the one name provable here, so the contract checks it against the registry before showing it. Rarity is rolled on chain; the image and your links live on chain. Addresses truncated.` +
   `<span class="build">build ${esc(__BUILD__)} · free · <a href="#" id="diag">diagnostics</a></span>`;

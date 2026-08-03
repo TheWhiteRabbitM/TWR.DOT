@@ -15,7 +15,7 @@
 import { keccak_256 } from '@noble/hashes/sha3';
 import ABI from './abi.json';
 
-const ADDRESS = '0x03a484cCD0f1832084dEEFca4bF6438d79Fe8db6';
+const ADDRESS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
 
 const CONNECT_MS = 12_000;
@@ -27,7 +27,7 @@ export type ClaimResult =
   | { ok: true; tier: number; id: number; verified: string }
   | { ok: false; why: string };
 
-export type Socials = { telegram: string; x: string; bio: string };
+export type Socials = { name: string; telegram: string; x: string; bio: string };
 export type ProfileResult = { ok: true } | { ok: false; why: string };
 
 // The app no longer hashes a name itself: the contract recomputes the `.dot`
@@ -377,11 +377,11 @@ export async function myMask(): Promise<{ id: number; tier: number; verified: st
     if (!id) return null;
     const tier = Number((await b.contract.tierOf.query(BigInt(id)))?.value ?? 4);
     const verified = String((await b.contract.verifiedName.query(BigInt(id)))?.value ?? '');
-    let socials: Socials = { telegram: '', x: '', bio: '' };
+    let socials: Socials = { name: '', telegram: '', x: '', bio: '' };
     try {
       const p = (await b.contract.profileOf.query(BigInt(id)))?.value;
       const g = (k: string, i: number) => String((Array.isArray(p) ? p[i] : (p as Record<string, unknown>)?.[k]) ?? '');
-      socials = { telegram: g('telegram', 0), x: g('x', 1), bio: g('bio', 2) };
+      socials = { name: g('displayName', 0), telegram: g('telegram', 1), x: g('x', 2), bio: g('bio', 3) };
     } catch { /* no profile yet */ }
     return { id, tier, verified, socials };
   } catch {
@@ -403,6 +403,7 @@ export async function setProfile(
   if (!b) return { ok: false, why: 'No wallet — open peoplebook inside the Polkadot app.' };
   const { contract } = b;
 
+  const nm = (s.name || '').slice(0, 40);
   const tg = (s.telegram || '').replace(/^@/, '').slice(0, 32);
   const x = (s.x || '').replace(/^@/, '').slice(0, 32);
   const bio = (s.bio || '').slice(0, 160);
@@ -411,7 +412,7 @@ export async function setProfile(
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res: any = await withTimeout(
-      contract.setProfile.tx(tg, x, bio, {
+      contract.setProfile.tx(nm, tg, x, bio, {
         ...(b.slot.manager ? { signerManager: b.slot.manager } : { signer: b.slot.signer }),
         gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
         storageDepositLimit: 10n ** 18n,
