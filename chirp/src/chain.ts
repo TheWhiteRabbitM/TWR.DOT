@@ -246,6 +246,30 @@ function session(): Promise<Slot | null> {
 }
 export function warmUp(): void { void session(); }
 
+/* ------------------------------------------------------------ notifications */
+// The host owns the notification surface — the OS permission and the delivery
+// both. We ask for the permission only when the person has asked to be told,
+// never on load: a prompt nobody invited is the reason these get denied.
+
+/** Ask the host for the Notifications permission. False if refused, or if the
+ *  app is running outside the host (a browser tab has no such surface). */
+export async function askNotifications(): Promise<boolean> {
+  const host = await import('@parity/product-sdk-host').catch(() => null);
+  if (!host) return false;
+  const r = await host.requestDevicePermission('Notifications').catch(() => null);
+  // The host answers with a Result, and a granted:false is a no, not an error.
+  return Boolean(r && (r as any).ok && (r as any).value);
+}
+
+/** Deliver one notification now. Silent when the host has no manager for it. */
+export async function notify(text: string, deeplink?: string): Promise<boolean> {
+  const host = await import('@parity/product-sdk-host').catch(() => null);
+  if (!host) return false;
+  const mgr = await host.getNotificationManager().catch(() => null);
+  if (!mgr) return false;
+  return await mgr.push({ text, deeplink }).then(() => true).catch(() => false);
+}
+
 /* -------------------------------------------------------------------- reads */
 
 /** A signer-less handle over the public RPC, so the timeline is readable without

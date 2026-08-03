@@ -227,6 +227,20 @@ main { padding-bottom: 88px; }           /* clear the bottom bar */
 .more-btn:hover { background: var(--panel); }
 .more-btn:disabled { color: var(--ink-2); cursor: default; }
 
+.pushrow { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--hair); }
+.pushrow b { display: block; font-size: 15px; }
+.pushrow span { display: block; color: var(--ink-2); font-size: 13px; margin-top: 2px; }
+.pushrow button { flex: none; }
+
+.mark { width: 20px; height: 20px; color: var(--blue); vertical-align: -3px; margin-right: 7px; }
+
+/* "N new chirps" — a pill, not a bar, because it is an offer rather than a
+   division of the feed. It sits centred over the top of the column. */
+.fresh-btn { display: block; margin: 10px auto; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--blue); color: #fff; font: inherit; font-size: 14px; font-weight: 600;
+  padding: 8px 18px; box-shadow: 0 2px 10px rgba(0,0,0,.28); }
+.fresh-btn:hover { filter: brightness(1.08); }
+
 .navb { position: relative; }
 .badge { position: absolute; top: 4px; right: 12px; min-width: 17px; height: 17px; padding: 0 4px;
   border-radius: 999px; background: var(--blue); color: #fff; font-size: 11px; font-weight: 700;

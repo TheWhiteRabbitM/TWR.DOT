@@ -217,7 +217,7 @@ export function forgetBylines() { bylines.clear(); }
 
 /** Every note, newest first. Reads go out in batches — one at a time made the
  *  page crawl as soon as there were more than a handful. */
-export async function load(): Promise<Entry[]> {
+export async function load(onBatch?: (soFar: Entry[]) => void): Promise<Entry[]> {
   const { wiki, masks, handles: hc, me } = await handles();
   if (!wiki) return [];
   const total = Number((await q(wiki, 'count')) ?? 0);
@@ -251,6 +251,9 @@ export async function load(): Promise<Entry[]> {
       return e;
     }));
     for (const e of got) if (e && !e.retracted) out.push(e);
+    // Paint what has arrived. Twenty notes is three round trips; waiting for the
+    // last one before showing the first is what made this look like it hung.
+    onBatch?.(out.slice());
   }
   return out;
 }

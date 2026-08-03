@@ -56,6 +56,8 @@ let open = new Set<number>();
 let sheet: null | { mode: 'add' | 'edit'; entry?: Entry } = null;
 let flash: { text: string; bad?: boolean } | null = null;
 let busy = true;
+/** Set when a read failed, so the page can say so instead of looking empty. */
+let loadError = '';
 
 const when = (t: number) => new Date(t * 1000).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -107,7 +109,7 @@ function sidebar(): string {
 
 function render() {
   const list = visible();
-  const body = busy
+  const body = busy && !list.length
     ? '<div class="skel"></div><div class="skel"></div><div class="skel"></div>'
     : list.length
       ? (topic === 'all' && !query.trim()
@@ -125,13 +127,18 @@ function render() {
       ${sidebar()}
       <main>
         ${flash ? `<div class="msg ${flash.bad ? 'bad' : 'good'}" role="status">${esc(flash.text)}<button id="dismiss" aria-label="Dismiss">✕</button></div>` : ''}
+        ${loadError ? `<div class="msg bad" role="alert">${esc(loadError)}<button id="retry" class="btn ghost">Try again</button></div>` : ''}
         ${topic === 'all' && !query.trim() ? `<section class="hero">
           <h1>What this devnet actually does.</h1>
           <p>Notes from people building on the Polkadot products devnet — the option that is silently ignored,
           the build that fails without naming a file, the permission whose absence makes a signature hang instead
           of fail. None of it is in the documentation. All of it is on chain, and anyone with a mask can add to it.</p>
-          <div class="stats"><span><b>${ALL.length}</b> notes</span><span><b>${groups(ALL).length}</b> topics</span>
-          <span><b>${ALL.reduce((n, e) => n + e.votes, 0)}</b> found useful</span></div>
+          ${busy
+            // Not "0 notes": a page that has not finished reading does not know
+            // how many there are, and printing zero is a claim that it is empty.
+            ? `<div class="stats"><span class="loading">Reading the chain…${ALL.length ? ` ${ALL.length} so far` : ''}</span></div>`
+            : `<div class="stats"><span><b>${ALL.length}</b> notes</span><span><b>${groups(ALL).length}</b> topics</span>
+          <span><b>${ALL.reduce((n, e) => n + e.votes, 0)}</b> found useful</span></div>`}
         </section>` : ''}
         <div class="group">${body}</div>
       </main>
@@ -179,6 +186,7 @@ function wire() {
     const n = document.getElementById('q') as HTMLInputElement; n.focus(); n.setSelectionRange(pos ?? 0, pos ?? 0);
   });
   document.getElementById('dismiss')?.addEventListener('click', () => { flash = null; render(); });
+  document.getElementById('retry')?.addEventListener('click', () => { void refresh(); });
   app.querySelectorAll<HTMLElement>('[data-topic]').forEach((b) =>
     b.addEventListener('click', () => { topic = b.dataset.topic!; render(); scrollTo({ top: 0 }); }));
   app.querySelectorAll<HTMLElement>('.note').forEach((n) => n.addEventListener('click', (ev) => {
@@ -224,8 +232,13 @@ function wire() {
 }
 
 async function refresh() {
-  busy = true; render();
-  ALL = await load().catch(() => ALL);
+  busy = true; loadError = ''; render();
+  ALL = await load((soFar) => { ALL = soFar; render(); }).catch((e) => {
+    // The failure used to be swallowed, which left an empty page and no way to
+    // tell a wiki with nothing in it from a chain that never answered.
+    loadError = String(e?.message ?? e).slice(0, 140) || 'The chain did not answer.';
+    return ALL;
+  });
   busy = false;
   render();
 }

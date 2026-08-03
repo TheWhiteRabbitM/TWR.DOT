@@ -18,6 +18,7 @@ import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
+  askNotifications, notify,
   CHIRP, MASKS, type Post, type Me, type Who,
 } from './chain';
 
@@ -136,6 +137,10 @@ let ACT: { signer: string; real: string | null } | null = null;
 let loadError = '';
 /** A destructive action waiting for a yes. Deleting was one tap and permanent. */
 let confirmDelete: number | null = null;
+/** Chirps that arrived while you were reading. They are held here rather than
+ *  spliced into the feed: a timeline that reflows under the thumb loses your
+ *  place, so the new ones wait behind a button, the way X does it. */
+let FRESH: Post[] = [];
 
 /** What you were writing, kept across a failed signature and a closed app. A
  *  post that costs a signature must not be able to eat the text you typed. */
@@ -154,6 +159,20 @@ const seen = {
   set: (v: number) => { try { localStorage.setItem(SEEN, String(v)); } catch { /* private mode */ } },
 };
 const unread = () => NOTIF.filter((p) => p.id > seen.get()).length;
+
+/** Whether this device has been asked to push. Three states on purpose: not yet
+ *  asked, said yes, said no — so a refusal is remembered and not asked again. */
+const PUSH = 'chirp.push';
+const push = {
+  get: () => { try { return localStorage.getItem(PUSH) ?? ''; } catch { return ''; } },
+  set: (v: 'on' | 'off') => { try { localStorage.setItem(PUSH, v); } catch { /* private mode */ } },
+};
+/** The newest id already pushed, so the same mention is not announced twice. */
+const PUSHED = 'chirp.pushed';
+const pushed = {
+  get: () => { try { return Number(localStorage.getItem(PUSHED) ?? 0); } catch { return 0; } },
+  set: (v: number) => { try { localStorage.setItem(PUSHED, String(v)); } catch { /* private mode */ } },
+};
 
 const findPost = (id: number) => [...ALL, ...TH.replies, ...TH.parents, TH.post].find((p) => p && p.id === id) as Post | undefined;
 
@@ -220,6 +239,7 @@ function homeView(): string {
       <button class="tab${tab === 'foryou' ? ' on' : ''}" data-tab="foryou">For you</button>
       <button class="tab${tab === 'following' ? ' on' : ''}" data-tab="following">Following</button>
     </div>`
+    + (FRESH.length ? `<button class="fresh-btn" id="showfresh">Show ${FRESH.length} new chirp${FRESH.length > 1 ? 's' : ''}</button>` : '')
     + (ME && !ME.mask ? gate() : '')
     + list(shown, tab === 'following' ? 'Nothing here yet — follow someone from their profile.' : 'No chirps yet.')
     + (ALL.length >= page ? '<button class="more-btn" id="loadmore">Show older chirps</button>' : '');
@@ -243,7 +263,16 @@ function personRow(w: Who): string {
 }
 
 function notifView(): string {
-  return `<div class="sechead">Replies and quotes of your chirps</div>`
+  // The offer sits here rather than on the home screen: you are on this page
+  // because you care about being told, which is the only moment the question
+  // is a fair one to ask.
+  const offer = ME?.mask && push.get() !== 'on'
+    ? `<div class="pushrow">
+        <div><b>Get told when someone replies</b>
+        <span>chirp asks the Polkadot app to notify you. Nothing leaves the device but the alert.</span></div>
+        <button class="primary" id="askpush">Turn on</button>
+      </div>` : '';
+  return offer + `<div class="sechead">Replies and quotes of your chirps</div>`
     + list(NOTIF, ME?.mask ? 'Nothing yet.' : 'Claim a mask to get replies.');
 }
 
@@ -315,7 +344,11 @@ function header(): string {
     : view.k === 'search' ? 'Search' : view.k === 'notif' ? 'Notifications' : 'chirp';
   const who = !ME ? '<span>open in the Polkadot app</span>'
     : `<b>${ME.mask ? esc(nm(ME as unknown as Who)) : 'no mask yet'}</b><span>${esc(short(ME.address))}</span>`;
-  return `<header class="top">${back}<h1>${title}${busy ? '<span class="dotspin" aria-label="Loading"></span>' : ''}</h1>
+  // The mark stands in for the word only where the word would be the app's own
+  // name; on a thread or a profile the title is doing real work and is left alone.
+  const mark = title === 'chirp'
+    ? `<svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="20" cy="44" r="4.5" fill="currentColor"/><g fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"><path d="M20 30 A14 14 0 0 1 34 44"/><path d="M20 20 A24 24 0 0 1 44 44"/></g></svg>` : '';
+  return `<header class="top">${back}<h1>${mark}${title}${busy ? '<span class="dotspin" aria-label="Loading"></span>' : ''}</h1>
     <div class="who">${who}</div>
     ${ME?.mask ? `<button class="iconbtn" id="settings" aria-label="Settings">${I.gear}</button>` : ''}
   </header>`;
@@ -602,7 +635,9 @@ function wire() {
     go({ k: k as 'home' | 'search' | 'notif' });
   }));
   app.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => {
-    tab = b.dataset.tab as 'foryou' | 'following'; render();
+    // Switching tabs redraws the column anyway, so there is no place left to
+    // lose: fold the held-back chirps in rather than throwing them away.
+    tab = b.dataset.tab as 'foryou' | 'following'; showFresh(false); render();
   }));
 
   const q = document.getElementById('q') as HTMLInputElement | null;
@@ -745,6 +780,15 @@ function wire() {
     if (m === 'chain') { window.open(`https://assethub-paseo.subscan.io/account/${CHIRP}`, '_blank'); return render(); }
     render();
   }));
+  document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
+  document.getElementById('askpush')?.addEventListener('click', async () => {
+    const ok = await askNotifications();
+    push.set(ok ? 'on' : 'off');
+    // Whatever is already on this page has been seen, so it is not news.
+    if (ok && NOTIF.length) pushed.set(Math.max(pushed.get(), ...NOTIF.map((p) => p.id)));
+    flash = ok ? { text: 'Notifications on.' } : { text: 'The app said no to notifications.', bad: true };
+    render();
+  });
   app.querySelectorAll<HTMLElement>('[data-open]').forEach((c) => c.addEventListener('click', () => {
     const id = Number(c.dataset.open);
     if (view.k === 'thread' && TH.post?.id === id) return;
@@ -753,7 +797,8 @@ function wire() {
 }
 
 async function refresh() {
-  busy = true; loadError = ''; render();
+  busy = true; loadError = ''; FRESH = [];  // a full read supersedes anything held back
+  render();
   ALL = await loadAll(page).catch((e) => { loadError = String(e?.message ?? e).slice(0, 120) || 'The chain did not answer.'; return ALL; });
   if (view.k === 'people' || view.k === 'profile') CONN = await connections(view.mask).catch(() => CONN);
   if (view.k === 'thread') TH = await thread(view.id).catch(() => TH);
@@ -769,6 +814,63 @@ async function refresh() {
   busy = false;
   render();
 }
+
+/* ---------------------------------------------------------------- live feed */
+// The chain has no subscription we can lean on here, so the feed asks. It asks
+// only while the app is actually being looked at and nothing is being written:
+// a poll behind a hidden tab is a bill nobody reads, and one that lands mid-post
+// would redraw the composer out from under the caret.
+const POLL_MS = 20_000;
+
+/** Fold the held-back chirps into the feed. `scroll` is false when the column is
+ *  being redrawn for another reason and jumping the page would be rude. */
+function showFresh(scroll = true) {
+  if (!FRESH.length) return;
+  ALL = [...FRESH, ...ALL];
+  FRESH = [];
+  if (scroll) scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function poll() {
+  if (document.visibilityState !== 'visible') return;
+  if (busy || sheet || settingsOpen) return;
+  // Replies to you are worth knowing about wherever you are in the app; only
+  // the timeline itself is a home-screen concern.
+  if (ME?.mask) { NOTIF = await notifications(ME.mask).catch(() => NOTIF); await announce(); }
+  if (view.k !== 'home') return render();
+  const fresh = await loadAll(page).catch(() => null);
+  if (!fresh) return;                       // a quiet network is not news
+  if (busy || sheet || view.k !== 'home') return;  // it may have changed while we waited
+  const known = new Set(ALL.map((p) => p.id));
+  const added = fresh.filter((p) => !known.has(p.id) && !p.replyTo);
+  // Counts, likes and edits on chirps already shown can land straight away —
+  // nothing moves. Only genuinely new top-level chirps wait behind the button.
+  const addedIds = new Set(added.map((p) => p.id));
+  ALL = fresh.filter((p) => !addedIds.has(p.id));
+  FRESH = added;
+  render();
+}
+
+/** Push what arrived for you while you were elsewhere — once per chirp, and as
+ *  one line rather than one alert each, because five buzzes for five replies is
+ *  how an app gets its notifications turned off. */
+async function announce() {
+  if (push.get() !== 'on') return;
+  const mark = pushed.get();
+  const fresh = NOTIF.filter((p) => p.id > mark);
+  if (!fresh.length) return;
+  pushed.set(Math.max(mark, ...fresh.map((p) => p.id)));
+  const one = fresh[0];
+  const text = fresh.length === 1
+    ? `${one.who ? nm(one.who) : 'Someone'} replied: ${one.body.slice(0, 80)}`
+    : `${fresh.length} new replies and quotes on chirp`;
+  await notify(text, fresh.length === 1 ? `#/t/${one.id}` : '#/notifications');
+}
+
+setInterval(() => { void poll(); }, POLL_MS);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') void poll();
+});
 
 /* ------------------------------------------------------------------ keyboard */
 // Escape closes whatever is open; Cmd/Ctrl+Enter sends what is being written.
