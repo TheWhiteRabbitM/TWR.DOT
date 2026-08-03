@@ -18,12 +18,19 @@ import { keccak_256 } from '@noble/hashes/sha3';
 import MASKS_ABI from './masks-abi.json';
 import CHIRP_ABI from './chirp-abi.json';
 import HANDLES_ABI from './handles-abi.json';
+import NOTES_ABI from './notes-abi.json';
+import PFP_ABI from './pfp-abi.json';
 
 export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
 export const CHIRP = '0x37A7CE834428636815b2746408343574aD13be7C';
 /** The @name registry. Separate from the masks contract because identity gained
  *  this field after masks and chirps already held content. */
 export const HANDLES = '0x7C61D99564C61e667C6Fd5D41aC2466327ea4109';
+/** Context on a chirp, and the ratings that decide whether it is shown. */
+export const NOTES = '0xf3584d1b59fb8759f4c6572e3a13c8a7af79c0cc';
+/** Profile pictures — the KEY to one, on Bulletin. Same reason as HANDLES: the
+ *  masks contract is deployed and its profile struct cannot grow. */
+export const PFP = '0x6f3f9d84161f0bd0eb9d6524a5a2e5089b565470';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
 const IDENTITY_DAPP = 'peoplebook.dot';
 
@@ -109,7 +116,7 @@ type Slot = {
   h160: string;
   kind: 'wallet' | 'app';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  signer: any; manager?: any; masks: any; chirp: any; handles: any;
+  signer: any; manager?: any; masks: any; chirp: any; handles: any; notes: any; pfp: any;
   /** The typed api, needed to wrap a contract call in Proxy.proxy. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   api: any;
@@ -206,6 +213,7 @@ async function connect(): Promise<Slot | null> {
   return {
     address, h160: await h160Of(who), kind, signer, manager, api, real,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
+    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI),
   };
 }
 
@@ -270,12 +278,126 @@ export async function notify(text: string, deeplink?: string): Promise<boolean> 
   return await mgr.push({ text, deeplink }).then(() => true).catch(() => false);
 }
 
+/* ---------------------------------------------------------------- pictures */
+//
+// The image is NOT on Asset Hub. It goes to Bulletin as a preimage through the
+// host, and PeoplePFP stores only the key the host hands back. Two reasons: the
+// bytes would otherwise be a storage deposit paid by every person who sets one,
+// and the Bulletin storage pool a publisher draws from needs an authorisation an
+// ordinary user cannot obtain — the host's preimage surface is the only upload
+// path they actually have.
+//
+// Bulletin keeps data for roughly a fortnight, so a picture left alone expires.
+// A preimage is content-addressed, so re-submitting identical bytes returns an
+// identical key: renewal is a read followed by a write of the SAME bytes, which
+// costs no transaction and never touches the contract. See renewPfp.
+
+const HEX = (b: Uint8Array) => '0x' + Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
+const UNHEX = (h: string) => {
+  const s = h.startsWith('0x') ? h.slice(2) : h;
+  const out = new Uint8Array(s.length >> 1);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(s.substr(i * 2, 2), 16);
+  return out;
+};
+
+/** Resolved pictures, so a timeline showing one person forty times fetches once. */
+const pfpCache = new Map<number, string>();
+/** Masks already looked up and found to have none — otherwise every render
+ *  re-asks the chain about the same absence. */
+const noPfp = new Set<number>();
+
+async function preimages() {
+  const host = await import('@parity/product-sdk-host').catch(() => null);
+  return host ? await host.getPreimageManager().catch(() => null) : null;
+}
+
+/** The host delivers preimage bytes through a subscription that reports `null`
+ *  until it finds them, so this waits — but not forever: a picture that is not
+ *  coming must not hold a face blank on the page. */
+function fetchPreimage(key: string, ms = 10_000): Promise<Uint8Array | null> {
+  return new Promise(async (resolve) => {
+    const mgr = await preimages();
+    if (!mgr) return resolve(null);
+    let done = false;
+    const finish = (v: Uint8Array | null) => { if (!done) { done = true; try { sub?.unsubscribe(); } catch { /* gone */ } resolve(v); } };
+    const timer = setTimeout(() => finish(null), ms);
+    let sub: { unsubscribe(): void } | undefined;
+    try {
+      sub = mgr.lookup(key as `0x${string}`, (bytes) => { if (bytes) { clearTimeout(timer); finish(bytes); } });
+    } catch { clearTimeout(timer); finish(null); }
+  });
+}
+
+/** The picture for a mask as a data URL, or '' when it has none — or when the
+ *  bytes have expired, which is deliberately the same answer: the caller draws
+ *  the generated avatar either way. */
+export async function pictureOf(mask: number): Promise<string> {
+  const hit = pfpCache.get(mask);
+  if (hit !== undefined) return hit;
+  if (noPfp.has(mask)) return '';
+  const { pfp } = await handles();
+  const raw = pfp ? await q(pfp, 'pfpOf', BigInt(mask)) : undefined;
+  const key = typeof raw === 'string' ? raw : (raw as { asHex?: () => string })?.asHex?.() ?? '';
+  if (!key || key === '0x') { noPfp.add(mask); return ''; }
+  const bytes = await fetchPreimage(new TextDecoder().decode(UNHEX(key)));
+  if (!bytes) { noPfp.add(mask); return ''; }
+  const url = 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes));
+  pfpCache.set(mask, url);
+  return url;
+}
+
+export function forgetPicture(mask?: number) {
+  if (mask) { pfpCache.delete(mask); noPfp.delete(mask); } else { pfpCache.clear(); noPfp.clear(); }
+}
+
+/** Upload a picture and point the mask at it. The bytes go to Bulletin first —
+ *  a key recorded on chain for bytes nobody has is worse than no key at all. */
+export async function setPicture(mask: number, bytes: Uint8Array): Promise<Ok | Fail> {
+  const mgr = await preimages();
+  if (!mgr) return { ok: false, why: 'Pictures need the Polkadot app — the browser has no upload surface.' };
+  let key = '';
+  try {
+    key = await mgr.submit(bytes);
+  } catch (e) {
+    return { ok: false, why: reason({ error: e }) };
+  }
+  if (!key) return { ok: false, why: 'The app accepted the picture but returned no key.' };
+  // The key is stored as its own text, not as parsed bytes: its width is the
+  // host's business, and a shape we merely assume would break silently.
+  const r = await send('pfp', 'setPfp', [BigInt(mask), HEX(new TextEncoder().encode(key))]);
+  if (r.ok) { pfpCache.set(mask, 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes))); noPfp.delete(mask); }
+  return r;
+}
+
+export function clearPicture(mask: number): Promise<Ok | Fail> {
+  pfpCache.delete(mask); noPfp.add(mask);
+  return send('pfp', 'clear', [BigInt(mask)]);
+}
+
+/** Push the retention window back without spending anything.
+ *
+ *  Read the picture, submit the identical bytes: same content, same key, so the
+ *  contract still points at it and no transaction is needed. Called on open, for
+ *  your own mask only — renewing other people's pictures is their app's job. */
+export async function renewPicture(mask: number): Promise<boolean> {
+  if (!mask) return false;
+  const { pfp } = await handles();
+  const raw = pfp ? await q(pfp, 'pfpOf', BigInt(mask)) : undefined;
+  const key = typeof raw === 'string' ? raw : (raw as { asHex?: () => string })?.asHex?.() ?? '';
+  if (!key || key === '0x') return false;
+  const bytes = await fetchPreimage(new TextDecoder().decode(UNHEX(key)));
+  if (!bytes) return false;                       // already gone; nothing to renew
+  const mgr = await preimages();
+  if (!mgr) return false;
+  return await mgr.submit(bytes).then(() => true).catch(() => false);
+}
+
 /* -------------------------------------------------------------------- reads */
 
 /** A signer-less handle over the public RPC, so the timeline is readable without
  *  a wallet. A social nobody can read unless they sign in is not much of one. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let reader: Promise<{ chirp: any; masks: any } | null> | null = null;
+let reader: Promise<{ chirp: any; masks: any; handles: any; notes: any; pfp: any } | null> | null = null;
 function pub() {
   if (!reader) {
     reader = (async () => {
@@ -289,7 +411,10 @@ function pub() {
       const rt = (contracts as any).createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mk = (a: string, abi: unknown) => (contracts as any).createContract(rt, a, abi);
-      return { chirp: mk(CHIRP, CHIRP_ABI), masks: mk(MASKS, MASKS_ABI), handles: mk(HANDLES, HANDLES_ABI) };
+      return {
+        chirp: mk(CHIRP, CHIRP_ABI), masks: mk(MASKS, MASKS_ABI), handles: mk(HANDLES, HANDLES_ABI),
+        notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI),
+      };
     })().catch(() => null);
     void reader.then((r) => { if (!r) reader = null; });
   }
@@ -299,8 +424,8 @@ function pub() {
 async function handles() {
   const s = await session().catch(() => null);
   return s
-    ? { chirp: s.chirp, masks: s.masks, handles: s.handles, me: s.h160 }
-    : { ...(await pub() ?? { chirp: null, masks: null, handles: null }), me: '' };
+    ? { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, me: s.h160 }
+    : { ...(await pub() ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null }), me: '' };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -390,6 +515,38 @@ export async function loadAll(limit = 300): Promise<Post[]> {
   return out;
 }
 
+/**
+ * Rank the timeline the way a For You feed is ranked, minus the part we cannot
+ * honestly build.
+ *
+ * X's heavy ranker is a neural net over signals we do not have — dwell time,
+ * an out-of-network engagement graph, a profile of what you linger on. What IS
+ * transferable is the shape: candidates from two sources, in-network and out,
+ * then one scorer over them. So this is engagement, affinity and decay, and it
+ * is arithmetic rather than anything learned. It is stated plainly here because
+ * a ranked feed that will not say why it ranked is the thing people object to.
+ *
+ *   engagement  likes, replies and reposts, with a reply worth more than a like
+ *               because it cost more to give
+ *   affinity    written by someone you follow, or quoting someone you do
+ *   decay       halves every twelve hours, so a good chirp does not sit on top
+ *               of the feed for a week
+ *   penalty     a chirp carrying a note that bridged is pushed down, not hidden
+ */
+export function rank(posts: Post[], follow: Set<number>, noted: Map<number, Note>, now = Date.now() / 1000): Post[] {
+  const HALF_LIFE = 12 * 3600;
+  const score = (p: Post) => {
+    const engagement = p.likes + p.replies * 2.5 + p.reposts * 2;
+    const affinity = (follow.has(p.mask) ? 6 : 0) + (p.quoted && follow.has(p.quoted.mask) ? 2 : 0);
+    const decay = Math.pow(0.5, Math.max(0, now - p.time) / HALF_LIFE);
+    const penalty = noted.has(p.id) ? 0.35 : 1;
+    // +1 so a chirp with no engagement still ranks by recency rather than tying
+    // at zero with every other silent one.
+    return (engagement + affinity + 1) * decay * penalty;
+  };
+  return [...posts].sort((a, b) => score(b) - score(a));
+}
+
 /** Everyone who holds a mask — the people you can search and follow. */
 export async function people(): Promise<Who[]> {
   const { masks } = await handles();
@@ -456,16 +613,18 @@ export async function connections(mask: number): Promise<{ followers: Who[]; fol
 }
 
 /** A profile: who they are, what they wrote, and how they connect. */
-export async function profile(mask: number): Promise<{
+export async function profile(mask: number, feed?: Post[]): Promise<{
   who: Who; bio: string; telegram: string; x: string;
   followers: number; posts: Post[]; isMe: boolean; iFollow: boolean;
 }> {
-  const { masks } = await handles();
+  const h = await handles();
+  const { masks } = h;
   const s = await session().catch(() => null);
   const who = masks ? await whoOf(masks, mask) : { mask, name: '', verified: '', handle: '', tier: 4 };
   const p = masks ? await q(masks, 'profileOf', BigInt(mask)) : undefined;
-  const all = await loadAll();
-  const followers = Number((await q((await handles()).chirp, 'followerCount', BigInt(mask))) ?? 0);
+  // Same as notifications: opening a profile re-read the entire timeline.
+  const all = feed ?? await loadAll();
+  const followers = Number((await q(h.chirp, 'followerCount', BigInt(mask))) ?? 0);
   const myMask = s ? Number((await q(s.masks, 'maskOf', s.h160)) ?? 0) : 0;
   return {
     who,
@@ -481,9 +640,12 @@ export async function profile(mask: number): Promise<{
 
 /** What happened to you: replies and quotes of your posts, newest first. There
  *  is no notification store on chain, so this is derived from the feed. */
-export async function notifications(myMask: number): Promise<Post[]> {
+export async function notifications(myMask: number, feed?: Post[]): Promise<Post[]> {
   if (!myMask) return [];
-  const all = await loadAll();
+  // Take the feed the caller already has. This used to re-read the whole thing —
+  // with a poll every twenty seconds that was the timeline fetched twice a
+  // minute for no new information.
+  const all = feed ?? await loadAll();
   const mine = new Set(all.filter((p) => p.mask === myMask).map((p) => p.id));
   return all.filter((p) => p.mask !== myMask && ((p.replyTo && mine.has(p.replyTo)) || (p.quoteOf && mine.has(p.quoteOf))));
 }
@@ -557,6 +719,212 @@ export async function suggestedName(): Promise<string> {
   }
 }
 
+/* -------------------------------------------------------------------- notes */
+//
+// Community notes, scored the way X scores them, but computed here rather than
+// announced by us.
+//
+// The naive ranking — most votes wins — hands the verdict to the largest
+// faction. The bridging model instead fits every rater and every note on a
+// latent axis and keeps what survives AFTER that axis is removed, which in
+// practice means the note was rated helpful by people on opposite sides of it.
+//
+//   predicted(rater u, note n) = mu + i_u + i_n + f_u * f_n
+//
+// f_u and f_n are the viewpoint coordinates; i_n is the note's intercept, the
+// part of its helpfulness that does NOT depend on which side you are on. That
+// intercept is the score. It is fitted by plain gradient descent over the whole
+// rating log, which is small here and public, so any reader's client can run
+// this same function and get the same answer.
+//
+// The thresholds below are OURS, not X's. Theirs are tuned on millions of
+// ratings; on a chain with a handful of masks they would leave everything
+// unscored forever. They are named here so they can be argued with.
+
+export type Note = {
+  id: number;
+  chirpId: number;
+  mask: number;
+  author: string;
+  time: number;
+  edited: number;
+  kind: number;           // 0 context, 1 misleading
+  ratings: number;
+  body: string;
+  who?: Who;
+  /** The fitted intercept. Undefined until enough ratings exist to fit at all. */
+  score?: number;
+  /** True when the intercept clears the bar AND both sides of the axis rated it. */
+  helpful?: boolean;
+  /** What you rated it, or undefined. */
+  mine?: number;
+};
+
+/** Below this there is nothing to fit: two ratings cannot describe an axis. */
+const MIN_RATINGS = 4;
+/** The intercept a note must reach. Deliberately low for a chain this small. */
+const HELPFUL_AT = 0.25;
+
+export type Rating = { noteId: number; mask: number; value: number };
+
+/** Every rating, as one flat read. The contract keeps this log precisely so the
+ *  matrix can be rebuilt in one pass instead of one round trip per note. */
+export async function allRatings(): Promise<Rating[]> {
+  const { notes } = await handles();
+  if (!notes) return [];
+  const total = Number((await q(notes, 'totalRatings')) ?? 0);
+  const out: Rating[] = [];
+  for (let i = 0; i < total; i += 20) {
+    const got = await Promise.all(
+      Array.from({ length: Math.min(20, total - i) }, (_, k) => q(notes, 'ratingAt', BigInt(i + k))),
+    );
+    for (const r of got) {
+      if (!r) continue;
+      out.push({
+        noteId: Number(pick(r, 'noteId', 0) ?? 0),
+        mask: Number(pick(r, 'mask', 1) ?? 0),
+        value: Number(pick(r, 'value', 2) ?? 0),
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * Fit the bridging model and return each note's intercept.
+ *
+ * Ratings arrive as 0/1/2 and are mapped to -1/0/+1, so "somewhat" is neutral
+ * rather than mild approval — a rater who never picks a side should not drag a
+ * note either way.
+ */
+export function bridge(ratings: Rating[]): Map<number, { score: number; sides: number }> {
+  const noteIds = [...new Set(ratings.map((r) => r.noteId))];
+  const maskIds = [...new Set(ratings.map((r) => r.mask))];
+  const ni = new Map(noteIds.map((id, i) => [id, i]));
+  const mi = new Map(maskIds.map((id, i) => [id, i]));
+
+  const iN = new Float64Array(noteIds.length);
+  const fN = new Float64Array(noteIds.length);
+  const iU = new Float64Array(maskIds.length);
+  const fU = new Float64Array(maskIds.length);
+  // Seed the factors apart. All-zero factors have zero gradient and the model
+  // would never leave the flat spot at the origin.
+  for (let i = 0; i < fN.length; i++) fN[i] = ((i % 2) ? 0.1 : -0.1);
+  for (let i = 0; i < fU.length; i++) fU[i] = ((i % 2) ? -0.1 : 0.1);
+  let mu = 0;
+
+  const obs = ratings.map((r) => ({ n: ni.get(r.noteId)!, u: mi.get(r.mask)!, y: r.value - 1 }));
+  const LR = 0.02, L2 = 0.03, STEPS = 900;
+  for (let s = 0; s < STEPS; s++) {
+    for (const o of obs) {
+      const err = (mu + iN[o.n] + iU[o.u] + fN[o.n] * fU[o.u]) - o.y;
+      const gN = fU[o.u], gU = fN[o.n];
+      mu -= LR * err;
+      iN[o.n] -= LR * (err + L2 * iN[o.n]);
+      iU[o.u] -= LR * (err + L2 * iU[o.u]);
+      fN[o.n] -= LR * (err * gN + L2 * fN[o.n]);
+      fU[o.u] -= LR * (err * gU + L2 * fU[o.u]);
+    }
+  }
+
+  // A high intercept from a crowd that all sits on one side of the axis is not
+  // a bridge, so count how many DISTINCT sides actually rated it helpfully.
+  const out = new Map<number, { score: number; sides: number }>();
+  for (const id of noteIds) {
+    const n = ni.get(id)!;
+    const helpfulRaters = ratings.filter((r) => r.noteId === id && r.value === 2);
+    const sides = new Set(helpfulRaters.map((r) => (fU[mi.get(r.mask)!] >= 0 ? 'a' : 'b'))).size;
+    out.set(id, { score: iN[n] + mu, sides });
+  }
+  return out;
+}
+
+/** The notes on a chirp, scored. */
+export async function notesOn(chirpId: number, ratings?: Rating[]): Promise<Note[]> {
+  const { notes, masks, handles: hc } = await handles();
+  if (!notes) return [];
+  const ids: number[] = ((await q(notes, 'notesOf', BigInt(chirpId))) as unknown[] ?? []).map((x) => Number(x));
+  if (!ids.length) return [];
+  const rows = ratings ?? await allRatings();
+  const scores = bridge(rows);
+  const mine = await myMask();
+
+  const out: Note[] = [];
+  for (const id of ids) {
+    const [m, b] = await Promise.all([q(notes, 'meta', BigInt(id)), q(notes, 'body', BigInt(id))]);
+    if (!m || Boolean(pick(m, 'retracted', 5))) continue;
+    const mask = Number(pick(m, 'mask', 1) ?? 0);
+    const sc = scores.get(id);
+    const n: Note = {
+      id,
+      chirpId: Number(pick(m, 'chirpId', 0) ?? 0),
+      mask,
+      author: String(pick(m, 'author', 2) ?? ''),
+      time: Number(pick(m, 'time', 3) ?? 0),
+      edited: Number(pick(m, 'edited', 4) ?? 0),
+      kind: Number(pick(m, 'kind', 6) ?? 0),
+      ratings: Number(pick(m, 'ratings', 7) ?? 0),
+      body: String(b ?? ''),
+      who: masks ? await whoOf(masks, mask, hc) : undefined,
+      mine: mine ? rows.find((r) => r.noteId === id && r.mask === mine)?.value : undefined,
+    };
+    if (sc && n.ratings >= MIN_RATINGS) {
+      n.score = sc.score;
+      n.helpful = sc.score >= HELPFUL_AT && sc.sides >= 2;
+    }
+    out.push(n);
+  }
+  // The one that reached people who disagree goes first.
+  return out.sort((a, b) => Number(b.helpful ?? false) - Number(a.helpful ?? false) || (b.score ?? -9) - (a.score ?? -9));
+}
+
+/** Which chirps carry a note that made it, so the feed can mark them in one pass
+ *  rather than asking per post. */
+export async function notedChirps(): Promise<Map<number, Note>> {
+  const { notes } = await handles();
+  const out = new Map<number, Note>();
+  if (!notes) return out;
+  const total = Number((await q(notes, 'count')) ?? 0);
+  if (!total) return out;
+  const rows = await allRatings();
+  const scores = bridge(rows);
+  for (let i = 1; i <= total; i += 20) {
+    const ids = Array.from({ length: Math.min(20, total - i + 1) }, (_, k) => i + k);
+    const metas = await Promise.all(ids.map((id) => q(notes, 'meta', BigInt(id))));
+    await Promise.all(metas.map(async (m, k) => {
+      if (!m || Boolean(pick(m, 'retracted', 5))) return;
+      const id = ids[k];
+      const sc = scores.get(id);
+      const count = Number(pick(m, 'ratings', 7) ?? 0);
+      if (!sc || count < MIN_RATINGS || sc.score < HELPFUL_AT || sc.sides < 2) return;
+      const chirpId = Number(pick(m, 'chirpId', 0) ?? 0);
+      const prev = out.get(chirpId);
+      if (prev && (prev.score ?? -9) >= sc.score) return;
+      out.set(chirpId, {
+        id, chirpId, mask: Number(pick(m, 'mask', 1) ?? 0), author: String(pick(m, 'author', 2) ?? ''),
+        time: Number(pick(m, 'time', 3) ?? 0), edited: Number(pick(m, 'edited', 4) ?? 0),
+        kind: Number(pick(m, 'kind', 6) ?? 0), ratings: count,
+        body: String((await q(notes, 'body', BigInt(id))) ?? ''),
+        score: sc.score, helpful: true,
+      });
+    }));
+  }
+  return out;
+}
+
+async function myMask(): Promise<number> {
+  const s = await session().catch(() => null);
+  if (!s) return 0;
+  return Number((await q(s.masks, 'maskOf', s.h160)) ?? 0);
+}
+
+export function addNote(chirpId: number, mask: number, kind: number, body: string): Promise<Ok | Fail> {
+  return send('notes', 'add', [BigInt(chirpId), BigInt(mask), kind, body.slice(0, 700)]);
+}
+export function rateNote(id: number, mask: number, value: number): Promise<Ok | Fail> {
+  return send('notes', 'rate', [BigInt(id), BigInt(mask), value]);
+}
+
 /* ------------------------------------------------------------------- writes */
 
 /**
@@ -568,7 +936,7 @@ export async function suggestedName(): Promise<string> {
  * same origin, or it would price the call for the wrong account.
  */
 async function send(
-  which: 'masks' | 'chirp' | 'handles',
+  which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp',
   method: string,
   args: unknown[],
 ): Promise<Ok | Fail> {

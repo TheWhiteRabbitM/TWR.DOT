@@ -227,6 +227,29 @@ main { padding-bottom: 88px; }           /* clear the bottom bar */
 .more-btn:hover { background: var(--panel); }
 .more-btn:disabled { color: var(--ink-2); cursor: default; }
 
+/* An uploaded face fills the same box the generated one draws into, so a
+   picture arriving late does not move a single line of the timeline. */
+.pfp { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pfprow { display: flex; align-items: center; gap: 14px; margin: 6px 0 2px; }
+.pfpnow { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; flex: none; background: var(--panel); }
+.pfpnow svg, .pfpnow img { width: 100%; height: 100%; display: block; }
+
+/* ---------------------------------------------------------------- notes */
+/* Under the chirp, never over it: the post stays whole and readable, and the
+   note is plainly a separate voice rather than an edit to what was said. */
+.cnote { border: 1px solid var(--hair); border-radius: 14px; padding: 12px 14px; margin: 10px 0 4px; background: var(--panel); }
+.cnote.full { margin: 0 16px 10px; }
+.cnote-h { font-size: 13px; font-weight: 700; color: var(--ink-2); margin-bottom: 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.cnote-b { font-size: 15px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cnote-f { font-size: 13px; color: var(--ink-2); margin-top: 8px; }
+.cnote-f a { color: var(--blue); cursor: pointer; }
+.nstate { font-weight: 500; color: var(--ink-2); }
+.nstate.good { color: var(--green); }
+.nrate { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+.kindrow { display: flex; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.kindrow .on { border-color: var(--blue); color: var(--blue); }
+button.small { font-size: 13px; padding: 5px 12px; }
+
 .pushrow { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--hair); }
 .pushrow b { display: block; font-size: 15px; }
 .pushrow span { display: block; color: var(--ink-2); font-size: 13px; margin-top: 2px; }

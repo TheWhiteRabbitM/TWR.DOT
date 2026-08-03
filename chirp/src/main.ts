@@ -19,7 +19,9 @@ import {
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
   askNotifications, notify,
-  CHIRP, MASKS, type Post, type Me, type Who,
+  pictureOf, setPicture, clearPicture, renewPicture, forgetPicture,
+  notesOn, notedChirps, addNote, rateNote, rank,
+  CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note,
 } from './chain';
 
 const app = document.getElementById('app')!;
@@ -28,7 +30,36 @@ const esc = (s: string) =>
 
 /* ---- the mask, drawn as the contract draws it: seeded by the address ---- */
 const PAL = ['#4f8cff', '#a855f7', '#ec4899', '#22d3ee', '#2dd4bf', '#f59e0b', '#f472b6', '#818cf8', '#34d399', '#fb7185'];
-function avatar(addr: string): string {
+/** Pictures already fetched, so a redraw does not flash back to the generated
+ *  face. Populated in the background by wantPicture(). */
+const PIC = new Map<number, string>();
+const picWanted = new Set<number>();
+
+/** Fetch a face once, in the background, and redraw when it lands. Deliberately
+ *  not awaited by the renderer: a timeline must not wait on twenty images, and
+ *  a face that never arrives must cost nothing but the generated one. */
+let picTimer: ReturnType<typeof setTimeout> | null = null;
+function wantPicture(mask: number) {
+  if (picWanted.has(mask)) return;
+  picWanted.add(mask);
+  void pictureOf(mask).then((url) => {
+    if (!url) return;
+    PIC.set(mask, url);
+    // Coalesce: twenty faces landing together should cause one redraw, not twenty.
+    if (picTimer) return;
+    picTimer = setTimeout(() => { picTimer = null; render(); }, 120);
+  });
+}
+
+/** The face for a mask: the uploaded picture if we have it, and the generated
+ *  one otherwise — which is also what an expired picture falls back to, since
+ *  Bulletin forgets and the contract keeps pointing anyway. */
+function avatar(addr: string, mask?: number): string {
+  if (mask) {
+    const pic = PIC.get(mask);
+    if (pic) return `<img class="pfp" src="${pic}" alt="">`;
+    wantPicture(mask);
+  }
   const hex = (addr || '0x0').replace(/^0x/, '').padStart(40, '0').slice(0, 40);
   const bytes = new Uint8Array(20);
   for (let i = 0; i < 20; i++) bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16) || 0;
@@ -141,6 +172,13 @@ let confirmDelete: number | null = null;
  *  spliced into the feed: a timeline that reflows under the thumb loses your
  *  place, so the new ones wait behind a button, the way X does it. */
 let FRESH: Post[] = [];
+/** Chirps carrying a note that bridged — one pass over the notes contract per
+ *  refresh, rather than a lookup per card. */
+let NOTED = new Map<number, Note>();
+/** The notes on the thread being read, with their fitted scores. */
+let THNOTES: Note[] = [];
+/** The note being written or rated, if any. */
+let noteSheet: null | { chirpId: number; kind: number } = null;
 
 /** What you were writing, kept across a failed signature and a closed app. A
  *  post that costs a signature must not be able to eat the text you typed. */
@@ -193,7 +231,7 @@ function card(p: Post, big = false): string {
   return `<article class="chirp${big ? ' big' : ''}" data-open="${p.id}">
     ${repost ? `<div class="ctx">${I.repost}<span>${esc(nm(p.who, p.mask))} reposted</span></div>` : ''}
     <div class="row">
-      <div class="av" data-who="${shown.mask}">${avatar(shown.author)}</div>
+      <div class="av" data-who="${shown.mask}">${avatar(shown.author, shown.mask)}</div>
       <div class="grow">
         ${p.replyTo && !big ? replyingTo(p) : ''}
         <div class="head">
@@ -214,10 +252,30 @@ function card(p: Post, big = false): string {
           <span><b>${p.reposts}</b> reposts</span>
           <span><b>${p.likes}</b> likes</span>
         </div>` : ''}
+        ${noteStrip(p.id)}
         ${actions(p)}
       </div>
     </div>
   </article>`;
+}
+
+/**
+ * The note under a chirp, when one has bridged.
+ *
+ * It sits below the post and leaves the post alone: nothing is hidden and
+ * nothing is deleted, because the contract cannot remove a chirp and should not
+ * be able to. The claim it makes is deliberately narrow — that people who
+ * disagree with each other both found this helpful — because that is the only
+ * thing the model actually establishes.
+ */
+function noteStrip(chirpId: number): string {
+  const n = NOTED.get(chirpId);
+  if (!n) return '';
+  return `<div class="cnote" data-note="${n.id}">
+    <div class="cnote-h">${n.kind === 1 ? 'Readers added context they thought people would want to know' : 'Readers added context'}</div>
+    <div class="cnote-b">${rich(n.body)}</div>
+    <div class="cnote-f">Rated helpful by people who do not agree on much else. <a data-open="${chirpId}">See the ratings</a></div>
+  </div>`;
 }
 
 /** "Replying to @someone" — without it a reply in a thread reads as if it were
@@ -234,7 +292,12 @@ const list = (ps: Post[], empty: string) => (ps.length ? ps.map((p) => card(p)).
 
 function homeView(): string {
   const top = ALL.filter((p) => !p.replyTo);
-  const shown = tab === 'following' ? top.filter((p) => FOLLOW.has(p.mask)) : top;
+  // Following stays strictly chronological — that is the point of it, and X
+  // breaking that promise is the complaint people actually have. For you is
+  // ranked, and says so.
+  const shown = tab === 'following'
+    ? top.filter((p) => FOLLOW.has(p.mask))
+    : rank(top, FOLLOW, NOTED);
   return `<div class="tabs">
       <button class="tab${tab === 'foryou' ? ' on' : ''}" data-tab="foryou">For you</button>
       <button class="tab${tab === 'following' ? ' on' : ''}" data-tab="following">Following</button>
@@ -256,7 +319,7 @@ function searchView(): string {
 
 function personRow(w: Who): string {
   return `<div class="prow" data-who="${w.mask}">
-    <div class="av">${avatar('0x' + w.mask.toString(16).padStart(40, '0'))}</div>
+    <div class="av">${avatar('0x' + w.mask.toString(16).padStart(40, '0'), w.mask)}</div>
     <div class="grow"><div class="head"><span class="nm">${esc(nm(w))}</span>${w.verified ? TICK : ''}</div>
     <div class="at">${esc(at(w))} · <span class="tier t${w.tier}">${TIERS[w.tier]}</span></div></div>
   </div>`;
@@ -281,7 +344,7 @@ function profileView(): string {
   const { who, bio, telegram, x, followers, posts, isMe, iFollow } = PROF;
   const addr = posts[0]?.author ?? '0x' + who.mask.toString(16).padStart(40, '0');
   return `<section class="phead">
-    <div class="pavatar">${avatar(addr)}</div>
+    <div class="pavatar">${avatar(addr, who.mask)}</div>
     <div class="pact">${isMe
       ? '<button class="ghost" id="editprof">Edit profile</button>'
       : `<button class="${iFollow ? 'ghost' : 'primary'}" data-follow="${who.mask}">${iFollow ? 'Following' : 'Follow'}</button>`}</div>
@@ -319,9 +382,55 @@ function threadView(): string {
       `<div class="branch" style="--d:${Math.min(depth, 4)}">${card(r)}</div>` + branch(r.id, depth + 1)).join('');
   return TH.parents.map((p) => card(p)).join('')
     + (TH.post ? card(TH.post, true) : '')
+    + notesSection()
     + `<div class="sechead">Replies</div>`
     + (byParent.get(view.k === 'thread' ? view.id : 0)?.length ? branch(view.k === 'thread' ? view.id : 0, 0)
       : '<div class="note">No replies yet. Be the first.</div>');
+}
+
+/**
+ * The notes on the chirp being read, with what the model made of each.
+ *
+ * The score is shown rather than hidden. A note that has not reached enough
+ * ratings says so plainly instead of appearing to have failed, because "not
+ * enough people have looked at this" and "people looked and disagreed" are
+ * completely different facts and a single greyed-out state would conflate them.
+ */
+function notesSection(): string {
+  const id = view.k === 'thread' ? view.id : 0;
+  if (!id) return '';
+  const add = ME?.mask
+    ? `<button class="ghost small" id="addnote">Add context</button>`
+    : '';
+  if (!THNOTES.length) {
+    return `<div class="sechead">Context ${add}</div>
+      <div class="note">Nobody has added context to this chirp.</div>`;
+  }
+  const rows = THNOTES.map((n) => {
+    const state = n.helpful
+      ? '<span class="nstate good">Shown on the chirp</span>'
+      : n.score === undefined
+        ? `<span class="nstate">Needs more ratings — ${n.ratings} so far</span>`
+        : '<span class="nstate">Rated, but not across viewpoints</span>';
+    const rate = ME?.mask && n.mine === undefined && n.mask !== ME.mask
+      ? `<div class="nrate">
+          <button class="ghost small" data-rate="${n.id}" data-v="2">Helpful</button>
+          <button class="ghost small" data-rate="${n.id}" data-v="1">Somewhat</button>
+          <button class="ghost small" data-rate="${n.id}" data-v="0">Not helpful</button>
+        </div>`
+      : n.mine !== undefined
+        ? `<div class="nrate"><span class="nstate">You rated it ${['not helpful', 'somewhat', 'helpful'][n.mine]}.</span></div>`
+        : '';
+    return `<article class="cnote full">
+      <div class="cnote-h">${n.kind === 1 ? 'Says this chirp is misleading' : 'Adds context'} ${state}</div>
+      <div class="cnote-b">${rich(n.body)}</div>
+      <div class="cnote-f">by <a class="mention" data-who="${n.mask}">${esc(at(n.who, n.mask))}</a>
+        · ${n.ratings} rating${n.ratings === 1 ? '' : 's'}${n.score !== undefined ? ` · score ${n.score.toFixed(2)}` : ''}
+        ${n.edited ? ' · edited after ratings were cast' : ''}</div>
+      ${rate}
+    </article>`;
+  }).join('');
+  return `<div class="sechead">Context ${add}</div>${rows}`;
 }
 
 function gate(): string {
@@ -370,6 +479,20 @@ function overlay(): string {
   if (settingsOpen && ME) {
     return `<div class="scrim" id="scrim"><div class="pane">
       <div class="panehead"><b>Settings</b><button class="iconbtn" id="closepane">✕</button></div>
+      <label>Picture</label>
+      <div class="pfprow">
+        <div class="pfpnow">${avatar('0x' + ME.mask.toString(16).padStart(40, '0'), ME.mask)}</div>
+        <div>
+          <button class="ghost small" id="pickpfp">Choose a picture</button>
+          ${PIC.get(ME.mask) ? '<button class="ghost small" id="clearpfp">Remove</button>' : ''}
+          <input type="file" id="pfpfile" accept="image/*" hidden>
+        </div>
+      </div>
+      <p class="hint">Cropped square and shrunk to 256px here, then stored on the Bulletin chain — the app
+      uploads it for you, so you need no storage account of your own. Bulletin keeps data for about a
+      fortnight, so chirp quietly re-uploads the same picture each time you open it, which costs nothing
+      and needs no transaction. Stay away longer than that and you come back to the generated face until
+      you set one again.</p>
       <label>Public name</label>
       <input id="s_name" maxlength="40" value="${esc(ME.name)}" placeholder="the name people see">
       <button class="link" id="usepeople">use my People chain username</button>
@@ -400,6 +523,22 @@ function overlay(): string {
             contract function gated on ownership of something only the real account holds.</p>`}
       <button class="primary wide" id="savep">Save on chain</button>
       <p class="hint">The name is yours to choose and proves nothing — which is exactly why the tick is reserved for the .dot the contract verified.</p>
+    </div></div>`;
+  }
+  if (noteSheet && ME?.mask) {
+    return `<div class="scrim" id="scrim"><div class="pane">
+      <div class="panehead"><b>Add context</b><button class="iconbtn" id="closepane">✕</button></div>
+      <p class="hint">A note is only shown on the chirp if people who normally disagree with each other
+      both rate it helpful. Votes alone do not do it — a note the majority likes and the minority rejects
+      stays here, where you are reading it now.</p>
+      <label>What kind</label>
+      <div class="kindrow">
+        <button class="ghost small${noteSheet.kind === 0 ? ' on' : ''}" data-kind="0">Adds context</button>
+        <button class="ghost small${noteSheet.kind === 1 ? ' on' : ''}" data-kind="1">Says it is misleading</button>
+      </div>
+      <label>Your note</label>
+      <textarea id="notebody" maxlength="700" rows="6" placeholder="What is missing, and where can it be checked? A source carries more than an opinion."></textarea>
+      <button class="primary wide" id="savenote">Publish the note</button>
     </div></div>`;
   }
   if (confirmDelete) {
@@ -523,7 +662,7 @@ function attachMentions(ta: HTMLTextAreaElement, box: HTMLElement) {
     if (!matches.length) return close();
     box.hidden = false;
     box.innerHTML = matches.map((w, i) => `<button class="mrow${i === sel ? ' on' : ''}" data-pick="${i}" role="option" aria-selected="${i === sel}">
-        <span class="mav">${avatar('0x' + w.mask.toString(16).padStart(40, '0'))}</span>
+        <span class="mav">${avatar('0x' + w.mask.toString(16).padStart(40, '0'), w.mask)}</span>
         <span class="mnm">${esc(nm(w))}</span><span class="mat">${esc(at(w))}</span>
       </button>`).join('');
     box.querySelectorAll<HTMLElement>('[data-pick]').forEach((b) =>
@@ -781,6 +920,56 @@ function wire() {
     render();
   }));
   document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
+
+  /* ------------------------------------------------------------- pictures */
+  document.getElementById('pickpfp')?.addEventListener('click', () => document.getElementById('pfpfile')?.click());
+  document.getElementById('pfpfile')?.addEventListener('change', async (e) => {
+    const f = (e.target as HTMLInputElement).files?.[0];
+    if (!f || !ME?.mask) return;
+    flash = { text: 'Preparing the picture…' }; render();
+    const bytes = await squareWebp(f).catch(() => null);
+    if (!bytes) { flash = { text: 'That file could not be read as an image.', bad: true }; return render(); }
+    flash = { text: 'Uploading…' }; render();
+    const r = await setPicture(ME.mask, bytes);
+    if (r.ok) { PIC.set(ME.mask, 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes))); flash = { text: 'Picture set.' }; }
+    else flash = { text: r.why, bad: true };
+    render();
+  });
+  document.getElementById('clearpfp')?.addEventListener('click', async () => {
+    if (!ME?.mask) return;
+    const r = await clearPicture(ME.mask);
+    if (r.ok) { PIC.delete(ME.mask); picWanted.delete(ME.mask); forgetPicture(ME.mask); flash = { text: 'Back to the generated face.' }; }
+    else flash = { text: r.why, bad: true };
+    render();
+  });
+
+  /* ---------------------------------------------------------------- notes */
+  document.getElementById('addnote')?.addEventListener('click', () => {
+    if (view.k === 'thread') { noteSheet = { chirpId: view.id, kind: 0 }; render(); }
+  });
+  app.querySelectorAll<HTMLElement>('[data-kind]').forEach((b) => b.addEventListener('click', () => {
+    if (noteSheet) { noteSheet.kind = Number(b.dataset.kind); render(); }
+  }));
+  document.getElementById('savenote')?.addEventListener('click', async () => {
+    const ta = document.getElementById('notebody') as HTMLTextAreaElement | null;
+    const body = ta?.value.trim() ?? '';
+    if (!body || !noteSheet || !ME?.mask) return;
+    flash = { text: 'Publishing the note…' }; render();
+    const r = await addNote(noteSheet.chirpId, ME.mask, noteSheet.kind, body);
+    noteSheet = null;
+    flash = r.ok ? { text: 'Note published.' } : { text: r.why, bad: true };
+    if (r.ok) await refreshNotes();
+    render();
+  });
+  app.querySelectorAll<HTMLElement>('[data-rate]').forEach((b) => b.addEventListener('click', async () => {
+    if (!ME?.mask) return;
+    const id = Number(b.dataset.rate), v = Number(b.dataset.v);
+    flash = { text: 'Recording your rating…' }; render();
+    const r = await rateNote(id, ME.mask, v);
+    flash = r.ok ? { text: 'Rated. It cannot be changed — that is what stops people waiting to see which way it goes.' } : { text: r.why, bad: true };
+    if (r.ok) await refreshNotes();
+    render();
+  }));
   document.getElementById('askpush')?.addEventListener('click', async () => {
     const ok = await askNotifications();
     push.set(ok ? 'on' : 'off');
@@ -802,17 +991,48 @@ async function refresh() {
   ALL = await loadAll(page).catch((e) => { loadError = String(e?.message ?? e).slice(0, 120) || 'The chain did not answer.'; return ALL; });
   if (view.k === 'people' || view.k === 'profile') CONN = await connections(view.mask).catch(() => CONN);
   if (view.k === 'thread') TH = await thread(view.id).catch(() => TH);
-  if (view.k === 'profile') PROF = await profile(view.mask).catch(() => PROF);
+  // ALL is handed on rather than re-read: both of these used to fetch the whole
+  // timeline again, so a refresh cost it two or three times over.
+  if (view.k === 'profile') PROF = await profile(view.mask, ALL).catch(() => PROF);
   if (view.k === 'search' && !PEOPLE.length) PEOPLE = await people().catch(() => []);
   if (view.k === 'notif') {
-    NOTIF = await notifications(ME?.mask ?? 0).catch(() => NOTIF);
+    NOTIF = await notifications(ME?.mask ?? 0, ALL).catch(() => NOTIF);
     if (NOTIF.length) seen.set(Math.max(seen.get(), ...NOTIF.map((p) => p.id)));
   } else if (ME?.mask) {
-    NOTIF = await notifications(ME.mask).catch(() => NOTIF); // keep the badge honest
+    NOTIF = await notifications(ME.mask, ALL).catch(() => NOTIF); // keep the badge honest
   }
+  await refreshNotes().catch(() => undefined);
   if (ME?.mask) FOLLOW = await following().catch(() => FOLLOW);
   busy = false;
   render();
+}
+
+/**
+ * Any photo becomes a 256px square WebP, here on the device.
+ *
+ * The crop is centred rather than offered as a control: a picker with handles is
+ * a lot of interface for a 40px circle. 256 is the size the biggest avatar on
+ * the page is drawn at, doubled for a retina screen, and nothing is served by
+ * uploading more — Bulletin has a quota and this has to be renewed forever.
+ */
+async function squareWebp(file: File, size = 256): Promise<Uint8Array> {
+  const bmp = await createImageBitmap(file);
+  const side = Math.min(bmp.width, bmp.height);
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const ctx = c.getContext('2d')!;
+  ctx.drawImage(bmp, (bmp.width - side) / 2, (bmp.height - side) / 2, side, side, 0, 0, size, size);
+  bmp.close();
+  const blob: Blob = await new Promise((res, rej) =>
+    c.toBlob((b) => (b ? res(b) : rej(new Error('encode failed'))), 'image/webp', 0.85));
+  return new Uint8Array(await blob.arrayBuffer());
+}
+
+/** Re-read the notes for whatever is on screen. Kept apart from refresh() so a
+ *  rating does not also re-fetch the entire timeline. */
+async function refreshNotes() {
+  NOTED = await notedChirps().catch(() => NOTED);
+  if (view.k === 'thread') THNOTES = await notesOn(view.id).catch(() => THNOTES);
 }
 
 /* ---------------------------------------------------------------- live feed */
@@ -833,13 +1053,13 @@ function showFresh(scroll = true) {
 
 async function poll() {
   if (document.visibilityState !== 'visible') return;
-  if (busy || sheet || settingsOpen) return;
-  // Replies to you are worth knowing about wherever you are in the app; only
-  // the timeline itself is a home-screen concern.
-  if (ME?.mask) { NOTIF = await notifications(ME.mask).catch(() => NOTIF); await announce(); }
-  if (view.k !== 'home') return render();
+  if (busy || sheet || settingsOpen || noteSheet) return;
   const fresh = await loadAll(page).catch(() => null);
   if (!fresh) return;                       // a quiet network is not news
+  // Replies to you are worth knowing about wherever you are in the app, and they
+  // are a slice of the feed we just read — not a second read of it.
+  if (ME?.mask) { NOTIF = await notifications(ME.mask, fresh).catch(() => NOTIF); await announce(); }
+  if (view.k !== 'home') { ALL = fresh; return render(); }
   if (busy || sheet || view.k !== 'home') return;  // it may have changed while we waited
   const known = new Set(ALL.map((p) => p.id));
   const added = fresh.filter((p) => !known.has(p.id) && !p.replyTo);
@@ -896,4 +1116,8 @@ view = viewOf(location.hash);
   // shared thread, someone's profile — has to arrive with ITS data, not with an
   // empty shell and a timeline nobody asked for.
   await refresh();
+  // Push your picture's retention window back. Content-addressed, so the same
+  // bytes give the same key and the contract still points at it: no transaction,
+  // no chain write, and it is the whole reason a picture survives at all.
+  if (ME?.mask) void renewPicture(ME.mask);
 })();
