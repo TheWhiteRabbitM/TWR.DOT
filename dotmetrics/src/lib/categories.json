@@ -483,6 +483,26 @@
     "confidence": "none",
     "why": []
   },
+  "my-first-app": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "my-first-page": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "page~"
+    ]
+  },
+  "my-tutorial-app": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "na87u9srwgblr61": {
     "category": "other",
     "source": "unclassified",
@@ -695,6 +715,12 @@
       "api~"
     ]
   },
+  "polkaroulette00": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "proofoftake": {
     "category": "social",
     "source": "derived:manifest",
@@ -847,6 +873,14 @@
     "confidence": "medium",
     "why": [
       "verified"
+    ]
+  },
+  "tutorial-deploy": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "deploy~"
     ]
   },
   "waldgeist": {

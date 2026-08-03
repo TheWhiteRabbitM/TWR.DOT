@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11776072,
-  "updatedAt": "2026-08-03T20:02:54.994Z",
+  "lastBlock": 11778797,
+  "updatedAt": "2026-08-03T21:33:37.187Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "3360d5cb8eed53edb4bfb3dab1b862e1f6b137faa4a0afc0c18bd068ba2d0b87",
-    "cid": "bafybeicy5n4iwi3wbijhhiswvu2t3btvcxjyieehx274e7a2x3zjikeqbm",
-    "uploadedAt": "2026-08-03T20:08:15.877Z"
+    "digest": "93ab7fbd5c7e3ac6ebdc5eecabbfd5b96fa3fe2af0edbd84f902bba57e193c62",
+    "cid": "bafybeiaysbgjdrmrp53tnpsq7rc5r2ja4efagaltxvfqktlvwjps4af6ku",
+    "uploadedAt": "2026-08-03T21:38:27.856Z"
   },
   "sitePublish": {
-    "treeHash": "bd441bfec81c65d840ab03873701fa41bce9ed4cd50bd9c0e3a8aa2b340efb48",
-    "publishedAt": "2026-08-03T20:10:30.668Z"
+    "treeHash": "c9b68913a050556d0923bae59b9047429dbcee1f7d7269ee63f6a24f00ea8c47",
+    "publishedAt": "2026-08-03T21:40:09.536Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-03T20:07:05.000Z",
+    "updatedAt": "2026-08-03T21:37:23.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -122,7 +122,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-03T20:07:05.000Z",
+    "updatedAt": "2026-08-03T21:37:23.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -240,9 +240,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiglk6dvvuqpftplvotebmjluaazs7vbhsa2ig34albmvx6lueulxq",
-        "updateCount": 47,
-        "changedAt": 1785787625,
+        "contenthash": "bafybeicwj5es4c4stzko4mptome7nmnzrpmkyfghcmetnkf2xurmia4ae4",
+        "updateCount": 48,
+        "changedAt": 1785793043,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -268,9 +268,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeic2y3sfnt7mtbr7lqbe7pefw2i3mlrsouewjh74lsenee3gaezz64",
-        "updateCount": 33,
-        "changedAt": 1785780816,
+        "contenthash": "bafybeicttjfwwcwg4ylbyqpltohkis4rd5i3bofyw6epmwk4q3czklq24e",
+        "updateCount": 34,
+        "changedAt": 1785793043,
         "live": "alive"
       },
       "dragon-realm": {
@@ -432,9 +432,9 @@
         "live": "alive"
       },
       "my-dotter": {
-        "contenthash": "bafybeihi7tck24q6gjws4yzfuvk46bneiz2wsafvdg6m73zgfvtymkrs2q",
-        "updateCount": 2,
-        "changedAt": 1785787625,
+        "contenthash": "bafybeic54eapiih3pn2ocshlpiukq7xgse7nwldlzv5ozceybmdci3f6ye",
+        "updateCount": 3,
+        "changedAt": 1785793043,
         "live": "alive"
       },
       "my-first-app": {
@@ -601,8 +601,9 @@
         "live": "alive"
       },
       "polkaroulette00": {
-        "contenthash": "bafybeienh3lvhqydlxqezdfyd3ko6adn7zqlo2d3tqf32f66zpnvujcj2q",
-        "updateCount": 0,
+        "contenthash": "bafybeihugrtfclanymtgyywmauxgc6irs4tfjseaahpzfooaplebymkjiq",
+        "updateCount": 1,
+        "changedAt": 1785793043,
         "live": "alive"
       },
       "proofoftake": {
