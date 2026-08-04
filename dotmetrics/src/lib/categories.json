@@ -1,4 +1,16 @@
 {
+  "aaaaaaaaa": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "adventure": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "ajedreztest01": {
     "category": "other",
     "source": "unclassified",
@@ -13,6 +25,12 @@
     "confidence": "declared",
     "why": []
   },
+  "archelabs": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "ascendyendor00": {
     "category": "games",
     "source": "derived:manifest",
@@ -20,6 +38,24 @@
     "why": [
       "roguelike"
     ]
+  },
+  "bbbbbbbbb": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "blueprint": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "broadside": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "buildboard01": {
     "category": "social",
@@ -70,6 +106,12 @@
     "confidence": "none",
     "why": []
   },
+  "ccccccccc": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "chainpulse": {
     "category": "explorers",
     "source": "derived:manifest",
@@ -105,6 +147,14 @@
     "confidence": "medium",
     "why": [
       "community"
+    ]
+  },
+  "community": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "community~"
     ]
   },
   "compute-flux": {
@@ -159,6 +209,12 @@
     "confidence": "none",
     "why": []
   },
+  "ddddddddd": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "devnet-atlas": {
     "category": "explorers",
     "source": "derived:manifest",
@@ -176,6 +232,12 @@
       "probe",
       "clock"
     ]
+  },
+  "discovery": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "discreetly": {
     "category": "identity",
@@ -197,6 +259,18 @@
       "page~",
       "docs~"
     ]
+  },
+  "domain-app": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "domainservice": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "doomarcade00": {
     "category": "games",
@@ -255,6 +329,12 @@
     "why": [
       "explorer~"
     ]
+  },
+  "dotfinder": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "dotify-test01": {
     "category": "media",
@@ -318,6 +398,12 @@
       "lives~"
     ]
   },
+  "eeeeeeeee": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "eternalise-notary": {
     "category": "identity",
     "source": "derived:app-text",
@@ -333,6 +419,12 @@
     "why": [
       "notary~"
     ]
+  },
+  "fffffffff": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "flowfarm-staking": {
     "category": "finance",
@@ -362,6 +454,12 @@
     "why": [
       "game~"
     ]
+  },
+  "ggggggggg": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "giganetwork": {
     "category": "other",
@@ -451,6 +549,24 @@
       "bulletin~"
     ]
   },
+  "hhhhhhhhh": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "hydration": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "iiiiiiiii": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "imthebest": {
     "category": "other",
     "source": "unclassified",
@@ -483,7 +599,37 @@
       "map~"
     ]
   },
+  "jjjjjjjjj": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "kkkkkkkkk": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "lanzadera": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "launchpad": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "lighthouse": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "lllllllll": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -515,6 +661,12 @@
       "chat~",
       "message~"
     ]
+  },
+  "mmmmmmmmm": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "my-cool-app": {
     "category": "other",
@@ -563,6 +715,12 @@
     "confidence": "none",
     "why": []
   },
+  "neo-app-demo": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "nesonchain": {
     "category": "games",
     "source": "owner",
@@ -570,6 +728,12 @@
     "why": []
   },
   "neversettled": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "nnnnnnnnn": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -657,6 +821,12 @@
       "widgets"
     ]
   },
+  "ooooooooo": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "open-docs": {
     "category": "other",
     "source": "unclassified",
@@ -682,6 +852,12 @@
       "escrow~",
       "marketplace~"
     ]
+  },
+  "paperplane": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "parlement-populaire": {
     "category": "other",
@@ -787,6 +963,12 @@
     "confidence": "none",
     "why": []
   },
+  "ppppppppp": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "proofoftake": {
     "category": "social",
     "source": "derived:manifest",
@@ -797,6 +979,12 @@
     ]
   },
   "provenveil": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "qqqqqqqqq": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -837,6 +1025,12 @@
       "probe~"
     ]
   },
+  "rrrrrrrrr": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "scytaledeploy": {
     "category": "other",
     "source": "unclassified",
@@ -858,6 +1052,18 @@
     "why": []
   },
   "squadbuilder": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "sssssssss": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "stargazer": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -941,6 +1147,12 @@
       "verified"
     ]
   },
+  "ttttttttt": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "tutorial-deploy": {
     "category": "other",
     "source": "unclassified",
@@ -949,7 +1161,19 @@
       "deploy~"
     ]
   },
+  "uuuuuuuuu": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "vault-control": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "vvvvvvvvv": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -975,6 +1199,18 @@
       "fortune~"
     ]
   },
+  "wonderland": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "workspace": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "wudcommunity": {
     "category": "social",
     "source": "derived:manifest",
@@ -983,6 +1219,18 @@
       "chat~",
       "community"
     ]
+  },
+  "wwwwwwwww": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "xxxxxxxxx": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "yechops-preview": {
     "category": "identity",
@@ -1001,6 +1249,18 @@
       "message~",
       "guestbook~"
     ]
+  },
+  "yyyyyyyyy": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "zhuzhiliao": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "zkdot-devnet": {
     "category": "other",

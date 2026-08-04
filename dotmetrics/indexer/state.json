@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11809990,
-  "updatedAt": "2026-08-04T15:40:45.512Z",
+  "lastBlock": 11814028,
+  "updatedAt": "2026-08-04T18:07:19.785Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "a1c5407ea6ec635d6eddd1cde9cab3d7fdb94b1873bfe5daad32e2d99a77e7c9",
-    "cid": "bafybeiaugvmcbnb2zdycm4jpd252gc2fokbjtxt7ioxexs2bnoii2hbu3e",
-    "uploadedAt": "2026-08-04T15:45:53.090Z"
+    "digest": "b6e172471e15d67e3647fa25b831e69c9f1e9bba9c0b82b77127df957d85071a",
+    "cid": "bafybeibtrkmmvpt3pecnuco7wqn5i2oafccxw7peg45agh43ge4aockxwm",
+    "uploadedAt": "2026-08-04T18:12:37.212Z"
   },
   "sitePublish": {
-    "treeHash": "e171898b9412c5201f4c27d93d1f003ec4530dde3fbf938d0bbd60f8fa1ab36a",
-    "publishedAt": "2026-08-04T15:47:51.246Z"
+    "treeHash": "e65b10016f6f90f2cb2a0d86396830434a40e10d184179dea7c7540fb9931d0a",
+    "publishedAt": "2026-08-04T18:14:15.003Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-04T15:44:42.000Z",
+    "updatedAt": "2026-08-04T18:11:16.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -142,13 +142,16 @@
       "vault-control": "alive",
       "wonderland": "alive",
       "workspace": "alive",
-      "zhuzhiliao": "alive"
+      "zhuzhiliao": "alive",
+      "domain-app": "alive",
+      "domainservice": "alive",
+      "hello-world-pricey-app": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-04T15:44:42.000Z",
+    "updatedAt": "2026-08-04T18:11:17.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -194,8 +197,9 @@
         "live": "alive"
       },
       "broadside": {
-        "contenthash": "bafybeihxf6rcwm44iglvv6winox6c6u7bnohcv4ddftjonqfxfoduitwae",
-        "updateCount": 0,
+        "contenthash": "bafybeibmes6uy5oladgdsvmy6rt6t4qyl4yln4bwdmrsarlcqhzm5otafu",
+        "updateCount": 1,
+        "changedAt": 1785867077,
         "live": "alive"
       },
       "buildboard01": {
@@ -298,6 +302,11 @@
         "changedAt": 1785858282,
         "live": "alive"
       },
+      "dashboard": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "ddddddddd": {
         "contenthash": "",
         "updateCount": 0,
@@ -331,14 +340,14 @@
         "live": "alive"
       },
       "domain-app": {
-        "contenthash": "",
+        "contenthash": "bafybeihwmi22p23wo4ux7puzwjwwdjiudx5tfqn5vtm5yjjnv6w77h5sla",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "domainservice": {
-        "contenthash": "",
+        "contenthash": "bafybeihwmi22p23wo4ux7puzwjwwdjiudx5tfqn5vtm5yjjnv6w77h5sla",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "doomarcade00": {
         "contenthash": "bafybeihtvdbm6a2g4wjd56rqtj5vqfmrgnnrwdv3pqj3bfhnbj6kfhl6xm",
@@ -352,9 +361,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiamw3p4xsppqgasxjd4u2c4nvt3vnjmnuaq5giillbs3i2fibqlg4",
-        "updateCount": 54,
-        "changedAt": 1785858282,
+        "contenthash": "bafybeievglwajfsr5qkluoq563xtwu7tu2n2ucxuvno66ucz7e56aecesu",
+        "updateCount": 55,
+        "changedAt": 1785867077,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -379,15 +388,15 @@
         "live": "alive"
       },
       "dotify-test01": {
-        "contenthash": "bafybeid3qfzlr3eyrot2p6qe2hmo7mqv6kdo7pqvmhnxbjwam3sqnhvabe",
-        "updateCount": 9,
-        "changedAt": 1785858282,
+        "contenthash": "bafybeihgijqigs4vhtuang6cycjjy43p544fdyjqt4rrabbd7bv5cavnbu",
+        "updateCount": 10,
+        "changedAt": 1785867077,
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeiencxjtjm5en53ri7ahmj2apysnwsizrvr2l3jpi4wkk7xmixuwzm",
-        "updateCount": 38,
-        "changedAt": 1785858282,
+        "contenthash": "bafybeicdhvfpejohpnpvssxqepyayuligubdsuvesg4lyvubm4ybdrbyha",
+        "updateCount": 39,
+        "changedAt": 1785867077,
         "live": "alive"
       },
       "doyoulike": {
@@ -503,9 +512,9 @@
         "live": "alive"
       },
       "hello-world-pricey-app": {
-        "contenthash": "",
+        "contenthash": "bafybeie2u7iawonmoz5eieqqcqng4do4v4q7fc6kxotlevbzhmw2zgxlvq",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "hellodotworld": {
         "contenthash": "bafybeihfc5hr5bkjyhkmxc35toqqgbayudcmefgh37licprsylamapf4ga",
@@ -1059,6 +1068,11 @@
         "updateCount": 1,
         "changedAt": 1785470574,
         "live": "alive"
+      },
+      "zzzzzzzzz": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       }
     }
   }

@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1785858282,
-  "count": 172,
+  "generatedAt": 1785867077,
+  "count": 174,
   "apps": [
+    {
+      "label": "dashboard",
+      "domain": "dashboard.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785858420,
+      "url": "https://dashboard.dev-dot.li"
+    },
+    {
+      "label": "zzzzzzzzz",
+      "domain": "zzzzzzzzz.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857964,
+      "url": "https://zzzzzzzzz.dev-dot.li"
+    },
     {
       "label": "yyyyyyyyy",
       "domain": "yyyyyyyyy.dot",
@@ -79,7 +97,7 @@
       "domain": "domain-app.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785856524,
       "url": "https://domain-app.dev-dot.li"
     },
@@ -88,7 +106,7 @@
       "domain": "domainservice.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785856428,
       "url": "https://domainservice.dev-dot.li"
     },
@@ -655,7 +673,7 @@
       "domain": "hello-world-pricey-app.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785611052,
       "url": "https://hello-world-pricey-app.dev-dot.li"
     },

@@ -4,7 +4,21 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Tue, 04 Aug 2026 15:44:42 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 04 Aug 2026 18:11:17 GMT</lastBuildDate>
+    <item>
+      <title>dashboard</title>
+      <link>https://dashboard.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">dashboard</guid>
+      <pubDate>Tue, 04 Aug 2026 15:47:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>zzzzzzzzz</title>
+      <link>https://zzzzzzzzz.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">zzzzzzzzz</guid>
+      <pubDate>Tue, 04 Aug 2026 15:39:24 GMT</pubDate>
+    </item>
     <item>
       <title>yyyyyyyyy</title>
       <link>https://yyyyyyyyy.dev-dot.li</link>
@@ -340,20 +354,6 @@
       <description></description>
       <guid isPermaLink="false">gametheory</guid>
       <pubDate>Tue, 04 Aug 2026 08:07:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>chirpwatch</title>
-      <link>https://chirpwatch.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">chirpwatch</guid>
-      <pubDate>Tue, 04 Aug 2026 07:54:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>pas-faucet-smoke</title>
-      <link>https://pas-faucet-smoke.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">pas-faucet-smoke</guid>
-      <pubDate>Tue, 04 Aug 2026 03:46:12 GMT</pubDate>
     </item>
   </channel>
 </rss>
