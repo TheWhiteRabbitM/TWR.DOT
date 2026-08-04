@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11820364,
-  "updatedAt": "2026-08-04T21:39:32.455Z",
+  "lastBlock": 11823414,
+  "updatedAt": "2026-08-04T23:22:26.342Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "8d9d3124e9e0cb4f132660062482730bafdf1b53680911685f90ab2f9a305c4a",
-    "cid": "bafybeihdolxsmkdctrxmypytmlzp53xkbsjpesmojh5nlilz4kqxr465d4",
-    "uploadedAt": "2026-08-04T21:44:54.503Z"
+    "digest": "0c61430a0b511a21ae7e0c279735bf6bb619350f96bf2623e6d0965758a06570",
+    "cid": "bafybeifyo3yn2gztqj5n5vzwuzvuv7l5sngqkkjxcyixzhtuyzk75mbzsq",
+    "uploadedAt": "2026-08-04T23:29:49.288Z"
   },
   "sitePublish": {
-    "treeHash": "9665189a649dbd9d45b02c496c648faec2c3ef31a4cbb6b3c406058e3dd3d70c",
-    "publishedAt": "2026-08-04T21:46:48.565Z"
+    "treeHash": "a607229c146219cb747eca4e7b9ac2f97e7d60c693cadf96c028eeff313c95c7",
+    "publishedAt": "2026-08-04T23:31:47.142Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-04T21:43:32.000Z",
+    "updatedAt": "2026-08-04T23:28:16.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -152,7 +152,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-04T21:43:33.000Z",
+    "updatedAt": "2026-08-04T23:28:17.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -249,9 +249,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeib3bwsdchdi3z3h4abgtea6xt2pwlnk6ehc3ucomunby6kbpacr5m",
-        "updateCount": 11,
-        "changedAt": 1785879813,
+        "contenthash": "bafybeif72syrfahhc4yidnzf6ssaztyzu3wmgzuvdmsd5w45fgh72vbu5q",
+        "updateCount": 12,
+        "changedAt": 1785886097,
         "live": "alive"
       },
       "chirpwatch": {
@@ -362,9 +362,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeigwuwkbb36mmu26cga3uskyool6abmcpxxzqp3qfhd6cy2rpom5yu",
-        "updateCount": 57,
-        "changedAt": 1785879813,
+        "contenthash": "bafybeiagpt25oc6cvtoxoyud3hxgs2lhf6fk7ndlmfgtfgthbsfu7nny7a",
+        "updateCount": 58,
+        "changedAt": 1785886097,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -395,9 +395,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeihjdmpexcb223vyufsjgotxflnn6asg2qrtdy3hmcxkjupdsujuiq",
-        "updateCount": 41,
-        "changedAt": 1785879813,
+        "contenthash": "bafybeicbnbwbsd76luoulz263tshhjqxcsqtyt3rjbsjaelqfdlwpu6ufe",
+        "updateCount": 42,
+        "changedAt": 1785886097,
         "live": "alive"
       },
       "doyoulike": {
@@ -1007,8 +1007,9 @@
         "live": "alive"
       },
       "waldmonster": {
-        "contenthash": "bafybeic6zlphpxf3jhjttcdq4fgxxlgc3vi6t5t7mhys27avbn4v523pum",
-        "updateCount": 0,
+        "contenthash": "bafybeihbpqqstbdgrgyb6sanwr7ighhwtq6pkr6q5w2h6qiggv4646d2y4",
+        "updateCount": 1,
+        "changedAt": 1785886097,
         "live": "alive"
       },
       "web3poker": {

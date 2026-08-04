@@ -1,13 +1,13 @@
 {
-  "generatedAt": 1785879813,
+  "generatedAt": 1785886097,
   "count": 175,
   "apps": [
     {
       "label": "waldmonster",
       "domain": "waldmonster.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "WALDMONSTER",
+      "description": "9-oscillator drone workstation & groovebox for spherical soundscapes.",
+      "tier": 0,
       "firstSeenAt": 1785867516,
       "url": "https://waldmonster.dev-dot.li"
     },

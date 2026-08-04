@@ -130,10 +130,12 @@
     ]
   },
   "chirponchain": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "post"
+    ]
   },
   "chirpwatch": {
     "category": "other",
