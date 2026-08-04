@@ -1421,7 +1421,7 @@ function wire() {
   /* ----------------------------------------------------------------- probe */
   document.getElementById('runprobe')?.addEventListener('click', async () => {
     PROBE = []; probing = true; render();
-    await runProbe((f) => { PROBE = [...PROBE, f]; render(); }).catch(() => undefined);
+    await runProbe((f) => { PROBE = [...PROBE, f]; render(); }, ACT?.real ?? ACT?.signer ?? ME?.address ?? '').catch(() => undefined);
     probing = false; render();
   });
   document.getElementById('copyprobe')?.addEventListener('click', async () => {

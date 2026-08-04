@@ -158,6 +158,41 @@ async function preimage(): Promise<Finding[]> {
   return out;
 }
 
+/**
+ * Can THIS person store on Bulletin?
+ *
+ * Issue #9 says apps cannot get storage authorised. That has been argued from
+ * failures — a publish that drew an unauthorised pool account, an upload that
+ * did not come back. There is a proper answer available:
+ * `checkAuthorization(address)` reads `TransactionStorage.Authorizations` and
+ * returns the quota, the remaining bytes and the expiry.
+ *
+ * A number beats an anecdote. If this says `authorized: false` for an ordinary
+ * account, that is the issue, stated in the chain's own terms.
+ */
+async function bulletinQuota(address: string): Promise<Finding> {
+  if (!address) return { what: 'Bulletin storage authorisation', result: 'unknown', detail: 'no account to ask about' };
+  try {
+    const cs = await import('@parity/product-sdk-cloud-storage');
+    // A read-only question, but the client wants a signer; a stub is enough,
+    // because checkAuthorization only queries storage.
+    const client = await (cs as any).CloudStorageClient.create({
+      environment: 'devnet',
+      signer: { publicKey: new Uint8Array(32), signTx: async () => new Uint8Array(), signBytes: async () => new Uint8Array() },
+    });
+    const r = await client.checkAuthorization(address);
+    const v = r?.value ?? r;
+    await client.destroy?.().catch(() => undefined);
+    return {
+      what: `Bulletin storage authorisation for ${address.slice(0, 10)}…`,
+      result: v?.authorized ? 'yes' : 'no',
+      detail: JSON.stringify(v, (_k, x) => (typeof x === 'bigint' ? x.toString() : x)),
+    };
+  } catch (e) {
+    return { what: 'Bulletin storage authorisation', result: 'unknown', detail: `threw: ${(e as Error)?.message}` };
+  }
+}
+
 /** Host storage: does it survive, and does it hold what we put in it? */
 async function storage(): Promise<Finding> {
   const h = await host();
@@ -180,7 +215,7 @@ async function storage(): Promise<Finding> {
 
 /** Everything, in order, with the permission asked BEFORE the things that
  *  depend on it — otherwise the image result means nothing. */
-export async function runProbe(onStep: (f: Finding) => void): Promise<Finding[]> {
+export async function runProbe(onStep: (f: Finding) => void, address = ''): Promise<Finding[]> {
   const all: Finding[] = [];
   const add = (f: Finding) => { all.push(f); onStep(f); };
 
@@ -196,6 +231,7 @@ export async function runProbe(onStep: (f: Finding) => void): Promise<Finding[]>
   for (const f of await imageVsFetch('https://i.giphy.com/3o7abKhOpu0NwenH3O.gif')) add(f);
   add(await navigate('https://polkadot.com'));
   for (const f of await preimage()) add(f);
+  add(await bulletinQuota(address));
   add(await storage());
   return all;
 }
