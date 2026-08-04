@@ -1220,7 +1220,18 @@ export type Why = { total: number; parts: { label: string; value: number }[] };
 export function rankWhy(
   p: Post, follow: Set<number>, noted: Map<number, Note>, sig: RankSignals = {}, now = Date.now() / 1000,
 ): Why {
-  const HALF_LIFE = 12 * 3600;
+  // Six hours, not twelve. At twelve, a chirp from yesterday afternoon had lost
+  // only half its weight while a chirp posted a minute ago had nothing to weigh
+  // at all — so the top of the feed was reliably eleven hours old. Measured
+  // before changing it: id 39, 11.4h old with six likes, scored 13.5; the
+  // newest chirp scored 1.
+  const HALF_LIFE = 6 * 3600;
+  /** A new chirp has no engagement yet, and waiting for some is how it never
+   *  gets any. So being new is itself worth something — a lot at first, gone
+   *  within a few hours. This is the term that was missing: without it the
+   *  ranking could only ever reward what had already been seen. */
+  const NEW_BONUS = 9;
+  const NEW_HALF_LIFE = 2 * 3600;
 
   const engagement = p.likes + p.replies * 2.5 + p.reposts * 2;
   const affinity = (follow.has(p.mask) ? 6 : 0) + (p.quoted && follow.has(p.quoted.mask) ? 2 : 0);
@@ -1245,15 +1256,18 @@ export function rankWhy(
   const conversation = p.replies >= 3 ? 3 : 0;
   const spammy = (p.body.match(/#/g)?.length ?? 0) > 4 || p.body.length < 4 ? 0.4 : 1;
 
-  const decay = Math.pow(0.5, Math.max(0, now - p.time) / HALF_LIFE);
+  const age = Math.max(0, now - p.time);
+  const decay = Math.pow(0.5, age / HALF_LIFE);
+  const fresh = NEW_BONUS * Math.pow(0.5, age / NEW_HALF_LIFE);
   const noteDrag = noted.has(p.id) ? 0.35 : 1;
 
   // +1 so a chirp with no engagement still ranks by recency rather than tying
   // at zero with every other silent one.
-  const base = engagement + affinity + reach + interest + conversation + 1;
+  const base = engagement + affinity + reach + interest + conversation + fresh + 1;
   return {
     total: base * decay * spammy * noteDrag,
     parts: [
+      { label: 'just posted', value: fresh },
       { label: 'engagement', value: engagement },
       { label: 'you follow them', value: affinity },
       { label: 'reach', value: reach },
@@ -1262,7 +1276,7 @@ export function rankWhy(
       { label: 'recency', value: decay },
       { label: 'context added', value: noteDrag },
       { label: 'thin or tag-stuffed', value: spammy },
-    ].filter((x) => x.value !== 0 && x.value !== 1),
+    ].filter((x) => Math.abs(x.value) > 0.01 && x.value !== 1),
   };
 }
 

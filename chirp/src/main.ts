@@ -188,7 +188,7 @@ let PROF: Awaited<ReturnType<typeof profile>> | null = null;
 let TH: Awaited<ReturnType<typeof thread>> = { parents: [], post: null, replies: [] };
 
 let view: View = { k: 'home' };
-let tab: 'foryou' | 'following' = 'foryou';
+let tab: 'foryou' | 'latest' | 'following' = 'foryou';
 /** Which slice of a profile is showing. X splits a profile the same way. */
 let ptab: 'chirps' | 'replies' | 'likes' = 'chirps';
 let sheet: null | { mode: 'new' | 'reply' | 'quote' | 'edit'; target?: Post } = null;
@@ -480,11 +480,18 @@ function homeView(): string {
   // Following stays strictly chronological — that is the point of it, and X
   // breaking that promise is the complaint people actually have. For you is
   // ranked, and says so.
+  // Three, not two. X has For you and Following, and Following is its
+  // chronological tab — but it is empty until you follow somebody, so on a small
+  // chain the only usable tab was the ranked one, and there was no way to just
+  // see what was posted last. Latest is that way.
   const shown = tab === 'following'
     ? top.filter((p) => FOLLOW.has(p.mask))
-    : rank(top, FOLLOW, NOTED, signals());
+    : tab === 'latest'
+      ? top   // ALL is read newest-id-first, so this is already chronological
+      : rank(top, FOLLOW, NOTED, signals());
   return `<div class="tabs">
       <button class="tab${tab === 'foryou' ? ' on' : ''}" data-tab="foryou">For you</button>
+      <button class="tab${tab === 'latest' ? ' on' : ''}" data-tab="latest">Latest</button>
       <button class="tab${tab === 'following' ? ' on' : ''}" data-tab="following">Following</button>
     </div>`
     + (FRESH.length ? `<button class="fresh-btn" id="showfresh">Show ${FRESH.length} new chirp${FRESH.length > 1 ? 's' : ''}</button>` : '')
@@ -1233,7 +1240,7 @@ function wire() {
   app.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.addEventListener('click', () => {
     // Switching tabs redraws the column anyway, so there is no place left to
     // lose: fold the held-back chirps in rather than throwing them away.
-    tab = b.dataset.tab as 'foryou' | 'following'; showFresh(false); render();
+    tab = b.dataset.tab as 'foryou' | 'latest' | 'following'; showFresh(false); render();
   }));
 
   const q = document.getElementById('q') as HTMLInputElement | null;
