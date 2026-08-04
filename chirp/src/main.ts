@@ -1400,11 +1400,14 @@ function overlay(): string {
         placeholder="Option ${i + 1}" maxlength="40" value="${esc(o)}">`).join('')}
       <div class="row">
         ${pollDraft.options.length < 4 ? '<button class="ghost small" id="polladd">Add option</button>' : ''}
-        <select id="polldur">
-          ${[[60, '1 hour'], [360, '6 hours'], [1440, '1 day'], [4320, '3 days'], [10080, '1 week']]
-            .map(([m, l]) => `<option value="${m}"${pollDraft!.minutes === m ? ' selected' : ''}>${l}</option>`).join('')}
-        </select>
         <button class="ghost small" id="polldrop">Remove poll</button>
+      </div>
+      <!-- Chips, not a native <select>. Our own pre-ship checklist says "no
+           <select>" because the shell renders one badly or not at all, and I
+           broke that rule this morning writing this very pane. -->
+      <div class="row seg">
+        ${([[60, '1 hour'], [360, '6 hours'], [1440, '1 day'], [4320, '3 days'], [10080, '1 week']] as const)
+          .map(([m, l]) => `<button class="ghost small${pollDraft!.minutes === m ? ' on' : ''}" data-dur="${m}">${l}</button>`).join('')}
       </div>
       <p class="hint">Every vote is a row in a contract, so the result is one anybody can add up
       themselves — including you, and including someone who does not believe it. The poll is created
@@ -2320,7 +2323,7 @@ async function attachExtras(chirpId: number): Promise<string[]> {
   }
   if (pollDraft) {
     const opts = [...document.querySelectorAll<HTMLInputElement>('.popt-in')].map((i) => i.value);
-    const mins = Number((document.getElementById('polldur') as HTMLSelectElement | null)?.value ?? pollDraft.minutes);
+    const mins = pollDraft.minutes;
     const r = await createPoll(chirpId, ME.mask, opts.length ? opts : pollDraft.options, mins)
       .catch(() => ({ ok: false, why: 'the poll was not created' } as const));
     said.push(r.ok ? 'poll created' : 'poll failed: ' + (('why' in r && r.why) || ''));
@@ -2366,9 +2369,14 @@ function bindExtras() {
   app.querySelectorAll<HTMLInputElement>('.popt-in').forEach((i) => i.addEventListener('input', () => {
     if (pollDraft) pollDraft.options[Number(i.dataset.oi)] = i.value;
   }));
-  document.getElementById('polldur')?.addEventListener('change', (e) => {
-    if (pollDraft) pollDraft.minutes = Number((e.target as HTMLSelectElement).value);
-  });
+  app.querySelectorAll<HTMLElement>('[data-dur]').forEach((b) => b.addEventListener('click', () => {
+    if (!pollDraft) return;
+    // Keep what has been typed: the pane redraws from state, so reading the
+    // inputs back first is what stops a duration tap wiping the options.
+    pollDraft.options = [...document.querySelectorAll<HTMLInputElement>('.popt-in')].map((i) => i.value);
+    pollDraft.minutes = Number(b.dataset.dur);
+    render();
+  }));
 
   /* --------------------------------------------------- composer: picture */
   //
