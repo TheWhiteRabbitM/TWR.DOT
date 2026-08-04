@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Tue, 04 Aug 2026 18:11:17 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 04 Aug 2026 20:06:52 GMT</lastBuildDate>
+    <item>
+      <title>waldmonster</title>
+      <link>https://waldmonster.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">waldmonster</guid>
+      <pubDate>Tue, 04 Aug 2026 18:18:36 GMT</pubDate>
+    </item>
     <item>
       <title>dashboard</title>
       <link>https://dashboard.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description>Independent on-chain opinion polls. Vote yes or no with your wallet.</description>
       <guid isPermaLink="false">doyoulike</guid>
       <pubDate>Tue, 04 Aug 2026 08:51:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>gametheory</title>
-      <link>https://gametheory.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">gametheory</guid>
-      <pubDate>Tue, 04 Aug 2026 08:07:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785867077,
-  "count": 174,
+  "generatedAt": 1785874012,
+  "count": 175,
   "apps": [
+    {
+      "label": "waldmonster",
+      "domain": "waldmonster.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785867516,
+      "url": "https://waldmonster.dev-dot.li"
+    },
     {
       "label": "dashboard",
       "domain": "dashboard.dot",
