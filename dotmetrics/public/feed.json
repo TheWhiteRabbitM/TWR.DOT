@@ -1,7 +1,394 @@
 {
-  "generatedAt": 1785846534,
-  "count": 129,
+  "generatedAt": 1785858282,
+  "count": 172,
   "apps": [
+    {
+      "label": "yyyyyyyyy",
+      "domain": "yyyyyyyyy.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857808,
+      "url": "https://yyyyyyyyy.dev-dot.li"
+    },
+    {
+      "label": "wwwwwwwww",
+      "domain": "wwwwwwwww.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857652,
+      "url": "https://wwwwwwwww.dev-dot.li"
+    },
+    {
+      "label": "vvvvvvvvv",
+      "domain": "vvvvvvvvv.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857484,
+      "url": "https://vvvvvvvvv.dev-dot.li"
+    },
+    {
+      "label": "uuuuuuuuu",
+      "domain": "uuuuuuuuu.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857340,
+      "url": "https://uuuuuuuuu.dev-dot.li"
+    },
+    {
+      "label": "ttttttttt",
+      "domain": "ttttttttt.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856992,
+      "url": "https://ttttttttt.dev-dot.li"
+    },
+    {
+      "label": "sssssssss",
+      "domain": "sssssssss.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856884,
+      "url": "https://sssssssss.dev-dot.li"
+    },
+    {
+      "label": "dotfinder",
+      "domain": "dotfinder.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785856740,
+      "url": "https://dotfinder.dev-dot.li"
+    },
+    {
+      "label": "rrrrrrrrr",
+      "domain": "rrrrrrrrr.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856692,
+      "url": "https://rrrrrrrrr.dev-dot.li"
+    },
+    {
+      "label": "domain-app",
+      "domain": "domain-app.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856524,
+      "url": "https://domain-app.dev-dot.li"
+    },
+    {
+      "label": "domainservice",
+      "domain": "domainservice.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856428,
+      "url": "https://domainservice.dev-dot.li"
+    },
+    {
+      "label": "qqqqqqqqq",
+      "domain": "qqqqqqqqq.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856344,
+      "url": "https://qqqqqqqqq.dev-dot.li"
+    },
+    {
+      "label": "ppppppppp",
+      "domain": "ppppppppp.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856248,
+      "url": "https://ppppppppp.dev-dot.li"
+    },
+    {
+      "label": "nnnnnnnnn",
+      "domain": "nnnnnnnnn.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856164,
+      "url": "https://nnnnnnnnn.dev-dot.li"
+    },
+    {
+      "label": "mmmmmmmmm",
+      "domain": "mmmmmmmmm.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856068,
+      "url": "https://mmmmmmmmm.dev-dot.li"
+    },
+    {
+      "label": "lllllllll",
+      "domain": "lllllllll.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855960,
+      "url": "https://lllllllll.dev-dot.li"
+    },
+    {
+      "label": "jjjjjjjjj",
+      "domain": "jjjjjjjjj.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855864,
+      "url": "https://jjjjjjjjj.dev-dot.li"
+    },
+    {
+      "label": "iiiiiiiii",
+      "domain": "iiiiiiiii.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855768,
+      "url": "https://iiiiiiiii.dev-dot.li"
+    },
+    {
+      "label": "hhhhhhhhh",
+      "domain": "hhhhhhhhh.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855672,
+      "url": "https://hhhhhhhhh.dev-dot.li"
+    },
+    {
+      "label": "ggggggggg",
+      "domain": "ggggggggg.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855576,
+      "url": "https://ggggggggg.dev-dot.li"
+    },
+    {
+      "label": "fffffffff",
+      "domain": "fffffffff.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855480,
+      "url": "https://fffffffff.dev-dot.li"
+    },
+    {
+      "label": "eeeeeeeee",
+      "domain": "eeeeeeeee.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855384,
+      "url": "https://eeeeeeeee.dev-dot.li"
+    },
+    {
+      "label": "ddddddddd",
+      "domain": "ddddddddd.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855288,
+      "url": "https://ddddddddd.dev-dot.li"
+    },
+    {
+      "label": "ccccccccc",
+      "domain": "ccccccccc.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855192,
+      "url": "https://ccccccccc.dev-dot.li"
+    },
+    {
+      "label": "bbbbbbbbb",
+      "domain": "bbbbbbbbb.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855096,
+      "url": "https://bbbbbbbbb.dev-dot.li"
+    },
+    {
+      "label": "xxxxxxxxx",
+      "domain": "xxxxxxxxx.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785854784,
+      "url": "https://xxxxxxxxx.dev-dot.li"
+    },
+    {
+      "label": "kkkkkkkkk",
+      "domain": "kkkkkkkkk.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785854688,
+      "url": "https://kkkkkkkkk.dev-dot.li"
+    },
+    {
+      "label": "aaaaaaaaa",
+      "domain": "aaaaaaaaa.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785854592,
+      "url": "https://aaaaaaaaa.dev-dot.li"
+    },
+    {
+      "label": "ooooooooo",
+      "domain": "ooooooooo.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785854496,
+      "url": "https://ooooooooo.dev-dot.li"
+    },
+    {
+      "label": "broadside",
+      "domain": "broadside.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785854424,
+      "url": "https://broadside.dev-dot.li"
+    },
+    {
+      "label": "zhuzhiliao",
+      "domain": "zhuzhiliao.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853860,
+      "url": "https://zhuzhiliao.dev-dot.li"
+    },
+    {
+      "label": "launchpad",
+      "domain": "launchpad.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853380,
+      "url": "https://launchpad.dev-dot.li"
+    },
+    {
+      "label": "paperplane",
+      "domain": "paperplane.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853284,
+      "url": "https://paperplane.dev-dot.li"
+    },
+    {
+      "label": "stargazer",
+      "domain": "stargazer.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853188,
+      "url": "https://stargazer.dev-dot.li"
+    },
+    {
+      "label": "blueprint",
+      "domain": "blueprint.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853092,
+      "url": "https://blueprint.dev-dot.li"
+    },
+    {
+      "label": "hydration",
+      "domain": "hydration.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853020,
+      "url": "https://hydration.dev-dot.li"
+    },
+    {
+      "label": "wonderland",
+      "domain": "wonderland.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853008,
+      "url": "https://wonderland.dev-dot.li"
+    },
+    {
+      "label": "adventure",
+      "domain": "adventure.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852888,
+      "url": "https://adventure.dev-dot.li"
+    },
+    {
+      "label": "workspace",
+      "domain": "workspace.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852804,
+      "url": "https://workspace.dev-dot.li"
+    },
+    {
+      "label": "discovery",
+      "domain": "discovery.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852708,
+      "url": "https://discovery.dev-dot.li"
+    },
+    {
+      "label": "community",
+      "domain": "community.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852600,
+      "url": "https://community.dev-dot.li"
+    },
+    {
+      "label": "lighthouse",
+      "domain": "lighthouse.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852504,
+      "url": "https://lighthouse.dev-dot.li"
+    },
+    {
+      "label": "neo-app-demo",
+      "domain": "neo-app-demo.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785851964,
+      "url": "https://neo-app-demo.dev-dot.li"
+    },
+    {
+      "label": "archelabs",
+      "domain": "archelabs.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785851244,
+      "url": "https://archelabs.dev-dot.li"
+    },
     {
       "label": "countersign",
       "domain": "countersign.dot",
@@ -14,9 +401,9 @@
     {
       "label": "vault-control",
       "domain": "vault-control.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 2,
+      "displayName": "vault-control",
+      "description": "A security-first control center for your Polkadot accounts: multisigs, keyless cold vaults, delegations - every action approved on your phone.",
+      "tier": 0,
       "firstSeenAt": 1785840480,
       "url": "https://vault-control.dev-dot.li"
     },

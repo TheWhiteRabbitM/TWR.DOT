@@ -153,6 +153,12 @@
       "improbable~"
     ]
   },
+  "countersign": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "devnet-atlas": {
     "category": "explorers",
     "source": "derived:manifest",
@@ -942,6 +948,12 @@
     "why": [
       "deploy~"
     ]
+  },
+  "vault-control": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "waldgeist": {
     "category": "other",

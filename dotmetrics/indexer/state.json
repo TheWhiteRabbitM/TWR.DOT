@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11804445,
-  "updatedAt": "2026-08-04T12:23:47.534Z",
+  "lastBlock": 11809990,
+  "updatedAt": "2026-08-04T15:40:45.512Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "bcc0ca27e3a2a108e3d0e65738a6312e9ad363e18178c8b886983fe87d03c4a4",
-    "cid": "bafybeibwocv4sv6sehids4pedfvvjimpg2rkqtrxzgf7no5lfsf7uusnfu",
-    "uploadedAt": "2026-08-04T12:30:18.622Z"
+    "digest": "a1c5407ea6ec635d6eddd1cde9cab3d7fdb94b1873bfe5daad32e2d99a77e7c9",
+    "cid": "bafybeiaugvmcbnb2zdycm4jpd252gc2fokbjtxt7ioxexs2bnoii2hbu3e",
+    "uploadedAt": "2026-08-04T15:45:53.090Z"
   },
   "sitePublish": {
-    "treeHash": "17712f6af16c878f9c0ce4e09210a500ca1c82eed5accd13c57d5cae77d0a857",
-    "publishedAt": "2026-08-04T12:33:22.466Z"
+    "treeHash": "e171898b9412c5201f4c27d93d1f003ec4530dde3fbf938d0bbd60f8fa1ab36a",
+    "publishedAt": "2026-08-04T15:47:51.246Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-04T12:28:54.000Z",
+    "updatedAt": "2026-08-04T15:44:42.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -126,15 +126,41 @@
       "gametheory": "alive",
       "countersign": "alive",
       "imthebest": "alive",
-      "mini-lucky-dev": "alive"
+      "mini-lucky-dev": "alive",
+      "adventure": "alive",
+      "blueprint": "alive",
+      "broadside": "alive",
+      "community": "alive",
+      "discovery": "alive",
+      "dotfinder": "alive",
+      "hydration": "alive",
+      "launchpad": "alive",
+      "lighthouse": "alive",
+      "neo-app-demo": "alive",
+      "paperplane": "alive",
+      "stargazer": "alive",
+      "vault-control": "alive",
+      "wonderland": "alive",
+      "workspace": "alive",
+      "zhuzhiliao": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-04T12:28:54.000Z",
+    "updatedAt": "2026-08-04T15:44:42.000Z",
     "bootstrapped": true,
     "names": {
+      "aaaaaaaaa": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "adventure": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "ajedreztest01": {
         "contenthash": "bafybeidgx4gm7muninnatw6zv6ecscp6ft5eig2kn3znybg6hn2s3ln7wi",
         "updateCount": 0,
@@ -146,10 +172,30 @@
         "changedAt": 1785684961,
         "live": "alive"
       },
+      "archelabs": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "ascendyendor00": {
         "contenthash": "bafybeieeycurjqwj3erj7snphemievpxae22jpjccqymvjbj7ljzqflt3a",
         "updateCount": 8,
         "changedAt": 1785500760,
+        "live": "alive"
+      },
+      "bbbbbbbbb": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "blueprint": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "broadside": {
+        "contenthash": "bafybeihxf6rcwm44iglvv6winox6c6u7bnohcv4ddftjonqfxfoduitwae",
+        "updateCount": 0,
         "live": "alive"
       },
       "buildboard01": {
@@ -182,6 +228,11 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "ccccccccc": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "chainpulse": {
         "contenthash": "bafybeihfclrcd44lz6cqtlkmymyjhwaqwbm2wymmqcum2ubowd4ifls7ci",
         "updateCount": 0,
@@ -193,9 +244,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeih2skae6akuazw5xoh4myh5aieo3n7b5tdt6hoccqvb3eul3gg3pm",
-        "updateCount": 8,
-        "changedAt": 1785846534,
+        "contenthash": "bafybeigbniela6sig26iw72mkcjciv6ig6nuoryq5g33rzyrfmdmhvfajy",
+        "updateCount": 9,
+        "changedAt": 1785858282,
         "live": "alive"
       },
       "chirpwatch": {
@@ -207,6 +258,11 @@
         "contenthash": "bafybeibaflnkvffp3k3d745wac6pltqecdope7mnisdp5fixfqy66hd3je",
         "updateCount": 1,
         "changedAt": 1785584498,
+        "live": "alive"
+      },
+      "community": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
         "live": "alive"
       },
       "compute-flux": {
@@ -237,9 +293,15 @@
         "live": "alive"
       },
       "countersign": {
-        "contenthash": "bafybeihm6clecmb5uetc224n3ste2o5davct5mdsobwd73rgdbe54pk72e",
-        "updateCount": 0,
+        "contenthash": "bafybeihzl26gh3gpi32nysls7pvntgxqllrtjrlmnujuif5ernseq3qtvu",
+        "updateCount": 1,
+        "changedAt": 1785858282,
         "live": "alive"
+      },
+      "ddddddddd": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "devnet-atlas": {
         "contenthash": "bafybeihvvpmjumatlux4jihjx25vflnxpux6sck5hvttyocdc7b3vskpru",
@@ -250,6 +312,11 @@
         "contenthash": "bafybeieebul257hwpppwenfvmf6me6xqutwfzczrlor4miriy7seiohsem",
         "updateCount": 2,
         "changedAt": 1785684961,
+        "live": "alive"
+      },
+      "discovery": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
         "live": "alive"
       },
       "discreetly": {
@@ -263,6 +330,16 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "domain-app": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "domainservice": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "doomarcade00": {
         "contenthash": "bafybeihtvdbm6a2g4wjd56rqtj5vqfmrgnnrwdv3pqj3bfhnbj6kfhl6xm",
         "updateCount": 3,
@@ -275,9 +352,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidjoa4j37rjszyeov32v3ctubhgmolgpcb76mij7nahfmzdxqhzsa",
-        "updateCount": 53,
-        "changedAt": 1785846534,
+        "contenthash": "bafybeiamw3p4xsppqgasxjd4u2c4nvt3vnjmnuaq5giillbs3i2fibqlg4",
+        "updateCount": 54,
+        "changedAt": 1785858282,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -296,16 +373,21 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "dotfinder": {
+        "contenthash": "bafybeihwmi22p23wo4ux7puzwjwwdjiudx5tfqn5vtm5yjjnv6w77h5sla",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "dotify-test01": {
-        "contenthash": "bafybeifebo3wuvjwb4tsploic4hfi4kehde7toxlk7ko4osuhn6qgsehgy",
-        "updateCount": 8,
-        "changedAt": 1785846534,
+        "contenthash": "bafybeid3qfzlr3eyrot2p6qe2hmo7mqv6kdo7pqvmhnxbjwam3sqnhvabe",
+        "updateCount": 9,
+        "changedAt": 1785858282,
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeifngdnhk55b2y4vd7d45a67x3ypqf7mgtkhwagel5ijoc5zwqrcmm",
-        "updateCount": 37,
-        "changedAt": 1785846534,
+        "contenthash": "bafybeiencxjtjm5en53ri7ahmj2apysnwsizrvr2l3jpi4wkk7xmixuwzm",
+        "updateCount": 38,
+        "changedAt": 1785858282,
         "live": "alive"
       },
       "doyoulike": {
@@ -337,6 +419,11 @@
         "changedAt": 1785500760,
         "live": "alive"
       },
+      "eeeeeeeee": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "eternalise-notary": {
         "contenthash": "bafybeia3vou57nyykzko433z2gf4aj6onmssf2uxav67rfa6k6uv5w3lam",
         "updateCount": 0,
@@ -347,6 +434,11 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "fffffffff": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "flowfarm-staking": {
         "contenthash": "bafybeicwzsiam2vnmw7uaf7j45hbialgm4lm7terfs2fibd2xk5fhiiqi4",
         "updateCount": 9,
@@ -354,9 +446,9 @@
         "live": "alive"
       },
       "frenchan-app77": {
-        "contenthash": "bafybeidpbiie4lblz4rbr3hhiere3e4ssezope5u2ubq7sk42k2grfmhae",
-        "updateCount": 2,
-        "changedAt": 1785846534,
+        "contenthash": "bafybeid5pcaftatdl64fmczkuoysqd66p5k2y77blr2zhlqt7ul6qu64iy",
+        "updateCount": 3,
+        "changedAt": 1785858282,
         "live": "alive"
       },
       "gameboyonchain": {
@@ -365,10 +457,15 @@
         "live": "alive"
       },
       "gametheory": {
-        "contenthash": "bafybeihzpy3h2me4ok2ycqbmahlmg5mhgakwk2zukqzbh3iyrzmspxkdg4",
-        "updateCount": 1,
-        "changedAt": 1785846534,
+        "contenthash": "bafybeibvykqw3jcnlzqdpmy6fbwvkwzbouh6iore6gnx5hmj2arvjuas3m",
+        "updateCount": 2,
+        "changedAt": 1785858282,
         "live": "alive"
+      },
+      "ggggggggg": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "giganetwork": {
         "contenthash": "",
@@ -425,6 +522,21 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "hhhhhhhhh": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "hydration": {
+        "contenthash": "bafybeifmk5z66ucvpleoqwhgowv5muryqpveolojpx4cc3m656xkqsb3la",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "iiiiiiiii": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "imthebest": {
         "contenthash": "bafybeibythwzgodq7ni2gxogewcdkbgv2qkijfibgzjwfyrinhovnn2jzy",
         "updateCount": 0,
@@ -448,10 +560,35 @@
         "changedAt": 1785382780,
         "live": "alive"
       },
+      "jjjjjjjjj": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "kkkkkkkkk": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "lanzadera": {
         "contenthash": "bafybeie5ualgqandjssffcorootpg6y5kv34nw4yiuto3jx67vjjywxyyq",
         "updateCount": 0,
         "live": "alive"
+      },
+      "launchpad": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "lighthouse": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "lllllllll": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "mini-lucky": {
         "contenthash": "",
@@ -459,8 +596,9 @@
         "live": "unknown"
       },
       "mini-lucky-dev": {
-        "contenthash": "bafybeiekrzhuo3ykxv7hbdv5krvellygpwyyltzbq6ygn6nhbjlyld7nnq",
-        "updateCount": 0,
+        "contenthash": "bafybeibdjza5lsxy4yjuvre4jutt35xnkxqk3ynnnwv4z5mcknt6swknxm",
+        "updateCount": 1,
+        "changedAt": 1785858282,
         "live": "alive"
       },
       "mini-lucky-loc": {
@@ -472,6 +610,11 @@
         "contenthash": "bafybeigkxuo47vkt4o2mjr2cfinswytrdo4yom3wobx75lan7gcczxkfke",
         "updateCount": 0,
         "live": "alive"
+      },
+      "mmmmmmmmm": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "my-cool-app": {
         "contenthash": "bafybeiak5q3gi5qcfseuewucsvqus4um4fo7qg4pr5kkdlb4hzhpkxoiqi",
@@ -509,6 +652,11 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "neo-app-demo": {
+        "contenthash": "bafybeidtilc23vbiebcklpebibkmo2xasswt2d2dl3iuo6o3ei2n35jmni",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "nesonchain": {
         "contenthash": "bafybeiebtreawroqqy77ut4eumheovnnmya6rbah3sbno7ibg4u3rvgwda",
         "updateCount": 0,
@@ -518,6 +666,11 @@
         "contenthash": "bafybeiast7nnfkgg73dzoelsrmrtjkz6htsq3mjlwuzphtkhldqrrfvvc4",
         "updateCount": 0,
         "live": "alive"
+      },
+      "nnnnnnnnn": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "oblv-vault": {
         "contenthash": "",
@@ -570,6 +723,11 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "ooooooooo": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "open-docs": {
         "contenthash": "bafybeiemqjsv5lhk2g3bmhlqqrkjjf4fq4mu4plkp6lxije7wzvfs6d2pq",
         "updateCount": 5,
@@ -584,6 +742,11 @@
       },
       "pactprotocol": {
         "contenthash": "bafybeihvlvikojsdu467372lplchc252drzdl26dw5vdfqo5wc77kx7keu",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "paperplane": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
         "updateCount": 0,
         "live": "alive"
       },
@@ -668,6 +831,11 @@
         "changedAt": 1785826104,
         "live": "alive"
       },
+      "ppppppppp": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "proofoftake": {
         "contenthash": "bafybeifkmxa224jt4wvgnlozhqvlaljmz7lyvuuww3ul6jnbe42xdvcsdm",
         "updateCount": 4,
@@ -675,6 +843,11 @@
         "live": "alive"
       },
       "provenveil": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "qqqqqqqqq": {
         "contenthash": "",
         "updateCount": 0,
         "live": "unknown"
@@ -701,6 +874,11 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "rrrrrrrrr": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "scytaledeploy": {
         "contenthash": "bafybeihna33siw5k7i77dne5dxojc3dd3lt7lnyr46opjj57z36dc4dk2y",
         "updateCount": 1,
@@ -721,6 +899,16 @@
         "contenthash": "bafybeigmkeakxneo7douy73pjokpxhhsog7caukt5zrz4mdagvd3i5lq54",
         "updateCount": 1,
         "changedAt": 1785367253,
+        "live": "alive"
+      },
+      "sssssssss": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "stargazer": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
         "live": "alive"
       },
       "stealcrown": {
@@ -777,12 +965,27 @@
         "changedAt": 1785684961,
         "live": "alive"
       },
+      "ttttttttt": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "tutorial-deploy": {
         "contenthash": "bafybeia44pdaxz3erdjbqtvorngwdfzphsoivx2r5hu4qsyuib2dwlvu6q",
         "updateCount": 0,
         "live": "alive"
       },
+      "uuuuuuuuu": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "vault-control": {
+        "contenthash": "bafybeibmnumlab4sspz4qck76aoogohzgoep7jq5lmahzarm3u6l63jh2q",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "vvvvvvvvv": {
         "contenthash": "",
         "updateCount": 0,
         "live": "unknown"
@@ -804,11 +1007,31 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "wonderland": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "workspace": {
+        "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "wudcommunity": {
         "contenthash": "bafybeicl457ynvcm7wgthboejuxu3nucnvrxctog3wfo3lxuclb2qm3piy",
         "updateCount": 3,
         "changedAt": 1785769994,
         "live": "alive"
+      },
+      "wwwwwwwww": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "xxxxxxxxx": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "yechops-preview": {
         "contenthash": "bafybeib76qsjhyr7spv5r5ihdk4xh73rcmfngolo35mojdmlwtxqmhncbe",
@@ -818,6 +1041,16 @@
       },
       "yologuestbook": {
         "contenthash": "bafybeigbru3aq6vpid7p43c72ed3jnuh5v6zyrbi7b4gwq5xullc5fcpae",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "yyyyyyyyy": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "zhuzhiliao": {
+        "contenthash": "bafybeiem3may4iv5dmhd3q636nfgipcviozzszf6gdyfh6vkaithtkeq7y",
         "updateCount": 0,
         "live": "alive"
       },
