@@ -189,6 +189,8 @@ let TH: Awaited<ReturnType<typeof thread>> = { parents: [], post: null, replies:
 
 let view: View = { k: 'home' };
 let tab: 'foryou' | 'following' = 'foryou';
+/** Which slice of a profile is showing. X splits a profile the same way. */
+let ptab: 'chirps' | 'replies' | 'likes' = 'chirps';
 let sheet: null | { mode: 'new' | 'reply' | 'quote' | 'edit'; target?: Post } = null;
 let settingsOpen = false;
 let menuFor: number | null = null;
@@ -701,7 +703,28 @@ function profileView(): string {
       const p = PINNED ? ALL.find((x) => x.id === PINNED && !x.deleted) : undefined;
       return p ? `<div class="pinrow">${I.bookmark} Pinned</div>` + card(p) : '';
     })()
-    + list(posts.filter((p) => p.id !== PINNED), 'No chirps yet.');
+    // X splits a profile into Posts, Replies and Likes, and it matters here for
+    // the same reason: someone who answers a lot has their own chirps buried
+    // under their replies, and a visitor cannot tell what they actually say.
+    + `<div class="tabs">
+        <button class="tab${ptab === 'chirps' ? ' on' : ''}" data-ptab="chirps">Chirps</button>
+        <button class="tab${ptab === 'replies' ? ' on' : ''}" data-ptab="replies">Replies</button>
+        <button class="tab${ptab === 'likes' ? ' on' : ''}" data-ptab="likes">Likes</button>
+      </div>`
+    + (() => {
+      if (ptab === 'replies') {
+        const rows = posts.filter((p) => p.replyTo);
+        return list(rows, 'No replies yet.');
+      }
+      if (ptab === 'likes') {
+        // Only answerable for yourself: the contract stores likes by (account,
+        // chirp), so reading somebody ELSE'S would mean walking every chirp and
+        // asking about their address. Said plainly rather than shown empty.
+        if (!isMe) return '<div class="note">Only you can see what you liked — the contract records a like against an account, and reading someone else\'s would mean asking about every chirp in turn.</div>';
+        return list(ALL.filter((p) => p.liked), 'Nothing liked yet.');
+      }
+      return list(posts.filter((p) => !p.replyTo && p.id !== PINNED), 'No chirps yet.');
+    })();
 }
 
 function peopleView(): string {
@@ -1416,6 +1439,9 @@ function wire() {
     render();
   }));
   document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
+  app.querySelectorAll<HTMLElement>('[data-ptab]').forEach((b) => b.addEventListener('click', () => {
+    ptab = b.dataset.ptab as 'chirps' | 'replies' | 'likes'; render();
+  }));
   document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
 
   /* ----------------------------------------------------------------- probe */
