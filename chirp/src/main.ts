@@ -19,7 +19,7 @@ import { runProbe, probeReport, type Finding } from './probe';
 import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, postThread, edit, remove, toggleLike, toggleRepost, toggleFollow,
-  claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
+  claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs, canSign,
   pinnedOf, pinChirp, unpinChirp,
   askNotifications, notify, openUrl, gifUrl, gifKind, gifBlob, cachedFeed, TOTAL,
   chatAvailable, discuss, chatRooms, registerBot, serveBot,
@@ -236,6 +236,9 @@ let shareFor: number | null = null;
 let CHAT = false;
 /** Whether preferences are held by the host rather than by this page. */
 let DURABLE = false;
+/** Whether anything here can sign at all. Without it, every write is a button
+ *  whose only outcome is an error — so they are not offered. */
+let CAN_SIGN = false;
 /** The container probe: findings so far, whether it is running, and what the
  *  real file input received when a finger tapped it. */
 let PROBE: Finding[] = [];
@@ -810,7 +813,26 @@ function notesSection(): string {
   return `<div class="sechead">Context ${add}</div>${rows}`;
 }
 
+/**
+ * The invitation to claim a mask — shown only where claiming can actually work.
+ *
+ * Claiming is a transaction. Offered to somebody with nothing that can sign, it
+ * is a button whose only possible outcome is an error, and it was the largest
+ * thing on the screen for every reader arriving through the gateway. What they
+ * need instead is to know that reading is all of it here, and where to go if
+ * they want more.
+ */
 function gate(): string {
+  if (!CAN_SIGN) {
+    return `<section class="gate">
+      <h2>You are reading chirp</h2>
+      <p>Everything here is public and needs nothing from you — no account, no wallet, no permission.
+      Posting does: a chirp is a transaction, signed by an account that holds a mask.</p>
+      <p class="hint">Open chirp in the Polkadot app to claim one, or connect a wallet extension in this
+      browser. Either way the mask belongs to your account and cannot be transferred, so nobody can post
+      as you.</p>
+    </section>`;
+  }
   return `<section class="gate">
     <h2>Claim your mask to post</h2>
     <p>A mask is bound to your account and cannot be transferred, so nobody can post as you.
@@ -1891,6 +1913,10 @@ if (!ALL.length) app.innerHTML = header() + '<div class="skel"></div><div class=
   const first = refresh();
   ME = await me().catch(() => null);
   ACT = await actingAs().catch(() => null);
+  // Can anything here sign? Asked once, beside identity, because it decides
+  // whether a write is OFFERED at all — and asking it late means the gateway
+  // flashes a claim button it could never honour.
+  CAN_SIGN = await canSign().catch(() => false);
   await first;
   // Go through refresh() rather than loading the feed by hand: a deep link — a
   // shared thread, someone's profile — has to arrive with ITS data, not with an

@@ -540,6 +540,20 @@ async function proxiedAccount(api: any, delegate: string): Promise<string | null
   }
 }
 
+/**
+ * Is there anything here that can sign?
+ *
+ * Not "is there a host" and not "is there an account" — either can be true while
+ * signing is impossible, which is exactly the gateway's case. The app uses this
+ * to decide whether to OFFER a write at all: a claim button with nothing behind
+ * it can only ever produce an error, and it was the largest thing on screen for
+ * every reader arriving on the web.
+ */
+export async function canSign(): Promise<boolean> {
+  const s = await session().catch(() => null);
+  return Boolean(s?.signer);
+}
+
 /** Who the app is acting as, for the UI to say so plainly. */
 export async function actingAs(): Promise<{ signer: string; real: string | null } | null> {
   const s = await session().catch(() => null);
@@ -899,6 +913,10 @@ export async function pictureOf(mask: number): Promise<string> {
   const { pfp } = await handles();
   const raw = pfp ? await q(pfp, 'pfpOf', BigInt(mask)) : undefined;
   const key = typeof raw === 'string' ? raw : (raw as { asHex?: () => string })?.asHex?.() ?? '';
+  // Same rule as whoOf: only remember "this mask has no picture" when the chain
+  // actually SAID so. `undefined` from both reads means they were refused, and
+  // marking that as "no picture" leaves a generated face forever.
+  if (bytesHex === undefined && raw === undefined) return '';
   if (!key || key === '0x') { noPfp.add(mask); return ''; }
   // The stored bytes ARE the key; hand them back as the hex the host expects.
   const bytes = await fetchPreimage(key.startsWith('0x') ? key : '0x' + key);
@@ -1009,6 +1027,19 @@ function pub() {
 let ready: Slot | null = null;
 
 /**
+ * Set when the session's reader has been caught failing a read.
+ *
+ * The fallback used to live inside loadAll, which fixed the timeline and
+ * nothing else: names, @handles, pictures, notes and follower counts all kept
+ * asking the same dead reader, and `q` swallowed every refusal into
+ * `undefined`. So the gateway showed a feed of "mask #16 @mask16" with
+ * generated faces, over a chain that had names and pictures for all of them.
+ *
+ * One reader is either usable or it is not. Once it is not, everything moves.
+ */
+let readerDead = false;
+
+/**
  * Are we inside the Polkadot app? Answered once and remembered, because the
  * answer decides which of the two readers is even possible.
  */
@@ -1023,7 +1054,12 @@ function insideHost(): Promise<boolean> {
 }
 
 async function handles() {
-  if (ready) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, pin: ready.pin, me: ready.h160 };
+  if (ready && !readerDead) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, pin: ready.pin, me: ready.h160 };
+  if (readerDead) {
+    // The session can still SIGN — send() uses it directly. It just cannot read.
+    const p = await pub();
+    if (p?.chirp) return { ...p, me: '' };
+  }
 
   // Inside a container, PREFER the session: its reads carry the account, so
   // `liked` and `reposted` come back filled in, and the host's own provider is
@@ -1125,7 +1161,15 @@ function whoOf(masks: any, mask: number, handlesC?: any): Promise<Who> {
       handle: String(h ?? ''),
       tier: Number(t ?? 4),
     };
-    whoCache.set(mask, who);
+    // Cache an ANSWER, never a failure. `q` returns undefined for both "the
+    // chain says empty" and "the read was refused", and storing the second as
+    // an identity is permanent: one bad moment and that person is "mask #16"
+    // with no handle for the rest of the session, however well the chain
+    // answers afterwards. If every field came back undefined, nothing was
+    // learned — leave the cache alone and ask again next time.
+    if (pr !== undefined || v !== undefined || t !== undefined || h !== undefined) {
+      whoCache.set(mask, who);
+    }
     return who;
   })();
   whoPending.set(mask, p);
@@ -1231,6 +1275,13 @@ export async function loadAll(limit = 300, onBatch?: (soFar: Post[]) => void): P
   try {
     total = Number((await qStrict(chirp, 'count')) ?? 0);
   } catch {
+    // Mark the reader dead FIRST, so that every other read in the app — names,
+    // handles, pictures, notes, follower counts — moves with this one. Fixing
+    // only the timeline left a feed of "mask #16" and generated faces over a
+    // chain that had names and pictures for all of them.
+    readerDead = true;
+    forgetWho();                              // the blanks it cached are not answers
+    forgetPicture();
     const p = await pub();
     if (!p?.chirp) throw new Error('The chain did not answer.');
     ({ chirp, masks } = p);
