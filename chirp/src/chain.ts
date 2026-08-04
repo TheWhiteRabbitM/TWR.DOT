@@ -929,7 +929,17 @@ function fetchPreimage(key: string, ms = 10_000): Promise<Uint8Array | null> {
 /** The picture for a mask as a data URL, or '' when it has none — or when the
  *  bytes have expired, which is deliberately the same answer: the caller draws
  *  the generated avatar either way. */
-export async function pictureOf(mask: number): Promise<string> {
+/**
+ * Somebody's face, or nothing — and those are two different nothings.
+ *
+ * `''` means the chain answered and there is no picture. `null` means it was not
+ * asked, it refused. The caller must tell them apart: the app latches each mask
+ * so a face is fetched once, and latching a refusal as "no picture" is precisely
+ * why every avatar on the gateway stayed generated. The first attempt ran
+ * against the session's dead reader, and once the public reader took over
+ * nothing ever asked again.
+ */
+export async function pictureOf(mask: number): Promise<string | null> {
   const hit = pfpCache.get(mask);
   if (hit !== undefined) return hit;
   if (noPfp.has(mask)) return '';
@@ -956,7 +966,7 @@ export async function pictureOf(mask: number): Promise<string> {
   // Same rule as whoOf: only remember "this mask has no picture" when the chain
   // actually SAID so. `undefined` from both reads means they were refused, and
   // marking that as "no picture" leaves a generated face forever.
-  if (bytesHex === undefined && raw === undefined) return '';
+  if (bytesHex === undefined && raw === undefined) return null;
   if (!key || key === '0x') { noPfp.add(mask); return ''; }
   // The stored bytes ARE the key; hand them back as the hex the host expects.
   const bytes = await fetchPreimage(key.startsWith('0x') ? key : '0x' + key);

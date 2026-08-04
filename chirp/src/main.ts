@@ -44,11 +44,24 @@ const picWanted = new Set<number>();
  *  not awaited by the renderer: a timeline must not wait on twenty images, and
  *  a face that never arrives must cost nothing but the generated one. */
 let picTimer: ReturnType<typeof setTimeout> | null = null;
+const picTries = new Map<number, number>();
 function wantPicture(mask: number) {
   if (picWanted.has(mask)) return;
   picWanted.add(mask);
   void pictureOf(mask).then((url) => {
-    if (!url) return;
+    if (url === null) {
+      // Not "no picture" — "could not ask". This latch is the reason every face
+      // on the gateway stayed generated after the reader was fixed: the first
+      // attempt ran against the session's dead reader, chain-side caches were
+      // cleared when it fell back to the public RPC, and this Set was not, so
+      // nothing ever asked again. Let it go, and cap the retries so a mask the
+      // chain genuinely will not answer for cannot spin.
+      const n = (picTries.get(mask) ?? 0) + 1;
+      picTries.set(mask, n);
+      if (n < 4) picWanted.delete(mask);
+      return;
+    }
+    if (!url) return;                     // asked, and there is no picture
     PIC.set(mask, url);
     // Coalesce: twenty faces landing together should cause one redraw, not twenty.
     if (picTimer) return;
@@ -377,15 +390,26 @@ function actions(p: Post): string {
   </div>`;
 }
 
-function card(p: Post, big = false): string {
+/**
+ * One chirp.
+ *
+ * `chain` — this post continues the one directly above it, by the same author.
+ * `runs`  — the post directly below continues THIS one.
+ *
+ * Together they turn a self-thread into a single running column instead of a
+ * stack of separate cards. A person writing five posts in a row was being drawn
+ * as five strangers answering each other, each repeating "Replying to
+ * @themselves", which is both noisy and untrue to what happened.
+ */
+function card(p: Post, big = false, chain = false, runs = false): string {
   const repost = p.quoteOf && !p.body;
   const shown = repost && p.quoted ? p.quoted : p;
-  return `<article class="chirp${big ? ' big' : ''}" data-open="${p.id}">
+  return `<article class="chirp${big ? ' big' : ''}${chain ? ' chain' : ''}${runs ? ' runs' : ''}" data-open="${p.id}">
     ${repost ? `<div class="ctx">${I.repost}<span>${esc(nm(p.who, p.mask))} reposted</span></div>` : ''}
     <div class="row">
       <div class="av" data-who="${shown.mask}">${avatar(shown.author, shown.mask)}</div>
       <div class="grow">
-        ${p.replyTo && !big ? replyingTo(p) : ''}
+        ${p.replyTo && !big && !chain ? replyingTo(p) : ''}
         <div class="head">
           <span class="nm" data-who="${shown.mask}">${esc(nm(shown.who, shown.mask))}</span>${shown.who?.verified ? TICK : ''}
           <span class="at">${esc(at(shown.who, shown.mask))}</span>
@@ -758,21 +782,47 @@ function threadView(): string {
   // conversation reads as a conversation instead of a flat pile.
   const byParent = new Map<number, Post[]>();
   for (const r of ALL) if (r.replyTo) byParent.set(r.replyTo, [...(byParent.get(r.replyTo) ?? []), r]);
-  const branch = (id: number, depth: number): string =>
-    (byParent.get(id) ?? []).map((r) =>
-      `<div class="branch" style="--d:${Math.min(depth, 4)}">${card(r)}</div>` + branch(r.id, depth + 1)).join('');
+
+  /** Does this post have a continuation directly under it — its only reply, by
+   *  the same person? That is a self-thread, not an exchange. */
+  const runsOn = (p: Post): boolean => {
+    const kids = byParent.get(p.id) ?? [];
+    return kids.length === 1 && kids[0].mask === p.mask;
+  };
+
+  // A self-thread is drawn as one running column: no fresh indent, no repeated
+  // "Replying to @yourself", and a rule down the avatar gutter joining the
+  // posts. Written as separate cards it read as five strangers answering each
+  // other — which is not what happened, and looked it.
+  const branch = (id: number, depth: number, author: number): string =>
+    (byParent.get(id) ?? []).map((r, _i, arr) => {
+      const cont = arr.length === 1 && r.mask === author;
+      return `<div class="branch${cont ? ' cont' : ''}" style="--d:${cont ? depth : Math.min(depth, 4)}">`
+        + card(r, false, cont, runsOn(r))
+        + `</div>` + branch(r.id, cont ? depth : depth + 1, r.mask);
+    }).join('');
   // Quotes of this chirp. X puts them behind the repost count; here they are a
   // section, because on a small feed they ARE the conversation as often as the
   // replies are, and burying them made them invisible.
   const id = view.k === 'thread' ? view.id : 0;
   const quotes = ALL.filter((p) => p.quoteOf === id && p.body && !p.deleted);
 
-  return TH.parents.map((p) => card(p)).join('')
-    + (TH.post ? card(TH.post, true) : '')
+  // The ancestors above the focused chirp are a chain by definition — each one
+  // leads to the next — so every one of them carries the rule down, and any that
+  // follows its own author drops the "Replying to".
+  const above = TH.parents.map((p, i, a) => {
+    const next: Post | undefined = a[i + 1] ?? TH.post ?? undefined;
+    return card(p, false, i > 0 && a[i - 1].mask === p.mask, Boolean(next));
+  }).join('');
+  const last = TH.parents[TH.parents.length - 1];
+
+  return above
+    + (TH.post ? card(TH.post, true, false, runsOn(TH.post)) : '')
     + notesSection()
     + (quotes.length ? `<div class="sechead">Quotes</div>` + quotes.map((p) => card(p)).join('') : '')
-    + `<div class="sechead">Replies</div>`
-    + (byParent.get(view.k === 'thread' ? view.id : 0)?.length ? branch(view.k === 'thread' ? view.id : 0, 0)
+    + (TH.post && runsOn(TH.post) ? '' : `<div class="sechead">Replies</div>`)
+    + (byParent.get(id)?.length
+      ? branch(id, 0, TH.post?.mask ?? last?.mask ?? -1)
       : '<div class="note">No replies yet. Be the first.</div>');
 }
 

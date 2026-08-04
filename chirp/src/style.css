@@ -381,6 +381,26 @@ body.locked { overflow: hidden; }
 .branch { padding-left: calc(var(--d, 0) * 22px); border-left: 1px solid transparent; }
 .branch .chirp { border-left: 2px solid var(--hair); }
 
+/* A self-thread is one running column, the way a conversation on X is: the
+   avatar gutter carries a rule down to the post that continues it, and the two
+   posts are not separated by a hairline. Drawn as independent cards, five posts
+   by one person read as five strangers answering each other. */
+.chirp.runs { position: relative; border-bottom-color: transparent; }
+.chirp.runs::before {
+  content: '';
+  position: absolute;
+  left: 35px;                 /* 16px padding + 20px to the avatar's centre, less half the rule */
+  top: 58px;                  /* clear of the 40px avatar and its 12px of padding */
+  bottom: -2px;               /* meet the next card, leaving no gap in the line */
+  width: 2px;
+  background: var(--hair);
+  border-radius: 1px;
+}
+/* A continuation sits in its parent's column, with no branch rule of its own —
+   the avatar line above already says what it is. */
+.branch.cont > .chirp { border-left: 0; }
+.chirp.chain { padding-top: 4px; }
+
 .dotspin { display: inline-block; width: 7px; height: 7px; margin-left: 8px; border-radius: 50%;
   background: var(--blue); vertical-align: middle; animation: pulse 1s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
