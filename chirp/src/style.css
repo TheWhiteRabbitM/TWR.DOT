@@ -540,3 +540,11 @@ body.locked { overflow: hidden; }
 .seg { flex-wrap: wrap; gap: 6px; }
 .seg .ghost.on { border-color: var(--blue); color: var(--blue); }
 .iconbtn.gifbtn.on { border-color: var(--blue); color: var(--blue); }
+
+/* The route trail in the link sheet. Small, monospaced, selectable: it exists
+   to be read out or pasted into a bug report, not to be decorative. */
+.hint.trail code {
+  display: block; margin-top: 6px; padding: 8px 10px;
+  background: var(--panel); border-radius: 8px;
+  font-size: 11.5px; overflow-wrap: anywhere; user-select: all; color: var(--ink);
+}

@@ -757,35 +757,59 @@ export async function askNotifications(): Promise<boolean> {
  * ahead of it. `navigateTo` becomes the fallback rather than the gate, and the
  * caller still shows the address when both fail.
  */
-export async function openUrl(url: string): Promise<boolean> {
-  // `noopener` is deliberately ABSENT, and this cost a round of "the links
-  // still do not open". Per spec `window.open(..., 'noopener')` returns null
-  // even when it succeeded — so the handle can no longer tell a working popup
-  // from a blocked one. This function read that null as failure, fell through
-  // to navigateTo and then showed the copy-the-address sheet, on top of a
-  // window that may well have opened. The other eight apps in this workspace
-  // already had this written down; chirp did not, because I wrote chirp's by
-  // hand instead of reading theirs. The opener is severed on the handle, which
-  // is the same protection without blinding the caller.
-  let w: Window | null = null;
-  try {
-    w = window.open(url, '_blank');
-    if (w) { try { (w as { opener: unknown }).opener = null; } catch { /* already isolated */ } }
-  } catch { w = null; }
-  if (w) return true;
+/** What each route did, so a link that will not open can say WHICH gate refused
+ *  instead of leaving somebody — and me — guessing a third time. */
+export type OpenTrail = { ok: boolean; trail: string };
 
-  const host = await import('@parity/product-sdk-host').catch(() => null);
-  if (host) {
-    // Raced, because navigateTo can hang rather than answer — and checked for a
-    // real ok, because "not false" was letting a non-answer through as success.
-    const r = await withTimeout(Promise.resolve(host.navigateTo(url)), 3000, 'navigate').catch(() => null);
-    if ((r as { ok?: boolean } | null)?.ok === true) return true;
+export async function openUrl(url: string): Promise<OpenTrail> {
+  const trail: string[] = [];
+
+  // 1. A popup, synchronously, before any await.
+  //
+  // `noopener` is deliberately ABSENT: per spec `window.open(…, 'noopener')`
+  // returns null even on SUCCESS, so the handle can no longer tell a working
+  // popup from a blocked one — which cost a whole round of "the links still do
+  // not open". The opener is severed on the handle instead, same protection.
+  try {
+    const w = window.open(url, '_blank');
+    if (w) {
+      try { (w as { opener: unknown }).opener = null; } catch { /* already isolated */ }
+      trail.push('popup:ok');
+      return { ok: true, trail: trail.join('>') };
+    }
+    trail.push('popup:null');
+  } catch (e) {
+    trail.push('popup:threw:' + ((e as Error)?.name ?? '?'));
   }
-  // Last resort: put it on the clipboard, so the person has the address rather
-  // than a tap that did nothing. The caller shows it too — silence is the one
-  // outcome that leaves somebody stuck.
-  try { await navigator.clipboard.writeText(url); } catch { /* no clipboard either */ }
-  return false;
+
+  // NOT a synthetic anchor click. It was here for one revision and taken out:
+  // a webview that cannot open a second window may honour target="_blank" by
+  // navigating IN PLACE, which would replace chirp with the linked site and
+  // throw the reader out of the app. A link that does not open is a small
+  // failure; losing the app is not. Without evidence that it helps, the risk is
+  // not worth taking.
+
+  // 2. The host. Raced, because navigateTo can hang rather than answer, and
+  //    checked for a REAL ok — "not false" was letting a non-answer through as
+  //    success, so the app reported opening links it had not opened.
+  const host = await import('@parity/product-sdk-host').catch(() => null);
+  if (!host) {
+    trail.push('host:none');
+  } else {
+    const r = await withTimeout(Promise.resolve(host.navigateTo(url)), 3000, 'navigate')
+      .catch((e) => ({ __threw: (e as Error)?.message ?? '?' }));
+    const asAny = r as { ok?: boolean; error?: unknown; __threw?: string } | null;
+    if (asAny?.__threw) trail.push('host:threw:' + asAny.__threw);
+    else if (asAny?.ok === true) { trail.push('host:ok'); return { ok: true, trail: trail.join('>') }; }
+    else trail.push('host:' + JSON.stringify(asAny ?? null).slice(0, 60));
+  }
+
+  // Nothing opened. Put it on the clipboard and let the caller show both the
+  // address and this trail — silence is the one outcome that leaves somebody
+  // stuck, and "it does nothing" is not a bug report anybody can act on.
+  try { await navigator.clipboard.writeText(url); trail.push('copied'); }
+  catch { trail.push('copy:refused'); }
+  return { ok: false, trail: trail.join('>') };
 }
 
 /* --------------------------------------------------------------------- chat */

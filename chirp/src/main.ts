@@ -313,6 +313,8 @@ let ROOMS = new Set<number>();
 let linkFor: string | null = null;
 /** Why the link pane is up: a refused navigation, or a refused clipboard write. */
 let linkWhy: 'open' | 'copy' = 'open';
+/** Which route refused, verbatim, so "it does nothing" becomes a fact. */
+let linkTrail = '';
 /** The GIF picker, and what it last said. */
 let gifOpen = false;
 /** Whether the picture panel in the composer is showing its three routes. */
@@ -1222,6 +1224,8 @@ function overlay(): string {
         : 'The Polkadot app refused to hand this address to a browser, and a container has no second window of its own. Here it is.'}</p>
       <div class="linkbox">${esc(linkFor)}</div>
       <button class="primary wide" id="linkcopy">Try copying again</button>
+      ${linkTrail ? `<p class="hint trail">Every route was tried, in order — this is what each one
+        said. If you are reporting this, this line is the useful part:<br><code>${esc(linkTrail)}</code></p>` : ''}
     </div></div>`;
   }
   if (shareFor) {
@@ -2032,7 +2036,8 @@ function wire() {
     const u = a.dataset.url ?? '';
     // If the container will not open it, say so and show the address. A tap
     // that silently does nothing is the worst of the three outcomes.
-    if (!(await openUrl(u))) { linkFor = u; render(); }
+    const r = await openUrl(u);
+    if (!r.ok) { linkFor = u; linkWhy = 'open'; linkTrail = r.trail; render(); }
   }));
   document.getElementById('linkclose')?.addEventListener('click', () => { linkFor = null; render(); });
   document.getElementById('linkcopy')?.addEventListener('click', async () => {
