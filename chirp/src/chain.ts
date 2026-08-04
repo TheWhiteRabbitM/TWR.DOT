@@ -20,6 +20,7 @@ import CHIRP_ABI from './chirp-abi.json';
 import HANDLES_ABI from './handles-abi.json';
 import NOTES_ABI from './notes-abi.json';
 import PFP_ABI from './pfp-abi.json';
+import FACE_ABI from './face-abi.json';
 
 export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
 export const CHIRP = '0x37A7CE834428636815b2746408343574aD13be7C';
@@ -31,6 +32,16 @@ export const NOTES = '0xf3584d1b59fb8759f4c6572e3a13c8a7af79c0cc';
 /** Profile pictures — the KEY to one, on Bulletin. Same reason as HANDLES: the
  *  masks contract is deployed and its profile struct cannot grow. */
 export const PFP = '0x6f3f9d84161f0bd0eb9d6524a5a2e5089b565470';
+/**
+ * The picture ITSELF, on Asset Hub.
+ *
+ * PeoplePFP kept a key and left the image on Bulletin. It came back only on the
+ * device that set it — clear the browser and the face was gone, which means it
+ * was never really on chain, it was in a cache with a receipt on chain. The
+ * bytes live here instead: a couple of kilobytes, paid once as a deposit, no
+ * expiry, no host service, and the same for every reader.
+ */
+export const FACE = '0xbc11688b1421bdde1fa1be5ea5bf02e9bb49be03';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
 const IDENTITY_DAPP = 'peoplebook.dot';
 
@@ -44,6 +55,9 @@ const IDENTITY_DAPP = 'peoplebook.dot';
  * the two services keyboards actually use, and not worth making for the web.
  */
 export const GIF_HOSTS = ['media.tenor.com', 'tenor.com', 'media.giphy.com', 'i.giphy.com', 'giphy.com'];
+/** Declared alongside them so the public reader has a chance of connecting from
+ *  inside the container too. It is not relied on — see handles(). */
+const RPC_HOSTS = ['asset-hub-paseo-rpc.n.dwellir.com', 'paseo-assethub-rpc.laissez-faire.trade'];
 /**
  * Fetch a GIF and hand back a local blob URL.
  *
@@ -186,7 +200,7 @@ type Slot = {
   h160: string;
   kind: 'wallet' | 'app';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  signer: any; manager?: any; masks: any; chirp: any; handles: any; notes: any; pfp: any;
+  signer: any; manager?: any; masks: any; chirp: any; handles: any; notes: any; pfp: any; face: any;
   /** The typed api, needed to wrap a contract call in Proxy.proxy. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   api: any;
@@ -273,7 +287,7 @@ async function browserSlot(): Promise<Slot | null> {
   return {
     address, h160: await h160Of(real ?? address), kind: 'wallet', signer, api, real,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
-    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI),
+    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI),
   };
 }
 
@@ -303,7 +317,7 @@ async function connect(): Promise<Slot | null> {
   // — but showing it means fetching from a third party, which the container
   // blocks unless the domains are declared. Nothing else is listed: this is the
   // whole outside world chirp can reach.
-  await withTimeout(Promise.resolve(host.requestPermission({ tag: 'Remote', value: { domains: GIF_HOSTS } })), CONNECT_MS, 'remote permission')
+  await withTimeout(Promise.resolve(host.requestPermission({ tag: 'Remote', value: { domains: [...GIF_HOSTS, ...RPC_HOSTS] } })), CONNECT_MS, 'remote permission')
     .catch(() => undefined);
 
   const ss58 = (pk: Uint8Array) => papi.AccountId().dec(pk) as string;
@@ -370,7 +384,7 @@ async function connect(): Promise<Slot | null> {
   return {
     address, h160: await h160Of(who), kind, signer, manager, api, real,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
-    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI),
+    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI),
   };
 }
 
@@ -558,6 +572,23 @@ export async function pictureOf(mask: number): Promise<string> {
   const hit = pfpCache.get(mask);
   if (hit !== undefined) return hit;
   if (noPfp.has(mask)) return '';
+
+  // The picture itself, straight off Asset Hub. No key, no Bulletin, no host
+  // service and no cache: whatever is stored is what every reader sees, and it
+  // is still there after the browser is wiped.
+  const { face } = await handles();
+  const bytesHex = face ? await q(face, 'faceOf', BigInt(mask)) : undefined;
+  const hex = typeof bytesHex === 'string' ? bytesHex : (bytesHex as { asHex?: () => string })?.asHex?.() ?? '';
+  if (hex && hex !== '0x') {
+    const url = 'data:image/webp;base64,' + btoa(
+      (hex.slice(2).match(/../g) ?? []).map((b) => String.fromCharCode(parseInt(b, 16))).join(''),
+    );
+    pfpCache.set(mask, url);
+    return url;
+  }
+
+  // Nothing here yet: fall back to the older key-on-Bulletin picture, so people
+  // who set one before this changed do not lose their face on the way over.
   const { pfp } = await handles();
   const raw = pfp ? await q(pfp, 'pfpOf', BigInt(mask)) : undefined;
   const key = typeof raw === 'string' ? raw : (raw as { asHex?: () => string })?.asHex?.() ?? '';
@@ -574,44 +605,42 @@ export function forgetPicture(mask?: number) {
   if (mask) { pfpCache.delete(mask); noPfp.delete(mask); } else { pfpCache.clear(); noPfp.clear(); }
 }
 
-/** Upload a picture and point the mask at it. The bytes go to Bulletin first —
- *  a key recorded on chain for bytes nobody has is worse than no key at all. */
+/** The most the picture contract will take. */
+export const FACE_MAX = 12_000;
+
+/**
+ * Put the picture on chain.
+ *
+ * One transaction, no upload service, nothing to renew. The bytes go into
+ * PeopleFace and that is the whole story — which is the point: the previous
+ * arrangement kept a key here and the image on Bulletin, and the image came
+ * back only on the device that had set it.
+ */
 export async function setPicture(mask: number, bytes: Uint8Array): Promise<Ok | Fail> {
-  const mgr = await preimages();
-  if (!mgr) return { ok: false, why: 'Pictures need the Polkadot app — the browser has no upload surface.' };
-  let key = '';
-  try {
-    key = await mgr.submit(bytes);
-  } catch (e) {
-    return { ok: false, why: reason({ error: e }) };
+  if (!bytes.length) return { ok: false, why: 'That produced no image data.' };
+  if (bytes.length > FACE_MAX) {
+    return { ok: false, why: `That is ${bytes.length} bytes and the limit is ${FACE_MAX}. Try a simpler picture.` };
   }
-  if (!key) return { ok: false, why: 'The app accepted the picture but returned no key.' };
-  // Store the key's BYTES, not the text of the key.
-  //
-  // The host returns a hex string — "0x" plus sixty-four characters for a
-  // 32-byte hash. Encoding that text as UTF-8 gives sixty-six bytes, and the
-  // contract accepts sixty-four, so every upload reverted on BadKey after the
-  // picture had already been uploaded. The bytes it stands for are thirty-two.
-  const r = await send('pfp', 'setPfp', [BigInt(mask), key.startsWith('0x') ? key : '0x' + key]);
-  if (r.ok) { pfpCache.set(mask, 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes))); noPfp.delete(mask); }
-  // The generic revert text talks about posts, which is nonsense while setting a
-  // picture — and that is exactly what it told the first person who tried.
-  if (!r.ok && /contract refused/i.test(r.why)) {
-    return { ok: false, why: `The picture contract refused the key (${key.length} chars). The upload itself worked.` };
+  const hex = '0x' + Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  const r = await send('face', 'setFace', [BigInt(mask), hex]);
+  if (r.ok) {
+    pfpCache.set(mask, 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes)));
+    noPfp.delete(mask);
   }
   return r;
 }
 
 export function clearPicture(mask: number): Promise<Ok | Fail> {
   pfpCache.delete(mask); noPfp.add(mask);
-  return send('pfp', 'clear', [BigInt(mask)]);
+  return send('face', 'clear', [BigInt(mask)]);
 }
 
-/** Push the retention window back without spending anything.
+/** Renew a picture that still lives on Bulletin under the OLD arrangement.
  *
- *  Read the picture, submit the identical bytes: same content, same key, so the
- *  contract still points at it and no transaction is needed. Called on open, for
- *  your own mask only — renewing other people's pictures is their app's job. */
+ *  Only those need it — a picture in PeopleFace cannot expire. Kept so nobody
+ *  who set one before the change loses their face while they have not replaced
+ *  it. Content-addressed, so re-submitting identical bytes gives an identical
+ *  key and no transaction is needed. */
 export async function renewPicture(mask: number): Promise<boolean> {
   if (!mask) return false;
   const { pfp } = await handles();
@@ -631,7 +660,7 @@ export async function renewPicture(mask: number): Promise<boolean> {
 /** A signer-less handle over the public RPC, so the timeline is readable without
  *  a wallet. A social nobody can read unless they sign in is not much of one. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let reader: Promise<{ chirp: any; masks: any; handles: any; notes: any; pfp: any } | null> | null = null;
+let reader: Promise<{ chirp: any; masks: any; handles: any; notes: any; pfp: any; face: any } | null> | null = null;
 function pub() {
   if (!reader) {
     reader = (async () => {
@@ -647,7 +676,7 @@ function pub() {
       const mk = (a: string, abi: unknown) => (contracts as any).createContract(rt, a, abi);
       return {
         chirp: mk(CHIRP, CHIRP_ABI), masks: mk(MASKS, MASKS_ABI), handles: mk(HANDLES, HANDLES_ABI),
-        notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI),
+        notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI),
       };
     })().catch(() => null);
     void reader.then((r) => { if (!r) reader = null; });
@@ -672,11 +701,40 @@ function pub() {
  */
 let ready: Slot | null = null;
 
+/**
+ * Are we inside the Polkadot app? Answered once and remembered, because the
+ * answer decides which of the two readers is even possible.
+ */
+let inside: Promise<boolean> | null = null;
+function insideHost(): Promise<boolean> {
+  if (!inside) {
+    inside = import('@parity/product-sdk-host')
+      .then((h) => h.isInsideContainer().catch(() => false))
+      .catch(() => false);
+  }
+  return inside;
+}
+
 async function handles() {
-  if (ready) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, me: ready.h160 };
-  void session();   // keep it warming, but do not wait on it
+  if (ready) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, me: ready.h160 };
+
+  // INSIDE the container, wait for the session — do not fall back to the public
+  // reader. That reader opens a websocket to a public RPC host, and the
+  // container only permits the domains this app declared, which are the GIF
+  // hosts and nothing else. So the fallback could never connect: the feed
+  // stayed empty until something else forced a refresh AFTER the session had
+  // come up, which is exactly the "nothing shows until you open your profile"
+  // everyone was seeing. The speed win still holds — the session is started at
+  // import, so this waits on something already in flight.
+  if (await insideHost()) {
+    const s = await session().catch(() => null);
+    if (s) return { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, face: s.face, me: s.h160 };
+    return { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, me: '' };
+  }
+
+  void session();   // outside: keep it warming, but do not wait on it
   const p = await pub();
-  return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null }), me: '' };
+  return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null }), me: '' };
 }
 
 /** Handles for reads that are meaningless without an account — following, and
@@ -799,10 +857,17 @@ function cacheFeed(posts: Post[]) {
   } catch { /* private mode, or full */ }
 }
 
+/** How many chirps the contract holds, as of the last read. The feed shows a
+ *  window; without this the app cannot tell "that is all of them" from "there
+ *  are more and you cannot reach them", and it was quietly showing the second
+ *  as if it were the first. */
+export let TOTAL = 0;
+
 export async function loadAll(limit = 300, onBatch?: (soFar: Post[]) => void): Promise<Post[]> {
   const { chirp, masks, me } = await handles();
   if (!chirp) return [];
   const total = Number((await q(chirp, 'count')) ?? 0);
+  TOTAL = total;
   const ids: number[] = [];
   for (let id = total; id > 0 && ids.length < limit; id--) ids.push(id);
   // Batched rather than one-at-a-time: sequential reads made the feed crawl as
@@ -1404,7 +1469,7 @@ const isNotImplemented = (why: string) =>
   /Not implemented|createTransactionWithLegacyAccount/i.test(why);
 
 async function send(
-  which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp',
+  which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp' | 'face',
   method: string,
   args: unknown[],
   retried = false,

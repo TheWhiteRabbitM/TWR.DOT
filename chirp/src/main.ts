@@ -18,8 +18,8 @@ import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
-  askNotifications, notify, openUrl, gifUrl, gifBlob, cachedFeed,
-  pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, pictureRights,
+  askNotifications, notify, openUrl, gifUrl, gifBlob, cachedFeed, TOTAL,
+  pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, FACE_MAX,
   notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
   followerCounts, interestsFrom, statsFor,
   CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note, type Stats,
@@ -191,7 +191,7 @@ let query = '';
 let flash: { text: string; bad?: boolean } | null = null;
 /** How much of the feed is loaded. The chain has no cursor, so this is simply
  *  how far back from the newest chirp we have read. */
-let page = 25;
+let page = 60;
 let CONN: { followers: Who[]; followingList: Who[] } = { followers: [], followingList: [] };
 /** True while a refresh is in flight, so the header can say so instead of the
  *  app looking frozen. */
@@ -224,6 +224,21 @@ let whyFor: number | null = null;
 let shareFor: number | null = null;
 /** A link the container refused to open, shown so it can at least be read. */
 let linkFor: string | null = null;
+/** The GIF picker, and what it last said. */
+let gifOpen = false;
+let gifSaid: { text: string; bad?: boolean } | null = null;
+
+/**
+ * What is currently in the composer.
+ *
+ * The whole column is rebuilt on every state change, and the textarea was
+ * rendered from its ORIGIN — the draft for a new chirp, the old body for an
+ * edit, and nothing at all for a reply or a quote. So any redraw while the
+ * sheet was open silently wiped what had been typed: opening the GIF picker
+ * did it, and so did anything else that called render(). Holding the text here
+ * makes a redraw harmless.
+ */
+let sheetText = '';
 /** Where the picture upload got to. Shown, because when it fails inside a
  *  container it fails silently and there is nothing to go on otherwise. */
 let pfpStep: { text: string; bad?: boolean } | null = null;
@@ -442,7 +457,13 @@ function homeView(): string {
     + (FRESH.length ? `<button class="fresh-btn" id="showfresh">Show ${FRESH.length} new chirp${FRESH.length > 1 ? 's' : ''}</button>` : '')
     + (ME && !ME.mask ? gate() : '')
     + list(shown, tab === 'following' ? 'Nothing here yet — follow someone from their profile.' : 'No chirps yet.')
-    + (ALL.length >= page ? '<button class="more-btn" id="loadmore">Show older chirps</button>' : '');
+    // `>= page` was the wrong test: a feed of exactly the window size looks
+    // full whether or not anything is behind it, and once the contract had more
+    // chirps than the window the older ones simply vanished with no way back.
+    // The contract's own count is the truth, so ask it.
+    + (TOTAL > ALL.length
+      ? `<button class="more-btn" id="loadmore">Show older chirps — ${TOTAL - ALL.length} further back</button>`
+      : '');
 }
 
 /**
@@ -717,23 +738,23 @@ function overlay(): string {
       <label>Picture</label>
       <div class="pfprow">
         <div class="pfpnow">${avatar('0x' + ME.mask.toString(16).padStart(40, '0'), ME.mask)}</div>
-        <div>
-          <!-- A REAL, visible file input. It used to be hidden behind a button
-               that called .click() on it, which is the one pattern a mobile
-               webview swallows: the picker never opened and the button looked
-               dead. Let the platform draw its own control. -->
-          <input type="file" id="pfpfile" accept="image/*" class="filein">
-          ${PIC.get(ME.mask) ? '<button class="ghost small" id="clearpfp">Remove</button>' : ''}
+        <div class="pfpways">
+          <!-- Paste leads, because it is the one that works here. The file
+               chooser is the obvious control and a mobile container swallows
+               it, so it is offered second and named as the fallback rather
+               than sitting there looking like the way in. -->
+          <div class="pasted" id="pastepfp" contenteditable="true" tabindex="0"
+               aria-label="Paste a picture here">Copy an image, then paste it here</div>
+          <label class="fileline">or choose a file
+            <input type="file" id="pfpfile" accept="image/*" class="filein"></label>
+          ${PIC.get(ME.mask) ? '<button class="ghost small" id="clearpfp">Remove picture</button>' : ''}
         </div>
       </div>
-      <!-- A second way in, because the first one may simply not exist here.
-           Some containers have no file chooser at all, and then a file input is
-           furniture. Pasting works through the clipboard instead, which is a
-           different permission and a different code path. -->
-      <div class="pasted" id="pastepfp" contenteditable="true" tabindex="0"
-           aria-label="Paste a picture here">Or paste a picture here</div>
       ${pfpStep ? `<p class="hint ${pfpStep.bad ? 'bad' : ''}">${esc(pfpStep.text)}</p>` : ''}
-      <button class="link" id="pfprights">Check what the app allows</button>
+      <p class="hint">Stored on Asset Hub, in the contract, as the image itself — not a link and not a
+      key. It cannot expire, it survives clearing your browser, and every reader sees the same bytes.
+      Squared and shrunk to ${FACE_PX}px here so it fits the ${(FACE_MAX / 1000).toFixed(0)} KB the
+      contract accepts; you pay a small one-off deposit for the storage.</p>
       <p class="hint">Cropped square and shrunk to 256px here, then stored on the Bulletin chain — the app
       uploads it for you, so you need no storage account of your own. Bulletin keeps data for about a
       fortnight, so chirp quietly re-uploads the same picture each time you open it, which costs nothing
@@ -865,10 +886,25 @@ function overlay(): string {
     ${t && sheet.mode !== 'edit' ? `<div class="quoted">
       <div class="head"><span class="nm">${esc(nm(t.who, t.mask))}</span><span class="at">${esc(at(t.who, t.mask))}</span></div>
       <div class="body">${esc(t.body)}</div></div>` : ''}
-    <textarea id="stxt" maxlength="400" placeholder="${sheet.mode === 'reply' ? 'Post your reply' : sheet.mode === 'quote' ? 'Add a comment' : "What's happening on chain?"}">${sheet.mode === 'edit' && t ? esc(t.body) : sheet.mode === 'new' ? esc(draft.get()) : ''}</textarea>
+    <textarea id="stxt" maxlength="400" placeholder="${sheet.mode === 'reply' ? 'Post your reply' : sheet.mode === 'quote' ? 'Add a comment' : "What's happening on chain?"}">${esc(sheetText)}</textarea>
     <div class="mentions" id="mbox" hidden role="listbox" aria-label="People"></div>
-    <div class="composebar"><span class="count" id="scount">280</span>
+    <!-- The GIF button. A keyboard's GIF key inserts a link, but only some
+         keyboards have one and none of them exist on a desktop — so there is a
+         button that takes the link the way a person actually has it: copied. -->
+    <div class="composebar">
+      <button class="iconbtn gifbtn" id="gifopen" aria-label="Add a GIF" title="Add a GIF">GIF</button>
+      <span class="count" id="scount">280</span>
       <button class="primary" id="ssend">${sheet.mode === 'edit' ? 'Save' : title === 'New chirp' ? 'Chirp' : title}</button></div>
+    ${gifOpen ? `<div class="gifpick">
+      <p class="hint">Paste a GIF link from Tenor or Giphy — the ones a phone keyboard inserts.
+      Only the link is stored, so a GIF costs nothing on chain and nothing on Bulletin.</p>
+      <input id="gifurl" placeholder="https://media.tenor.com/…" autocomplete="off" spellcheck="false">
+      <div class="row">
+        <button class="ghost small" id="gifpaste">Paste from clipboard</button>
+        <button class="primary small" id="gifadd">Add it</button>
+      </div>
+      ${gifSaid ? `<p class="hint ${gifSaid.bad ? 'bad' : ''}">${esc(gifSaid.text)}</p>` : ''}
+    </div>` : ''}
   </div></div>`;
 }
 
@@ -1039,7 +1075,7 @@ function wire() {
   document.getElementById('scrim')?.addEventListener('click', (e) => {
     if (e.target === document.getElementById('scrim')) { settingsOpen = false; sheet = null; menuFor = null; confirmDelete = null; repostFor = null; render(); }
   });
-  document.getElementById('fab')?.addEventListener('click', () => { sheet = { mode: 'new' }; render(); });
+  document.getElementById('fab')?.addEventListener('click', () => { sheet = { mode: 'new' }; sheetText = draft.get(); render(); });
   document.getElementById('dismiss')?.addEventListener('click', () => { flash = null; render(); });
   document.getElementById('retry')?.addEventListener('click', () => refresh());
   document.getElementById('cancel-del')?.addEventListener('click', () => { confirmDelete = null; render(); });
@@ -1077,6 +1113,8 @@ function wire() {
   const scnt = document.getElementById('scount');
   if (stxt && ssend && scnt && sheet) {
     counter(stxt, scnt, ssend, sheet.mode === 'quote');
+    // The single place the composer's text is remembered across redraws.
+    stxt.addEventListener('input', () => { sheetText = stxt.value; });
     const mbox = document.getElementById('mbox');
     if (mbox) {
       attachMentions(stxt, mbox);
@@ -1156,13 +1194,13 @@ function wire() {
     const what = b.dataset.rp, p = repostFor ? findPost(repostFor) : undefined;
     repostFor = null;
     if (!p || what === 'close') return render();
-    if (what === 'quote') { sheet = { mode: 'quote', target: p }; return render(); }
+    if (what === 'quote') { sheet = { mode: 'quote', target: p }; sheetText = ''; return render(); }
     act(() => toggleRepost(p.id, ME!.mask), p.reposted ? 'Repost undone.' : 'Reposted.');
   }));
   app.querySelectorAll<HTMLElement>('[data-reply]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
     const p = findPost(Number(b.dataset.reply));
-    if (p) { sheet = { mode: 'reply', target: p }; render(); }
+    if (p) { sheet = { mode: 'reply', target: p }; sheetText = ''; render(); }
   }));
   app.querySelectorAll<HTMLElement>('[data-follow]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation(); act(() => toggleFollow(Number(b.dataset.follow)), 'Done.');
@@ -1201,7 +1239,7 @@ function wire() {
         else { await navigator.clipboard.writeText(url); flash = { text: 'No share sheet here — link copied instead.' }; }
       } catch { /* dismissed by the person, which is not a failure */ }
     } else if (how === 'quote') {
-      sheet = { mode: 'quote', target: p };
+      sheet = { mode: 'quote', target: p }; sheetText = '';
     } else if (how === 'chain') {
       void openUrl(`https://assethub-paseo.subscan.io/account/${CHIRP}`);
     }
@@ -1224,8 +1262,8 @@ function wire() {
     const m = b.dataset.m, id = Number(b.dataset.id), p = id ? findPost(id) : undefined;
     menuFor = null;
     if (m === 'close' || !p) return render();
-    if (m === 'edit') { sheet = { mode: 'edit', target: p }; return render(); }
-    if (m === 'quote') { sheet = { mode: 'quote', target: p }; return render(); }
+    if (m === 'edit') { sheet = { mode: 'edit', target: p }; sheetText = p.body; return render(); }
+    if (m === 'quote') { sheet = { mode: 'quote', target: p }; sheetText = ''; return render(); }
     if (m === 'del') { confirmDelete = p.id; return render(); }
     if (m === 'who') return goProfile(p.mask);
     if (m === 'why') { whyFor = whyFor === p.id ? null : p.id; return render(); }
@@ -1242,6 +1280,46 @@ function wire() {
   }));
   document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
   document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
+
+  /* ------------------------------------------------------------------ gifs */
+  document.getElementById('gifopen')?.addEventListener('click', () => { gifOpen = !gifOpen; gifSaid = null; render(); });
+  document.getElementById('gifpaste')?.addEventListener('click', async () => {
+    const el = document.getElementById('gifurl') as HTMLInputElement | null;
+    try { if (el) el.value = await navigator.clipboard.readText(); }
+    catch { gifSaid = { text: 'This app will not give the page the clipboard — paste into the field by hand.', bad: true }; }
+    render();
+  });
+  document.getElementById('gifadd')?.addEventListener('click', () => {
+    const el = document.getElementById('gifurl') as HTMLInputElement | null;
+    const u = (el?.value ?? '').trim();
+    if (!u) return;
+    // Checked here rather than on send, so a link that will never render is
+    // refused while it can still be replaced — not after the chirp is on chain.
+    if (!gifUrl(u)) {
+      // Same reason: say it in place rather than redrawing the composer.
+      gifSaid = { text: 'That is not a Tenor or Giphy media link. Use the address of the GIF itself, the one ending in .gif.', bad: true };
+      const box = document.querySelector('.gifpick');
+      if (box) {
+        box.querySelector('.hint.bad')?.remove();
+        const p = document.createElement('p');
+        p.className = 'hint bad';
+        p.textContent = gifSaid.text;
+        box.appendChild(p);
+      }
+      return;
+    }
+    const ta = document.getElementById('stxt') as HTMLTextAreaElement | null;
+    if (ta) {
+      ta.value = (ta.value.trimEnd() + '\n' + u).trim();
+      ta.dispatchEvent(new Event('input', { bubbles: true }));   // keep the counter and the draft honest
+      ta.focus();
+    }
+    // Closed by hand, NOT by render(): a redraw rebuilds the textarea, and for a
+    // reply or a quote it rebuilds it EMPTY — so calling render() here threw
+    // away the link that had just been added, along with anything already typed.
+    gifOpen = false; gifSaid = null;
+    document.querySelector('.gifpick')?.remove();
+  });
   document.getElementById('gostats')?.addEventListener('click', () => go({ k: 'stats' }));
   app.querySelectorAll<HTMLElement>('[data-url]').forEach((a) => a.addEventListener('click', async (e) => {
     e.stopPropagation(); e.preventDefault();
@@ -1275,15 +1353,6 @@ function wire() {
     if (!img) { pfpStep = { text: 'Nothing on the clipboard looked like an image.', bad: true }; return render(); }
     const f = img.getAsFile();
     if (f) await usePicture(f);
-  });
-  document.getElementById('pfprights')?.addEventListener('click', async () => {
-    pfpStep = { text: 'Asking…' }; render();
-    const r = await pictureRights();
-    const said = Object.entries(r).map(([k, v]) => `${k}: ${v ? 'yes' : 'no'}`).join(', ');
-    pfpStep = Object.keys(r).length
-      ? { text: `The app answered — ${said}.`, bad: Object.values(r).some((v) => !v) }
-      : { text: 'No host here: pictures need the Polkadot app.', bad: true };
-    render();
   });
   document.getElementById('clearpfp')?.addEventListener('click', async () => {
     if (!ME?.mask) return;
@@ -1393,7 +1462,11 @@ async function usePicture(f: File) {
   render();
 }
 
-async function squareWebp(file: File, size = 256): Promise<Uint8Array> {
+/** The size the picture is stored at. 128 rather than 256: the largest place it
+ *  is ever drawn is 64px, and the bytes are now paid for as chain storage. */
+const FACE_PX = 128;
+
+async function squareWebp(file: File, size = FACE_PX): Promise<Uint8Array> {
   const bmp = await createImageBitmap(file);
   const side = Math.min(bmp.width, bmp.height);
   const c = document.createElement('canvas');
@@ -1401,9 +1474,17 @@ async function squareWebp(file: File, size = 256): Promise<Uint8Array> {
   const ctx = c.getContext('2d')!;
   ctx.drawImage(bmp, (bmp.width - side) / 2, (bmp.height - side) / 2, side, side, 0, 0, size, size);
   bmp.close();
-  const blob: Blob = await new Promise((res, rej) =>
-    c.toBlob((b) => (b ? res(b) : rej(new Error('encode failed'))), 'image/webp', 0.85));
-  return new Uint8Array(await blob.arrayBuffer());
+
+  // Step the quality down until it fits. A photograph at quality .85 can be
+  // three times a drawing at the same setting, so a fixed number would take
+  // some pictures and refuse others for no reason a person could see.
+  for (const q of [0.8, 0.65, 0.5, 0.38, 0.28]) {
+    const blob: Blob = await new Promise((res, rej) =>
+      c.toBlob((b) => (b ? res(b) : rej(new Error('encode failed'))), 'image/webp', q));
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    if (bytes.length <= FACE_MAX) return bytes;
+  }
+  throw new Error('too detailed to fit');
 }
 
 /** Re-read the notes for whatever is on screen. Kept apart from refresh() so a

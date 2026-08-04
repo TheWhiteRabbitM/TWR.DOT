@@ -414,3 +414,20 @@ body.locked { overflow: hidden; }
 .mav svg { width: 100%; height: 100%; display: block; }
 .mnm { font-weight: 600; }
 .mat { color: var(--ink-2); font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The GIF button and its picker. Deliberately plain: it takes a link, because
+   that is the form a GIF actually arrives in — from a keyboard, or copied. */
+.gifbtn { font: 700 12px/1 inherit; letter-spacing: .06em; border: 1px solid var(--hair); border-radius: 6px; padding: 5px 7px; color: var(--ink-2); background: none; cursor: pointer; }
+.gifbtn:hover { color: var(--blue); border-color: var(--blue); }
+.gifpick { border-top: 1px solid var(--hair); margin-top: 12px; padding-top: 12px; }
+.gifpick input {
+  width: 100%; padding: 11px 13px; background: var(--panel);
+  border: 1px solid var(--hair); border-radius: 10px; color: var(--ink); font: inherit; font-size: 15px; outline: none;
+}
+.gifpick input:focus { border-color: var(--blue); }
+.gifpick .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+
+/* Picture: paste leads, the file chooser follows and is named as the fallback. */
+.pfpways { flex: 1; min-width: 0; }
+.fileline { display: block; margin-top: 8px; color: var(--ink-2); font-size: 13px; }
+.fileline .filein { display: block; margin-top: 6px; }
