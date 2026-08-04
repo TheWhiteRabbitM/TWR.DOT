@@ -50,6 +50,26 @@
       "short~"
     ]
   },
+  "caniuseprobe": {
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "probe~"
+    ]
+  },
+  "caniusethis": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "caniusexx00": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "chainpulse": {
     "category": "explorers",
     "source": "derived:manifest",
@@ -513,6 +533,12 @@
     "category": "games",
     "source": "owner",
     "confidence": "declared",
+    "why": []
+  },
+  "neversettled": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
     "why": []
   },
   "oblv-vault": {

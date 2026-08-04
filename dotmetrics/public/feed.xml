@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Tue, 04 Aug 2026 03:48:05 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 04 Aug 2026 06:48:24 GMT</lastBuildDate>
+    <item>
+      <title>pas-faucet-smoke</title>
+      <link>https://pas-faucet-smoke.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">pas-faucet-smoke</guid>
+      <pubDate>Tue, 04 Aug 2026 03:46:12 GMT</pubDate>
+    </item>
     <item>
       <title>caniusethis</title>
       <link>https://caniusethis.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description>An ASCII fantasy roguelike. Descend to recover the Amulet of Yendor, and ascend.</description>
       <guid isPermaLink="false">ascendyendor00</guid>
       <pubDate>Wed, 29 Jul 2026 15:04:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>dot-store</title>
-      <link>https://dot-store.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">dot-store</guid>
-      <pubDate>Wed, 29 Jul 2026 09:31:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

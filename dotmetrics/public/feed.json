@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785815285,
-  "count": 122,
+  "generatedAt": 1785826104,
+  "count": 123,
   "apps": [
+    {
+      "label": "pas-faucet-smoke",
+      "domain": "pas-faucet-smoke.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785815172,
+      "url": "https://pas-faucet-smoke.dev-dot.li"
+    },
     {
       "label": "caniusethis",
       "domain": "caniusethis.dot",
