@@ -1,4 +1,4 @@
-# Two issues for the products devnet, with evidence — and three claims withdrawn
+# Three issues for the products devnet, with evidence — and three claims withdrawn
 
 Written after building **chirponchain.dot**, a text-only social app that keeps
 everything in Asset Hub contracts. Every line below came out of a probe that
@@ -30,13 +30,18 @@ Measured inside the Polkadot app:
 [YES] navigateTo(https://polkadot.com)   settled in 10ms: {"ok":true}
 ```
 
-The permission is granted, remote images render, and `navigateTo` settles
-promptly with `ok`. Each of those "limits" was a symptom of a bug on our side —
+The permission is granted and remote images render. `navigateTo` settles
+promptly with `ok` — which is all this test ever showed, and reading it as "so
+links open" was a mistake this file made for a day. It settles. It does not
+open. That is Issue 3 below, and finding it took instrumenting the app rather
+than trusting a return value.
+
+Each of the other "limits" was a symptom of a bug on our side —
 a key encoded two bytes over a contract's field limit, a gas figure sized for a
 different kind of write — that we had explained to ourselves as a platform
 constraint. Reporting them would have cost somebody a day chasing nothing.
 
-Which is the reason for the probe, and the reason the two issues below are worth
+Which is the reason for the probe, and the reason the three issues below are worth
 reading: they are what survived the same test.
 
 ---
@@ -167,6 +172,55 @@ System.BlockWeights
 Our first correction asked for `8_000_000_000_000` — four times a whole block —
 which would have been refused before executing. Stating the ceiling next to
 whatever documents `gasLimit` would save the next person the same detour.
+
+---
+
+# Issue 3 — `navigateTo` returns `ok` for an external URL and opens nothing
+
+**Symptom.** Tapping any external link in an app inside the Polkadot app does
+nothing at all. No browser, no error, no visible change.
+
+**What the app sees.** `navigateTo(url)` resolves, promptly, with `ok: true`.
+Nothing else happens: no browser appears, and the app's own document never goes
+to the background — `visibilitychange` does not fire and `document.visibilityState`
+stays `visible` for as long as you care to wait.
+
+The trail below is printed by the app itself, from a phone, on a real tap:
+
+```
+popup:skipped-in-app>host:ok>host:said-ok-but-nothing-opened
+```
+
+Read left to right: the popup route was skipped because we are in the app, the
+host accepted the address and answered ok, and 1.4 s later this screen had never
+been backgrounded.
+
+**Ruled out on our side, in this order:**
+
+- **Popups.** `window.open` inside the app returns a `Window` object, that object
+  is **not** `closed` a moment later, and nothing is displayed. The handle carries
+  no information here, so neither `null` nor `.closed` can be used to detect
+  failure. (On the dot.li gateway the same call works — the frame carries
+  `sandbox="… allow-popups"`. Evidence from the gateway does not transfer to the
+  app; they are different hosts.)
+- **The `OpenUrl` device permission**, requested at startup, granted.
+- **The URL scheme.** First seen with `http://`, on the theory that a host might
+  hand only `https` to a browser. Retested with `https://`: **identical**.
+
+**Why it matters more than it looks.** An `ok` that means "request accepted"
+rather than "a browser opened" is indistinguishable, from inside, from success.
+Every app in this workspace reported opening links it had not opened, for weeks,
+because there is nothing else to check. The only reason we know now is that the
+app was instrumented to cross-check the host's answer against whether its own
+page ever lost visibility.
+
+**Ask:** either open the URL, or return an error. If neither is possible on a
+given host, a documented way to ask "can you actually open links?" would let an
+app show the address up front instead of offering a control that cannot work.
+
+**What the app does meanwhile.** Shows the address, copyable, with the trail
+attached — because a tap that silently does nothing is the worst outcome
+available, and the second worst is telling somebody it worked.
 
 ---
 
