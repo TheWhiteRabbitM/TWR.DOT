@@ -53,6 +53,7 @@ const KEYS = [
   'chirp.push',       // whether notifications were allowed or refused
   'chirp.nolegacy',   // this host cannot sign with a wallet account
   'chirp.draft',      // an unsent chirp
+  'chirp.lists',      // curated timelines: name -> masks
 ] as const;
 
 const local = {

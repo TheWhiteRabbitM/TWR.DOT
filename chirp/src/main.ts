@@ -26,8 +26,13 @@ import {
   pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, FACE_MAX,
   notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
   followerCounts, interestsFrom, statsFor,
+  pollOn, createPoll, votePoll, forgetPolls, findMine, type Poll,
+  rulesFor, setReplyPolicy, isBlocked, setBlocked, mayReply, forgetRules,
+  REPLY_EVERYONE, REPLY_FOLLOWING, REPLY_MENTIONED,
+  mediaOf, attachMedia, detachMedia, forgetMedia, MEDIA_MAX,
   CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note, type Stats, type Notice,
 } from './chain';
+import { lists, createList, removeList, toggleInList, listsWith } from './lists';
 
 const app = document.getElementById('app')!;
 const esc = (s: string) =>
@@ -205,7 +210,8 @@ const I = {
 type View =
   | { k: 'home' } | { k: 'search' } | { k: 'notif' } | { k: 'saved' } | { k: 'stats' } | { k: 'probe' }
   | { k: 'profile'; mask: number } | { k: 'thread'; id: number }
-  | { k: 'people'; mask: number; of: 'followers' | 'following' };
+  | { k: 'people'; mask: number; of: 'followers' | 'following' }
+  | { k: 'lists' } | { k: 'list'; name: string };
 
 let ME: Me | null = null;
 let ALL: Post[] = [];
@@ -214,6 +220,19 @@ let PEOPLE: Who[] = [];
 let NOTIF: Notice[] = [];
 let PROF: Awaited<ReturnType<typeof profile>> | null = null;
 let TH: Awaited<ReturnType<typeof thread>> = { parents: [], post: null, replies: [] };
+/** Polls and pictures for what is on screen, filled in the background like faces. */
+const POLLS_BY_CHIRP = new Map<number, Poll | null>();
+const MEDIA_BY_CHIRP = new Map<number, { url: string; alt: string } | null>();
+const pollWanted = new Set<number>();
+const mediaWanted = new Set<number>();
+/** Masks in a block relationship with me, so the feed can hide them. */
+let BLOCKED = new Set<number>();
+/** My own reply policy, for the settings pane to show what is set. */
+let MYPOLICY = REPLY_EVERYONE;
+/** Composer state for a poll being written alongside a chirp. */
+let pollDraft: null | { options: string[]; minutes: number } = null;
+/** A picture chosen in the composer, waiting for the chirp to exist. */
+let mediaDraft: null | { bytes: Uint8Array; url: string; alt: string } = null;
 
 let view: View = { k: 'home' };
 let tab: 'foryou' | 'latest' | 'following' = 'foryou';
@@ -222,6 +241,8 @@ let ptab: 'chirps' | 'replies' | 'likes' = 'chirps';
 let sheet: null | { mode: 'new' | 'reply' | 'quote' | 'edit'; target?: Post } = null;
 let settingsOpen = false;
 let menuFor: number | null = null;
+/** Whose "add to list" chooser is open. */
+let listFor: number | null = null;
 /** Repost is two different acts — passing something on unchanged, and saying
  *  something about it. X puts both behind the same button, and so does this. */
 let repostFor: number | null = null;
@@ -443,6 +464,8 @@ function card(p: Post, big = false, chain = false, runs = false): string {
           <span><b>${p.reposts}</b> reposts</span>
           <span><b>${p.likes}</b> likes</span>
         </div>` : ''}
+        ${mediaStrip(shown.id, shown.mask)}
+        ${pollStrip(shown.id)}
         ${noteStrip(p.id)}
         ${whyFor === p.id ? whyBox(p) : ''}
         ${actions(p)}
@@ -504,6 +527,133 @@ const list = (ps: Post[], empty: string) => (ps.length
     ? '<div class="skel"></div><div class="skel"></div><div class="skel"></div>'
     : `<div class="note">${empty}</div>`);
 
+
+/* ------------------------------------------------------- polls and media */
+
+/**
+ * Fetch a poll or a picture once, in the background, and redraw when it lands.
+ *
+ * Same shape as wantPicture, and the same hard-won rule: a refused read is not
+ * an answer. `pollOn` and `mediaOf` cache "there is none" themselves and return
+ * null without caching when the chain would not say — so the latch here is
+ * released on every null, and a real "no poll" costs one read per refresh cycle
+ * rather than one per render.
+ */
+let extraTimer: ReturnType<typeof setTimeout> | null = null;
+function redrawSoon() {
+  if (extraTimer) return;
+  extraTimer = setTimeout(() => { extraTimer = null; render(); }, 120);
+}
+
+function wantPoll(id: number) {
+  if (pollWanted.has(id)) return;
+  pollWanted.add(id);
+  void pollOn(id).then((p) => {
+    POLLS_BY_CHIRP.set(id, p);
+    if (p) redrawSoon();
+  }).catch(() => pollWanted.delete(id));
+}
+
+function wantMedia(id: number, author: number) {
+  if (mediaWanted.has(id)) return;
+  mediaWanted.add(id);
+  void mediaOf(id, author).then((m) => {
+    MEDIA_BY_CHIRP.set(id, m);
+    if (m) redrawSoon();
+  }).catch(() => mediaWanted.delete(id));
+}
+
+/** The picture on a chirp, once it has arrived. */
+function mediaStrip(id: number, author: number): string {
+  const m = MEDIA_BY_CHIRP.get(id);
+  if (m === undefined) { wantMedia(id, author); return ''; }
+  if (!m) return '';
+  return `<div class="cmedia"><img src="${m.url}" alt="${esc(m.alt)}" loading="lazy">${
+    m.alt ? `<div class="calt">${esc(m.alt)}</div>` : ''}</div>`;
+}
+
+/**
+ * The poll on a chirp: the options while it is open, the result once it is not.
+ *
+ * The line under the bars is the whole point of putting this on a chain, so it
+ * says so rather than being decoration. Anyone can add the votes up themselves.
+ */
+function pollStrip(id: number): string {
+  const p = POLLS_BY_CHIRP.get(id);
+  if (p === undefined) { wantPoll(id); return ''; }
+  if (!p) return '';
+
+  const total = p.total || 0;
+  const closed = !p.open;
+  const voted = p.mine > 0;
+  const rows = p.options.map((o, i) => {
+    const n = p.counts[i] ?? 0;
+    const pct = total ? Math.round((n / total) * 100) : 0;
+    const mine = p.mine === i + 1;
+    // Show bars once you have voted or once it is closed — before that, seeing
+    // the running score is how a poll turns into a bandwagon.
+    return (voted || closed)
+      ? `<div class="popt done${mine ? ' mine' : ''}">
+           <div class="pbar" style="--p:${pct}%"></div>
+           <span class="plabel">${esc(o)}${mine ? ' ✓' : ''}</span>
+           <span class="ppct">${pct}%</span>
+         </div>`
+      : `<button class="popt" data-vote="${p.id}" data-chirp="${id}" data-opt="${i}">${esc(o)}</button>`;
+  }).join('');
+
+  const left = closed ? 'Final' : timeLeft(p.closesAt);
+  return `<div class="poll" data-poll="${p.id}">
+    ${rows}
+    <div class="pfoot">${total} ${total === 1 ? 'vote' : 'votes'} · ${left}
+      <span class="pwhy" title="Every vote is a row in the poll contract on Asset Hub. Anyone can add them up and get this number — including you.">recountable</span>
+    </div>
+  </div>`;
+}
+
+function timeLeft(closesAt: number): string {
+  const s = closesAt - Math.floor(Date.now() / 1000);
+  if (s <= 0) return 'Final';
+  if (s < 3600) return Math.ceil(s / 60) + 'm left';
+  if (s < 86400) return Math.ceil(s / 3600) + 'h left';
+  return Math.ceil(s / 86400) + 'd left';
+}
+
+/* ----------------------------------------------------------------- lists */
+
+function listsView(): string {
+  const all = lists();
+  const rows = all.length
+    ? all.map((l) => `<div class="lrow">
+        <button class="lname" data-list="${esc(l.name)}">${esc(l.name)}</button>
+        <span class="lcount">${l.masks.length} ${l.masks.length === 1 ? 'person' : 'people'}</span>
+        <button class="ghost small" data-dellist="${esc(l.name)}">Delete</button>
+      </div>`).join('')
+    : '<div class="note">No lists yet. A list is a timeline of just the people you put in it.</div>';
+  return `<div class="sechead">Your lists</div>
+    ${rows}
+    <div class="lnew">
+      <input id="newlist" placeholder="Name a new list" maxlength="24" autocomplete="off">
+      <button class="primary small" id="mklist">Create</button>
+    </div>
+    <div class="note small">Lists stay on this device. Everything else here is public on chain,
+    and a list is an opinion about people who never agreed to be sorted — so it is the one thing
+    that does not go on the chain. It rides the same host storage as your bookmarks, so a new
+    version of chirp does not wipe it.</div>`;
+}
+
+function listView(): string {
+  const name = view.k === 'list' ? view.name : '';
+  const l = lists().find((x) => x.name.toLowerCase() === name.toLowerCase());
+  if (!l) return '<div class="note">That list is gone.</div>';
+  if (!l.masks.length) {
+    return `<div class="sechead">${esc(l.name)}</div>
+      <div class="note">Nobody in this list yet. Open somebody's profile and use “Add to list”.</div>`;
+  }
+  const inList = ALL.filter((p) => l.masks.includes(p.mask) && !p.deleted);
+  return `<div class="sechead">${esc(l.name)} · ${l.masks.length} ${l.masks.length === 1 ? 'person' : 'people'}</div>`
+    + list(inList, 'Nothing from this list in the timeline yet.');
+}
+
 /* -------------------------------------------------------------------- views */
 
 /** What the ranker knows. Recomputed per render, which is cheap, and never
@@ -519,7 +669,12 @@ function homeView(): string {
   // Muting hides them from the timeline, not from the chain: open their profile
   // and everything is still there. A mute is "not in my feed", not censorship,
   // and this app could not censor anything if it wanted to.
-  const top = ALL.filter((p) => !p.replyTo && !muted.has(p.mask));
+  // A block hides them from your feed as well, in both directions — but note
+  // that this is the same KIND of thing as a mute, not something stronger. On a
+  // public chain nothing can stop them reading you; what a block does is
+  // published on chain so every client applies it, where a mute is only ever
+  // this device's business.
+  const top = ALL.filter((p) => !p.replyTo && !muted.has(p.mask) && !BLOCKED.has(p.mask));
   // Following stays strictly chronological — that is the point of it, and X
   // breaking that promise is the complaint people actually have. For you is
   // ranked, and says so.
@@ -924,7 +1079,8 @@ function header(): string {
   const title = view.k === 'thread' ? 'Thread' : view.k === 'profile' ? 'Profile'
     : view.k === 'people' ? (view.of === 'followers' ? 'Followers' : 'Following')
     : view.k === 'search' ? 'Search' : view.k === 'notif' ? 'Notifications'
-    : view.k === 'saved' ? 'Bookmarks' : view.k === 'stats' ? 'Your numbers' : view.k === 'probe' ? 'Container probe' : 'chirp';
+    : view.k === 'saved' ? 'Bookmarks' : view.k === 'stats' ? 'Your numbers' : view.k === 'probe' ? 'Container probe'
+    : view.k === 'lists' ? 'Lists' : view.k === 'list' ? view.name : 'chirp';
   const who = !ME ? '<span>reading only — open in the Polkadot app, or connect a wallet extension</span>'
     : `<b>${ME.mask ? esc(nm(ME as unknown as Who)) : 'no mask yet'}</b><span>${esc(short(ME.address))}</span>`;
   // The mark stands in for the word only where the word would be the app's own
@@ -985,6 +1141,16 @@ function overlay(): string {
       <p class="hint">This is the @ name people see. It is unique — first to claim it keeps it — and only
       you can set it, because your mask cannot be moved. It carries <b>no tick</b>: Asset Hub cannot read
       the People chain, so nothing here can prove the username is yours. Only a .dot is checked.</p>
+      <label>Who can reply to you</label>
+      <div class="row seg">
+        ${[[REPLY_EVERYONE, 'Everyone'], [REPLY_FOLLOWING, 'People you follow'], [REPLY_MENTIONED, 'Only who you name']]
+          .map(([v, l]) => `<button class="ghost small${MYPOLICY === v ? ' on' : ''}" data-policy="${v}">${l}</button>`).join('')}
+      </div>
+      <p class="hint">Published on chain, so every client reads the same rule and nobody — not us,
+      not an operator — can change it but you. <b>It is not enforced by the chain.</b> The chirp
+      contract was deployed before this existed and has no way to consult it, so somebody determined
+      can still send a reply straight to it. This is a rule that can be audited, not one that can be
+      bypassed silently: you can check for yourself whether it was respected.</p>
       <label>Bio</label><input id="s_bio" maxlength="160" value="${esc(ME.bio)}" placeholder="one line about you">
       <label>Telegram</label><input id="s_tg" maxlength="32" value="${esc(ME.telegram)}" placeholder="handle, without @">
       <label>X</label><input id="s_x" maxlength="32" value="${esc(ME.x)}" placeholder="handle, without @">
@@ -1011,6 +1177,7 @@ function overlay(): string {
       <label>Diagnostics</label>
       <p class="hint">What this container actually allows — measured on this device. Worth running if
       something here fails silently: it produces a report you can paste into a bug report.</p>
+      <button class="ghost wide" id="golists">Your lists</button>
       <button class="ghost wide" id="goprobe">Test what this app allows</button>
     </div></div>`;
   }
@@ -1065,6 +1232,19 @@ function overlay(): string {
       </div>
     </div></div>`;
   }
+  if (listFor) {
+    const mine = listsWith(listFor);
+    const all = lists();
+    return `<div class="scrim" id="scrim"><div class="menu">
+      <div class="menuhead">Add to a list</div>
+      ${all.length
+        ? all.map((l) => `<button data-addlist="${esc(l.name)}">${mine.includes(l.name) ? '✓ ' : ''}${esc(l.name)}</button>`).join('')
+        : '<div class="note small">No lists yet — make one below.</div>'}
+      <div class="lnew"><input id="quicklist" placeholder="New list name" maxlength="24" autocomplete="off">
+        <button class="primary small" id="quickmk">Create &amp; add</button></div>
+      <button data-addlist="">Cancel</button>
+    </div></div>`;
+  }
   if (repostFor) {
     const p = findPost(repostFor);
     return `<div class="scrim" id="scrim"><div class="menu">
@@ -1096,6 +1276,9 @@ function overlay(): string {
       ${ME?.mask ? `<button data-m="note" data-id="${p.id}">Add context</button>` : ''}
       <button data-m="who" data-id="${p.id}">View profile</button>
       ${mine ? '' : `<button data-m="mute" data-id="${p.id}">${muted.has(p.mask) ? 'Unmute' : 'Mute'} ${esc(at(p.who, p.mask))}</button>`}
+      ${mine || !ME?.mask ? '' : `<button class="danger" data-m="block" data-id="${p.id}">${
+        BLOCKED.has(p.mask) ? 'Unblock' : 'Block'} ${esc(at(p.who, p.mask))}</button>`}
+      ${ME?.mask ? `<button data-m="tolist" data-id="${p.id}">Add to list…</button>` : ''}
       <button data-m="link" data-id="${p.id}">Copy link</button>
       <button data-m="copy" data-id="${p.id}">Copy text</button>
       <button data-m="chain" data-id="${p.id}">View on chain</button>
@@ -1125,6 +1308,12 @@ function overlay(): string {
          button that takes the link the way a person actually has it: copied. -->
     <div class="composebar">
       <button class="iconbtn gifbtn" id="gifopen" aria-label="Add a GIF" title="Add a GIF">GIF</button>
+      <!-- A picture and a poll only make sense on something new. An edit cannot
+           gain either: the chirp already exists, and a poll attached after
+           people have replied changes what they were answering. -->
+      ${sheet.mode === 'new' || sheet.mode === 'reply'
+        ? `<button class="iconbtn gifbtn${mediaDraft ? ' on' : ''}" id="picopen" aria-label="Add a picture" title="Add a picture">IMG</button>
+           <button class="iconbtn gifbtn${pollDraft ? ' on' : ''}" id="pollopen" aria-label="Add a poll" title="Add a poll">POLL</button>` : ''}
       ${sheet.mode !== 'edit'
         ? `<button class="iconbtn gifbtn" id="tadd" aria-label="Add another chirp to this thread" title="Add another">＋</button>` : ''}
       <span class="count" id="scount">280</span>
@@ -1141,6 +1330,30 @@ function overlay(): string {
       </div>
       ${gifSaid ? `<p class="hint ${gifSaid.bad ? 'bad' : ''}">${esc(gifSaid.text)}</p>` : ''}
     </div>` : ''}
+    ${mediaDraft ? `<div class="picdraft">
+      <img src="${mediaDraft.url}" alt="">
+      <input id="alttext" placeholder="Describe it, for people who cannot see it" maxlength="120" value="${esc(mediaDraft.alt)}">
+      <button class="ghost small" id="picdrop">Remove picture</button>
+      <p class="hint">The image itself goes into a contract, not a link to it — so it cannot expire
+      and every reader gets the same bytes. It is resized to fit 24 kB before it is sent, and it is
+      attached in a second transaction once the chirp exists.</p>
+    </div>` : ''}
+    ${pollDraft ? `<div class="polldraft">
+      <div class="sechead small">Poll</div>
+      ${pollDraft.options.map((o, i) => `<input class="popt-in" data-oi="${i}"
+        placeholder="Option ${i + 1}" maxlength="40" value="${esc(o)}">`).join('')}
+      <div class="row">
+        ${pollDraft.options.length < 4 ? '<button class="ghost small" id="polladd">Add option</button>' : ''}
+        <select id="polldur">
+          ${[[60, '1 hour'], [360, '6 hours'], [1440, '1 day'], [4320, '3 days'], [10080, '1 week']]
+            .map(([m, l]) => `<option value="${m}"${pollDraft!.minutes === m ? ' selected' : ''}>${l}</option>`).join('')}
+        </select>
+        <button class="ghost small" id="polldrop">Remove poll</button>
+      </div>
+      <p class="hint">Every vote is a row in a contract, so the result is one anybody can add up
+      themselves — including you, and including someone who does not believe it. The poll is created
+      in a second transaction once the chirp exists.</p>
+    </div>` : ''}
   </div></div>`;
 }
 
@@ -1153,7 +1366,7 @@ function render() {
   const key = hashOf(view);
   if (app.querySelector('main')) scrollAt.set(key, scrollY);
   // A sheet is over the column; let it scroll, not the timeline behind it.
-  document.body.classList.toggle('locked', Boolean(sheet || settingsOpen || menuFor || confirmDelete || repostFor));
+  document.body.classList.toggle('locked', Boolean(sheet || settingsOpen || menuFor || confirmDelete || repostFor || listFor));
 
   const body = view.k === 'home' ? homeView()
     : view.k === 'saved' ? savedView()
@@ -1163,6 +1376,8 @@ function render() {
     : view.k === 'notif' ? notifView()
     : view.k === 'profile' ? profileView()
     : view.k === 'people' ? peopleView()
+    : view.k === 'lists' ? listsView()
+    : view.k === 'list' ? listView()
     : threadView();
   app.innerHTML = header()
     + (flash ? `<div class="msg ${flash.bad ? 'bad' : 'good'}" role="status" aria-live="polite">${esc(flash.text)}<button class="x-flash" id="dismiss" aria-label="Dismiss">✕</button></div>` : '')
@@ -1279,6 +1494,8 @@ function hashOf(v: View): string {
     : v.k === 'notif' ? '#/notifications' : v.k === 'saved' ? '#/saved' : v.k === 'stats' ? '#/stats' : v.k === 'probe' ? '#/probe'
     : v.k === 'profile' ? '#/u/' + v.mask
     : v.k === 'people' ? '#/u/' + v.mask + '/' + v.of
+    : v.k === 'lists' ? '#/lists'
+    : v.k === 'list' ? '#/l/' + encodeURIComponent(v.name)
     : '#/t/' + v.id;
 }
 function viewOf(hash: string): View {
@@ -1294,6 +1511,8 @@ function viewOf(hash: string): View {
   if (h.startsWith('saved')) return { k: 'saved' };
   if (h.startsWith('stats')) return { k: 'stats' };
   if (h.startsWith('probe')) return { k: 'probe' };
+  if (h.startsWith('lists')) return { k: 'lists' };
+  if (h.startsWith('l/')) return { k: 'list', name: decodeURIComponent(h.slice(2)) };
   return { k: 'home' };
 }
 /** Navigate. Pushing the hash is what makes Back work; the hashchange handler
@@ -1383,13 +1602,28 @@ function wire() {
       }
 
       if (s.mode === 'edit' && s.target) return act(() => edit(s.target!.id, v), 'Updated on chain.');
-      if (s.mode === 'reply' && s.target) return act(() => post(ME!.mask, v, s.target!.id, 0), 'Replied on chain.');
-      if (s.mode === 'quote' && s.target) return act(() => post(ME!.mask, v, 0, s.target!.id), 'Quoted on chain.');
-      return act(async () => {
-        const r = await post(ME!.mask, v);
-        if (!r.ok) draft.set(v); // hand the words back
+
+      // A poll and a picture need the chirp's id, which does not exist until
+      // the chirp is on chain — so the post goes first, the id is found, and
+      // each extra is its own transaction after it. Kept together here so the
+      // reply and the new-chirp paths cannot drift apart.
+      const withExtras = (base: string) => async () => {
+        const r = await post(ME!.mask, v, s.mode === 'reply' && s.target ? s.target.id : 0, 0);
+        if (!r.ok) { draft.set(v); return r; }
+        if (!mediaDraft && !pollDraft) { flash = { text: base }; return r; }
+        flash = { text: 'Posted. Attaching…' }; render();
+        const id = await findMine(ME!.mask, v).catch(() => 0);
+        if (!id) {
+          mediaDraft = null; pollDraft = null;
+          return { ok: true, why: '' } as { ok: boolean; why?: string };
+        }
+        const said = await attachExtras(id);
+        flash = { text: base + (said.length ? ' — ' + said.join(', ') + '.' : '') };
         return r;
-      }, 'Posted on chain.');
+      };
+      if (s.mode === 'reply' && s.target) return act(withExtras('Replied on chain.'), 'Replied on chain.');
+      if (s.mode === 'quote' && s.target) return act(() => post(ME!.mask, v, 0, s.target!.id), 'Quoted on chain.');
+      return act(withExtras('Posted on chain.'), 'Posted on chain.');
     });
   }
 
@@ -1452,7 +1686,16 @@ function wire() {
   app.querySelectorAll<HTMLElement>('[data-reply]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
     const p = findPost(Number(b.dataset.reply));
-    if (p) { sheet = { mode: 'reply', target: p }; sheetText = ''; render(); }
+    if (!p) return;
+    // Check the author's published rule BEFORE opening the composer. Letting
+    // somebody write a reply and refusing it afterwards wastes their words; and
+    // the check is stated as the author's choice, not as a failure of theirs.
+    void mayReply(p, ME?.mask ?? 0).then((ok) => {
+      if (!ok.ok) { flash = { text: ok.why, bad: true }; return render(); }
+      sheet = { mode: 'reply', target: p };
+      sheetText = '';
+      render();
+    });
   }));
   app.querySelectorAll<HTMLElement>('[data-follow]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation(); act(() => toggleFollow(Number(b.dataset.follow)), 'Done.');
@@ -1541,6 +1784,15 @@ function wire() {
     }
     if (m === 'mark') { marks.toggle(p.id); flash = { text: marks.has(p.id) ? 'Bookmarked on this device.' : 'Bookmark removed.' }; return render(); }
     if (m === 'mute') { muted.toggle(p.mask); flash = { text: muted.has(p.mask) ? 'Muted on this device.' : 'Unmuted.' }; return render(); }
+    if (m === 'block') {
+      const on = BLOCKED.has(p.mask);
+      return act(async () => {
+        const r = await setBlocked(ME!.mask, p.mask, !on);
+        if (r.ok) { if (on) BLOCKED.delete(p.mask); else BLOCKED.add(p.mask); }
+        return r;
+      }, on ? 'Unblocked.' : 'Blocked. They can still read you — everything here is public — but conforming clients will not carry their replies to you.');
+    }
+    if (m === 'tolist') { listFor = p.mask; menuFor = null; return render(); }
     if (m === 'note') { noteSheet = { chirpId: p.id, kind: 0 }; return render(); }
     if (m === 'link') {
       void navigator.clipboard.writeText(`${location.origin}${location.pathname}#/t/${p.id}`);
@@ -1556,6 +1808,7 @@ function wire() {
   }));
   document.getElementById('goprobe')?.addEventListener('click', () => { settingsOpen = false; go({ k: 'probe' }); });
   document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
+  bindExtras();
 
   /* ----------------------------------------------------------------- probe */
   document.getElementById('runprobe')?.addEventListener('click', async () => {
@@ -1761,6 +2014,11 @@ async function refresh() {
   await refreshNotes().catch(() => undefined);
   FOLLOWERS = await followerCounts().catch(() => FOLLOWERS);
   if (ME?.mask) FOLLOW = await following().catch(() => FOLLOW);
+  // Polls and pictures are re-asked once a cycle rather than once a render:
+  // clearing the latches here is what lets a poll created a moment ago appear,
+  // without every redraw costing a read per chirp on screen.
+  forgetPolls(); forgetMedia(); pollWanted.clear(); mediaWanted.clear();
+  if (ME?.mask) await loadRules().catch(() => undefined);
   busy = false;
   render();
 }
@@ -1834,11 +2092,211 @@ async function squareWebp(file: File, size = FACE_PX): Promise<Uint8Array> {
   throw new Error('too detailed to fit');
 }
 
+/**
+ * My reply policy, and which of the masks on screen are in a block with me.
+ *
+ * Asked only for masks that are actually in the timeline: the contract has no
+ * "list everyone I blocked" read, and adding one would have meant publishing an
+ * enumerable enemies list, which is worse than the extra reads. Blocks are rare,
+ * so `blockCount` is checked first and the per-mask walk is skipped entirely
+ * when it is zero — which for almost everybody it is.
+ */
+async function loadRules() {
+  if (!ME?.mask) return;
+  forgetRules();
+  const mine = await rulesFor(ME.mask).catch(() => ({ policy: REPLY_EVERYONE, blocks: 0 }));
+  MYPOLICY = mine.policy;
+  if (!mine.blocks) { BLOCKED = new Set(); return; }
+  const seenMasks = [...new Set(ALL.map((p) => p.mask))].filter((m) => m && m !== ME!.mask);
+  const hits = await Promise.all(seenMasks.map(async (m) => ((await isBlocked(ME!.mask, m)) ? m : 0)));
+  BLOCKED = new Set(hits.filter(Boolean));
+}
+
 /** Re-read the notes for whatever is on screen. Kept apart from refresh() so a
  *  rating does not also re-fetch the entire timeline. */
 async function refreshNotes() {
   NOTED = await notedChirps().catch(() => NOTED);
   if (view.k === 'thread') THNOTES = await notesOn(view.id).catch(() => THNOTES);
+}
+
+
+/**
+ * A picture for a chirp: wider than an avatar, and to a harder ceiling.
+ *
+ * Not square, because a photograph cropped to a square to fit a contract is a
+ * photograph the app damaged. Fitted inside 640px instead, keeping its shape.
+ *
+ * The same two-threshold rule as squareWebp, for the same reason: the contract
+ * takes MEDIA_MAX, but a write near a contract's limit runs close to the
+ * chain's per-transaction weight ceiling, and that is how the avatar write met
+ * Revive.OutOfGas the first time. Aim well under, accept the limit only if
+ * nothing smaller can be had.
+ */
+async function fitWebp(file: File, maxSide = 640): Promise<{ bytes: Uint8Array; url: string }> {
+  const bmp = await createImageBitmap(file);
+  const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+  const w = Math.max(1, Math.round(bmp.width * scale));
+  const h = Math.max(1, Math.round(bmp.height * scale));
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  c.getContext('2d')!.drawImage(bmp, 0, 0, w, h);
+  bmp.close();
+
+  const COMFORT = 18_000;
+  let last: Uint8Array | null = null;
+  for (const q of [0.72, 0.6, 0.5, 0.4, 0.3, 0.22]) {
+    const blob: Blob = await new Promise((res, rej) =>
+      c.toBlob((b) => (b ? res(b) : rej(new Error('encode failed'))), 'image/webp', q));
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    if (bytes.length <= COMFORT) return { bytes, url: URL.createObjectURL(blob) };
+    last = bytes;
+  }
+  if (last && last.length <= MEDIA_MAX) {
+    return { bytes: last, url: URL.createObjectURL(new Blob([last as BlobPart], { type: 'image/webp' })) };
+  }
+  throw new Error('too detailed to fit');
+}
+
+/**
+ * Everything the composer promised but could not send until the chirp existed.
+ *
+ * A poll and a picture both reference a chirp id, and the id only exists once
+ * the chirp is on chain — so they are separate transactions, deliberately, and
+ * they run after. If one fails the chirp still stands: losing the post because
+ * its picture would not encode would be the worse outcome by far, so each is
+ * reported on its own rather than rolling anything back.
+ */
+async function attachExtras(chirpId: number): Promise<string[]> {
+  const said: string[] = [];
+  if (!chirpId || !ME?.mask) return said;
+  if (mediaDraft) {
+    const alt = (document.getElementById('alttext') as HTMLInputElement | null)?.value ?? mediaDraft.alt;
+    const r = await attachMedia(chirpId, ME.mask, mediaDraft.bytes, alt).catch(() => ({ ok: false, why: 'the picture did not attach' } as const));
+    said.push(r.ok ? 'picture attached' : 'picture failed: ' + (('why' in r && r.why) || ''));
+    if (r.ok) MEDIA_BY_CHIRP.delete(chirpId);
+  }
+  if (pollDraft) {
+    const opts = [...document.querySelectorAll<HTMLInputElement>('.popt-in')].map((i) => i.value);
+    const mins = Number((document.getElementById('polldur') as HTMLSelectElement | null)?.value ?? pollDraft.minutes);
+    const r = await createPoll(chirpId, ME.mask, opts.length ? opts : pollDraft.options, mins)
+      .catch(() => ({ ok: false, why: 'the poll was not created' } as const));
+    said.push(r.ok ? 'poll created' : 'poll failed: ' + (('why' in r && r.why) || ''));
+    if (r.ok) { POLLS_BY_CHIRP.delete(chirpId); pollWanted.delete(chirpId); }
+  }
+  mediaDraft = null;
+  pollDraft = null;
+  return said;
+}
+
+/** Wire the controls added for polls, pictures, lists and rules. Called from
+ *  the same place every other listener is bound, after each render. */
+function bindExtras() {
+  /* ------------------------------------------------------------- voting */
+  app.querySelectorAll<HTMLElement>('[data-vote]').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation();                       // the card underneath opens the thread
+    if (!ME?.mask) { flash = { text: 'Claim a mask to vote.', bad: true }; return render(); }
+    const pollId = Number(b.dataset.vote);
+    const chirpId = Number(b.dataset.chirp);
+    const opt = Number(b.dataset.opt);
+    void act(async () => {
+      const r = await votePoll(pollId, chirpId, opt);
+      if (r.ok) { POLLS_BY_CHIRP.delete(chirpId); pollWanted.delete(chirpId); }
+      return r;
+    }, 'Voted. Anyone can recount it.');
+  }));
+
+  /* ------------------------------------------------------ composer: poll */
+  document.getElementById('pollopen')?.addEventListener('click', () => {
+    pollDraft = pollDraft ? null : { options: ['', ''], minutes: 1440 };
+    render();
+  });
+  document.getElementById('polladd')?.addEventListener('click', () => {
+    if (pollDraft && pollDraft.options.length < 4) {
+      pollDraft.options = [...document.querySelectorAll<HTMLInputElement>('.popt-in')].map((i) => i.value);
+      pollDraft.options.push('');
+      render();
+    }
+  });
+  document.getElementById('polldrop')?.addEventListener('click', () => { pollDraft = null; render(); });
+  // Keep what has been typed: the pane is re-rendered from state, so without
+  // this every keystroke elsewhere would wipe the options.
+  app.querySelectorAll<HTMLInputElement>('.popt-in').forEach((i) => i.addEventListener('input', () => {
+    if (pollDraft) pollDraft.options[Number(i.dataset.oi)] = i.value;
+  }));
+  document.getElementById('polldur')?.addEventListener('change', (e) => {
+    if (pollDraft) pollDraft.minutes = Number((e.target as HTMLSelectElement).value);
+  });
+
+  /* --------------------------------------------------- composer: picture */
+  document.getElementById('picopen')?.addEventListener('click', () => {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = 'image/*';
+    inp.addEventListener('change', async () => {
+      const f = inp.files?.[0];
+      if (!f) return;
+      flash = { text: 'Resizing…' }; render();
+      try {
+        const fit = await fitWebp(f);
+        mediaDraft = { bytes: fit.bytes, url: fit.url, alt: '' };
+        flash = { text: `Ready — ${Math.round(fit.bytes.length / 1000)} kB. It is sent after the chirp.` };
+      } catch {
+        flash = { text: 'That picture could not be shrunk enough to fit. Try a smaller one.', bad: true };
+      }
+      render();
+    });
+    inp.click();
+  });
+  document.getElementById('picdrop')?.addEventListener('click', () => { mediaDraft = null; render(); });
+  document.getElementById('alttext')?.addEventListener('input', (e) => {
+    if (mediaDraft) mediaDraft.alt = (e.target as HTMLInputElement).value;
+  });
+
+  /* ------------------------------------------------------------- rules */
+  app.querySelectorAll<HTMLElement>('[data-policy]').forEach((b) => b.addEventListener('click', () => {
+    const v = Number(b.dataset.policy);
+    if (!ME?.mask) return;
+    void act(async () => {
+      const r = await setReplyPolicy(ME!.mask, v);
+      if (r.ok) MYPOLICY = v;
+      return r;
+    }, 'Rule published on chain.');
+  }));
+
+  /* ------------------------------------------------------------- lists */
+  app.querySelectorAll<HTMLElement>('[data-addlist]').forEach((b) => b.addEventListener('click', () => {
+    const name = b.dataset.addlist ?? '';
+    if (name && listFor) {
+      const now = toggleInList(name, listFor);
+      flash = { text: now ? `Added to ${name}.` : `Removed from ${name}.` };
+    }
+    listFor = null;
+    render();
+  }));
+  document.getElementById('quickmk')?.addEventListener('click', () => {
+    const v = (document.getElementById('quicklist') as HTMLInputElement | null)?.value ?? '';
+    if (v.trim() && listFor) {
+      createList(v);
+      toggleInList(v.trim(), listFor);
+      flash = { text: `Added to ${v.trim()}.` };
+    }
+    listFor = null;
+    render();
+  });
+  document.getElementById('mklist')?.addEventListener('click', () => {
+    const v = (document.getElementById('newlist') as HTMLInputElement | null)?.value ?? '';
+    if (v.trim()) { createList(v); flash = { text: 'List created.' }; }
+    render();
+  });
+  app.querySelectorAll<HTMLElement>('[data-dellist]').forEach((b) => b.addEventListener('click', () => {
+    removeList(b.dataset.dellist ?? '');
+    flash = { text: 'List deleted.' };
+    render();
+  }));
+  app.querySelectorAll<HTMLElement>('[data-list]').forEach((b) => b.addEventListener('click', () => {
+    go({ k: 'list', name: b.dataset.list ?? '' });
+  }));
+  document.getElementById('golists')?.addEventListener('click', () => { settingsOpen = false; go({ k: 'lists' }); });
 }
 
 /* ------------------------------------------------------------ pull to refresh */
@@ -1957,7 +2415,7 @@ document.addEventListener('visibilitychange', () => {
 // Escape closes whatever is open; Cmd/Ctrl+Enter sends what is being written.
 addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && (sheet || settingsOpen || menuFor || confirmDelete || repostFor)) {
-    sheet = null; THREAD = []; settingsOpen = false; menuFor = null; confirmDelete = null; repostFor = null; render();
+    sheet = null; THREAD = []; settingsOpen = false; menuFor = null; confirmDelete = null; repostFor = null; listFor = null; render();
   }
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
     const b = document.getElementById('ssend') as HTMLButtonElement | null;

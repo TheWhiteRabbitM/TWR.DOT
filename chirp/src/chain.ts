@@ -23,6 +23,9 @@ import NOTES_ABI from './notes-abi.json';
 import PFP_ABI from './pfp-abi.json';
 import FACE_ABI from './face-abi.json';
 import PIN_ABI from './pin-abi.json';
+import POLLS_ABI from './chirppolls-abi.json';
+import RULES_ABI from './chirprules-abi.json';
+import MEDIA_ABI from './chirpmedia-abi.json';
 
 export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
 export const CHIRP = '0x37A7CE834428636815b2746408343574aD13be7C';
@@ -34,6 +37,25 @@ export const NOTES = '0xf3584d1b59fb8759f4c6572e3a13c8a7af79c0cc';
 /** Profile pictures — the KEY to one, on Bulletin. Same reason as HANDLES: the
  *  masks contract is deployed and its profile struct cannot grow. */
 export const PFP = '0x6f3f9d84161f0bd0eb9d6524a5a2e5089b565470';
+/**
+ * Polls, and the only one of these three the chain truly enforces: a vote is a
+ * transaction the contract validates, so the count is recountable by anyone.
+ */
+export const POLLS = '0x5b39063dbef4aa3e2ea1ae75b863da7f569796c3';
+/**
+ * Reply policy and blocks — PUBLISHED on chain, APPLIED by clients.
+ *
+ * Chirp2 was deployed before these existed and has no hook to consult, so
+ * nothing can stop a caller posting a reply straight to it. Saying otherwise
+ * would be a lie, and the app says so where a person can read it. What this
+ * does give is a rule nobody can quietly change and anyone can audit — which is
+ * more than a centralised network offers, and less than the block you are used
+ * to. Both halves matter.
+ */
+export const RULES = '0xca9027bbad7cf18b6efcea945d91a2ece934c7ab';
+/** Pictures inside a chirp: the bytes, not a link, for the reason PeopleFace
+ *  exists — a key on chain with the image in a cache is not on chain at all. */
+export const MEDIA = '0x02141db68fc4f70f724e8a72110951821f341e57';
 /**
  * The picture ITSELF, on Asset Hub.
  *
@@ -322,7 +344,7 @@ type Slot = {
   h160: string;
   kind: 'wallet' | 'app';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  signer: any; manager?: any; runtime: any; masks: any; chirp: any; handles: any; notes: any; pfp: any; face: any; pin: any;
+  signer: any; manager?: any; runtime: any; masks: any; chirp: any; handles: any; notes: any; pfp: any; face: any; pin: any; polls: any; rules: any; media: any;
   /** The typed api, needed to wrap a contract call in Proxy.proxy. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   api: any;
@@ -408,6 +430,7 @@ async function browserSlot(): Promise<Slot | null> {
     address, h160: await h160Of(real ?? address), kind: 'wallet', signer, api, real, runtime,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
     notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
+    polls: mk(POLLS, POLLS_ABI), rules: mk(RULES, RULES_ABI), media: mk(MEDIA, MEDIA_ABI),
   };
 }
 
@@ -515,6 +538,7 @@ async function connect(): Promise<Slot | null> {
     address, h160: await h160Of(who), kind, signer, manager, api, real, runtime,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
     notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
+    polls: mk(POLLS, POLLS_ABI), rules: mk(RULES, RULES_ABI), media: mk(MEDIA, MEDIA_ABI),
   };
 }
 
@@ -1035,7 +1059,7 @@ export async function renewPicture(mask: number): Promise<boolean> {
 /** A signer-less handle over the public RPC, so the timeline is readable without
  *  a wallet. A social nobody can read unless they sign in is not much of one. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let reader: Promise<{ chirp: any; masks: any; handles: any; notes: any; pfp: any; face: any; pin: any } | null> | null = null;
+let reader: Promise<{ chirp: any; masks: any; handles: any; notes: any; pfp: any; face: any; pin: any; polls: any; rules: any; media: any } | null> | null = null;
 function pub() {
   if (!reader) {
     reader = (async () => {
@@ -1052,6 +1076,7 @@ function pub() {
       return {
         chirp: mk(CHIRP, CHIRP_ABI), masks: mk(MASKS, MASKS_ABI), handles: mk(HANDLES, HANDLES_ABI),
         notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
+    polls: mk(POLLS, POLLS_ABI), rules: mk(RULES, RULES_ABI), media: mk(MEDIA, MEDIA_ABI),
       };
     })().catch(() => null);
     void reader.then((r) => { if (!r) reader = null; });
@@ -1104,7 +1129,7 @@ function insideHost(): Promise<boolean> {
 }
 
 async function handles() {
-  if (ready && !readerDead) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, pin: ready.pin, me: ready.h160 };
+  if (ready && !readerDead) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, pin: ready.pin, polls: ready.polls, rules: ready.rules, media: ready.media, me: ready.h160 };
   if (readerDead) {
     // The session can still SIGN — send() uses it directly. It just cannot read.
     const p = await pub();
@@ -1126,13 +1151,13 @@ async function handles() {
   // signing is unavailable.
   if (await insideHost()) {
     const s = await session().catch(() => null);
-    if (s) return { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, face: s.face, pin: s.pin, me: s.h160 };
+    if (s) return { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, face: s.face, pin: s.pin, polls: s.polls, rules: s.rules, media: s.media, me: s.h160 };
   } else {
     void session();   // outside: keep it warming, but do not wait on it
   }
 
   const p = await pub();
-  return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, pin: null }), me: '' };
+  return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, pin: null, polls: null, rules: null, media: null }), me: '' };
 }
 
 /** Handles for reads that are meaningless without an account — following, and
@@ -2007,7 +2032,9 @@ export function rateNote(id: number, mask: number, value: number): Promise<Ok | 
 /** Which weights a call needs. Only the picture write moves kilobytes; giving
  *  everything the large limits would make every dry-run needlessly heavy. */
 const limitsFor = (which: string, method: string) =>
-  (which === 'face' && method === 'setFace' ? BIG_LIMITS : LIMITS);
+  ((which === 'face' && method === 'setFace') || (which === 'media' && method === 'attach')
+    ? BIG_LIMITS
+    : LIMITS);
 
 /**
  * Ask for the permission to sign, once, at the first write.
@@ -2058,7 +2085,7 @@ const isNotImplemented = (why: string) =>
   /Not implemented|createTransactionWithLegacyAccount/i.test(why);
 
 async function send(
-  which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp' | 'face' | 'pin',
+  which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp' | 'face' | 'pin' | 'polls' | 'rules' | 'media',
   method: string,
   args: unknown[],
   retried = false,
@@ -2152,7 +2179,7 @@ export function post(mask: number, body: string, replyTo = 0, quoteOf = 0): Prom
  * walk back a few and take the newest one that is OURS and says what we said.
  * Cheap, and wrong is much worse than slow here.
  */
-async function findMine(mask: number, body: string): Promise<number> {
+export async function findMine(mask: number, body: string): Promise<number> {
   const { chirp } = await handles();
   if (!chirp) return 0;
   const total = Number((await q(chirp, 'count')) ?? 0);
@@ -2264,4 +2291,206 @@ export async function isFollowing(mask: number): Promise<boolean> {
   const s = await session().catch(() => null);
   if (!s) return false;
   return Boolean(await q(s.chirp, 'follows', s.h160, BigInt(mask)));
+}
+
+/* --------------------------------------------------------------- polls */
+
+export type Poll = {
+  id: number;
+  chirpId: number;
+  mask: number;
+  closesAt: number;
+  options: string[];
+  counts: number[];
+  total: number;
+  /** 0 = you have not voted; otherwise 1 + the index you chose. */
+  mine: number;
+  open: boolean;
+};
+
+const pollCache = new Map<number, Poll | null>();
+export function forgetPolls() { pollCache.clear(); }
+
+/**
+ * The poll on a chirp, if it has one.
+ *
+ * `null` IS cached, deliberately: most chirps have no poll, and re-asking for
+ * every one of them on every render is exactly the read amplification this app
+ * has been fighting. A refresh clears the cache, so a poll created a moment ago
+ * still shows up within one cycle.
+ *
+ * A refused read is NOT cached — same rule as everywhere else here. "The chain
+ * says there is no poll" and "the chain did not answer" are different facts.
+ */
+export async function pollOn(chirpId: number): Promise<Poll | null> {
+  const hit = pollCache.get(chirpId);
+  if (hit !== undefined) return hit;
+  const { polls, me } = await handles();
+  if (!polls) return null;
+  const id = Number((await q(polls, 'pollOfChirp', BigInt(chirpId))) ?? 0);
+  if (!id) { pollCache.set(chirpId, null); return null; }
+
+  const raw = await q(polls, 'pollOf', BigInt(id));
+  if (raw === undefined) return null;
+  const opts = (pick(raw, 'options', 3) ?? []) as unknown[];
+  const counts = ((pick(raw, 'counts', 4) ?? []) as unknown[]).map((n) => Number(n));
+  const closesAt = Number(pick(raw, 'closesAt', 2) ?? 0);
+  const mine = me ? Number((await q(polls, 'votedBy', BigInt(id), me)) ?? 0) : 0;
+  const poll: Poll = {
+    id,
+    chirpId,
+    mask: Number(pick(raw, 'mask', 1) ?? 0),
+    closesAt,
+    options: opts.map((o) => String(o)),
+    counts,
+    total: Number(pick(raw, 'total', 5) ?? 0),
+    mine,
+    open: closesAt * 1000 > Date.now(),
+  };
+  pollCache.set(chirpId, poll);
+  return poll;
+}
+
+/** Attach a poll to a chirp just posted. Two to four options. */
+export async function createPoll(chirpId: number, mask: number, options: string[], minutesOpen: number): Promise<Ok | Fail> {
+  const clean = options.map((o) => o.trim()).filter(Boolean).slice(0, 4);
+  if (clean.length < 2) return { ok: false, why: 'A poll needs at least two options.' };
+  if (clean.some((o) => o.length > 40)) return { ok: false, why: 'Keep each option under 40 characters.' };
+  const r = await send('polls', 'create', [BigInt(chirpId), BigInt(mask), clean, minutesOpen]);
+  if (r.ok) pollCache.delete(chirpId);
+  return r;
+}
+
+/** Vote, or move a vote already cast. The contract refuses a closed poll. */
+export async function votePoll(pollId: number, chirpId: number, option: number): Promise<Ok | Fail> {
+  const r = await send('polls', 'vote', [BigInt(pollId), option]);
+  if (r.ok) pollCache.delete(chirpId);
+  return r;
+}
+
+/* ---------------------------------------------------------------- rules */
+
+export const REPLY_EVERYONE = 0;
+export const REPLY_FOLLOWING = 1;
+export const REPLY_MENTIONED = 2;
+
+export type Rules = { policy: number; blocks: number };
+
+const rulesCache = new Map<number, Rules>();
+const blockCache = new Map<string, boolean>();
+export function forgetRules() { rulesCache.clear(); blockCache.clear(); }
+
+export async function rulesFor(mask: number): Promise<Rules> {
+  const hit = rulesCache.get(mask);
+  if (hit) return hit;
+  const { rules } = await handles();
+  const raw = rules ? await q(rules, 'rulesFor', BigInt(mask)) : undefined;
+  if (raw === undefined) return { policy: REPLY_EVERYONE, blocks: 0 };
+  const r: Rules = { policy: Number(pick(raw, 'policy', 0) ?? 0), blocks: Number(pick(raw, 'blocks', 1) ?? 0) };
+  rulesCache.set(mask, r);
+  return r;
+}
+
+/** Is the conversation between these two off, in either direction? */
+export async function isBlocked(a: number, b: number): Promise<boolean> {
+  if (!a || !b || a === b) return false;
+  const key = a < b ? a + ':' + b : b + ':' + a;   // symmetric: one entry serves both
+  const hit = blockCache.get(key);
+  if (hit !== undefined) return hit;
+  const { rules } = await handles();
+  const v = rules ? await q(rules, 'eitherBlocked', BigInt(a), BigInt(b)) : undefined;
+  if (v === undefined) return false;
+  blockCache.set(key, Boolean(v));
+  return Boolean(v);
+}
+
+export async function setReplyPolicy(mask: number, policy: number): Promise<Ok | Fail> {
+  const r = await send('rules', 'setReplyPolicy', [BigInt(mask), policy]);
+  if (r.ok) rulesCache.delete(mask);
+  return r;
+}
+
+export async function setBlocked(mask: number, other: number, on: boolean): Promise<Ok | Fail> {
+  const r = await send('rules', 'setBlocked', [BigInt(mask), BigInt(other), on]);
+  if (r.ok) { rulesCache.delete(mask); blockCache.clear(); }
+  return r;
+}
+
+/**
+ * May this mask reply to this chirp, by the author's published rule?
+ *
+ * Honest about what it is: A CHECK A CLIENT CHOOSES TO MAKE. Chirp2 predates
+ * ChirpRules and has no hook, so somebody who ignores this can post the reply
+ * anyway and the chain will take it. What the rule buys is that it is public
+ * and unforgeable — only the mask holder can set it, and any reader can check
+ * whether a client respected it. That is worth having, and it is not the same
+ * as being impossible, so the app never claims it is.
+ */
+export async function mayReply(post: Post, who: number): Promise<{ ok: true } | { ok: false; why: string }> {
+  if (!who || who === post.mask) return { ok: true };
+  if (await isBlocked(post.mask, who)) {
+    return { ok: false, why: 'One of you blocked the other, so this reply would be hidden from them.' };
+  }
+  const { policy } = await rulesFor(post.mask);
+  if (policy === REPLY_EVERYONE) return { ok: true };
+  if (policy === REPLY_MENTIONED) {
+    const named = new Set((post.body.match(/@([A-Za-z0-9_.-]{1,32})/g) ?? []).map((m) => m.slice(1).toLowerCase()));
+    const w = await whoOf((await handles()).masks, who);
+    return named.has((w.handle || '').toLowerCase())
+      ? { ok: true }
+      : { ok: false, why: 'The author asked that only the people they named can reply.' };
+  }
+  const { chirp } = await handles();
+  const on = Boolean(await q(chirp, 'follows', post.author, BigInt(who)));
+  return on ? { ok: true } : { ok: false, why: 'The author asked that only people they follow can reply.' };
+}
+
+/* ---------------------------------------------------------------- media */
+
+const mediaCache = new Map<number, { url: string; alt: string } | null>();
+export function forgetMedia() { mediaCache.clear(); }
+export const MEDIA_MAX = 24_000;
+
+/** The picture attached to a chirp. `null` means the chain said there is none. */
+export async function mediaOf(chirpId: number, author: number): Promise<{ url: string; alt: string } | null> {
+  const hit = mediaCache.get(chirpId);
+  if (hit !== undefined) return hit;
+  const { media } = await handles();
+  if (!media) return null;
+  const info = await q(media, 'infoOf', BigInt(chirpId));
+  if (info === undefined) return null;
+  const size = Number(pick(info, 'size', 0) ?? 0);
+  const by = Number(pick(info, 'mask', 1) ?? 0);
+  const alt = String(pick(info, 'alt', 2) ?? '');
+  // Attached by somebody other than the chirp's author: ignore it. The contract
+  // cannot read Chirp2's storage to check who wrote the post, so the check has
+  // to live here — otherwise anyone could hang a picture on anyone's chirp.
+  if (!size || (author && by && by !== author)) { mediaCache.set(chirpId, null); return null; }
+
+  const raw = await q(media, 'mediaOf', BigInt(chirpId));
+  const hex = typeof raw === 'string' ? raw : (raw as { asHex?: () => string })?.asHex?.() ?? '';
+  if (!hex || hex === '0x') return null;
+  const url = 'data:image/webp;base64,' + btoa(
+    (hex.slice(2).match(/../g) ?? []).map((b) => String.fromCharCode(parseInt(b, 16))).join(''),
+  );
+  const got = { url, alt };
+  mediaCache.set(chirpId, got);
+  return got;
+}
+
+export async function attachMedia(chirpId: number, mask: number, bytes: Uint8Array, alt: string): Promise<Ok | Fail> {
+  if (!bytes.length) return { ok: false, why: 'Nothing to attach.' };
+  if (bytes.length > MEDIA_MAX) {
+    return { ok: false, why: 'That picture is ' + Math.round(bytes.length / 1000) + ' kB; the limit is 24 kB.' };
+  }
+  const hex = '0x' + Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('');
+  const r = await send('media', 'attach', [BigInt(chirpId), BigInt(mask), hex, alt.slice(0, 120)]);
+  if (r.ok) mediaCache.delete(chirpId);
+  return r;
+}
+
+export async function detachMedia(chirpId: number, mask: number): Promise<Ok | Fail> {
+  const r = await send('media', 'detach', [BigInt(chirpId), BigInt(mask)]);
+  if (r.ok) mediaCache.delete(chirpId);
+  return r;
 }
