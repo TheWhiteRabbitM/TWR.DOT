@@ -236,8 +236,19 @@ export async function runProbe(onStep: (f: Finding) => void, address = ''): Prom
   return all;
 }
 
-/** The report as text, for pasting into an issue. */
-export const probeReport = (all: Finding[]) =>
+/**
+ * The report as text, for pasting into an issue.
+ *
+ * `tapped` carries what the real file input received, because that is the one
+ * finding a person produces rather than the code — and it was missing from the
+ * copied report entirely, so the answer stayed on screen and never reached
+ * anyone who needed it.
+ */
+export const probeReport = (all: Finding[], tapped = '') =>
   ['chirp container probe', new Date().toISOString(), navigator.userAgent, '']
     .concat(all.map((f) => `[${f.result.toUpperCase().padEnd(7)}] ${f.what}\n           ${f.detail}`))
+    .concat([
+      `[${(tapped ? 'YES' : 'UNTESTED').padEnd(7)}] file chooser opened when tapped`,
+      `           ${tapped || 'nobody tapped the file input on the probe screen'}`,
+    ])
     .join('\n');

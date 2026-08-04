@@ -1468,7 +1468,7 @@ function wire() {
     probing = false; render();
   });
   document.getElementById('copyprobe')?.addEventListener('click', async () => {
-    await navigator.clipboard.writeText(probeReport(PROBE)).catch(() => undefined);
+    await navigator.clipboard.writeText(probeReport(PROBE, probeFile)).catch(() => undefined);
     flash = { text: 'Report copied.' }; render();
   });
   document.getElementById('probefile')?.addEventListener('change', (e) => {
