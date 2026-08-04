@@ -1057,7 +1057,22 @@ async function myHandles() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const q = async (c: any, m: string, ...a: unknown[]) => { try { return (await c?.[m]?.query(...a))?.value; } catch { return undefined; } };
+/**
+ * A read, or `undefined`.
+ *
+ * `success` is CHECKED. A contract query does not throw when it fails — it
+ * resolves with `{success: false, value: unknown}`, and reading `.value`
+ * regardless made a failure look like an answer. Through the gateway that
+ * turned into `Number(...) ?? 0` and then into "No chirps yet" over a contract
+ * holding eighty-five of them.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const q = async (c: any, m: string, ...a: unknown[]) => {
+  try {
+    const r = await c?.[m]?.query(...a);
+    return r?.success === false ? undefined : r?.value;
+  } catch { return undefined; }
+};
 
 /**
  * The same read, but a failure is a failure.
@@ -1073,7 +1088,10 @@ const q = async (c: any, m: string, ...a: unknown[]) => { try { return (await c?
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const qStrict = async (c: any, m: string, ...a: unknown[]) => {
   if (!c?.[m]?.query) throw new Error('no contract to ask');
-  return (await c[m].query(...a))?.value;
+  const r = await c[m].query(...a);
+  // The failure path RESOLVES rather than throwing, so it has to be looked for.
+  if (r?.success === false) throw new Error(`the reader refused: ${JSON.stringify(r.value).slice(0, 90)}`);
+  return r?.value;
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pick = (v: any, key: string, i: number) => (Array.isArray(v) ? v[i] : v?.[key]);
