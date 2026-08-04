@@ -653,7 +653,16 @@ function session(force = false): Promise<Slot | null> {
  */
 queueMicrotask(() => { void pub(); });
 
-export function warmUp(): void { void session(); void pub(); void askDeviceRights(); }
+export function warmUp(): void {
+  void session();
+  void pub();
+  void askDeviceRights();
+  // Ask "are we in the app?" now, so a later click handler can read the cached
+  // answer WITHOUT an await. Awaiting it inside a tap spends the user-activation
+  // budget a popup needs, which is the trap this whole file has been walking
+  // into all day.
+  void insideHost();
+}
 
 /* ------------------------------------------------------------ notifications */
 // The host owns the notification surface — the OS permission and the delivery
@@ -764,14 +773,27 @@ export type OpenTrail = { ok: boolean; trail: string };
 export async function openUrl(url: string, onLateFailure?: (t: OpenTrail) => void): Promise<OpenTrail> {
   const trail: string[] = [];
 
-  // 1. A popup, synchronously, before any await.
+  // 1. A popup — but NEVER inside the Polkadot app, where it lies.
   //
-  // `noopener` is deliberately ABSENT: per spec `window.open(…, 'noopener')`
-  // returns null even on SUCCESS, so the handle can no longer tell a working
-  // popup from a blocked one — which cost a whole round of "the links still do
-  // not open". The opener is severed on the handle instead, same protection.
+  // Measured, finally, and it took four rounds: in the app's webview
+  // `window.open` returns a Window object, that object is NOT closed a moment
+  // later, and nothing is displayed. So the handle carries no information at
+  // all there, and every check built on it — null means blocked, `.closed`
+  // means it failed — is checking a value that cannot answer. Only outside the
+  // app does the handle mean what the web platform says it means.
+  //
+  // `insideKnown` is a plain cached boolean rather than the promise, because
+  // this branch has to run inside the click's user activation: `await` the
+  // container question and the popup is refused by the blocker even where it
+  // would have worked. It is populated at startup by warmUp.
+  //
+  // `noopener` is deliberately ABSENT where the popup IS attempted: per spec
+  // `window.open(…, 'noopener')` returns null even on success, which would make
+  // a working popup indistinguishable from a blocked one. The opener is severed
+  // on the handle instead — same protection, without blinding the caller.
+  if (insideKnown === true) trail.push('popup:skipped-in-app');
   try {
-    const w = window.open(url, '_blank');
+    const w = insideKnown === true ? null : window.open(url, '_blank');
     if (w) {
       try { (w as { opener: unknown }).opener = null; } catch { /* already isolated */ }
       trail.push('popup:handle');
@@ -809,12 +831,35 @@ export async function openUrl(url: string, onLateFailure?: (t: OpenTrail) => voi
   if (!host) {
     trail.push('host:none');
   } else {
+    // Watch for the page going away BEFORE asking, because a navigation that
+    // works may tear this document down before any promise settles.
+    let departed = false;
+    const noteDeparture = () => { departed = true; };
+    document.addEventListener('visibilitychange', noteDeparture, { once: true });
+    window.addEventListener('pagehide', noteDeparture, { once: true });
+
     const r = await withTimeout(Promise.resolve(host.navigateTo(url)), 3000, 'navigate')
       .catch((e) => ({ __threw: (e as Error)?.message ?? '?' }));
     const asAny = r as { ok?: boolean; error?: unknown; __threw?: string } | null;
     if (asAny?.__threw) trail.push('host:threw:' + asAny.__threw);
-    else if (asAny?.ok === true) { trail.push('host:ok'); return { ok: true, trail: trail.join('>') }; }
+    else if (asAny?.ok === true) {
+      trail.push('host:ok');
+      // `ok` is the host saying it accepted the request, not that a browser
+      // appeared. Same lie the popup handle told, one layer up — so it is
+      // corroborated the way host-nav corroborates a deep link: if this page
+      // never went to the background, nothing came up over it.
+      setTimeout(() => {
+        document.removeEventListener('visibilitychange', noteDeparture);
+        window.removeEventListener('pagehide', noteDeparture);
+        if (!departed && document.visibilityState === 'visible') {
+          onLateFailure?.({ ok: false, trail: trail.concat('host:said-ok-but-nothing-opened').join('>') });
+        }
+      }, 1400);
+      return { ok: true, trail: trail.join('>') };
+    }
     else trail.push('host:' + JSON.stringify(asAny ?? null).slice(0, 60));
+    document.removeEventListener('visibilitychange', noteDeparture);
+    window.removeEventListener('pagehide', noteDeparture);
   }
 
   // Nothing opened. Put it on the clipboard and let the caller show both the
@@ -1222,11 +1267,15 @@ let readerDead = false;
  * answer decides which of the two readers is even possible.
  */
 let inside: Promise<boolean> | null = null;
+/** The same answer, cached as a plain value once it is known, so a click handler
+ *  can branch on it WITHOUT an await — see openUrl for why that matters. */
+let insideKnown: boolean | null = null;
 function insideHost(): Promise<boolean> {
   if (!inside) {
     inside = import('@parity/product-sdk-host')
       .then((h) => h.isInsideContainer().catch(() => false))
       .catch(() => false);
+    void inside.then((v) => { insideKnown = v; });
   }
   return inside;
 }
