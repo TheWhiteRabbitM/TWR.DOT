@@ -254,6 +254,68 @@ async function chainSupport(): Promise<Finding[]> {
   return out;
 }
 
+/**
+ * Can a link be shown INSIDE the app, in a frame?
+ *
+ * Asked because it keeps being asked, and because I have twice answered it from
+ * reasoning rather than measurement. The reasoning was: most sites refuse to be
+ * framed (`X-Frame-Options`, CSP `frame-ancestors`), so an in-app viewer would
+ * mostly show blank rectangles. That is probably true — but "probably" is not a
+ * finding, and an attempt to measure it outside the container measured the test
+ * browser instead of the sites, which is exactly the trap this screen exists to
+ * avoid.
+ *
+ * So it gets asked here, where the answer is the real one. Two targets: a site
+ * that is known to refuse framing, and this app's own gateway, which does not.
+ * If the second renders and the first does not, framing works and the limit is
+ * the sites — an in-app viewer is then possible for the minority that allow it.
+ * If NEITHER renders, the container forbids nested frames outright and an
+ * in-app browser is not buildable at all, whatever the sites say.
+ *
+ * A cross-origin document that loaded THROWS on contentDocument. One that is
+ * readable and empty never loaded. That distinction is the whole test.
+ */
+async function framing(): Promise<Finding[]> {
+  const targets = [
+    ['a site that refuses framing (github.com)', 'https://github.com'],
+    ['our own gateway (dot.li)', 'https://chirponchain.dot.li'],
+  ] as const;
+  const out: Finding[] = [];
+  for (const [label, url] of targets) {
+    const verdict = await new Promise<string>((res) => {
+      const f = document.createElement('iframe');
+      f.style.cssText = 'width:1px;height:1px;opacity:0;position:absolute';
+      let settled = false;
+      const done = (v: string) => {
+        if (settled) return;
+        settled = true;
+        try { f.remove(); } catch { /* already gone */ }
+        res(v);
+      };
+      f.onload = () => {
+        try {
+          const d = f.contentDocument;
+          done(d && d.body && d.body.childElementCount > 0
+            ? 'readable, with content — same-origin error page, so it did NOT load'
+            : 'readable and empty — nothing loaded');
+        } catch {
+          done('cross-origin document present — it LOADED');
+        }
+      };
+      f.onerror = () => done('error event');
+      setTimeout(() => done('no answer in 10s'), 10_000);
+      f.src = url;
+      document.body.appendChild(f);
+    });
+    out.push({
+      what: `iframe ${label}`,
+      result: verdict.includes('LOADED') ? 'yes' : 'no',
+      detail: verdict,
+    });
+  }
+  return out;
+}
+
 /** Host storage: does it survive, and does it hold what we put in it? */
 async function storage(): Promise<Finding> {
   const h = await host();
@@ -294,6 +356,7 @@ export async function runProbe(onStep: (f: Finding) => void, address = ''): Prom
   for (const f of await preimage()) add(f);
   add(await bulletinQuota(address));
   for (const f of await chainSupport()) add(f);
+  for (const f of await framing()) add(f);
   add(await storage());
   return all;
 }

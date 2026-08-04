@@ -758,8 +758,20 @@ export async function askNotifications(): Promise<boolean> {
  * caller still shows the address when both fail.
  */
 export async function openUrl(url: string): Promise<boolean> {
+  // `noopener` is deliberately ABSENT, and this cost a round of "the links
+  // still do not open". Per spec `window.open(..., 'noopener')` returns null
+  // even when it succeeded — so the handle can no longer tell a working popup
+  // from a blocked one. This function read that null as failure, fell through
+  // to navigateTo and then showed the copy-the-address sheet, on top of a
+  // window that may well have opened. The other eight apps in this workspace
+  // already had this written down; chirp did not, because I wrote chirp's by
+  // hand instead of reading theirs. The opener is severed on the handle, which
+  // is the same protection without blinding the caller.
   let w: Window | null = null;
-  try { w = window.open(url, '_blank', 'noopener'); } catch { w = null; }
+  try {
+    w = window.open(url, '_blank');
+    if (w) { try { (w as { opener: unknown }).opener = null; } catch { /* already isolated */ } }
+  } catch { w = null; }
   if (w) return true;
 
   const host = await import('@parity/product-sdk-host').catch(() => null);
