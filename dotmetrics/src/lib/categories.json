@@ -655,6 +655,12 @@
     "confidence": "none",
     "why": []
   },
+  "pas-faucet-smoke": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "pennypixel": {
     "category": "identity",
     "source": "derived:manifest",

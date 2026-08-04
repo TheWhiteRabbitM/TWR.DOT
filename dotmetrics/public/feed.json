@@ -1,7 +1,43 @@
 {
-  "generatedAt": 1785826104,
-  "count": 123,
+  "generatedAt": 1785838158,
+  "count": 127,
   "apps": [
+    {
+      "label": "imthebest",
+      "domain": "imthebest.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785836604,
+      "url": "https://imthebest.dev-dot.li"
+    },
+    {
+      "label": "doyoulike",
+      "domain": "doyoulike.dot",
+      "displayName": "Do You Like...?",
+      "description": "Independent on-chain opinion polls. Vote yes or no with your wallet.",
+      "tier": 0,
+      "firstSeenAt": 1785833508,
+      "url": "https://doyoulike.dev-dot.li"
+    },
+    {
+      "label": "gametheory",
+      "domain": "gametheory.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785830844,
+      "url": "https://gametheory.dev-dot.li"
+    },
+    {
+      "label": "chirpwatch",
+      "domain": "chirpwatch.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785830064,
+      "url": "https://chirpwatch.dev-dot.li"
+    },
     {
       "label": "pas-faucet-smoke",
       "domain": "pas-faucet-smoke.dot",
