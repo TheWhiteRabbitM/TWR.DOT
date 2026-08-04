@@ -20,7 +20,7 @@ import {
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
   askNotifications, notify, openUrl, gifUrl, gifBlob, cachedFeed, TOTAL,
-  chatAvailable, discuss, chatRooms,
+  chatAvailable, discuss, chatRooms, registerBot, serveBot,
   pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, FACE_MAX,
   notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
   followerCounts, interestsFrom, statsFor,
@@ -1677,5 +1677,18 @@ if (!ALL.length) app.innerHTML = header() + '<div class="skel"></div><div class=
   // a conversation that is already running is not paying attention.
   DURABLE = await durable().catch(() => false);
   CHAT = await chatAvailable().catch(() => false);
-  if (CHAT) { ROOMS = await chatRooms().catch(() => ROOMS); render(); }
+  if (CHAT) {
+    ROOMS = await chatRooms().catch(() => ROOMS); render();
+    // Stand up in the chat as a participant, and answer what can be answered
+    // without a key. A command that WRITES is handed back here, because the
+    // signature has to come from the app — the chat has no key of its own.
+    if (await registerBot().catch(() => false)) {
+      void serveBot((ask) => {
+        sheet = { mode: 'new' };
+        sheetText = ask.text;
+        flash = { text: 'From the chat — check it and sign.' };
+        render();
+      }).catch(() => undefined);
+    }
+  }
 })();

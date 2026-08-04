@@ -611,6 +611,87 @@ export async function chatRooms(): Promise<Set<number>> {
   });
 }
 
+/* ---------------------------------------------------------------- the bot */
+//
+// The chat bridge is not a chat bridge. Read the whole protocol and it is a bot
+// platform: `registerBot` puts an app in the chat as a participant, commands
+// arrive as {command, payload}, messages can carry ACTION BUTTONS whose presses
+// come back as {messageId, actionId}, and `customMessageRenderSubscribe` lets an
+// app draw its OWN message type inside the host's chat.
+//
+// Which means chirp does not have to be a place you go. You can post from the
+// chat you are already in, and read a chirp rendered as a card there.
+//
+// One honest limit, and it shapes everything below: an incoming action tells us
+// the ROOM and the PEER, not a wallet we can sign for. So the bot can read
+// commands and answer them, but a command that writes to the chain still needs
+// the app to be open — the signature has to come from somewhere. Reads and
+// answers work unattended; writes are queued and confirmed in the app.
+
+export type BotAsk =
+  | { kind: 'post'; text: string; room: string }
+  | { kind: 'read'; count: number; room: string }
+  | { kind: 'unknown'; command: string; room: string };
+
+const BOT_ID = 'chirp';
+
+/** Put chirp in the chat as a participant. Idempotent — "Exists" is success. */
+export async function registerBot(): Promise<boolean> {
+  const chat = await chatManager();
+  if (!chat) return false;
+  return await chat.registerBot({ botId: BOT_ID, name: 'chirp', icon: '' })
+    .then(() => true).catch(() => false);
+}
+
+/**
+ * Listen for what people ask the bot, and answer what can be answered without a
+ * signature.
+ *
+ * `/chirp <text>` is handed to the caller to confirm in the app, because posting
+ * needs a key. `/feed` is answered here and now, because reading needs nothing.
+ */
+export async function serveBot(
+  onWrite: (ask: Extract<BotAsk, { kind: 'post' }>) => void,
+): Promise<() => void> {
+  const chat = await chatManager();
+  if (!chat) return () => undefined;
+
+  const sub = chat.subscribeAction(async (action) => {
+    const room = (action as { roomId?: string })?.roomId ?? '';
+    const payload = (action as { payload?: { tag?: string; value?: unknown } })?.payload;
+    if (!payload || payload.tag !== 'Command') return;
+    const cmd = payload.value as { command?: string; payload?: string };
+    const name = String(cmd?.command ?? '').replace(/^\//, '').toLowerCase();
+    const arg = String(cmd?.payload ?? '').trim();
+
+    if (name === 'feed') {
+      const posts = (await loadAll(5).catch(() => [])).filter((p) => !p.replyTo).slice(0, 5);
+      const text = posts.length
+        ? posts.map((p) => `${p.who ? (p.who.name || '@' + (p.who.handle || 'mask' + p.mask)) : 'mask ' + p.mask}: ${p.body.slice(0, 120)}`).join('\n\n')
+        : 'Nothing on chirp yet.';
+      await chat.sendMessage(room, { tag: 'Text', value: { text } }).catch(() => undefined);
+      return;
+    }
+    if (name === 'chirp' && arg) {
+      // Cannot be done here: a post is a transaction and this callback has no
+      // key. Hand it to the app, which has one, and say so rather than
+      // swallowing it.
+      onWrite({ kind: 'post', text: arg, room });
+      await chat.sendMessage(room, {
+        tag: 'Text',
+        value: { text: `Ready to post: "${arg.slice(0, 120)}"\nOpen chirp to sign it — a post is a transaction and the chat cannot sign.` },
+      }).catch(() => undefined);
+      return;
+    }
+    await chat.sendMessage(room, {
+      tag: 'Text',
+      value: { text: 'chirp understands /feed and /chirp <what you want to say>.' },
+    }).catch(() => undefined);
+  });
+
+  return () => { try { sub.unsubscribe(); } catch { /* already gone */ } };
+}
+
 /** Deliver one notification now. Silent when the host has no manager for it. */
 export async function notify(text: string, deeplink?: string): Promise<boolean> {
   const host = await import('@parity/product-sdk-host').catch(() => null);
