@@ -436,3 +436,10 @@ body.locked { overflow: hidden; }
 .notice { border-bottom: 1px solid var(--hair); }
 .notice .chirp { border-bottom: 0; padding-top: 4px; }
 .why-line { padding: 10px 16px 0; color: var(--ink-2); font-size: 13px; font-weight: 600; }
+
+/* A thread in the composer: the parts already written, numbered, above the one
+   being written. Each is its own chirp the moment it is sent. */
+.tpart { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--hair); }
+.tpart-n { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--panel); color: var(--ink-2);
+  font-size: 12px; font-weight: 700; display: grid; place-items: center; margin-top: 2px; }
+.tpart-b { flex: 1; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink-2); font-size: 14px; }

@@ -78,6 +78,15 @@ export async function gifBlob(url: string): Promise<string> {
   const hit = gifCache.get(url);
   if (hit !== undefined) return hit;
 
+  // A page rather than the image: find the image first.
+  if (isGifPage(url)) {
+    const real = await resolveGifPage(url);
+    if (!real) { gifCache.set(url, ''); return ''; }
+    const via = await gifBlob(real);
+    gifCache.set(url, via);
+    return via;
+  }
+
   // Two attempts, cheapest first. A plain CORS fetch is what the Remote
   // permission grants; `no-cors` gets an opaque response whose bytes we cannot
   // read, so it is not worth trying. If CORS is refused, an <img> tag is still
@@ -105,13 +114,50 @@ export async function gifBlob(url: string): Promise<string> {
   return direct;
 }
 
-/** Is this a link a keyboard would have inserted for a GIF? */
+/**
+ * Is this a GIF link?
+ *
+ * Two shapes, and the second one is the shape people actually have. A keyboard
+ * inserts a MEDIA url — media.tenor.com/…/x.gif — but a person copying from the
+ * Tenor or Giphy app or website gets a PAGE url, tenor.com/view/something-12345.
+ * Refusing those was refusing the common case, and the button looked broken to
+ * anyone who had not been handed a link by a keyboard.
+ */
 export function gifUrl(u: string): boolean {
   try {
-    const h = new URL(u).hostname.toLowerCase();
+    const h = new URL(u).hostname.toLowerCase().replace(/^www\./, '');
     if (!GIF_HOSTS.includes(h)) return false;
-    return /\.(gif|webp|mp4)($|\?)/i.test(u) || /\/media\//.test(u) || h.startsWith('media.');
+    if (/\.(gif|webp|mp4)($|\?)/i.test(u) || /\/media\//.test(u) || h.startsWith('media.') || h.startsWith('i.')) return true;
+    // A page on one of those hosts: tenor.com/view/… or giphy.com/gifs/…
+    return /\/(view|gifs|clips|stickers)\//.test(new URL(u).pathname);
   } catch { return false; }
+}
+
+/** A page url rather than the image itself — it has to be resolved first. */
+const isGifPage = (u: string) => {
+  try {
+    const url = new URL(u);
+    return !/\.(gif|webp|mp4)($|\?)/i.test(u) && /\/(view|gifs|clips|stickers)\//.test(url.pathname);
+  } catch { return false; }
+};
+
+/**
+ * Turn a Tenor or Giphy PAGE into the image it is about.
+ *
+ * Both put the real media url in an Open Graph tag, which is what every chat app
+ * reads to show a preview. No API key, no account, no service: fetch the page —
+ * which the Remote permission already covers — and read the tag.
+ */
+async function resolveGifPage(u: string): Promise<string> {
+  try {
+    const html = await fetch(u, { referrerPolicy: 'no-referrer' }).then((r) => (r.ok ? r.text() : ''));
+    if (!html) return '';
+    const m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+      ?? html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+    return m?.[1] ?? '';
+  } catch {
+    return '';
+  }
 }
 
 const CONNECT_MS = 12_000;
@@ -121,6 +167,31 @@ const TX_MS = 120_000;
  *  and reverts OutOfGas before the wallet is ever asked. Unused weight is free. */
 const LIMITS = {
   gasLimit: { ref_time: 600_000_000_000n, proof_size: 1_000_000n },
+  storageDepositLimit: 10n ** 18n,
+};
+
+/**
+ * Limits for a call that writes KILOBYTES rather than a number.
+ *
+ * Storing a picture reverted with `Revive.OutOfGas`: the figures above are
+ * sized for a like or a follow — a word of storage — and a five-kilobyte write
+ * is a different order of work entirely. Both parts have to grow: `ref_time`
+ * for the hashing and copying, `proof_size` because the bytes themselves are
+ * in the proof.
+ *
+ * Unused weight is refunded, so being generous costs nothing — but only up to a
+ * ceiling, and going over it is worse than being tight. Read off this chain
+ * (System.BlockWeights): a normal extrinsic may use at most
+ *
+ *   ref_time   1_599_875_000_000
+ *   proof_size         8_388_608
+ *
+ * Ask for more and the transaction is refused before it runs at all. The first
+ * attempt at this fix asked for 8_000_000_000_000, which is five times a whole
+ * block, and would have traded OutOfGas for something harder to read.
+ */
+const BIG_LIMITS = {
+  gasLimit: { ref_time: 1_400_000_000_000n, proof_size: 5_000_000n },
   storageDepositLimit: 10n ** 18n,
 };
 
@@ -1674,6 +1745,11 @@ export function rateNote(id: number, mask: number, value: number): Promise<Ok | 
  * the contract sees the real account as msg.sender. The gas dry-run is given the
  * same origin, or it would price the call for the wrong account.
  */
+/** Which weights a call needs. Only the picture write moves kilobytes; giving
+ *  everything the large limits would make every dry-run needlessly heavy. */
+const limitsFor = (which: string, method: string) =>
+  (which === 'face' && method === 'setFace' ? BIG_LIMITS : LIMITS);
+
 /** The host said it cannot sign with the wallet account it just handed us. */
 const isNotImplemented = (why: string) =>
   /Not implemented|createTransactionWithLegacyAccount/i.test(why);
@@ -1690,7 +1766,7 @@ async function send(
   const c = (s as any)[which];
   try {
     if (!s.real) {
-      const o = { ...LIMITS, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) };
+      const o = { ...limitsFor(which, method), ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res: any = await withTimeout(c[method].tx(...args, o), TX_MS, 'transaction');
       if (res && res.ok === false) {
@@ -1708,7 +1784,7 @@ async function send(
       return { ok: true, value: undefined };
     }
     const prepared = await withTimeout(
-      c[method].prepare(...args, { ...LIMITS, origin: s.real }), TX_MS, 'preparing',
+      c[method].prepare(...args, { ...limitsFor(which, method), origin: s.real }), TX_MS, 'preparing',
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const inner: any = (prepared as any)?.value ?? prepared;
@@ -1755,6 +1831,65 @@ export function setHandle(mask: number, handle: string): Promise<Ok | Fail> {
 
 export function post(mask: number, body: string, replyTo = 0, quoteOf = 0): Promise<Ok | Fail> {
   return send('chirp', 'chirp', [BigInt(mask), body, BigInt(replyTo), BigInt(quoteOf)]);
+}
+
+/**
+ * Find the id a chirp we just posted was given.
+ *
+ * The contract assigns `++count`, so the newest id is the count — but between
+ * our transaction and this read somebody else may have posted, and taking the
+ * count on faith would chain the rest of a thread onto a stranger's chirp. So
+ * walk back a few and take the newest one that is OURS and says what we said.
+ * Cheap, and wrong is much worse than slow here.
+ */
+async function findMine(mask: number, body: string): Promise<number> {
+  const { chirp } = await handles();
+  if (!chirp) return 0;
+  const total = Number((await q(chirp, 'count')) ?? 0);
+  for (let id = total; id > 0 && id > total - 8; id--) {
+    const [m, b] = await Promise.all([q(chirp, 'meta', BigInt(id)), q(chirp, 'body', BigInt(id))]);
+    if (!m) continue;
+    if (Number(pick(m, 'mask', 0) ?? 0) === mask && String(b ?? '') === body) return id;
+  }
+  return 0;
+}
+
+/**
+ * Post a thread: several chirps, each a reply to the one before.
+ *
+ * X calls this a thread and it is how anything longer than one post gets said.
+ * There is nothing to add to the contract — a thread IS a chain of replies, and
+ * `replyTo` already exists. What it needs is doing them in ORDER and finding
+ * each id before writing the next, which is why this cannot be one transaction.
+ *
+ * Each part is signed separately, so a person can refuse halfway. If they do,
+ * what is already posted stays posted: this reports how far it got rather than
+ * pretending the whole thing failed, because those chirps are really on chain
+ * and telling someone otherwise would send them looking for posts they can see.
+ */
+export async function postThread(
+  mask: number,
+  parts: string[],
+  onStep?: (done: number, total: number) => void,
+): Promise<Ok<number> | Fail> {
+  let parent = 0;
+  for (let i = 0; i < parts.length; i++) {
+    onStep?.(i, parts.length);
+    const r = await post(mask, parts[i], parent, 0);
+    if (!r.ok) {
+      return i === 0
+        ? r
+        : { ok: false, why: `${i} of ${parts.length} posted, then: ${r.why} The ones already sent are on chain.` };
+    }
+    if (i < parts.length - 1) {
+      parent = await findMine(mask, parts[i]);
+      if (!parent) {
+        return { ok: false, why: `${i + 1} posted, but the chain could not confirm the id to reply to. The rest was not sent.` };
+      }
+    }
+  }
+  onStep?.(parts.length, parts.length);
+  return { ok: true, value: parts.length };
 }
 
 export function edit(id: number, body: string): Promise<Ok | Fail> {

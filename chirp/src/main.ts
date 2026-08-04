@@ -17,7 +17,7 @@ import { keccak_256 } from '@noble/hashes/sha3';
 import { keep, hydrate, durable } from './keep';
 import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
-  post, edit, remove, toggleLike, toggleRepost, toggleFollow,
+  post, postThread, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
   askNotifications, notify, openUrl, gifUrl, gifBlob, cachedFeed, TOTAL,
   chatAvailable, discuss, chatRooms, registerBot, serveBot,
@@ -233,6 +233,7 @@ let ROOMS = new Set<number>();
 let linkFor: string | null = null;
 /** The GIF picker, and what it last said. */
 let gifOpen = false;
+let gifBound = false;
 let gifSaid: { text: string; bad?: boolean } | null = null;
 
 /**
@@ -246,6 +247,16 @@ let gifSaid: { text: string; bad?: boolean } | null = null;
  * makes a redraw harmless.
  */
 let sheetText = '';
+
+/**
+ * The earlier parts of a thread, in order, still unsent.
+ *
+ * A thread is not a new kind of object: it is chirps replying to each other,
+ * which the contract has always been able to do. What it needs is composing
+ * them together and sending them in order — so they are held here until the
+ * whole thing is sent.
+ */
+let THREAD: string[] = [];
 /** Where the picture upload got to. Shown, because when it fails inside a
  *  container it fails silently and there is nothing to go on otherwise. */
 let pfpStep: { text: string; bad?: boolean } | null = null;
@@ -658,9 +669,16 @@ function threadView(): string {
   const branch = (id: number, depth: number): string =>
     (byParent.get(id) ?? []).map((r) =>
       `<div class="branch" style="--d:${Math.min(depth, 4)}">${card(r)}</div>` + branch(r.id, depth + 1)).join('');
+  // Quotes of this chirp. X puts them behind the repost count; here they are a
+  // section, because on a small feed they ARE the conversation as often as the
+  // replies are, and burying them made them invisible.
+  const id = view.k === 'thread' ? view.id : 0;
+  const quotes = ALL.filter((p) => p.quoteOf === id && p.body && !p.deleted);
+
   return TH.parents.map((p) => card(p)).join('')
     + (TH.post ? card(TH.post, true) : '')
     + notesSection()
+    + (quotes.length ? `<div class="sechead">Quotes</div>` + quotes.map((p) => card(p)).join('') : '')
     + `<div class="sechead">Replies</div>`
     + (byParent.get(view.k === 'thread' ? view.id : 0)?.length ? branch(view.k === 'thread' ? view.id : 0, 0)
       : '<div class="note">No replies yet. Be the first.</div>');
@@ -778,11 +796,6 @@ function overlay(): string {
       key. It cannot expire, it survives clearing your browser, and every reader sees the same bytes.
       Squared and shrunk to ${FACE_PX}px here so it fits the ${(FACE_MAX / 1000).toFixed(0)} KB the
       contract accepts; you pay a small one-off deposit for the storage.</p>
-      <p class="hint">Cropped square and shrunk to 256px here, then stored on the Bulletin chain — the app
-      uploads it for you, so you need no storage account of your own. Bulletin keeps data for about a
-      fortnight, so chirp quietly re-uploads the same picture each time you open it, which costs nothing
-      and needs no transaction. Stay away longer than that and you come back to the generated face until
-      you set one again.</p>
       <label>Public name</label>
       <input id="s_name" maxlength="40" value="${esc(ME.name)}" placeholder="the name people see">
       <button class="link" id="usepeople">use my People chain username</button>
@@ -910,17 +923,29 @@ function overlay(): string {
     ${t && sheet.mode !== 'edit' ? `<div class="quoted">
       <div class="head"><span class="nm">${esc(nm(t.who, t.mask))}</span><span class="at">${esc(at(t.who, t.mask))}</span></div>
       <div class="body">${esc(t.body)}</div></div>` : ''}
-    <textarea id="stxt" maxlength="400" placeholder="${sheet.mode === 'reply' ? 'Post your reply' : sheet.mode === 'quote' ? 'Add a comment' : "What's happening on chain?"}">${esc(sheetText)}</textarea>
+    <!-- The parts of a thread already written, above the one being written.
+         X shows them as a stack you can still edit; so does this, and each is
+         its own chirp on chain the moment it is sent. -->
+    ${THREAD.map((p, i) => `<div class="tpart">
+      <span class="tpart-n">${i + 1}</span>
+      <div class="tpart-b">${esc(p)}</div>
+      <button class="iconbtn" data-tdrop="${i}" aria-label="Remove this part">✕</button>
+    </div>`).join('')}
+    <textarea id="stxt" maxlength="400" placeholder="${THREAD.length ? 'And then…' : sheet.mode === 'reply' ? 'Post your reply' : sheet.mode === 'quote' ? 'Add a comment' : "What's happening on chain?"}">${esc(sheetText)}</textarea>
     <div class="mentions" id="mbox" hidden role="listbox" aria-label="People"></div>
     <!-- The GIF button. A keyboard's GIF key inserts a link, but only some
          keyboards have one and none of them exist on a desktop — so there is a
          button that takes the link the way a person actually has it: copied. -->
     <div class="composebar">
       <button class="iconbtn gifbtn" id="gifopen" aria-label="Add a GIF" title="Add a GIF">GIF</button>
+      ${sheet.mode !== 'edit'
+        ? `<button class="iconbtn gifbtn" id="tadd" aria-label="Add another chirp to this thread" title="Add another">＋</button>` : ''}
       <span class="count" id="scount">280</span>
-      <button class="primary" id="ssend">${sheet.mode === 'edit' ? 'Save' : title === 'New chirp' ? 'Chirp' : title}</button></div>
+      <button class="primary" id="ssend">${sheet.mode === 'edit' ? 'Save'
+        : THREAD.length ? `Post all ${THREAD.length + 1}`
+        : title === 'New chirp' ? 'Chirp' : title}</button></div>
     ${gifOpen ? `<div class="gifpick">
-      <p class="hint">Paste a GIF link from Tenor or Giphy — the ones a phone keyboard inserts.
+      <p class="hint">Paste a link from Tenor or Giphy — either the page you copied from their app, or the direct image link a keyboard inserts. Both work.
       Only the link is stored, so a GIF costs nothing on chain and nothing on Bulletin.</p>
       <input id="gifurl" placeholder="https://media.tenor.com/…" autocomplete="off" spellcheck="false">
       <div class="row">
@@ -1152,8 +1177,22 @@ function wire() {
     if (s.mode === 'new') stxt.addEventListener('input', () => draft.set(stxt.value));
     ssend.addEventListener('click', () => {
       const v = stxt.value.trim();
+      const parts = [...THREAD, v].filter(Boolean);
       sheet = null;
       if (s.mode === 'new') draft.set('');
+
+      // A thread: several chirps, each replying to the one before. Signed one
+      // at a time, because each is its own transaction — so the progress is
+      // shown rather than leaving a person staring at a spinner through four
+      // signature sheets.
+      if (parts.length > 1) {
+        THREAD = [];
+        return act(async () => postThread(ME!.mask, parts, (done, total) => {
+          flash = { text: `Posting ${done + 1} of ${total}…` };
+          render();
+        }), `Thread of ${parts.length} posted on chain.`);
+      }
+
       if (s.mode === 'edit' && s.target) return act(() => edit(s.target!.id, v), 'Updated on chain.');
       if (s.mode === 'reply' && s.target) return act(() => post(ME!.mask, v, s.target!.id, 0), 'Replied on chain.');
       if (s.mode === 'quote' && s.target) return act(() => post(ME!.mask, v, 0, s.target!.id), 'Quoted on chain.');
@@ -1317,8 +1356,43 @@ function wire() {
   document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
   document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
 
+  /* --------------------------------------------------------------- threads */
+  document.getElementById('tadd')?.addEventListener('click', () => {
+    const ta = document.getElementById('stxt') as HTMLTextAreaElement | null;
+    const v = (ta?.value ?? '').trim();
+    if (!v) return;
+    THREAD.push(v);
+    sheetText = '';           // the next part starts empty
+    render();
+    (document.getElementById('stxt') as HTMLTextAreaElement | null)?.focus();
+  });
+  app.querySelectorAll<HTMLElement>('[data-tdrop]').forEach((b) => b.addEventListener('click', () => {
+    // Put it back in the box rather than deleting it — dropping a paragraph you
+    // wrote should not destroy it.
+    const i = Number(b.dataset.tdrop);
+    const ta = document.getElementById('stxt') as HTMLTextAreaElement | null;
+    const back = THREAD[i];
+    THREAD.splice(i, 1);
+    sheetText = ta?.value ? `${back}\n${ta.value}` : back;
+    render();
+  }));
+
   /* ------------------------------------------------------------------ gifs */
-  document.getElementById('gifopen')?.addEventListener('click', () => { gifOpen = !gifOpen; gifSaid = null; render(); });
+  // NOT bound to the element: bound to the document, once, matched by id on the
+  // way up. Every other handler here is re-attached on each render, and if a
+  // render ever lands between the tap and the attach — or the button is inside
+  // a subtree that was replaced — the tap goes nowhere and the button looks
+  // dead. Delegation cannot miss.
+  if (!gifBound) {
+    gifBound = true;
+    document.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement | null)?.closest('#gifopen');
+      if (!t) return;
+      e.preventDefault(); e.stopPropagation();
+      gifOpen = !gifOpen; gifSaid = null; render();
+      (document.getElementById('gifurl') as HTMLInputElement | null)?.focus();
+    });
+  }
   document.getElementById('gifpaste')?.addEventListener('click', async () => {
     const el = document.getElementById('gifurl') as HTMLInputElement | null;
     try { if (el) el.value = await navigator.clipboard.readText(); }
@@ -1333,7 +1407,7 @@ function wire() {
     // refused while it can still be replaced — not after the chirp is on chain.
     if (!gifUrl(u)) {
       // Same reason: say it in place rather than redrawing the composer.
-      gifSaid = { text: 'That is not a Tenor or Giphy media link. Use the address of the GIF itself, the one ending in .gif.', bad: true };
+      gifSaid = { text: 'That is not a Tenor or Giphy link. Copy the GIF from their app or site and paste the link here.', bad: true };
       const box = document.querySelector('.gifpick');
       if (box) {
         box.querySelector('.hint.bad')?.remove();
@@ -1514,12 +1588,22 @@ async function squareWebp(file: File, size = FACE_PX): Promise<Uint8Array> {
   // Step the quality down until it fits. A photograph at quality .85 can be
   // three times a drawing at the same setting, so a fixed number would take
   // some pictures and refuse others for no reason a person could see.
-  for (const q of [0.8, 0.65, 0.5, 0.38, 0.28]) {
+  //
+  // Two thresholds, not one. The contract accepts FACE_MAX, but the weight a
+  // transaction may use is capped by the chain, and a write near the contract's
+  // limit runs close to that ceiling — which is how the first attempt met
+  // Revive.OutOfGas. So aim for COMFORT first and only accept the contract's
+  // limit if nothing smaller can be had.
+  const COMFORT = 6000;
+  let last: Uint8Array | null = null;
+  for (const q of [0.62, 0.5, 0.4, 0.3, 0.22]) {
     const blob: Blob = await new Promise((res, rej) =>
       c.toBlob((b) => (b ? res(b) : rej(new Error('encode failed'))), 'image/webp', q));
     const bytes = new Uint8Array(await blob.arrayBuffer());
-    if (bytes.length <= FACE_MAX) return bytes;
+    if (bytes.length <= COMFORT) return bytes;
+    last = bytes;
   }
+  if (last && last.length <= FACE_MAX) return last;
   throw new Error('too detailed to fit');
 }
 
@@ -1646,7 +1730,7 @@ document.addEventListener('visibilitychange', () => {
 // Escape closes whatever is open; Cmd/Ctrl+Enter sends what is being written.
 addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && (sheet || settingsOpen || menuFor || confirmDelete || repostFor)) {
-    sheet = null; settingsOpen = false; menuFor = null; confirmDelete = null; repostFor = null; render();
+    sheet = null; THREAD = []; settingsOpen = false; menuFor = null; confirmDelete = null; repostFor = null; render();
   }
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
     const b = document.getElementById('ssend') as HTMLButtonElement | null;
