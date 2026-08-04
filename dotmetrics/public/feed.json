@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1785874012,
+  "generatedAt": 1785879813,
   "count": 175,
   "apps": [
     {
@@ -464,9 +464,9 @@
     {
       "label": "chirpwatch",
       "domain": "chirpwatch.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "chirpwatch",
+      "description": "Are the chirp contracts answering, and are their numbers moving? Read live from Asset Hub, with no indexer in between.",
+      "tier": 0,
       "firstSeenAt": 1785830064,
       "url": "https://chirpwatch.dev-dot.li"
     },
@@ -581,9 +581,9 @@
     {
       "label": "peoplewiki",
       "domain": "peoplewiki.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "PeopleWiki",
+      "description": "What the Polkadot products devnet actually does — written down by the people using it, kept on chain, open to anyone with a mask.",
+      "tier": 0,
       "firstSeenAt": 1785759444,
       "url": "https://peoplewiki.dev-dot.li"
     },
@@ -635,9 +635,9 @@
     {
       "label": "chirponchain",
       "domain": "chirponchain.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "chirp",
+      "description": "X, on chain. Every post, like, follow and reply is a contract call on Asset Hub — no server holds any of it, and reading needs no wallet. You post as a mask bound to your account, so a chirp cannot be forged.",
+      "tier": 0,
       "firstSeenAt": 1785674160,
       "url": "https://chirponchain.dev-dot.li"
     },
@@ -923,9 +923,9 @@
     {
       "label": "dot-store",
       "domain": "dot-store.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "dot-store",
+      "description": "Every app registered on the Polkadot Products devnet, with real screenshots and on-chain reviews. Read from the chain on every load.",
+      "tier": 0,
       "firstSeenAt": 1785317484,
       "url": "https://dot-store.dev-dot.li"
     },
