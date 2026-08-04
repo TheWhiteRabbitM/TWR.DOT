@@ -236,9 +236,10 @@ let shareFor: number | null = null;
 let CHAT = false;
 /** Whether preferences are held by the host rather than by this page. */
 let DURABLE = false;
-/** Whether anything here can sign at all. Without it, every write is a button
- *  whose only outcome is an error — so they are not offered. */
-let CAN_SIGN = false;
+/** Whether a transaction is possible here — see chain.canSign. `null` until the
+ *  first read comes back, and everything gated on it stays silent until then:
+ *  the point is to stop guessing, not to guess the other way. */
+let CAN_SIGN: boolean | null = null;
 /** The container probe: findings so far, whether it is running, and what the
  *  real file input received when a finger tapped it. */
 let PROBE: Finding[] = [];
@@ -577,7 +578,12 @@ function searchView(): string {
  * already public — you could recount it yourself from the contract.
  */
 function statsView(): string {
-  if (!ME?.mask) return '<div class="note">Claim a mask to see your numbers.</div>';
+  if (!ME?.mask) {
+    if (CAN_SIGN === null) return '<div class="note">Reading the chain…</div>';
+    return `<div class="note">${CAN_SIGN
+      ? 'Claim a mask to see your numbers.'
+      : 'These are your own numbers, and they need an account that can sign. Open chirp in the Polkadot app, or connect a wallet here.'}</div>`;
+  }
   const s = statsFor(ME.mask, ALL, FOLLOWERS.get(ME.mask) ?? 0, FOLLOW.size, ALL.filter((p) => p.liked).length);
   const peak = Math.max(1, ...s.days.map((d) => d.posts + d.got));
   const big = (n: number, l: string) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`;
@@ -677,7 +683,9 @@ function notifView(): string {
         <div class="why-line">${esc(nm(n.who, n.mask))} ${label[n.why]}</div>
         ${card(n)}
       </div>`).join('')
-    : `<div class="note">${ME?.mask ? 'Nothing yet.' : 'Claim a mask to be told about replies and mentions.'}</div>`;
+    : `<div class="note">${ME?.mask ? 'Nothing yet.'
+        : CAN_SIGN !== false ? 'Claim a mask to be told about replies and mentions.'
+        : 'Replies and mentions are addressed to a mask, and a mask needs an account that can sign. Open chirp in the Polkadot app, or connect a wallet here.'}</div>`;
   return offer + `<div class="sechead">Replies, quotes and mentions</div>` + rows;
 }
 
@@ -823,6 +831,7 @@ function notesSection(): string {
  * they want more.
  */
 function gate(): string {
+  if (CAN_SIGN === null) return '';        // not known yet — say nothing
   if (!CAN_SIGN) {
     return `<section class="gate">
       <h2>You are reading chirp</h2>
@@ -1913,11 +1922,12 @@ if (!ALL.length) app.innerHTML = header() + '<div class="skel"></div><div class=
   const first = refresh();
   ME = await me().catch(() => null);
   ACT = await actingAs().catch(() => null);
-  // Can anything here sign? Asked once, beside identity, because it decides
-  // whether a write is OFFERED at all — and asking it late means the gateway
-  // flashes a claim button it could never honour.
-  CAN_SIGN = await canSign().catch(() => false);
   await first;
+  // AFTER the first read, not before: whether a transaction is possible here is
+  // partly answered by whether that read worked, and asking early gets the
+  // gateway's optimistic "yes". Until this line runs CAN_SIGN is null, and the
+  // things it gates render nothing rather than guess.
+  CAN_SIGN = await canSign().catch(() => false);
   // Go through refresh() rather than loading the feed by hand: a deep link — a
   // shared thread, someone's profile — has to arrive with ITS data, not with an
   // empty shell and a timeline nobody asked for.

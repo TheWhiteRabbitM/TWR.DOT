@@ -541,17 +541,27 @@ async function proxiedAccount(api: any, delegate: string): Promise<string | null
 }
 
 /**
- * Is there anything here that can sign?
+ * Can a transaction actually be made here?
  *
- * Not "is there a host" and not "is there an account" — either can be true while
- * signing is impossible, which is exactly the gateway's case. The app uses this
- * to decide whether to OFFER a write at all: a claim button with nothing behind
- * it can only ever produce an error, and it was the largest thing on screen for
- * every reader arriving on the web.
+ * The obvious test — is there a signer — gives the wrong answer in the one place
+ * this matters. Through the gateway a session DOES arrive and it DOES carry a
+ * signer: `SignerManager` hands back an app-derived account whether or not a
+ * wallet exists behind it. That account has no funds, and the host provider it
+ * came with cannot serve a read, never mind broadcast a write.
+ *
+ * So the honest test is the one the app already performs on every load: if the
+ * session's own provider could not answer `count()` on a contract holding
+ * eighty chirps, it is not going to carry a transaction either. Two facts, both
+ * measured, neither assumed.
+ *
+ * `null` means not yet known — the first read has not come back. Callers must
+ * not turn that into "no": promising a reader that they cannot post, before
+ * finding out, is the same lie in the other direction.
  */
 export async function canSign(): Promise<boolean> {
+  if (readerDead) return false;
   const s = await session().catch(() => null);
-  return Boolean(s?.signer);
+  return Boolean(s?.signer) && !readerDead;
 }
 
 /** Who the app is acting as, for the UI to say so plainly. */
@@ -1255,6 +1265,16 @@ function cacheFeed(posts: Post[]) {
 export let TOTAL = 0;
 
 export async function loadAll(limit = 300, onBatch?: (soFar: Post[]) => void): Promise<Post[]> {
+  // A dead reader is a diagnosis, not a life sentence. One dropped connection in
+  // the Polkadot app would otherwise latch it for the whole session, and the
+  // cost of that is real: the session's reads are the ones that carry the
+  // account, so `liked` and `reposted` go blank, and canSign() starts telling a
+  // wallet-holder they cannot post. Ask the session again — it is one query, on
+  // a path that already has to run — and take it back if it answers.
+  if (readerDead) {
+    const s = await session().catch(() => null);
+    if (s && (await q(s.chirp, 'count')) !== undefined) { readerDead = false; forgetWho(); forgetPicture(); }
+  }
   const h = await handles();
   // THROW rather than return nothing. An empty list is rendered as "no chirps
   // yet", which is a claim — and when there is no reader at all the truth is
