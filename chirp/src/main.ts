@@ -24,7 +24,7 @@ import {
   pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, FACE_MAX,
   notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
   followerCounts, interestsFrom, statsFor,
-  CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note, type Stats,
+  CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note, type Stats, type Notice,
 } from './chain';
 
 const app = document.getElementById('app')!;
@@ -177,7 +177,7 @@ let ME: Me | null = null;
 let ALL: Post[] = [];
 let FOLLOW = new Set<number>();
 let PEOPLE: Who[] = [];
-let NOTIF: Post[] = [];
+let NOTIF: Notice[] = [];
 let PROF: Awaited<ReturnType<typeof profile>> | null = null;
 let TH: Awaited<ReturnType<typeof thread>> = { parents: [], post: null, replies: [] };
 
@@ -594,12 +594,25 @@ function notifView(): string {
   // is a fair one to ask.
   const offer = ME?.mask && push.get() !== 'on'
     ? `<div class="pushrow">
-        <div><b>Get told when someone replies</b>
+        <div><b>Get told when someone replies or names you</b>
         <span>chirp asks the Polkadot app to notify you. Nothing leaves the device but the alert.</span></div>
         <button class="primary" id="askpush">Turn on</button>
       </div>` : '';
-  return offer + `<div class="sechead">Replies and quotes of your chirps</div>`
-    + list(NOTIF, ME?.mask ? 'Nothing yet.' : 'Claim a mask to get replies.');
+  // Each one says which of the three it is. X does this, and it matters: being
+  // replied to, being quoted and being named are three different things to a
+  // reader, and an undifferentiated pile makes you open all of them to find out.
+  const label: Record<string, string> = {
+    reply: 'replied to you',
+    quote: 'quoted you',
+    mention: 'mentioned you',
+  };
+  const rows = NOTIF.length
+    ? NOTIF.map((n) => `<div class="notice">
+        <div class="why-line">${esc(nm(n.who, n.mask))} ${label[n.why]}</div>
+        ${card(n)}
+      </div>`).join('')
+    : `<div class="note">${ME?.mask ? 'Nothing yet.' : 'Claim a mask to be told about replies and mentions.'}</div>`;
+  return offer + `<div class="sechead">Replies, quotes and mentions</div>` + rows;
 }
 
 function profileView(): string {
@@ -1439,10 +1452,10 @@ async function refresh() {
   if (view.k === 'profile') PROF = await profile(view.mask, ALL).catch(() => PROF);
   if (view.k === 'search' && !PEOPLE.length) PEOPLE = await people().catch(() => []);
   if (view.k === 'notif') {
-    NOTIF = await notifications(ME?.mask ?? 0, ALL).catch(() => NOTIF);
+    NOTIF = await notifications(ME?.mask ?? 0, ALL, ME ?? undefined).catch(() => NOTIF);
     if (NOTIF.length) seen.set(Math.max(seen.get(), ...NOTIF.map((p) => p.id)));
   } else if (ME?.mask) {
-    NOTIF = await notifications(ME.mask, ALL).catch(() => NOTIF); // keep the badge honest
+    NOTIF = await notifications(ME.mask, ALL, ME).catch(() => NOTIF); // keep the badge honest
   }
   await refreshNotes().catch(() => undefined);
   FOLLOWERS = await followerCounts().catch(() => FOLLOWERS);
@@ -1595,7 +1608,7 @@ async function poll() {
   if (!fresh) return;                       // a quiet network is not news
   // Replies to you are worth knowing about wherever you are in the app, and they
   // are a slice of the feed we just read — not a second read of it.
-  if (ME?.mask) { NOTIF = await notifications(ME.mask, fresh).catch(() => NOTIF); await announce(); }
+  if (ME?.mask) { NOTIF = await notifications(ME.mask, fresh, ME).catch(() => NOTIF); await announce(); }
   if (view.k !== 'home') { ALL = fresh; return render(); }
   if (busy || sheet || view.k !== 'home') return;  // it may have changed while we waited
   const known = new Set(ALL.map((p) => p.id));
@@ -1620,7 +1633,7 @@ async function announce() {
   const one = fresh[0];
   const text = fresh.length === 1
     ? `${one.who ? nm(one.who) : 'Someone'} replied: ${one.body.slice(0, 80)}`
-    : `${fresh.length} new replies and quotes on chirp`;
+    : `${fresh.length} new replies, quotes and mentions on chirp`;
   await notify(text, fresh.length === 1 ? `#/t/${one.id}` : '#/notifications');
 }
 

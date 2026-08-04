@@ -1346,16 +1346,48 @@ export async function profile(mask: number, feed?: Post[]): Promise<{
   };
 }
 
-/** What happened to you: replies and quotes of your posts, newest first. There
- *  is no notification store on chain, so this is derived from the feed. */
-export async function notifications(myMask: number, feed?: Post[]): Promise<Post[]> {
+/** What a notification is about, so the screen can say which. */
+export type NoteKind = 'reply' | 'quote' | 'mention';
+export type Notice = Post & { why: NoteKind };
+
+/**
+ * What happened to you: replies, quotes, and being MENTIONED.
+ *
+ * The mention was missing, which is the one X leads with — the app grew an @
+ * autocomplete and then never told anybody they had been named. Nothing on
+ * chain records a mention, so it is read out of the text the same way the
+ * timeline renders it: the handle, the verified `.dot`, or `@maskN`. All three,
+ * because all three are shown as an address somewhere in this app and a person
+ * will use whichever they see.
+ *
+ * Derived from the feed rather than stored: there is no notification list on
+ * chain, and inventing one would cost a transaction per notification.
+ */
+export async function notifications(myMask: number, feed?: Post[], me?: Who): Promise<Notice[]> {
   if (!myMask) return [];
   // Take the feed the caller already has. This used to re-read the whole thing —
   // with a poll every twenty seconds that was the timeline fetched twice a
   // minute for no new information.
   const all = feed ?? await loadAll();
   const mine = new Set(all.filter((p) => p.mask === myMask).map((p) => p.id));
-  return all.filter((p) => p.mask !== myMask && ((p.replyTo && mine.has(p.replyTo)) || (p.quoteOf && mine.has(p.quoteOf))));
+
+  const names = ['@mask' + myMask];
+  if (me?.handle) names.push('@' + me.handle);
+  if (me?.verified) names.push('@' + me.verified + '.dot');
+  const named = (body: string) => {
+    const low = body.toLowerCase();
+    // Bounded on both sides, so @watanabe does not fire on @watanabe2.
+    return names.some((n) => new RegExp(`(^|[^a-z0-9_.])${n.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z0-9_.])`).test(low));
+  };
+
+  const out: Notice[] = [];
+  for (const p of all) {
+    if (p.mask === myMask || p.deleted) continue;
+    if (p.replyTo && mine.has(p.replyTo)) { out.push({ ...p, why: 'reply' }); continue; }
+    if (p.quoteOf && mine.has(p.quoteOf)) { out.push({ ...p, why: 'quote' }); continue; }
+    if (named(p.body)) out.push({ ...p, why: 'mention' });
+  }
+  return out;
 }
 
 /** The timeline, newest first. Replies are left out of the main feed — they

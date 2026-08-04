@@ -431,3 +431,8 @@ body.locked { overflow: hidden; }
 .pfpways { flex: 1; min-width: 0; }
 .fileline { display: block; margin-top: 8px; color: var(--ink-2); font-size: 13px; }
 .fileline .filein { display: block; margin-top: 6px; }
+
+/* A notification says which of the three it is before you read it. */
+.notice { border-bottom: 1px solid var(--hair); }
+.notice .chirp { border-bottom: 0; padding-top: 4px; }
+.why-line { padding: 10px 16px 0; color: var(--ink-2); font-size: 13px; font-weight: 600; }
