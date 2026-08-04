@@ -19,6 +19,7 @@ import {
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
   askNotifications, notify, openUrl, gifUrl, gifBlob, cachedFeed, TOTAL,
+  chatAvailable, discuss, chatRooms,
   pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, FACE_MAX,
   notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
   followerCounts, interestsFrom, statsFor,
@@ -222,6 +223,9 @@ let FOLLOWERS = new Map<number, number>();
 let whyFor: number | null = null;
 /** Which chirp the share sheet is open for. */
 let shareFor: number | null = null;
+/** Whether the host has a chat surface, and which chirps already have a room. */
+let CHAT = false;
+let ROOMS = new Set<number>();
 /** A link the container refused to open, shown so it can at least be read. */
 let linkFor: string | null = null;
 /** The GIF picker, and what it last said. */
@@ -804,6 +808,7 @@ function overlay(): string {
   if (shareFor) {
     const p = findPost(shareFor);
     return `<div class="scrim" id="scrim"><div class="menu">
+      ${CHAT ? `<button data-sh="chat">${ROOMS.has(shareFor) ? 'Open the conversation' : 'Discuss it in chat'}</button>` : ''}
       <button data-sh="native">Share…</button>
       <button data-sh="copy">Copy link</button>
       <button data-sh="copytext">Copy chirp and link</button>
@@ -1240,6 +1245,18 @@ function wire() {
       } catch { /* dismissed by the person, which is not a failure */ }
     } else if (how === 'quote') {
       sheet = { mode: 'quote', target: p }; sheetText = '';
+    } else if (how === 'chat') {
+      // The chirp's own room, in the Polkadot app's chat. Note what this is not:
+      // there is no way to address a person through the bridge, so this is a
+      // conversation about a post, never a message to somebody.
+      flash = { text: 'Opening the conversation…' }; render();
+      const r = await discuss(p.id, `chirp: ${nm(p.who, p.mask)}`, `${text}\n${url}`);
+      if (r.ok) {
+        ROOMS.add(p.id);
+        flash = { text: r.value === 'New' ? 'Room opened — it is in your chat.' : 'That conversation already exists — it is in your chat.' };
+      } else {
+        flash = { text: r.why, bad: true };
+      }
     } else if (how === 'chain') {
       void openUrl(`https://assethub-paseo.subscan.io/account/${CHIRP}`);
     }
@@ -1644,4 +1661,9 @@ if (!ALL.length) app.innerHTML = header() + '<div class="skel"></div><div class=
   // bytes give the same key and the contract still points at it: no transaction,
   // no chain write, and it is the whole reason a picture survives at all.
   if (ME?.mask) void renewPicture(ME.mask);
+  // Whether the chat bridge exists is a host question, asked once. If it does,
+  // find out which chirps already have a room — an app that offers to "start"
+  // a conversation that is already running is not paying attention.
+  CHAT = await chatAvailable().catch(() => false);
+  if (CHAT) { ROOMS = await chatRooms().catch(() => ROOMS); render(); }
 })();

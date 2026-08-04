@@ -514,6 +514,102 @@ export async function openUrl(url: string): Promise<boolean> {
   return false;
 }
 
+/* --------------------------------------------------------------------- chat */
+//
+// The Polkadot app has a chat, and it lets an app take part in it. What that
+// bridge actually offers is narrow, and worth stating before anything is built
+// on top of it:
+//
+//   registerRoom({roomId, name, icon})  create or join a room
+//   sendMessage(roomId, {tag:'Text'})   say something in it
+//   subscribeAction(cb)                 hear what happens in rooms we are in
+//   subscribeChatList(cb)               the rooms we are in
+//
+// There is NO way to address a person. A room is named by a string we choose,
+// and the host decides who can see it. So this cannot be "message @watanabe" —
+// X's DM has no equivalent here, and pretending otherwise would produce a
+// button that silently goes nowhere.
+//
+// What it CAN be is the thing a room is good at: a conversation attached to a
+// chirp, in the app's own chat surface, where people already are. That is what
+// this builds.
+
+export type ChatRoomInfo = { roomId: string; participatingAs: string };
+
+async function chatManager() {
+  const host = await import('@parity/product-sdk-host').catch(() => null);
+  return host ? await host.getChatManager().catch(() => null) : null;
+}
+
+/** Is the chat bridge here at all? False in a browser, and on hosts without it. */
+export async function chatAvailable(): Promise<boolean> {
+  return Boolean(await chatManager());
+}
+
+/** The room id for a chirp. Deterministic, so two people who open the same
+ *  chirp land in the SAME room rather than each creating their own. */
+export const roomOf = (chirpId: number) => `chirp-${chirpId}`;
+
+/**
+ * Open the conversation for a chirp, and put the chirp in it.
+ *
+ * `registerRoom` answers "New" or "Exists" — both are success, and the
+ * difference is only worth telling the person because "Exists" means there may
+ * already be something to read.
+ */
+export async function discuss(chirpId: number, title: string, opener: string): Promise<Ok<'New' | 'Exists'> | Fail> {
+  const chat = await chatManager();
+  if (!chat) return { ok: false, why: 'This app has no chat surface — open chirp in the Polkadot app.' };
+  try {
+    const status = await chat.registerRoom({
+      roomId: roomOf(chirpId),
+      name: title.slice(0, 60),
+      icon: '',
+    });
+    // Only introduce the room when it is new. Re-posting the opener into a room
+    // people are already talking in is the app shouting over them.
+    if (status === 'New') await chat.sendMessage(roomOf(chirpId), { tag: 'Text', value: { text: opener } });
+    return { ok: true, value: status as 'New' | 'Exists' };
+  } catch (e) {
+    return { ok: false, why: reason({ error: e }) };
+  }
+}
+
+/** Say something into a chirp's room. */
+export async function sayInChat(chirpId: number, text: string): Promise<Ok | Fail> {
+  const chat = await chatManager();
+  if (!chat) return { ok: false, why: 'No chat here.' };
+  try {
+    await chat.sendMessage(roomOf(chirpId), { tag: 'Text', value: { text: text.slice(0, 1000) } });
+    return { ok: true, value: undefined };
+  } catch (e) {
+    return { ok: false, why: reason({ error: e }) };
+  }
+}
+
+/** The chirp rooms this person is in, so the app can show which chirps have a
+ *  conversation going rather than offering to start one that already exists. */
+export async function chatRooms(): Promise<Set<number>> {
+  const chat = await chatManager();
+  const out = new Set<number>();
+  if (!chat) return out;
+  return new Promise((resolve) => {
+    let sub: { unsubscribe(): void } | undefined;
+    const done = () => { try { sub?.unsubscribe(); } catch { /* gone */ } resolve(out); };
+    const timer = setTimeout(done, 4000);
+    try {
+      sub = chat.subscribeChatList((rooms) => {
+        for (const r of rooms) {
+          const m = /^chirp-(\d+)$/.exec(r.roomId);
+          if (m) out.add(Number(m[1]));
+        }
+        clearTimeout(timer);
+        done();
+      });
+    } catch { clearTimeout(timer); done(); }
+  });
+}
+
 /** Deliver one notification now. Silent when the host has no manager for it. */
 export async function notify(text: string, deeplink?: string): Promise<boolean> {
   const host = await import('@parity/product-sdk-host').catch(() => null);
