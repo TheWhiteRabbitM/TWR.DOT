@@ -1,7 +1,43 @@
 {
-  "generatedAt": 1785799616,
-  "count": 118,
+  "generatedAt": 1785815285,
+  "count": 122,
   "apps": [
+    {
+      "label": "caniusethis",
+      "domain": "caniusethis.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785801072,
+      "url": "https://caniusethis.dev-dot.li"
+    },
+    {
+      "label": "caniusexx00",
+      "domain": "caniusexx00.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785800916,
+      "url": "https://caniusexx00.dev-dot.li"
+    },
+    {
+      "label": "caniuseprobe",
+      "domain": "caniuseprobe.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785800712,
+      "url": "https://caniuseprobe.dev-dot.li"
+    },
+    {
+      "label": "neversettled",
+      "domain": "neversettled.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785800496,
+      "url": "https://neversettled.dev-dot.li"
+    },
     {
       "label": "my-first-app",
       "domain": "my-first-app.dot",

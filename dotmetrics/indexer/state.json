@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11781977,
-  "updatedAt": "2026-08-03T23:23:05.653Z",
+  "lastBlock": 11789437,
+  "updatedAt": "2026-08-04T03:44:17.526Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "1dc3e14b2174773b6402cdd02eeecc647f01cf9e6053d245c660784b988d5c0a",
-    "cid": "bafybeibqww5zsq52ewwy2g5uujgww2h43by6mhfjyhi36qvodpa3mz2b5i",
-    "uploadedAt": "2026-08-03T23:28:07.284Z"
+    "digest": "7706951480fc59f5a9d081ad958785cfa5c7f3444b927eb540c30de8f8569d65",
+    "cid": "bafybeiaqoq6lxy2qnpygjxwt66xolw5razwrgu6xlmgwvnqa2fnit5vsi4",
+    "uploadedAt": "2026-08-04T03:49:24.021Z"
   },
   "sitePublish": {
     "treeHash": "c9b68913a050556d0923bae59b9047429dbcee1f7d7269ee63f6a24f00ea8c47",
     "publishedAt": "2026-08-03T21:40:09.536Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-03T23:26:55.000Z",
+    "updatedAt": "2026-08-04T03:48:05.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -116,13 +116,16 @@
       "my-first-page": "alive",
       "my-tutorial-app": "alive",
       "polkaroulette00": "alive",
-      "tutorial-deploy": "alive"
+      "tutorial-deploy": "alive",
+      "caniuseprobe": "alive",
+      "caniusethis": "alive",
+      "neversettled": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-03T23:26:56.000Z",
+    "updatedAt": "2026-08-04T03:48:05.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -157,6 +160,21 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "caniuseprobe": {
+        "contenthash": "bafybeihbguvfo4k73dt7v7edbhk4rc7d2plpamfh2jeixwq5ao5iz7vgr4",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "caniusethis": {
+        "contenthash": "bafybeicvx72dtlpx673kvcxd7mp6yruw6vsp6sp3bolnsak2enemjqjdzm",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "caniusexx00": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "chainpulse": {
         "contenthash": "bafybeihfclrcd44lz6cqtlkmymyjhwaqwbm2wymmqcum2ubowd4ifls7ci",
         "updateCount": 0,
@@ -168,9 +186,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeicuu26p5yzpn22lemnhkdxwxo6d7fhgltccevdilv2r5phs5pjsoq",
-        "updateCount": 4,
-        "changedAt": 1785799616,
+        "contenthash": "bafybeigzhdehlti4zivb5oavglejhw2dpt7yk3e3mwgwxjp5jmpnqlf6e4",
+        "updateCount": 5,
+        "changedAt": 1785815285,
         "live": "alive"
       },
       "chopdotproof01": {
@@ -240,9 +258,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeihhd2ewlw3y3tp2w564uhpfbg7z33trfow4ggo7zoj6e5geyldayq",
-        "updateCount": 49,
-        "changedAt": 1785799616,
+        "contenthash": "bafybeihwppfekublprhidqbgd2ybr6sp3gfxswocv4wmviogx3xsgcmw2y",
+        "updateCount": 50,
+        "changedAt": 1785815285,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -262,9 +280,9 @@
         "live": "unknown"
       },
       "dotify-test01": {
-        "contenthash": "bafybeibnsqreyaf3zcsrsiqeefd2awmexblekqimzdiwwpm7ouw7k6ccoe",
-        "updateCount": 6,
-        "changedAt": 1785780816,
+        "contenthash": "bafybeihiejklvo7gtbqt2ve5t2zmk3w3sukydocwetn3rkimtaprl6m5va",
+        "updateCount": 7,
+        "changedAt": 1785815285,
         "live": "alive"
       },
       "dotmetrics": {
@@ -314,8 +332,9 @@
         "live": "alive"
       },
       "frenchan-app77": {
-        "contenthash": "bafybeidu532o6rqwb23okbqgj5uy6zbxkabar5ymurkvq7tevdnfadueke",
-        "updateCount": 0,
+        "contenthash": "bafybeiezd6dguk637anp3xmrl3dkfunlfdq2kgkcuytjvaeaa6hqc2olha",
+        "updateCount": 1,
+        "changedAt": 1785815285,
         "live": "alive"
       },
       "gameboyonchain": {
@@ -459,6 +478,11 @@
       },
       "nesonchain": {
         "contenthash": "bafybeiebtreawroqqy77ut4eumheovnnmya6rbah3sbno7ibg4u3rvgwda",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "neversettled": {
+        "contenthash": "bafybeiast7nnfkgg73dzoelsrmrtjkz6htsq3mjlwuzphtkhldqrrfvvc4",
         "updateCount": 0,
         "live": "alive"
       },
