@@ -35,6 +35,18 @@
     "h": 970,
     "capturedAt": 1785747660
   },
+  "caniuseprobe": {
+    "file": "shots/caniuseprobe.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831549
+  },
+  "caniusethis": {
+    "file": "shots/caniusethis.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831538
+  },
   "chainpulse": {
     "file": "shots/chainpulse.webp",
     "w": 480,
@@ -275,11 +287,41 @@
     "h": 970,
     "capturedAt": 1785747939
   },
+  "my-dotter": {
+    "file": "shots/my-dotter.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831629
+  },
+  "my-first-app": {
+    "file": "shots/my-first-app.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831572
+  },
+  "my-first-page": {
+    "file": "shots/my-first-page.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831607
+  },
+  "my-tutorial-app": {
+    "file": "shots/my-tutorial-app.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831584
+  },
   "nesonchain": {
     "file": "shots/nesonchain.webp",
     "w": 480,
     "h": 970,
     "capturedAt": 1785747364
+  },
+  "neversettled": {
+    "file": "shots/neversettled.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831561
   },
   "oblv-wg-calc": {
     "file": "shots/oblv-wg-calc.webp",
@@ -353,6 +395,12 @@
     "h": 970,
     "capturedAt": 1785748078
   },
+  "pas-faucet-smoke": {
+    "file": "shots/pas-faucet-smoke.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831526
+  },
   "pennypixel": {
     "file": "shots/pennypixel.webp",
     "w": 480,
@@ -364,6 +412,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785747208
+  },
+  "peoplewiki": {
+    "file": "shots/peoplewiki.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831640
   },
   "pilliodot": {
     "file": "shots/pilliodot.webp",
@@ -394,6 +448,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785748176
+  },
+  "polkaroulette00": {
+    "file": "shots/polkaroulette00.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831595
   },
   "proofoftake": {
     "file": "shots/proofoftake.webp",
@@ -484,6 +544,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785747446
+  },
+  "tutorial-deploy": {
+    "file": "shots/tutorial-deploy.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785831618
   },
   "waldgeist": {
     "file": "shots/waldgeist.webp",
