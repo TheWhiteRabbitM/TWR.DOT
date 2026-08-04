@@ -298,6 +298,12 @@ function reason(res: any): string {
   if (/SigningRejected|rejected|cancel/i.test(d)) return 'You cancelled the signature.';
   if (/Timeout/i.test(d)) return 'Timed out waiting for the block — it may still land.';
   if (/Inability to pay|TransferFailed/i.test(d)) return 'The signing account cannot pay the fee.';
+  // Seen through the dot.li gateway: the host holds an account for you but it
+  // has no allowance to submit anything, so writing is impossible from there.
+  // Reading still works, and saying which is which is the useful part.
+  if (/no allowance set for account/i.test(d)) {
+    return 'This gateway can show you chirp but cannot post for you — the account it gave you has no transaction allowance. Open chirp in the Polkadot app to write.';
+  }
   // Naming the call is useless to the person holding the phone; what they need
   // to know is that this build of the app cannot sign with a wallet account.
   if (/Not implemented|createTransactionWithLegacyAccount/i.test(d)) {
@@ -419,15 +425,17 @@ async function connect(): Promise<Slot | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ap: any = await withTimeout(host.getAccountsProvider() as any, CONNECT_MS, 'wallet').catch(() => null);
   if (!ap) return null;
-  // Without this the host never raises a signing sheet and a write hangs silently.
-  await withTimeout(Promise.resolve(host.requestPermission({ tag: 'ChainSubmit', value: undefined })), CONNECT_MS, 'permission')
-    .catch(() => undefined);
-  // And this one is its exact twin for preimages: without PreimageSubmit the
-  // host refuses remote_preimage_submit, so a picture upload cannot even begin.
-  // Asked here rather than at upload time so the person is not interrupted by a
-  // second permission sheet in the middle of choosing a photo.
-  await withTimeout(Promise.resolve(host.requestPermission({ tag: 'PreimageSubmit', value: undefined })), CONNECT_MS, 'preimage permission')
-    .catch(() => undefined);
+  // NOTE what is NOT asked for here: permission to sign.
+  //
+  // It used to be, on connect, so the first thing anyone opening chirp saw was a
+  // sheet asking to submit transactions on their behalf — before they had read a
+  // single chirp, and whether or not they ever meant to post. On the gateway
+  // that is worse than rude: there is often no wallet behind it, so the request
+  // fails and the app looks broken while doing something the reader never asked
+  // for. Reading this chain is public and needs no permission at all.
+  //
+  // It is requested at the first WRITE instead, in `askToSign()` — at the moment
+  // it is actually needed, which is the moment it can be explained.
   // Outbound access, only for the hosts phone keyboards insert GIFs from. A GIF
   // picked from the keyboard arrives as a LINK, so it costs nothing on Bulletin
   // — but showing it means fetching from a third party, which the container
@@ -1044,6 +1052,23 @@ async function myHandles() {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const q = async (c: any, m: string, ...a: unknown[]) => { try { return (await c?.[m]?.query(...a))?.value; } catch { return undefined; } };
+
+/**
+ * The same read, but a failure is a failure.
+ *
+ * `q` swallows everything and hands back `undefined`, which the callers turn
+ * into zero — so a chain that could not be reached is indistinguishable from a
+ * chain that says there is nothing. That is how the gateway showed "No chirps
+ * yet" over a contract holding eighty of them: the reads were failing and the
+ * app reported an empty world.
+ *
+ * Used for the ONE read everything else hangs on, the count.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const qStrict = async (c: any, m: string, ...a: unknown[]) => {
+  if (!c?.[m]?.query) throw new Error('no contract to ask');
+  return (await c[m].query(...a))?.value;
+};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pick = (v: any, key: string, i: number) => (Array.isArray(v) ? v[i] : v?.[key]);
 
@@ -1162,12 +1187,32 @@ function cacheFeed(posts: Post[]) {
 export let TOTAL = 0;
 
 export async function loadAll(limit = 300, onBatch?: (soFar: Post[]) => void): Promise<Post[]> {
-  const { chirp, masks, me } = await handles();
+  const h = await handles();
   // THROW rather than return nothing. An empty list is rendered as "no chirps
   // yet", which is a claim — and when there is no reader at all the truth is
   // "could not ask", which deserves an error and a retry button instead.
-  if (!chirp) throw new Error('No way to reach the chain from here.');
-  const total = Number((await q(chirp, 'count')) ?? 0);
+  if (!h.chirp) throw new Error('No way to reach the chain from here.');
+
+  // Read the count strictly, and if the reader we were handed cannot answer,
+  // fall back to the public RPC and use THAT for the rest.
+  //
+  // Through the gateway a session exists — there is an account, the app says
+  // "no mask yet" rather than "reading only" — but its provider could not serve
+  // these reads, and `q` turned that into `undefined`, which became zero, which
+  // the timeline printed as "No chirps yet" over a contract holding eighty.
+  // Reading is public and needs no session at all, so a session that cannot
+  // read must not be the end of it.
+  let { chirp, masks, me } = h;
+  let total: number;
+  try {
+    total = Number((await qStrict(chirp, 'count')) ?? 0);
+  } catch {
+    const p = await pub();
+    if (!p?.chirp) throw new Error('The chain did not answer.');
+    ({ chirp, masks } = p);
+    me = '';                                  // the public reader knows nobody
+    total = Number((await qStrict(chirp, 'count')) ?? 0);
+  }
   TOTAL = total;
   const ids: number[] = [];
   for (let id = total; id > 0 && ids.length < limit; id--) ids.push(id);
@@ -1816,6 +1861,29 @@ export function rateNote(id: number, mask: number, value: number): Promise<Ok | 
 const limitsFor = (which: string, method: string) =>
   (which === 'face' && method === 'setFace' ? BIG_LIMITS : LIMITS);
 
+/**
+ * Ask for the permission to sign, once, at the first write.
+ *
+ * Without it the host never raises a signing sheet and the write hangs with no
+ * error — the trap that cost a day early on. Asked here rather than on connect
+ * so that reading, which needs nothing, is never gated behind a request to act
+ * on somebody's behalf.
+ *
+ * `PreimageSubmit` rides along: it is only needed for a picture, and a person
+ * setting one has already decided to write.
+ */
+let signAsked = false;
+async function askToSign(): Promise<void> {
+  if (signAsked) return;
+  signAsked = true;
+  const host = await import('@parity/product-sdk-host').catch(() => null);
+  if (!host) return;
+  await withTimeout(Promise.resolve(host.requestPermission({ tag: 'ChainSubmit', value: undefined })), CONNECT_MS, 'permission')
+    .catch(() => undefined);
+  await withTimeout(Promise.resolve(host.requestPermission({ tag: 'PreimageSubmit', value: undefined })), CONNECT_MS, 'preimage permission')
+    .catch(() => undefined);
+}
+
 /** The host said it cannot sign with the wallet account it just handed us. */
 const isNotImplemented = (why: string) =>
   /Not implemented|createTransactionWithLegacyAccount/i.test(why);
@@ -1828,6 +1896,8 @@ async function send(
 ): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
   if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
+  // The first write is where the permission is asked for — not on open.
+  await askToSign();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const c = (s as any)[which];
   try {
