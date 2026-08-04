@@ -701,20 +701,44 @@ export async function askNotifications(): Promise<boolean> {
  * another app inside the container. Outside the host we fall back to the
  * browser, so the same code works in a plain tab.
  */
+/**
+ * Open a link — popup FIRST, and before anything is awaited.
+ *
+ * Two mistakes were stacked here, and together they meant no external link ever
+ * opened from inside the Polkadot app.
+ *
+ * ONE: the comment said popups are blocked in the container. They are not. The
+ * gateway embeds the app with
+ *   sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups"
+ * — read off the live page, not guessed. `allow-popups` is right there. What is
+ * absent is `allow-popups-to-escape-sandbox`, so the new window inherits the
+ * sandbox, and `allow-top-navigation`, so this frame cannot replace the whole
+ * page. Neither of those stops a link opening.
+ *
+ * TWO, and this is what actually broke it: `window.open` only survives the popup
+ * blocker when it is called inside the user gesture that asked for it. This
+ * function used to `await import(...)` the host module and then race
+ * `navigateTo` for up to three seconds BEFORE reaching the open call — by which
+ * time the gesture is long over and the browser refuses, every time, silently.
+ * Worse, `navigateTo` resolving with anything that was not literally `{ok:false}`
+ * counted as success, so the app reported that it had opened a link it had not.
+ *
+ * So the popup is attempted synchronously, on the first line, with no await
+ * ahead of it. `navigateTo` becomes the fallback rather than the gate, and the
+ * caller still shows the address when both fail.
+ */
 export async function openUrl(url: string): Promise<boolean> {
+  let w: Window | null = null;
+  try { w = window.open(url, '_blank', 'noopener'); } catch { w = null; }
+  if (w) return true;
+
   const host = await import('@parity/product-sdk-host').catch(() => null);
   if (host) {
-    // navigateTo can hang rather than answer, so it is raced: a link that has
-    // not opened in three seconds has not opened.
+    // Raced, because navigateTo can hang rather than answer — and checked for a
+    // real ok, because "not false" was letting a non-answer through as success.
     const r = await withTimeout(Promise.resolve(host.navigateTo(url)), 3000, 'navigate').catch(() => null);
-    if (r && (r as { ok?: boolean }).ok !== false) return true;
+    if ((r as { ok?: boolean } | null)?.ok === true) return true;
   }
-  // Outside the container this is the whole story. Inside it, popups are
-  // blocked, so this returns a window that is instantly null.
-  try {
-    const w = window.open(url, '_blank', 'noopener');
-    if (w) return true;
-  } catch { /* blocked */ }
   // Last resort: put it on the clipboard, so the person has the address rather
   // than a tap that did nothing. The caller shows it too — silence is the one
   // outcome that leaves somebody stuck.

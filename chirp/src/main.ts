@@ -148,10 +148,22 @@ function rich(text: string): string {
     // in the chirp. Only the keyboards' own hosts are rendered this way; every
     // other link stays a link.
     //
-    // data-url rather than href: inside the Polkadot app there is no second
-    // window, so an anchor with target="_blank" is a link that does nothing at
-    // all. The host opens it for us through navigateTo.
-    .replace(/https?:\/\/[^\s<]+/g, (u) => (gifUrl(u) ? gifTag(u) : `<a class="ext" data-url="${u}">${u}</a>`))
+    // A REAL anchor now — href and target, not a bare data-url.
+    //
+    // The comment that used to sit here said the container has no second window
+    // and that target="_blank" is a link that does nothing. That was wrong, and
+    // it was wrong for months. Read off the live gateway rather than assumed,
+    // the app is framed with
+    //   sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups"
+    // — `allow-popups` is present. A link CAN open a window; what the frame
+    // cannot do is navigate the top page, which is a different restriction.
+    //
+    // A real anchor lets the browser open it natively, and that is the one path
+    // no popup heuristic ever blocks, because the click IS the gesture. The
+    // data-url handler stays as the fallback for hosts that still refuse.
+    // rel=noopener because a popup that inherits this sandbox should not also
+    // get a handle back to it.
+    .replace(/https?:\/\/[^\s<]+/g, (u) => (gifUrl(u) ? gifTag(u) : `<a class="ext" href="${u}" target="_blank" rel="noopener noreferrer" data-url="${u}">${u}</a>`))
     .replace(/(^|\s)(@[A-Za-z0-9_.-]{2,40})/g, (_m, sp, h) => `${sp}<a class="mention" data-q="${h.slice(1)}">${h}</a>`)
     .replace(/(^|\s)([A-Za-z0-9-]{2,40}\.dot)\b/g, (_m, sp, d) => `${sp}<a class="mention" data-q="${d}">${d}</a>`)
     .replace(/(^|\s)(#[A-Za-z0-9_]{1,40})/g, (_m, sp, t) => `${sp}<a class="mention" data-q="${t.slice(1)}">${t}</a>`);
@@ -168,7 +180,7 @@ let gifTimer: ReturnType<typeof setTimeout> | null = null;
  */
 function gifTag(u: string): string {
   const local = GIFS.get(u);
-  if (local) return `<a class="ext gifwrap" data-url="${u}"><img class="gif" src="${local}" alt="GIF"></a>`;
+  if (local) return `<a class="ext gifwrap" href="${u}" target="_blank" rel="noopener noreferrer" data-url="${u}"><img class="gif" src="${local}" alt="GIF"></a>`;
   if (local === undefined) {
     GIFS.set(u, '');            // claim it before the async call, or every render refires
     void gifBlob(u).then((b) => {
@@ -182,7 +194,7 @@ function gifTag(u: string): string {
   // that pill invited a tap that could not work and hid the address while doing
   // it. If the image cannot be shown, the honest fallback is the thing that was
   // in the chirp all along: the link, as text.
-  return `<a class="ext" data-url="${u}">${u}</a>`;
+  return `<a class="ext" href="${u}" target="_blank" rel="noopener noreferrer" data-url="${u}">${u}</a>`;
 }
 
 const TICK = `<svg class="tick" viewBox="0 0 24 24" fill="currentColor"><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81C14.67 2.63 13.43 1.75 12 1.75s-2.67.88-3.34 2.19c-1.39-.46-2.9-.2-3.91.81s-1.27 2.52-.81 3.91C2.63 9.33 1.75 10.57 1.75 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.27 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.34-2.19c1.39.46 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z"/></svg>`;
@@ -299,8 +311,14 @@ let probeFile = '';
 let ROOMS = new Set<number>();
 /** A link the container refused to open, shown so it can at least be read. */
 let linkFor: string | null = null;
+/** Why the link pane is up: a refused navigation, or a refused clipboard write. */
+let linkWhy: 'open' | 'copy' = 'open';
 /** The GIF picker, and what it last said. */
 let gifOpen = false;
+/** Whether the picture panel in the composer is showing its three routes. */
+let picOpen = false;
+/** What the picture panel last said — an encode failure has to be visible. */
+let picSaid: null | { text: string; bad?: boolean } = null;
 let gifBound = false;
 let gifSaid: { text: string; bad?: boolean } | null = null;
 
@@ -896,8 +914,8 @@ function profileView(): string {
     <div class="at">${esc(at(who))}</div>
     ${bio ? `<p class="bio">${esc(bio)}</p>` : ''}
     <div class="plinks">
-      ${telegram ? `<a class="ext" data-url="https://t.me/${encodeURIComponent(telegram)}">✆ ${esc(telegram)}</a>` : ''}
-      ${x ? `<a class="ext" data-url="https://x.com/${encodeURIComponent(x)}">𝕏 ${esc(x)}</a>` : ''}
+      ${telegram ? `<a class="ext" href="https://t.me/${encodeURIComponent(telegram)}" target="_blank" rel="noopener noreferrer" data-url="https://t.me/${encodeURIComponent(telegram)}">✆ ${esc(telegram)}</a>` : ''}
+      ${x ? `<a class="ext" href="https://x.com/${encodeURIComponent(x)}" target="_blank" rel="noopener noreferrer" data-url="https://x.com/${encodeURIComponent(x)}">𝕏 ${esc(x)}</a>` : ''}
       <span class="tier t${who.tier}">${TIERS[who.tier]}</span>
     </div>
     <div class="pstats">
@@ -1062,11 +1080,22 @@ function gate(): string {
       as you.</p>
     </section>`;
   }
+  // The optional field was read as "type your name here" and people typed their
+  // People chain username — a `.01`. That is a different thing from a `.dot`,
+  // the contract checks it against the .dot registry, and the check failing
+  // takes the whole claim down with it. So: leave it empty is now the stated
+  // default, the two names are told apart in as many words, and the handler
+  // refuses to send a `.01` rather than spending somebody's transaction on it.
   return `<section class="gate">
     <h2>Claim your mask to post</h2>
     <p>A mask is bound to your account and cannot be transferred, so nobody can post as you.
-    Own a <b>.dot</b>? Put the label in — the contract checks it against the registry, and that is what earns a tick.</p>
-    <input id="dotlabel" placeholder="your .dot label, without the suffix (optional)" autocomplete="off" spellcheck="false">
+    <b>Most people should leave the box below empty</b> and just claim — you can set your @ name
+    afterwards in Settings.</p>
+    <input id="dotlabel" placeholder="leave empty unless you own a .dot domain" autocomplete="off" spellcheck="false">
+    <p class="hint">Only for a <b>.dot domain</b> you own, without the suffix — <code>alice</code>, not
+    <code>alice.dot</code>. The contract checks it against the registry and that is what earns the tick.
+    A name ending in <b>.01</b> is a People chain username, not a .dot: leave this empty and set it in
+    Settings once you have a mask.</p>
     <button class="primary" id="claim">Claim my mask</button>
   </section>`;
 }
@@ -1182,12 +1211,17 @@ function overlay(): string {
     </div></div>`;
   }
   if (linkFor) {
+    // Two different failures share this pane, and it must not claim the wrong
+    // one. `linkWhy` says which: a link the container would not open, or a
+    // clipboard write that was refused — in which case telling somebody it is
+    // "already on your clipboard" is precisely the lie this pane exists to stop.
     return `<div class="scrim" id="scrim"><div class="pane">
-      <div class="panehead"><b>This app cannot open links</b><button class="iconbtn" id="linkclose">✕</button></div>
-      <p class="hint">The Polkadot app refused to hand this address to a browser, and a container has no
-      second window of its own. Here it is — it is already on your clipboard.</p>
+      <div class="panehead"><b>${linkWhy === 'copy' ? 'Copying was refused' : 'This app cannot open links'}</b><button class="iconbtn" id="linkclose">✕</button></div>
+      <p class="hint">${linkWhy === 'copy'
+        ? 'The container would not let the app write to your clipboard. Here is the text — select it and copy it by hand.'
+        : 'The Polkadot app refused to hand this address to a browser, and a container has no second window of its own. Here it is.'}</p>
       <div class="linkbox">${esc(linkFor)}</div>
-      <button class="primary wide" id="linkcopy">Copy it again</button>
+      <button class="primary wide" id="linkcopy">Try copying again</button>
     </div></div>`;
   }
   if (shareFor) {
@@ -1330,6 +1364,24 @@ function overlay(): string {
       </div>
       ${gifSaid ? `<p class="hint ${gifSaid.bad ? 'bad' : ''}">${esc(gifSaid.text)}</p>` : ''}
     </div>` : ''}
+    <!-- Three routes to a picture, not one.
+         The file chooser is the route most likely to do nothing at all in this
+         container — that is a measured, reported limitation, not a guess — so it
+         is offered LAST and never on its own. Pasting needs no permission and no
+         chooser: the clipboard arrives with the paste event. This mirrors what
+         already works for avatars in Settings; the composer only ever had the
+         chooser, which is exactly why attaching a picture to a post did not
+         work. You can also paste straight into the text box without opening
+         this panel at all. -->
+    ${picOpen && !mediaDraft ? `<div class="gifpick">
+      <div class="pasted" id="pastepic" contenteditable="true" tabindex="0"
+           aria-label="Paste or drop a picture here">Copy a picture, then paste it here — or drop one in</div>
+      <label class="fileline">or choose a file
+        <input type="file" id="picfile" accept="image/*" class="filein"></label>
+      <p class="hint">Pasting works where a file chooser may not. You can also paste into the
+      text box itself while writing.</p>
+      ${picSaid ? `<p class="hint ${picSaid.bad ? 'bad' : ''}">${esc(picSaid.text)}</p>` : ''}
+    </div>` : ''}
     ${mediaDraft ? `<div class="picdraft">
       <img src="${mediaDraft.url}" alt="">
       <input id="alttext" placeholder="Describe it, for people who cannot see it" maxlength="120" value="${esc(mediaDraft.alt)}">
@@ -1386,8 +1438,8 @@ function render() {
     + `<main>${body}</main>`
     + `<footer class="foot">
         Every chirp — replies, quotes and reposts included — is a row in the
-        <a class="ext" data-url="https://assethub-paseo.subscan.io/account/${CHIRP}">Chirp contract</a> on the devnet
-        Asset Hub. You post as a <a class="ext" data-url="https://assethub-paseo.subscan.io/account/${MASKS}">mask</a>
+        <a class="ext" href="https://assethub-paseo.subscan.io/account/${CHIRP}" target="_blank" rel="noopener noreferrer" data-url="https://assethub-paseo.subscan.io/account/${CHIRP}">Chirp contract</a> on the devnet
+        Asset Hub. You post as a <a class="ext" href="https://assethub-paseo.subscan.io/account/${MASKS}" target="_blank" rel="noopener noreferrer" data-url="https://assethub-paseo.subscan.io/account/${MASKS}">mask</a>
         bound to your account and non-transferable, so a chirp can only come from its author. Text only, 280 characters, no server.
         <span style="display:block;margin-top:10px;opacity:.6">build ${esc(__BUILD__)}</span>
       </footer>`
@@ -1480,9 +1532,64 @@ function attachMentions(ta: HTMLTextAreaElement, box: HTMLElement) {
   });
 }
 
+/**
+ * Copy, and if the container refuses, SHOW the text instead of pretending.
+ *
+ * Every copy in this app used to be `clipboard.writeText(x).catch(() => {})`
+ * followed by a cheerful "Copied." — which is a claim, made without looking, in
+ * a container that may well have refused. Somebody then pastes nothing into a
+ * message and has no idea why.
+ *
+ * `writeText` rejects when it is blocked, so the promise is actually awaited.
+ * The old `execCommand('copy')` path is tried second because it still works in
+ * some webviews where the async API is gated, and only when both fail does the
+ * text go on screen to be selected by hand.
+ */
+async function copyOrShow(text: string, good = 'Copied.'): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(text);
+    flash = { text: good };
+    return render();
+  } catch { /* fall through */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-1000px';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    if (ok) { flash = { text: good }; return render(); }
+  } catch { /* fall through */ }
+  linkFor = text;
+  linkWhy = 'copy';
+  render();
+}
+
+/**
+ * Run a write, and never leave somebody staring at a word.
+ *
+ * A tester reported this exactly: "it says to approve in wallet. The app has no
+ * wallet tab, and there is no pop up to sign anything. What do I do?" The answer
+ * was that the transaction has a two-minute timeout, so "Signing…" sat there
+ * silently for two minutes and then failed with something unreadable. The app
+ * knew nothing was happening and said nothing.
+ *
+ * So the message escalates on its own. After eight seconds without a sheet it
+ * stops implying the person is being slow and says what is probably wrong and
+ * what to try — which is the difference between a bug and a dead end.
+ */
 async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: string) {
-  flash = { text: 'Signing…' }; render();
+  flash = { text: 'Signing… your wallet should ask you to approve this.' }; render();
+  const nudge = setTimeout(() => {
+    flash = {
+      text: 'Still waiting for a signature. If no approval sheet has appeared, this host may not be '
+        + 'able to raise one — close this, reopen chirp from the Polkadot app, and try once more.',
+    };
+    render();
+  }, 8000);
   const r = await fn();
+  clearTimeout(nudge);
   flash = r.ok ? { text: good } : { text: r.why ?? 'Failed', bad: true };
   await refresh();
 }
@@ -1659,8 +1766,24 @@ function wire() {
     if (!n) { flash = { text: 'The host did not report a People chain username.', bad: true }; render(); }
   });
   document.getElementById('claim')?.addEventListener('click', () => {
-    const label = (document.getElementById('dotlabel') as HTMLInputElement)?.value ?? '';
-    act(async () => { const r = await claimMask(label); if (r.ok) ME = await me(); return r; }, 'Mask claimed — it is yours and cannot be moved.');
+    const raw = ((document.getElementById('dotlabel') as HTMLInputElement)?.value ?? '').trim();
+    // Refuse a People chain username here rather than spend the transaction on
+    // it. The contract checks this against the .dot registry, so a `.01` does
+    // not merely fail to earn a tick — it takes the whole claim down, and the
+    // person is left with no mask and no idea why. Reported by a tester who read
+    // the box as "type your name".
+    const looksLikePeople = /\.\d{2}$/.test(raw);
+    const hasOtherSuffix = raw.includes('.') && !/\.dot$/i.test(raw) && !looksLikePeople;
+    if (looksLikePeople || hasOtherSuffix) {
+      flash = {
+        text: `"${raw}" is a People chain username, not a .dot domain — and the contract checks this `
+          + 'box against the .dot registry, so it would refuse the whole claim. Clear the box, claim '
+          + 'your mask, then set that name in Settings.',
+        bad: true,
+      };
+      return render();
+    }
+    act(async () => { const r = await claimMask(raw); if (r.ok) ME = await me(); return r; }, 'Mask claimed — it is yours and cannot be moved.');
   });
 
   app.querySelectorAll<HTMLElement>('[data-like]').forEach((b) => b.addEventListener('click', (e) => {
@@ -1721,17 +1844,15 @@ function wire() {
     const text = `${nm(p.who, p.mask)} on chirp: "${p.body}"`;
     shareFor = null;
     if (how === 'copy') {
-      await navigator.clipboard.writeText(url).catch(() => undefined);
-      flash = { text: 'Link copied.' };
+      await copyOrShow(url, 'Link copied.');
     } else if (how === 'copytext') {
-      await navigator.clipboard.writeText(`${text}\n${url}`).catch(() => undefined);
-      flash = { text: 'Chirp and link copied.' };
+      await copyOrShow(`${text}\n${url}`, 'Chirp and link copied.');
     } else if (how === 'native') {
       // The webview may or may not have a share sheet. If it does not, this
       // throws and we say so rather than appearing to have done something.
       try {
         if (navigator.share) await navigator.share({ text, url });
-        else { await navigator.clipboard.writeText(url); flash = { text: 'No share sheet here — link copied instead.' }; }
+        else await copyOrShow(url, 'No share sheet here — link copied instead.');
       } catch { /* dismissed by the person, which is not a failure */ }
     } else if (how === 'quote') {
       sheet = { mode: 'quote', target: p }; sheetText = '';
@@ -1795,10 +1916,9 @@ function wire() {
     if (m === 'tolist') { listFor = p.mask; menuFor = null; return render(); }
     if (m === 'note') { noteSheet = { chirpId: p.id, kind: 0 }; return render(); }
     if (m === 'link') {
-      void navigator.clipboard.writeText(`${location.origin}${location.pathname}#/t/${p.id}`);
-      flash = { text: 'Link copied.' }; return render();
+      void copyOrShow(`${location.origin}${location.pathname}#/t/${p.id}`, 'Link copied.'); return;
     }
-    if (m === 'copy') { void navigator.clipboard.writeText(p.body); flash = { text: 'Copied.' }; return render(); }
+    if (m === 'copy') { void copyOrShow(p.body); return; }
     if (m === 'chain') { void openUrl(`https://assethub-paseo.subscan.io/account/${CHIRP}`); return render(); }
     render();
   }));
@@ -1817,8 +1937,7 @@ function wire() {
     probing = false; render();
   });
   document.getElementById('copyprobe')?.addEventListener('click', async () => {
-    await navigator.clipboard.writeText(probeReport(PROBE, probeFile)).catch(() => undefined);
-    flash = { text: 'Report copied.' }; render();
+    await copyOrShow(probeReport(PROBE, probeFile), 'Report copied.');
   });
   document.getElementById('probefile')?.addEventListener('change', (e) => {
     const f = (e.target as HTMLInputElement).files?.[0];
@@ -1917,8 +2036,7 @@ function wire() {
   }));
   document.getElementById('linkclose')?.addEventListener('click', () => { linkFor = null; render(); });
   document.getElementById('linkcopy')?.addEventListener('click', async () => {
-    await navigator.clipboard.writeText(linkFor ?? '').catch(() => undefined);
-    linkFor = null; flash = { text: 'Address copied.' }; render();
+    const t = linkFor ?? ''; linkFor = null; await copyOrShow(t, 'Address copied.');
   });
   app.querySelectorAll<HTMLElement>('[data-why]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -2248,24 +2366,60 @@ function bindExtras() {
   });
 
   /* --------------------------------------------------- composer: picture */
+  //
+  // The first cut fired a synthetic file chooser and nothing else. In this
+  // container a file input may accept the element and never open anything —
+  // measured, and reported to Parity — so that single route is the one most
+  // likely to fail, and attaching a picture to a post simply did not work.
+  // Avatars already had the answer: paste. It needs no chooser and no
+  // permission, because the bytes ride in on the paste event.
+  const usePicked = async (f: File | null | undefined) => {
+    if (!f) { picSaid = { text: 'Nothing there looked like an image.', bad: true }; return render(); }
+    picSaid = { text: 'Resizing…' }; render();
+    try {
+      const fit = await fitWebp(f);
+      mediaDraft = { bytes: fit.bytes, url: fit.url, alt: '' };
+      picOpen = false;
+      picSaid = null;
+      flash = { text: `Picture ready — ${Math.round(fit.bytes.length / 1000)} kB. It is attached after the chirp.` };
+    } catch {
+      picSaid = { text: 'That picture could not be shrunk enough to fit 24 kB. Try a smaller one.', bad: true };
+    }
+    render();
+  };
+  const fromClipboard = (e: ClipboardEvent) => {
+    const items = [...(e.clipboardData?.items ?? [])];
+    const img = items.find((i) => i.type.startsWith('image/'));
+    if (!img) return null;
+    e.preventDefault();
+    return img.getAsFile();
+  };
+
   document.getElementById('picopen')?.addEventListener('click', () => {
-    const inp = document.createElement('input');
-    inp.type = 'file';
-    inp.accept = 'image/*';
-    inp.addEventListener('change', async () => {
-      const f = inp.files?.[0];
-      if (!f) return;
-      flash = { text: 'Resizing…' }; render();
-      try {
-        const fit = await fitWebp(f);
-        mediaDraft = { bytes: fit.bytes, url: fit.url, alt: '' };
-        flash = { text: `Ready — ${Math.round(fit.bytes.length / 1000)} kB. It is sent after the chirp.` };
-      } catch {
-        flash = { text: 'That picture could not be shrunk enough to fit. Try a smaller one.', bad: true };
-      }
-      render();
-    });
-    inp.click();
+    if (mediaDraft) { mediaDraft = null; return render(); }   // pressing it again removes
+    picOpen = !picOpen; picSaid = null; render();
+  });
+  document.getElementById('pastepic')?.addEventListener('paste', (e) => {
+    const f = fromClipboard(e as ClipboardEvent);
+    void usePicked(f);
+  });
+  document.getElementById('picfile')?.addEventListener('change', (e) => {
+    void usePicked((e.target as HTMLInputElement).files?.[0]);
+  });
+  // Drop, for a desktop. Cheap to add and it is the other gesture people try.
+  const drop = document.getElementById('pastepic');
+  drop?.addEventListener('dragover', (e) => { e.preventDefault(); });
+  drop?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    void usePicked((e as DragEvent).dataTransfer?.files?.[0]);
+  });
+  // And the one people actually do: paste while writing, without opening
+  // anything. A paste that is not an image falls through to the textarea
+  // untouched, so this cannot break typing.
+  document.getElementById('stxt')?.addEventListener('paste', (e) => {
+    if (!(sheet?.mode === 'new' || sheet?.mode === 'reply')) return;
+    const f = fromClipboard(e as ClipboardEvent);
+    if (f) void usePicked(f);
   });
   document.getElementById('picdrop')?.addEventListener('click', () => { mediaDraft = null; render(); });
   document.getElementById('alttext')?.addEventListener('input', (e) => {
