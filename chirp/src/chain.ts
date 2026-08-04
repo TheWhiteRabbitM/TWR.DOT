@@ -570,11 +570,41 @@ export async function actingAs(): Promise<{ signer: string; real: string | null 
   return s ? { signer: s.address, real: s.real } : null;
 }
 
-function session(): Promise<Slot | null> {
+/** No further handshake attempts until this moment, and how many have failed. */
+let coolUntil = 0;
+let failures = 0;
+
+/**
+ * The wallet handshake, at most once — and after a failure, not again for a while.
+ *
+ * Failures are still not memoised: one bad boot must not make a session
+ * impossible for as long as the tab is open, which is why this used to clear
+ * `slot` and let the next caller try again. What that missed is WHO the next
+ * caller is. Reads go through `handles()`, `handles()` asks for a session inside
+ * a container, and the feed refreshes every twenty seconds — so on a gateway,
+ * where the handshake can never succeed, chirp re-ran the whole thing on a
+ * twenty-second loop. `SignerManager.connect()` raises a permission request, so
+ * that is one "Sign and submit on-chain transactions on your behalf" dialog
+ * every twenty seconds, stacking up behind each other over a page whose entire
+ * job is to be readable without any of it. Nine of them were on screen inside
+ * two minutes.
+ *
+ * So: retry, but back off — 30s, 60s, 2m, 4m, up to 10m. A deliberate write
+ * passes `force` and ignores the cooldown, because somebody pressing a button is
+ * evidence worth more than the last failure.
+ */
+function session(force = false): Promise<Slot | null> {
   if (!slot) {
+    if (!force && Date.now() < coolUntil) return Promise.resolve(null);
     slot = connect().catch(() => null);
     void slot.then((s) => {
-      if (!s) { slot = null; return; }   // never memoise a failure
+      if (!s) {
+        slot = null;
+        failures += 1;
+        coolUntil = Date.now() + Math.min(30_000 * 2 ** (failures - 1), 600_000);
+        return;
+      }
+      failures = 0; coolUntil = 0;
       ready = s;                          // reads can stop using the public RPC
     });
   }
@@ -2010,7 +2040,10 @@ async function send(
   args: unknown[],
   retried = false,
 ): Promise<Ok | Fail> {
-  const s = await session().catch(() => null);
+  // `true`: somebody pressed a button. That is a better reason to attempt the
+  // handshake than the last failure is to skip it, so a write is never held back
+  // by the cooldown — only the background reads are.
+  const s = await session(true).catch(() => null);
   if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
   // The first write is where the permission is asked for, and where the account
   // gets mapped — not on open, when somebody may only want to read.
@@ -2171,7 +2204,10 @@ export function remove(id: number): Promise<Ok | Fail> {
 /** A heart is a toggle: ask the chain what you already did rather than guessing,
  *  because liking twice reverts. */
 export async function toggleLike(id: number): Promise<Ok | Fail> {
-  const s = await session().catch(() => null);
+  // `true`: somebody pressed a button. That is a better reason to attempt the
+  // handshake than the last failure is to skip it, so a write is never held back
+  // by the cooldown — only the background reads are.
+  const s = await session(true).catch(() => null);
   if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
   const already = Boolean(await q(s.chirp, 'liked', BigInt(id), s.h160));
   return send('chirp', already ? 'unlike' : 'like', [BigInt(id)]);
@@ -2180,7 +2216,10 @@ export async function toggleLike(id: number): Promise<Ok | Fail> {
 /** Reposting again retracts the repost you made — the contract remembers which
  *  chirp was yours, so this undoes rather than piling copies up. */
 export async function toggleRepost(id: number, mask: number): Promise<Ok | Fail> {
-  const s = await session().catch(() => null);
+  // `true`: somebody pressed a button. That is a better reason to attempt the
+  // handshake than the last failure is to skip it, so a write is never held back
+  // by the cooldown — only the background reads are.
+  const s = await session(true).catch(() => null);
   if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
   const mine = Number((await q(s.chirp, 'repostOf', BigInt(id), s.h160)) ?? 0);
   return mine
@@ -2189,7 +2228,10 @@ export async function toggleRepost(id: number, mask: number): Promise<Ok | Fail>
 }
 
 export async function toggleFollow(mask: number): Promise<Ok | Fail> {
-  const s = await session().catch(() => null);
+  // `true`: somebody pressed a button. That is a better reason to attempt the
+  // handshake than the last failure is to skip it, so a write is never held back
+  // by the cooldown — only the background reads are.
+  const s = await session(true).catch(() => null);
   if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
   const on = Boolean(await q(s.chirp, 'follows', s.h160, BigInt(mask)));
   return send('chirp', 'follow', [BigInt(mask), !on]);
