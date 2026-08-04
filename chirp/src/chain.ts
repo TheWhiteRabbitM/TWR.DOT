@@ -1313,7 +1313,20 @@ export async function loadAll(limit = 300, onBatch?: (soFar: Post[]) => void): P
   // a path that already has to run — and take it back if it answers.
   if (readerDead) {
     const s = await session().catch(() => null);
-    if (s && (await q(s.chirp, 'count')) !== undefined) { readerDead = false; forgetWho(); forgetPicture(); }
+    // TWO reads, and one of them is an identity read — not `count` alone.
+    // `count` is the cheapest question on the contract and a provider can
+    // answer it while failing everything that carries an argument, which is
+    // most of what the app asks for. Recovering on that one answer put the
+    // session's reader back in charge of names and faces it could not serve.
+    if (s && (await q(s.chirp, 'count')) !== undefined && (await q(s.masks, 'tierOf', 1n)) !== undefined) {
+      readerDead = false;
+      // Deliberately NOT clearing the caches here. They were cleared when the
+      // reader DIED, because what they held then were refusals recorded as
+      // answers. What they hold now are real names and real pictures, read from
+      // a public RPC — identical bytes to whatever the session would return,
+      // because this is public data. Throwing them away on recovery emptied
+      // every name back to @maskN for no reason at all.
+    }
   }
   const h = await handles();
   // THROW rather than return nothing. An empty list is rendered as "no chirps

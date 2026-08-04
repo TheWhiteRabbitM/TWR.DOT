@@ -44,7 +44,19 @@ const picWanted = new Set<number>();
  *  not awaited by the renderer: a timeline must not wait on twenty images, and
  *  a face that never arrives must cost nothing but the generated one. */
 let picTimer: ReturnType<typeof setTimeout> | null = null;
-const picTries = new Map<number, number>();
+/**
+ * When each mask was last asked for, and how often.
+ *
+ * Both, because a count alone is not a budget. Boot renders several times in
+ * quick succession — the cached feed, then every batch as it lands — and a plain
+ * counter burns its retries inside one second, all of them against the reader
+ * that is about to be replaced. The face is then given up on permanently, at the
+ * exact moment the app was about to gain a working way to fetch it.
+ */
+const picTries = new Map<number, { n: number; at: number }>();
+const PIC_RETRY_GAP = 4000;
+const PIC_MAX_TRIES = 8;
+
 function wantPicture(mask: number) {
   if (picWanted.has(mask)) return;
   picWanted.add(mask);
@@ -54,11 +66,14 @@ function wantPicture(mask: number) {
       // on the gateway stayed generated after the reader was fixed: the first
       // attempt ran against the session's dead reader, chain-side caches were
       // cleared when it fell back to the public RPC, and this Set was not, so
-      // nothing ever asked again. Let it go, and cap the retries so a mask the
-      // chain genuinely will not answer for cannot spin.
-      const n = (picTries.get(mask) ?? 0) + 1;
-      picTries.set(mask, n);
-      if (n < 4) picWanted.delete(mask);
+      // nothing ever asked again. Let it go — but spaced, so a burst of renders
+      // cannot spend the whole budget in a second, and capped, so a mask the
+      // chain will genuinely never answer for cannot spin for ever.
+      const prev = picTries.get(mask) ?? { n: 0, at: 0 };
+      const now = Date.now();
+      if (now - prev.at < PIC_RETRY_GAP) { picWanted.delete(mask); return; }  // too soon to count
+      picTries.set(mask, { n: prev.n + 1, at: now });
+      if (prev.n + 1 < PIC_MAX_TRIES) picWanted.delete(mask);
       return;
     }
     if (!url) return;                     // asked, and there is no picture
