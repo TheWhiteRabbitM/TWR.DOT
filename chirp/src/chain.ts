@@ -15,6 +15,7 @@
  * ends up as two. That string is IDENTITY_DAPP — changing it changes who you are.
  */
 import { keccak_256 } from '@noble/hashes/sha3';
+import { keep } from './keep';
 import MASKS_ABI from './masks-abi.json';
 import CHIRP_ABI from './chirp-abi.json';
 import HANDLES_ABI from './handles-abi.json';
@@ -233,7 +234,7 @@ let slot: Promise<Slot | null> | null = null;
 const NOLEGACY = 'chirp.nolegacy';
 const legacyBroken = {
   get: () => { try { return localStorage.getItem(NOLEGACY) === '1'; } catch { return false; } },
-  set: () => { try { localStorage.setItem(NOLEGACY, '1'); } catch { /* private mode */ } },
+  set: () => keep(NOLEGACY, '1'),
 };
 
 /**

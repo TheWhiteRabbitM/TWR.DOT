@@ -14,6 +14,7 @@
  */
 import './style.css';
 import { keccak_256 } from '@noble/hashes/sha3';
+import { keep, hydrate, durable } from './keep';
 import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, edit, remove, toggleLike, toggleRepost, toggleFollow,
@@ -225,6 +226,8 @@ let whyFor: number | null = null;
 let shareFor: number | null = null;
 /** Whether the host has a chat surface, and which chirps already have a room. */
 let CHAT = false;
+/** Whether preferences are held by the host rather than by this page. */
+let DURABLE = false;
 let ROOMS = new Set<number>();
 /** A link the container refused to open, shown so it can at least be read. */
 let linkFor: string | null = null;
@@ -263,7 +266,7 @@ const chirpLink = (id: number) => `https://chirponchain.dot/#/t/${id}`;
 const DRAFT = 'chirp.draft';
 const draft = {
   get: () => { try { return localStorage.getItem(DRAFT) ?? ''; } catch { return ''; } },
-  set: (v: string) => { try { v ? localStorage.setItem(DRAFT, v) : localStorage.removeItem(DRAFT); } catch { /* private mode */ } },
+  set: (v: string) => keep(DRAFT, v),
 };
 
 /** The newest chirp id you have already seen in Notifications, so the bell can
@@ -272,7 +275,7 @@ const draft = {
 const SEEN = 'chirp.seen';
 const seen = {
   get: () => { try { return Number(localStorage.getItem(SEEN) ?? 0); } catch { return 0; } },
-  set: (v: number) => { try { localStorage.setItem(SEEN, String(v)); } catch { /* private mode */ } },
+  set: (v: number) => keep(SEEN, String(v)),
 };
 const unread = () => NOTIF.filter((p) => p.id > seen.get()).length;
 
@@ -281,7 +284,7 @@ const unread = () => NOTIF.filter((p) => p.id > seen.get()).length;
 const PUSH = 'chirp.push';
 const push = {
   get: () => { try { return localStorage.getItem(PUSH) ?? ''; } catch { return ''; } },
-  set: (v: 'on' | 'off') => { try { localStorage.setItem(PUSH, v); } catch { /* private mode */ } },
+  set: (v: 'on' | 'off') => keep(PUSH, v),
 };
 /**
  * Bookmarks and mutes: this device's business and nobody else's.
@@ -299,7 +302,7 @@ function localSet(key: string) {
     get size() { return set.size; },
     toggle(id: number) {
       set.has(id) ? set.delete(id) : set.add(id);
-      try { localStorage.setItem(key, JSON.stringify([...set])); } catch { /* private mode */ }
+      keep(key, JSON.stringify([...set]));
       return set.has(id);
     },
   };
@@ -311,7 +314,7 @@ const muted = localSet('chirp.muted');
 const PUSHED = 'chirp.pushed';
 const pushed = {
   get: () => { try { return Number(localStorage.getItem(PUSHED) ?? 0); } catch { return 0; } },
-  set: (v: number) => { try { localStorage.setItem(PUSHED, String(v)); } catch { /* private mode */ } },
+  set: (v: number) => keep(PUSHED, String(v)),
 };
 
 const findPost = (id: number) => [...ALL, ...TH.replies, ...TH.parents, TH.post].find((p) => p && p.id === id) as Post | undefined;
@@ -570,7 +573,10 @@ function savedView(): string {
   const rows = ALL.filter((p) => marks.has(p.id));
   return `<div class="sechead">Bookmarks</div>`
     + list(rows, 'Nothing saved yet. Bookmark a chirp from its ⋯ menu.')
-    + `<div class="note small">Bookmarks stay on this device. A chain would make them public, and what you save is nobody's business.</div>`;
+    + `<div class="note small">Bookmarks stay on this device. A chain would make them public, and what you
+      save is nobody's business. ${DURABLE
+        ? 'They are held by the Polkadot app rather than by this page, so a new version of chirp does not lose them.'
+        : 'This browser holds them, so clearing its data clears these too.'}</div>`;
 }
 
 function personRow(w: Who, withFollow = false): string {
@@ -1639,6 +1645,11 @@ addEventListener('hashchange', () => { view = viewOf(location.hash); refresh(); 
 /* --------------------------------------------------------------------- boot */
 view = viewOf(location.hash);
 warmUp();
+// Pull anything the HOST is holding into this origin before the first render
+// reads it. A new bundle is a new content hash and, in most containers, a new
+// origin with empty storage — so without this every publish silently reset
+// everyone's bookmarks, mutes and notification watermark.
+void hydrate().then(() => render());
 // Paint the last feed we had, immediately. It is public data we already read,
 // it is replaced the moment the chain answers, and it is the difference between
 // opening the app and opening three grey rectangles.
@@ -1664,6 +1675,7 @@ if (!ALL.length) app.innerHTML = header() + '<div class="skel"></div><div class=
   // Whether the chat bridge exists is a host question, asked once. If it does,
   // find out which chirps already have a room — an app that offers to "start"
   // a conversation that is already running is not paying attention.
+  DURABLE = await durable().catch(() => false);
   CHAT = await chatAvailable().catch(() => false);
   if (CHAT) { ROOMS = await chatRooms().catch(() => ROOMS); render(); }
 })();
