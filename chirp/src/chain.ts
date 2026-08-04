@@ -322,7 +322,7 @@ type Slot = {
   h160: string;
   kind: 'wallet' | 'app';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  signer: any; manager?: any; masks: any; chirp: any; handles: any; notes: any; pfp: any; face: any; pin: any;
+  signer: any; manager?: any; runtime: any; masks: any; chirp: any; handles: any; notes: any; pfp: any; face: any; pin: any;
   /** The typed api, needed to wrap a contract call in Proxy.proxy. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   api: any;
@@ -398,16 +398,14 @@ async function browserSlot(): Promise<Slot | null> {
   const runtime = (contracts as any).createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
   const address = acc.address;
   const signer = acc.polkadotSigner;
-  await withTimeout(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (contracts as any).ensureContractAccountMapped(runtime, address, signer), 30_000, 'mapping',
-  ).catch(() => undefined);
+  // Not mapped here — see the note in connect(). Mapping is a transaction, and
+  // nothing is signed until somebody asks to write.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mk = (addr: string, abi: unknown) => (contracts as any).createContract(runtime, addr, abi, { defaultSigner: signer, defaultOrigin: address });
   const api = client.getTypedApi(descriptors.devnet_asset_hub);
   const real = await proxiedAccount(api, address);
   return {
-    address, h160: await h160Of(real ?? address), kind: 'wallet', signer, api, real,
+    address, h160: await h160Of(real ?? address), kind: 'wallet', signer, api, real, runtime,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
     notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
   };
@@ -490,10 +488,18 @@ async function connect(): Promise<Slot | null> {
   const client = papi.createClient(provider);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const runtime = (contracts as any).createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
-  await withTimeout(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (contracts as any).ensureContractAccountMapped(runtime, address, signer), 30_000, 'mapping',
-  ).catch(() => undefined);
+
+  // NOT mapped here, and this is the one that mattered.
+  //
+  // `ensureContractAccountMapped` submits `Revive.map_account` — a TRANSACTION,
+  // not a check. Called on connect, it put a "Sign Transaction" sheet in front
+  // of anyone who merely opened the app: call data 0x6407, two bytes, on a page
+  // that had not yet drawn a single chirp. Asking somebody to sign something
+  // before showing them anything is the worst first impression an app can make,
+  // and on the gateway — where the account often has no allowance — it fails
+  // too, so the reward for signing was an error.
+  //
+  // The mapping is only needed to WRITE. It is done in mapOnce(), from send().
 
   // `signer` is not a ContractOptions key — it is silently dropped. The real
   // names are signerManager / defaultSigner / defaultOrigin.
@@ -506,7 +512,7 @@ async function connect(): Promise<Slot | null> {
   // is found again.
   const who = real ?? address;
   return {
-    address, h160: await h160Of(who), kind, signer, manager, api, real,
+    address, h160: await h160Of(who), kind, signer, manager, api, real, runtime,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
     notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
   };
@@ -1872,6 +1878,27 @@ const limitsFor = (which: string, method: string) =>
  * `PreimageSubmit` rides along: it is only needed for a picture, and a person
  * setting one has already decided to write.
  */
+/**
+ * Map the account in pallet-revive, once, before the first write.
+ *
+ * A contract call from an unmapped account is rejected, so this has to happen —
+ * but it is itself a transaction, and doing it on connect meant a signature
+ * sheet for people who only came to read. Here it is one extra signature the
+ * first time somebody writes, in a moment where signing is already expected.
+ */
+let mapped = false;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function mapOnce(s: any): Promise<void> {
+  if (mapped) return;
+  mapped = true;
+  const contracts = await import('@parity/product-sdk/contracts').catch(() => null);
+  if (!contracts) return;
+  await withTimeout(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (contracts as any).ensureContractAccountMapped(s.runtime, s.address, s.signer), 60_000, 'mapping',
+  ).catch(() => undefined);
+}
+
 let signAsked = false;
 async function askToSign(): Promise<void> {
   if (signAsked) return;
@@ -1896,8 +1923,10 @@ async function send(
 ): Promise<Ok | Fail> {
   const s = await session().catch(() => null);
   if (!s) return { ok: false, why: 'Nothing here can sign. Open chirp in the Polkadot app, or connect a wallet extension in this browser.' };
-  // The first write is where the permission is asked for — not on open.
+  // The first write is where the permission is asked for, and where the account
+  // gets mapped — not on open, when somebody may only want to read.
   await askToSign();
+  await mapOnce(s);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const c = (s as any)[which];
   try {
