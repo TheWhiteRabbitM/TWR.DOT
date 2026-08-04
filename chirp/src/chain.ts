@@ -653,7 +653,7 @@ function session(force = false): Promise<Slot | null> {
  */
 queueMicrotask(() => { void pub(); });
 
-export function warmUp(): void { void session(); void pub(); }
+export function warmUp(): void { void session(); void pub(); void askDeviceRights(); }
 
 /* ------------------------------------------------------------ notifications */
 // The host owns the notification surface — the OS permission and the delivery
@@ -679,6 +679,36 @@ export async function pictureRights(): Promise<Record<string, boolean>> {
   const p = await host.requestPermission({ tag: 'PreimageSubmit', value: undefined }).catch(() => null);
   out.PreimageSubmit = Boolean(p && (p as any).ok && (p as any).value);
   return out;
+}
+
+/**
+ * The device permissions this app needs, asked once, at startup.
+ *
+ * chirp was not following the rule the rest of this workspace follows, and it
+ * is written down in the README: device capabilities are a SECOND, separate
+ * gate from network origins. `OpenUrl` is what lets an app hand a link to the
+ * browser; `Clipboard` is what the copy buttons need. Neither is mentioned by
+ * the API that requires them, and the web shell grants both implicitly — so the
+ * omission is invisible on a desktop and shows up on a phone as a button that
+ * does nothing. Which is exactly what was reported.
+ *
+ * At startup, deliberately, and never mid-gesture: a permission prompt raised
+ * during a tap spends the user-activation budget that the popup needs, so
+ * asking late breaks the very thing it was asked for.
+ *
+ * Bounded, because a host call can queue for ever on a wedged channel and
+ * opening the app must not wait on one.
+ */
+export async function askDeviceRights(): Promise<void> {
+  try {
+    const host = await import('@parity/product-sdk-host');
+    if (!(await host.isInsideContainer().catch(() => false))) return;
+    await Promise.race([
+      Promise.all((['OpenUrl', 'Clipboard'] as const).map((k) =>
+        host.requestDevicePermission(k).catch(() => undefined))),
+      new Promise((r) => setTimeout(r, 2500)),
+    ]);
+  } catch { /* older host, or no bridge: never block the app on a permission */ }
 }
 
 /** Ask the host for the Notifications permission. False if refused, or if the

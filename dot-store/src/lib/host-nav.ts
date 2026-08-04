@@ -1,10 +1,13 @@
 /**
  * Open a link that lives outside this app, from wherever the app is running.
  *
- * Inside the Polkadot host an app runs in a sandboxed iframe: `target="_blank"`
- * anchors and `window.open` are swallowed, and the supported escape is the
- * host's `navigateTo` (an `https://` URL opens in the system browser, a
- * `*.dot` URL deep-links to a sibling app inside the container).
+ * Inside the Polkadot host an app runs in a sandboxed iframe. The frame carries
+ * `sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups"`
+ * — read off the live gateway — so `window.open` is NOT swallowed; what the
+ * frame cannot do is navigate the top page. The host's `navigateTo` is still
+ * useful (an `https://` URL opens in the system browser, a `*.dot` URL
+ * deep-links to a sibling app inside the container), but it is the fallback,
+ * not the only road: a popup opened inside the tap works, and works first try.
  *
  * The subtlety that made an earlier version of this file useless: the TrUAPI
  * client has **no request timeout**, and its iframe transport queues frames
@@ -295,15 +298,48 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
     return r;
   };
 
+  // A handle is not proof a window appeared: native wrappers can hand one back
+  // and close it immediately. Checking a moment later is what turns that into a
+  // visible fallback rather than an unchanged screen.
+  const settlePopup = (w: Window): OpenResult => {
+    trail.push('popup:ok');
+    const result = settle('popup');
+    window.setTimeout(() => {
+      try {
+        if (w.closed) {
+          const late: OpenResult = { via: 'manual', trail: `${result.trail}>popup:closed`, url };
+          console.warn('[open-external]', late.trail, url);
+          (opts.onFallback ?? showLinkFallback)(late);
+        }
+      } catch {
+        /* cross-origin handles can throw on .closed; treat as opened */
+      }
+    }, 700);
+    return result;
+  };
+
   // Synchronous fast path: still inside the tap, no await has run yet.
+  //
+  // ALWAYS tried now, not only once the host has been caught wedged. Two facts
+  // make this the right order, and the old order was costing every first tap.
+  //
+  // The shell frames the app with `sandbox="… allow-popups"` — read off the live
+  // gateway, not assumed — so a popup is a route it genuinely grants. And a
+  // popup only survives the blocker while the tap is still "transiently active".
+  // Every path below begins with awaits: importing the SDK, asking for the
+  // OpenUrl permission, racing navigateTo for up to 1.5s. By the time the old
+  // code reached openPopup, seconds of that activation budget were gone and the
+  // browser refused — silently, because a blocked popup returns null and throws
+  // nothing. So the FIRST external link of a session never opened a window, and
+  // only after a timeout latched `wedged` did later taps get the fast path.
+  //
+  // A window the user can see beats a host call that might have been tidier. If
+  // the popup is blocked, everything below happens exactly as it did before.
+  const early = openPopup(url);
+  if (early) return settlePopup(early);
+  trail.push('popup:blocked');
   if (hostIsKnownWedged()) {
     trail.push('host:skipped');
-    const early = openPopup(url);
-    if (early) {
-      trail.push('popup:ok');
-      return settle('popup');
-    }
-    trail.push('popup:blocked');
     trail.push('manual');
     return settle('manual');
   }
@@ -361,30 +397,10 @@ export async function openExternal(url: string, opts: OpenOptions = {}): Promise
     trail.push('host:outside');
   }
 
-  // A blocked popup returns null and throws nothing — checking the handle is
-  // what turns a silent no-op into a diagnosable state.
+  // Second chance: the host may have navigated away from the tap's activation
+  // window, but some engines restore it after a settled promise.
   const opened = openPopup(url);
-  if (opened) {
-    trail.push('popup:ok');
-    const result = settle('popup');
-    // A handle is not proof a window appeared. Native wrappers can hand one
-    // back and close it immediately — or never show anything. If it is gone a
-    // moment later, that was not an opened link, so surface the sheet after
-    // all rather than leaving the user looking at an unchanged screen.
-    window.setTimeout(() => {
-      try {
-        if (opened.closed) {
-          const late: OpenResult = { via: 'manual', trail: `${result.trail}>popup:closed`, url };
-          console.warn('[open-external]', late.trail, url);
-          (opts.onFallback ?? showLinkFallback)(late);
-        }
-      } catch {
-        /* cross-origin handles can throw on .closed; treat as opened */
-      }
-    }, 700);
-    return result;
-  }
-  trail.push('popup:blocked');
+  if (opened) return settlePopup(opened);
   trail.push('manual');
   return settle('manual');
 }
