@@ -1,65 +1,162 @@
-# Issues for the products devnet — drafts, and what still has to be measured
+# Two issues for the products devnet, with evidence — and three claims withdrawn
 
 Written after building **chirponchain.dot**, a text-only social app that keeps
-everything in Asset Hub contracts.
+everything in Asset Hub contracts. Every line below came out of a probe that
+ships inside the app and runs in the container: chirp → Settings → Diagnostics.
 
-## Why this file is not just three bug reports
+Environment for all of it:
 
-A first draft of this reported three container limits: a file chooser that never
-opens, remote images blocked despite a granted permission, and `navigateTo`
-neither opening nor answering. It was going to be filed. It should not have
-been, and the reason is worth stating because it is the whole method here.
-
-Every one of those was a **symptom we had explained to ourselves**, and two of
-them turned out to have causes on our side:
-
-- The picture upload that "proved" the file chooser was broken was failing
-  because we stored a 66-byte hex STRING in a field that accepts 64 bytes, and
-  then, once that was fixed, because our gas figures were sized for writing a
-  single word rather than kilobytes.
-- The image that "proved" `Remote` does not cover `img-src` was never checked
-  against the permission's actual answer. We requested it and never looked at
-  whether it was granted.
-- `navigateTo` "hanging" was measured by a person watching a screen, not by
-  looking at the returned promise.
-
-A bug report built on a guess costs the time of the one person who could have
-fixed the real thing. So each claim below now has a test that produces evidence
-a stranger can check, the tests ship inside the app at `#/probe`, and **nothing
-gets filed until the probe has been run inside the Polkadot app and its output
-pasted in**.
-
-The probe is deliberately part of chirp rather than a separate page: these
-questions only have answers inside a container, and a page that has to be
-published to be run is a page nobody runs.
+```
+Android 17, Android WebView (Chrome 150.0.7871.181)
+@parity/truapi 0.5.1
+@parity/product-sdk-host 0.14.1
+products devnet, Asset Hub genesis 0xd6eec261…
+2026-08-04T08:02Z
+```
 
 ---
 
-# What can be stated today, with evidence
+## First, three things this project was about to report and did not
 
-These do not need the probe. They are facts about the chain and the SDK that we
-checked directly, and they are the ones that cost us the most time.
+A draft of this file claimed the container blocked remote images, refused the
+`Remote` permission, and left `navigateTo` hanging. **All three are wrong.**
+Measured inside the Polkadot app:
 
-## A. `PreimageSubmit` is a separate permission from `ChainSubmit`, and nothing says so
-
-`RemotePermission` has four variants, two of which govern writes:
-
-```ts
-{ tag: 'ChainSubmit',    value: undefined }   // submitting transactions
-{ tag: 'PreimageSubmit', value: undefined }   // submitting preimages
+```
+[YES] Remote permission granted for media.tenor.com, i.giphy.com
+      answered in 17ms: {"ok":true,"value":true}
+[YES] fetch  https://i.giphy.com/…gif    HTTP 200 in 438ms
+[YES] <img>  https://i.giphy.com/…gif    480x270 in 501ms
+[YES] navigateTo(https://polkadot.com)   settled in 10ms: {"ok":true}
 ```
 
-Without the second, `getPreimageManager().submit()` cannot work. It is the exact
-twin of the `ChainSubmit` trap — a missing permission that produces silence
-rather than an error — and we found it only by reading the generated types.
+The permission is granted, remote images render, and `navigateTo` settles
+promptly with `ok`. Each of those "limits" was a symptom of a bug on our side —
+a key encoded two bytes over a contract's field limit, a gas figure sized for a
+different kind of write — that we had explained to ourselves as a platform
+constraint. Reporting them would have cost somebody a day chasing nothing.
 
-**Ask:** one line in the docs beside `getPreimageManager`.
+Which is the reason for the probe, and the reason the two issues below are worth
+reading: they are what survived the same test.
 
-## B. The weight ceiling is not where a contract app would guess
+---
 
-Writing a few kilobytes into contract storage failed with `Revive.OutOfGas`. The
-fix is to raise `gasLimit`, and the trap is that raising it too far fails
-differently and more confusingly. Read from this chain:
+# Issue 1 — `remote_preimage_submit` fails to decode its own response
+
+**Severity: this blocks every app that accepts a picture from a user.**
+
+With the permission granted, submitting a preimage throws inside the client's
+codec:
+
+```
+[YES] PreimageSubmit permission     {"ok":true,"value":true}
+[NO ] preimage submit               threw: Unknown enum discriminant: 236
+```
+
+### What it looks like from here
+
+`236` is not a wire discriminant — the generated table puts `PREIMAGE_SUBMIT` at
+`{request: 68, response: 69}`, and every entry is well under 100. It is a SCALE
+**variant index inside a payload**, so the client is reading a response, or an
+error, whose shape its codec does not know. That reads as a version skew between
+this client (`@parity/truapi 0.5.1`) and the host build, rather than anything
+wrong with the request.
+
+### Why it matters more than one failing call
+
+`getPreimageManager()` is the only upload path an ordinary user has. The
+Bulletin storage-pool accounts a publisher draws from need an authorisation
+users cannot obtain (see Issue 2 below, and #9). So while this is broken, **no
+app on this devnet can accept an image, an avatar, or any file from anybody.**
+
+It also explains something we misdiagnosed for a week. Profile pictures stored
+this way came back only on the device that had set them, and we blamed Bulletin
+retention. They were never stored: the submit was failing, and the app was
+showing its own in-memory copy.
+
+### Reproduce
+
+chirp → Settings → Diagnostics → Run the probe. Or directly:
+
+```ts
+const mgr = await getPreimageManager();
+await mgr.submit(new TextEncoder().encode('hello'));   // throws
+```
+
+### Ask
+
+Either the host's response for this method or the client's codec is ahead of the
+other; aligning them fixes it. Failing that, surfacing the raw frame in the
+error would let an app tell a user something better than "unknown discriminant".
+
+### What we did instead
+
+Moved profile pictures into contract storage on Asset Hub — the bytes
+themselves, capped at 12 KB, paid for as a storage deposit by whoever sets one.
+It cannot expire and cannot fail to resolve, but it is not a general answer:
+nobody should store a photograph in contract storage, and nothing larger fits.
+
+---
+
+# Issue 2 — an ordinary account has no Bulletin storage authorisation at all
+
+This is #9, restated in the chain's own terms rather than as a series of
+failures. `checkAuthorization` reads `TransactionStorage.Authorizations`
+directly:
+
+```
+[NO] Bulletin storage authorisation for 5H3ooRY1pX…
+     {"authorized":false,"remainingTransactions":0,"remainingBytes":"0","expiration":0}
+```
+
+Not "expired", not "quota exhausted" — **no entry**. Zero transactions, zero
+bytes, no expiry, for a normal account in good standing on the devnet.
+
+### Why this is worth a number
+
+Everything said about Bulletin authorisation so far, ours included, has been
+argued from things that failed: a publish that drew an unauthorised pool
+account, an upload that never came back. That is easy to dismiss as an app
+holding it wrong. This is the chain being asked directly and answering nothing.
+
+### Consequences, taken together with Issue 1
+
+Bulletin is the platform's storage story, and today a user can reach it by
+exactly two routes: the storage pool, which needs an authorisation they cannot
+get, and the host's preimage surface, which currently throws. Both are shut. An
+app that wants to hold anything bigger than contract storage allows has nowhere
+to put it.
+
+### Ask
+
+Whatever grants authorisation to publishers should be reachable for user
+accounts too, or the preimage path should be fixed — either one reopens the
+door. Both would be better.
+
+---
+
+# Two documentation gaps that each cost a day
+
+Not bugs. Both were found by reading generated types, which is not where anyone
+should have to look.
+
+### `PreimageSubmit` is a separate permission from `ChainSubmit`
+
+```ts
+{ tag: 'ChainSubmit',    value: undefined }
+{ tag: 'PreimageSubmit', value: undefined }
+```
+
+Without the second, `submit()` cannot work — and its absence produces silence,
+not an error. Exactly the same trap as `ChainSubmit`, which the docs do mention.
+One line beside `getPreimageManager` would do it.
+
+### The per-extrinsic weight ceiling
+
+Writing a few kilobytes into contract storage fails with `Revive.OutOfGas`, and
+the fix is to raise `gasLimit`. The trap is that raising it too far fails
+differently and more confusingly, because a call may not ask for more than a
+single extrinsic's share. From this chain:
 
 ```
 System.BlockWeights
@@ -67,105 +164,27 @@ System.BlockWeights
   normal max_extrinsic  ref_time 1_599_875_000_000   proof_size  8_388_608
 ```
 
-So a single call can use at most ~1.6e12 of `ref_time`. Our first correction
-asked for 8e12 — four times a whole block — which would have been refused before
-executing.
-
-**Ask:** state the per-extrinsic ceiling in the contracts documentation, next to
-whatever explains `gasLimit`. Anyone sizing a limit by trial will otherwise walk
-straight past it.
-
-## C. `Revive.ContractTrapped` when registering a new contract name
-
-`cdm deploy` traps while REGISTERING any name the ContractRegistry has not seen.
-Proven with a two-line contract and with the registry address passed explicitly;
-redeploying an already-registered name works. The instantiate itself is fine, so
-the workaround is a bare `Revive.instantiate_with_code`.
-
-This is already filed as #10 — repeated here only because it is the same class:
-a failure whose message names the wrong step.
+Our first correction asked for `8_000_000_000_000` — four times a whole block —
+which would have been refused before executing. Stating the ceiling next to
+whatever documents `gasLimit` would save the next person the same detour.
 
 ---
 
-# What needs the probe before it is filed
-
-Each of these has a test. The template is written; the evidence block is empty
-until someone runs `#/probe` inside the Polkadot app and pastes the output.
-
-## 1. Does a file input open a chooser?
-
-**Test.** `#/probe` renders a real `<input type="file">` and reports the file it
-receives. The element being accepted by the webview is checked separately, since
-that is a different question from whether tapping it does anything.
-
-**Evidence:** _(paste the probe line for "file input", plus what happened when
-you tapped the real one)_
-
-**If it does not open**, the ask is one of, in order of preference: implement the
-WebView file chooser; add an SDK `pickImage()`; or make the input throw or log,
-so an app can offer its fallback immediately instead of shipping a dead button.
-
-**Our workaround either way:** a `contenteditable` paste target reading
-`clipboardData.items`.
-
-## 2. Does the `Remote` permission cover `img-src`?
-
-**Test.** `#/probe` requests `Remote` for two hosts and **prints the answer**,
-then fetches the same URL and loads it in an `<img>`, back to back. The claim is
-only meaningful if the permission was granted; the first draft of this issue
-never established that.
-
-**Evidence:** _(paste the three lines: Remote permission, fetch, `<img>`)_
-
-**If fetch succeeds and `<img>` does not**, the ask is either to extend `Remote`
-to `img-src` for the declared domains, or to document that it does not — a
-granted permission that appears to have had no effect reads as a bug.
-
-**Our workaround:** fetch the bytes and wrap them in a blob URL, which is
-same-origin and therefore unaffected.
-
-## 3. Does `navigateTo` settle?
-
-**Test.** `#/probe` calls it and races the promise against six seconds, printing
-whether it settled and with what.
-
-**Evidence:** _(paste the `navigateTo` line)_
-
-**If it does not settle**, the ask is small: settle it. `PermissionDenied` is a
-perfectly good answer and lets an app fall back at once. A promise that never
-resolves cannot be handled at all.
-
-**Our workaround:** race it, then try `window.open`, then put the address on the
-clipboard and tell the person the container will not open links.
-
-## 4. Is a submitted preimage retrievable?
-
-**Test.** `#/probe` submits unique bytes and then looks up the key it was given,
-waiting fifteen seconds, and compares byte for byte.
-
-**Evidence:** _(paste the three preimage lines)_
-
-This one matters more than it looks. `getPreimageManager` is the only upload
-path an ordinary user has — the Bulletin storage pool accounts need an
-authorisation users cannot obtain (#9) — so if the round trip does not hold, no
-app on this devnet can accept a picture from anybody.
-
-**What we did instead:** moved profile pictures into contract storage. It costs
-the user a deposit and caps the image at 12 KB, but it cannot expire and cannot
-fail to resolve.
-
----
-
-# One thing that is not a bug, and cost a week anyway
+# One thing that is not a bug and cost a week anyway
 
 An app is served from its content hash, so **publishing a new build changes the
-origin, and `localStorage` starts empty**. Every preference an app keeps the
-ordinary way is silently wiped by its own next release. Nothing errors; people
-simply find their settings reset.
+origin and `localStorage` starts empty**. Every preference an app keeps the
+ordinary way is wiped by its own next release. Nothing errors; people find their
+settings reset and assume they did it themselves.
 
-`getHostLocalStorage()` is the right home — it belongs to the host and outlives
-both the origin and a cache clear — but nothing points a developer at it, and
+`getHostLocalStorage()` is the right home and it works — the probe confirms a
+write-then-read round trip is exact. But nothing points a developer at it, and
 the obvious API is the one that quietly loses data.
 
-**Ask:** a line in the docs saying that `localStorage` does not survive a
-release, and that host storage does.
+**Ask:** a line saying `localStorage` does not survive a release, and that host
+storage does.
+
+---
+
+Happy to test any fix against a real app. The probe is in chirp under Settings →
+Diagnostics, and it prints a report like the ones above.

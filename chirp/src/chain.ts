@@ -92,27 +92,22 @@ export async function gifBlob(url: string): Promise<string> {
     return '';
   }
 
-  // Two attempts, cheapest first. A plain CORS fetch is what the Remote
-  // permission grants; `no-cors` gets an opaque response whose bytes we cannot
-  // read, so it is not worth trying. If CORS is refused, an <img> tag is still
-  // worth one go — image loading and fetch are governed by DIFFERENT policies,
-  // and which of the two a container blocks is not something to assume.
-  try {
-    const r = await fetch(url, { referrerPolicy: 'no-referrer', mode: 'cors' });
-    if (r.ok) {
-      const local = URL.createObjectURL(await r.blob());
-      gifCache.set(url, local);
-      return local;
-    }
-  } catch { /* fall through to the tag */ }
-
+  // The TAG first, and usually only the tag.
+  //
+  // This used to fetch the bytes and wrap them in a blob URL, on the theory
+  // that the container blocked remote images while permitting fetch. The probe
+  // says otherwise, from inside the Polkadot app: Remote is granted
+  // ({"ok":true,"value":true}), and an <img> against i.giphy.com loads at
+  // 480x270. There was no image policy to work around — so the fetch was a
+  // wasted round trip that FAILED for media.tenor.com, which sends no CORS
+  // headers, and only then fell through to the thing that worked.
   const direct = await new Promise<string>((res) => {
     const img = new Image();
     img.referrerPolicy = 'no-referrer';
     const done = (v: string) => res(v);
-    img.onload = () => done(url);       // it renders: use the URL as-is
+    img.onload = () => done(img.naturalWidth > 1 ? url : '');   // a 1px answer is an error page
     img.onerror = () => done('');
-    setTimeout(() => done(''), 6000);
+    setTimeout(() => done(''), 8000);
     img.src = url;
   });
   gifCache.set(url, direct);            // remember either answer; do not re-ask per render
