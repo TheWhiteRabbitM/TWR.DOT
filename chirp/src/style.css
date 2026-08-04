@@ -203,7 +203,7 @@ button.ghost:hover { background: var(--panel); }
 .pane .link { background: none; border: 0; color: var(--blue); font: inherit; font-size: 13px; padding: 6px 0; cursor: pointer; }
 .pane .hint { color: var(--ink-2); font-size: 12.5px; line-height: 1.5; margin: 8px 0 0; }
 .okmark { color: var(--green); font-size: 12px; }
-.primary.wide { width: 100%; margin-top: 18px; }
+.primary.wide, .ghost.wide { width: 100%; margin-top: 18px; }
 
 .menu { padding: 8px; }
 .menu button { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--ink); font: inherit; font-size: 15px; padding: 14px 12px; border-radius: 10px; cursor: pointer; }

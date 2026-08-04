@@ -900,6 +900,15 @@ function overlay(): string {
             contract function gated on ownership of something only the real account holds.</p>`}
       <button class="primary wide" id="savep">Save on chain</button>
       <p class="hint">The name is yours to choose and proves nothing — which is exactly why the tick is reserved for the .dot the contract verified.</p>
+
+      <!-- The probe lives on a route, and inside the container there is no
+           address bar to type one into. Without a way in from the interface it
+           may as well not exist — which is what it was until somebody asked how
+           to open it. -->
+      <label>Diagnostics</label>
+      <p class="hint">What this container actually allows — measured on this device. Worth running if
+      something here fails silently: it produces a report you can paste into a bug report.</p>
+      <button class="ghost wide" id="goprobe">Test what this app allows</button>
     </div></div>`;
   }
   if (linkFor) {
@@ -1442,6 +1451,7 @@ function wire() {
   app.querySelectorAll<HTMLElement>('[data-ptab]').forEach((b) => b.addEventListener('click', () => {
     ptab = b.dataset.ptab as 'chirps' | 'replies' | 'likes'; render();
   }));
+  document.getElementById('goprobe')?.addEventListener('click', () => { settingsOpen = false; go({ k: 'probe' }); });
   document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
 
   /* ----------------------------------------------------------------- probe */
