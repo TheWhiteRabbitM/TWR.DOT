@@ -2309,7 +2309,7 @@ export type Poll = {
 };
 
 const pollCache = new Map<number, Poll | null>();
-export function forgetPolls() { pollCache.clear(); }
+export function forgetPolls(chirpId?: number) { if (chirpId) pollCache.delete(chirpId); else pollCache.clear(); }
 
 /**
  * The poll on a chirp, if it has one.
@@ -2448,7 +2448,7 @@ export async function mayReply(post: Post, who: number): Promise<{ ok: true } | 
 /* ---------------------------------------------------------------- media */
 
 const mediaCache = new Map<number, { url: string; alt: string } | null>();
-export function forgetMedia() { mediaCache.clear(); }
+export function forgetMedia(chirpId?: number) { if (chirpId) mediaCache.delete(chirpId); else mediaCache.clear(); }
 export const MEDIA_MAX = 24_000;
 
 /** The picture attached to a chirp. `null` means the chain said there is none. */

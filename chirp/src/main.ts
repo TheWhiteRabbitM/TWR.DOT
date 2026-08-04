@@ -2014,10 +2014,30 @@ async function refresh() {
   await refreshNotes().catch(() => undefined);
   FOLLOWERS = await followerCounts().catch(() => FOLLOWERS);
   if (ME?.mask) FOLLOW = await following().catch(() => FOLLOW);
-  // Polls and pictures are re-asked once a cycle rather than once a render:
-  // clearing the latches here is what lets a poll created a moment ago appear,
-  // without every redraw costing a read per chirp on screen.
-  forgetPolls(); forgetMedia(); pollWanted.clear(); mediaWanted.clear();
+  // Re-ask only for what can actually have changed.
+  //
+  // The first cut cleared both caches wholesale every cycle, which on a
+  // twenty-five chirp timeline is fifty extra reads every twenty seconds for
+  // answers that were nearly all still "no poll, no picture". That is the read
+  // amplification this app has spent its life removing, reintroduced by me.
+  //
+  // What genuinely changes: an OPEN poll's counts, because other people vote.
+  // What does not: a closed poll, and a chirp that has neither — with one
+  // exception, a chirp posted moments ago, because its author attaches the poll
+  // and the picture in a second transaction just after it. So young chirps are
+  // re-asked for a few minutes and everything else is left alone.
+  const YOUNG = 5 * 60 * 1000;
+  const now = Date.now();
+  for (const p of ALL) {
+    const poll = POLLS_BY_CHIRP.get(p.id);
+    const young = now - p.time * 1000 < YOUNG;
+    if (poll !== undefined && ((poll && poll.open) || (!poll && young))) {
+      POLLS_BY_CHIRP.delete(p.id); pollWanted.delete(p.id); forgetPolls(p.id);
+    }
+    if (MEDIA_BY_CHIRP.get(p.id) === null && young) {
+      MEDIA_BY_CHIRP.delete(p.id); mediaWanted.delete(p.id); forgetMedia(p.id);
+    }
+  }
   if (ME?.mask) await loadRules().catch(() => undefined);
   busy = false;
   render();
