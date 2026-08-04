@@ -1011,21 +1011,26 @@ function insideHost(): Promise<boolean> {
 async function handles() {
   if (ready) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, pin: ready.pin, me: ready.h160 };
 
-  // INSIDE the container, wait for the session — do not fall back to the public
-  // reader. That reader opens a websocket to a public RPC host, and the
-  // container only permits the domains this app declared, which are the GIF
-  // hosts and nothing else. So the fallback could never connect: the feed
-  // stayed empty until something else forced a refresh AFTER the session had
-  // come up, which is exactly the "nothing shows until you open your profile"
-  // everyone was seeing. The speed win still holds — the session is started at
-  // import, so this waits on something already in flight.
+  // Inside a container, PREFER the session: its reads carry the account, so
+  // `liked` and `reposted` come back filled in, and the host's own provider is
+  // the one the app is meant to use.
+  //
+  // But never let a failed session stop reading. It used to: this returned all
+  // nulls and the timeline stayed empty forever. That is fine in the Polkadot
+  // app, where a session always arrives — and fatal through the dot.li gateway,
+  // which IS a container by every test but has no wallet behind it unless the
+  // reader installs one. So anyone opening chirp on the web got the shell, the
+  // tabs, the footer, and a feed that loaded for ever.
+  //
+  // Reading this chain is public. There is no reason to refuse to do it because
+  // signing is unavailable.
   if (await insideHost()) {
     const s = await session().catch(() => null);
     if (s) return { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, face: s.face, pin: s.pin, me: s.h160 };
-    return { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, pin: null, me: '' };
+  } else {
+    void session();   // outside: keep it warming, but do not wait on it
   }
 
-  void session();   // outside: keep it warming, but do not wait on it
   const p = await pub();
   return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, pin: null }), me: '' };
 }
@@ -1158,7 +1163,10 @@ export let TOTAL = 0;
 
 export async function loadAll(limit = 300, onBatch?: (soFar: Post[]) => void): Promise<Post[]> {
   const { chirp, masks, me } = await handles();
-  if (!chirp) return [];
+  // THROW rather than return nothing. An empty list is rendered as "no chirps
+  // yet", which is a claim — and when there is no reader at all the truth is
+  // "could not ask", which deserves an error and a retry button instead.
+  if (!chirp) throw new Error('No way to reach the chain from here.');
   const total = Number((await q(chirp, 'count')) ?? 0);
   TOTAL = total;
   const ids: number[] = [];
