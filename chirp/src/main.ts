@@ -2037,10 +2037,22 @@ function wire() {
   app.querySelectorAll<HTMLElement>('[data-url]').forEach((a) => a.addEventListener('click', async (e) => {
     e.stopPropagation(); e.preventDefault();
     const u = a.dataset.url ?? '';
-    // If the container will not open it, say so and show the address. A tap
-    // that silently does nothing is the worst of the three outcomes.
-    const r = await openUrl(u);
-    if (!r.ok) { linkFor = u; linkWhy = 'open'; linkTrail = r.trail; render(); }
+    // A tap that silently does nothing is the worst outcome there is, and it is
+    // what was actually happening: the webview handed back a Window object,
+    // openUrl called that success, and nothing appeared and nothing was said.
+    //
+    // Three ways out now. A refusal shows the sheet immediately. A handle that
+    // turns out to be closed a moment later shows it late, through the
+    // callback. And a handle that stays open but may still have shown nothing —
+    // which is not detectable from in here — at least leaves a line on screen
+    // saying what to do, instead of silence.
+    const showSheet = (t: string) => { linkFor = u; linkWhy = 'open'; linkTrail = t; render(); };
+    const r = await openUrl(u, (late) => showSheet(late.trail));
+    if (!r.ok) return showSheet(r.trail);
+    if (r.trail.includes('popup:handle')) {
+      flash = { text: 'Opening the link… if nothing appeared, use ⋯ on the chirp → Copy link.' };
+      render();
+    }
   }));
   document.getElementById('linkclose')?.addEventListener('click', () => { linkFor = null; render(); });
   document.getElementById('linkcopy')?.addEventListener('click', async () => {

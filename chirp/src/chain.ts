@@ -761,7 +761,7 @@ export async function askNotifications(): Promise<boolean> {
  *  instead of leaving somebody — and me — guessing a third time. */
 export type OpenTrail = { ok: boolean; trail: string };
 
-export async function openUrl(url: string): Promise<OpenTrail> {
+export async function openUrl(url: string, onLateFailure?: (t: OpenTrail) => void): Promise<OpenTrail> {
   const trail: string[] = [];
 
   // 1. A popup, synchronously, before any await.
@@ -774,7 +774,20 @@ export async function openUrl(url: string): Promise<OpenTrail> {
     const w = window.open(url, '_blank');
     if (w) {
       try { (w as { opener: unknown }).opener = null; } catch { /* already isolated */ }
-      trail.push('popup:ok');
+      trail.push('popup:handle');
+      // A HANDLE IS NOT A WINDOW, and this is what "nothing happens, no error"
+      // was: a webview can hand back a Window object and show nothing at all,
+      // or open and close it immediately. openUrl took the handle as success,
+      // returned ok, and the caller therefore had nothing to report — total
+      // silence, which is the single worst outcome and the one this whole path
+      // exists to prevent. The other eight apps check `.closed` a moment later;
+      // chirp did not, because I wrote its opener by hand instead of reading
+      // theirs. Now it checks, and tells the caller when the window is gone.
+      setTimeout(() => {
+        let gone = false;
+        try { gone = w.closed; } catch { gone = false; }   // cross-origin: treat as open
+        if (gone) onLateFailure?.({ ok: false, trail: trail.concat('popup:closed-immediately').join('>') });
+      }, 700);
       return { ok: true, trail: trail.join('>') };
     }
     trail.push('popup:null');
