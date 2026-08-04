@@ -19,7 +19,7 @@ import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, postThread, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
-  askNotifications, notify, openUrl, gifUrl, gifBlob, cachedFeed, TOTAL,
+  askNotifications, notify, openUrl, gifUrl, gifKind, gifBlob, cachedFeed, TOTAL,
   chatAvailable, discuss, chatRooms, registerBot, serveBot,
   pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, FACE_MAX,
   notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
@@ -143,7 +143,11 @@ function gifTag(u: string): string {
       gifTimer = setTimeout(() => { gifTimer = null; render(); }, 120);
     });
   }
-  return `<a class="ext gifchip" data-url="${u}">GIF — tap to open</a>`;
+  // Not a "tap to open" pill. Inside the container a link does not open, so
+  // that pill invited a tap that could not work and hid the address while doing
+  // it. If the image cannot be shown, the honest fallback is the thing that was
+  // in the chirp all along: the link, as text.
+  return `<a class="ext" data-url="${u}">${u}</a>`;
 }
 
 const TICK = `<svg class="tick" viewBox="0 0 24 24" fill="currentColor"><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81C14.67 2.63 13.43 1.75 12 1.75s-2.67.88-3.34 2.19c-1.39-.46-2.9-.2-3.91.81s-1.27 2.52-.81 3.91C2.63 9.33 1.75 10.57 1.75 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.27 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.34-2.19c1.39.46 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z"/></svg>`;
@@ -945,7 +949,7 @@ function overlay(): string {
         : THREAD.length ? `Post all ${THREAD.length + 1}`
         : title === 'New chirp' ? 'Chirp' : title}</button></div>
     ${gifOpen ? `<div class="gifpick">
-      <p class="hint">Paste a link from Tenor or Giphy — either the page you copied from their app, or the direct image link a keyboard inserts. Both work.
+      <p class="hint">Paste a Giphy link, or the direct image address of a GIF — the one a keyboard inserts, starting with media.tenor.com or i.giphy.com. Only the link is stored, so a GIF costs nothing on chain and nothing on Bulletin.
       Only the link is stored, so a GIF costs nothing on chain and nothing on Bulletin.</p>
       <input id="gifurl" placeholder="https://media.tenor.com/…" autocomplete="off" spellcheck="false">
       <div class="row">
@@ -1405,9 +1409,16 @@ function wire() {
     if (!u) return;
     // Checked here rather than on send, so a link that will never render is
     // refused while it can still be replaced — not after the chirp is on chain.
-    if (!gifUrl(u)) {
-      // Same reason: say it in place rather than redrawing the composer.
-      gifSaid = { text: 'That is not a Tenor or Giphy link. Copy the GIF from their app or site and paste the link here.', bad: true };
+    const kind = gifKind(u);
+    if (kind !== 'image' && kind !== 'giphy-page') {
+      // Said HERE, while the box is still open and the link can still be
+      // swapped — not after the chirp is on chain and the picture is missing.
+      gifSaid = {
+        text: kind === 'tenor-page'
+          ? 'That is a Tenor page, and Tenor will not serve the picture from one — we tried. Long-press the GIF and copy the image address instead: it starts with media.tenor.com.'
+          : 'That is not a Tenor or Giphy link. Copy the GIF from their app or site and paste the link here.',
+        bad: true,
+      };
       const box = document.querySelector('.gifpick');
       if (box) {
         box.querySelector('.hint.bad')?.remove();

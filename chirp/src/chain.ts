@@ -78,13 +78,14 @@ export async function gifBlob(url: string): Promise<string> {
   const hit = gifCache.get(url);
   if (hit !== undefined) return hit;
 
-  // A page rather than the image: find the image first.
+  // A page rather than the image: try each derived candidate until one renders.
   if (isGifPage(url)) {
-    const real = await resolveGifPage(url);
-    if (!real) { gifCache.set(url, ''); return ''; }
-    const via = await gifBlob(real);
-    gifCache.set(url, via);
-    return via;
+    for (const c of gifCandidates(url)) {
+      const via = await gifBlob(c);
+      if (via) { gifCache.set(url, via); return via; }
+    }
+    gifCache.set(url, '');
+    return '';
   }
 
   // Two attempts, cheapest first. A plain CORS fetch is what the Remote
@@ -133,6 +134,33 @@ export function gifUrl(u: string): boolean {
   } catch { return false; }
 }
 
+/**
+ * Will this link actually show as a picture?
+ *
+ * Measured, not assumed:
+ *   media.tenor.com/…, i.giphy.com/… — yes, they are the image
+ *   giphy.com/gifs/…                 — yes, the id is the last token and
+ *                                      i.giphy.com/<id>.gif serves it
+ *   tenor.com/view/…                 — NO. Appending .gif, the short bXQZk
+ *                                      form and the older c.tenor.com paths
+ *                                      were all tried and none serve an image;
+ *                                      the page itself cannot be read either,
+ *                                      because Tenor sends no CORS headers.
+ *                                      Resolving it needs their API key.
+ *
+ * Worth being exact about, because the useful thing to tell someone holding a
+ * Tenor page link is "copy the image's own address instead", and that is only
+ * useful while they are still standing in front of the box.
+ */
+export function gifKind(u: string): 'image' | 'giphy-page' | 'tenor-page' | 'no' {
+  if (!gifUrl(u)) return 'no';
+  if (!isGifPage(u)) return 'image';
+  try {
+    return new URL(u).hostname.toLowerCase().replace(/^www\./, '').endsWith('giphy.com')
+      ? 'giphy-page' : 'tenor-page';
+  } catch { return 'no'; }
+}
+
 /** A page url rather than the image itself — it has to be resolved first. */
 const isGifPage = (u: string) => {
   try {
@@ -142,22 +170,39 @@ const isGifPage = (u: string) => {
 };
 
 /**
- * Turn a Tenor or Giphy PAGE into the image it is about.
+ * Turn a Tenor or Giphy PAGE into image urls to try.
  *
- * Both put the real media url in an Open Graph tag, which is what every chat app
- * reads to show a preview. No API key, no account, no service: fetch the page —
- * which the Remote permission already covers — and read the tag.
+ * Reading the page's og:image tag is the obvious route and it does not work
+ * from a browser: neither host sends CORS headers on the page, so the fetch is
+ * refused before the tag can be read. What DOES work is that both encode the
+ * identity of the GIF in the url itself:
+ *
+ *   tenor.com/view/some-name-12345   →  the same url with .gif appended, which
+ *                                       Tenor serves as the image
+ *   giphy.com/gifs/some-name-abc123  →  i.giphy.com/<id>.gif, where the id is
+ *                                       the last dash-separated token
+ *
+ * Several candidates rather than one, because neither is documented as a
+ * contract and a guess that fails should fall through to the next guess.
  */
-async function resolveGifPage(u: string): Promise<string> {
+function gifCandidates(u: string): string[] {
+  const out: string[] = [];
   try {
-    const html = await fetch(u, { referrerPolicy: 'no-referrer' }).then((r) => (r.ok ? r.text() : ''));
-    if (!html) return '';
-    const m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
-      ?? html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
-    return m?.[1] ?? '';
-  } catch {
-    return '';
-  }
+    const url = new URL(u);
+    const host = url.hostname.toLowerCase().replace(/^www\./, '');
+    const last = url.pathname.replace(/\/$/, '').split('/').pop() ?? '';
+    if (host.endsWith('tenor.com')) {
+      out.push(u.replace(/\/$/, '') + '.gif');
+    }
+    if (host.endsWith('giphy.com')) {
+      const id = last.split('-').pop() ?? '';
+      if (id) {
+        out.push(`https://i.giphy.com/${id}.gif`);
+        out.push(`https://media.giphy.com/media/${id}/giphy.gif`);
+      }
+    }
+  } catch { /* not a url we can read */ }
+  return out;
 }
 
 const CONNECT_MS = 12_000;
