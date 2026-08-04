@@ -15,6 +15,7 @@
 import './style.css';
 import { keccak_256 } from '@noble/hashes/sha3';
 import { keep, hydrate, durable } from './keep';
+import { runProbe, probeReport, type Finding } from './probe';
 import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, postThread, edit, remove, toggleLike, toggleRepost, toggleFollow,
@@ -173,7 +174,7 @@ const I = {
 
 /* -------------------------------------------------------------------- state */
 type View =
-  | { k: 'home' } | { k: 'search' } | { k: 'notif' } | { k: 'saved' } | { k: 'stats' }
+  | { k: 'home' } | { k: 'search' } | { k: 'notif' } | { k: 'saved' } | { k: 'stats' } | { k: 'probe' }
   | { k: 'profile'; mask: number } | { k: 'thread'; id: number }
   | { k: 'people'; mask: number; of: 'followers' | 'following' };
 
@@ -232,6 +233,11 @@ let shareFor: number | null = null;
 let CHAT = false;
 /** Whether preferences are held by the host rather than by this page. */
 let DURABLE = false;
+/** The container probe: findings so far, whether it is running, and what the
+ *  real file input received when a finger tapped it. */
+let PROBE: Finding[] = [];
+let probing = false;
+let probeFile = '';
 let ROOMS = new Set<number>();
 /** A link the container refused to open, shown so it can at least be read. */
 let linkFor: string | null = null;
@@ -581,6 +587,36 @@ function statsView(): string {
     because nothing records who read what — a number for that would have to be invented.</div>`;
 }
 
+/**
+ * What the container actually does.
+ *
+ * Not a feature — a way to stop guessing. Three limits were about to be
+ * reported to Parity on the strength of symptoms whose causes turned out to be
+ * ours, so each claim now has a test that produces evidence, and the report is
+ * copyable so it can be pasted into an issue by whoever ran it.
+ */
+function probeView(): string {
+  const rows = PROBE.map((f) => `<div class="prow2 ${f.result}">
+      <span class="ptag">${f.result}</span>
+      <div><div class="pwhat">${esc(f.what)}</div><div class="pdetail">${esc(f.detail)}</div></div>
+    </div>`).join('');
+  return `<div class="sechead">What this container actually does</div>
+    <div class="note small">Every answer here is measured on this device, now. It exists because three
+    limits were nearly reported to Parity on the strength of symptoms that turned out to have causes on
+    our side — a key two bytes over a contract limit, a gas figure sized for a different kind of write.
+    A bug report built on a guess wastes the time of whoever could fix the real one.</div>
+    <div class="probebar">
+      <button class="primary" id="runprobe" ${probing ? 'disabled' : ''}>${probing ? 'Running…' : 'Run the probe'}</button>
+      ${PROBE.length ? '<button class="ghost" id="copyprobe">Copy the report</button>' : ''}
+    </div>
+    <div class="sechead">The one only a finger can answer</div>
+    <div class="note small">Tap this. If a chooser opens, the file input works in this container; if
+    nothing happens, it does not — and that is the finding, either way.</div>
+    <div class="probebar"><input type="file" id="probefile" accept="image/*" class="filein"></div>
+    ${probeFile ? `<div class="note small">Received: ${esc(probeFile)}</div>` : ''}
+    ${rows}`;
+}
+
 /** The saved chirps. Kept on the device on purpose: a bookmark is a note to
  *  yourself, and putting it on a public chain would publish what you are
  *  quietly interested in to everybody, forever. */
@@ -751,7 +787,7 @@ function header(): string {
   const title = view.k === 'thread' ? 'Thread' : view.k === 'profile' ? 'Profile'
     : view.k === 'people' ? (view.of === 'followers' ? 'Followers' : 'Following')
     : view.k === 'search' ? 'Search' : view.k === 'notif' ? 'Notifications'
-    : view.k === 'saved' ? 'Bookmarks' : view.k === 'stats' ? 'Your numbers' : 'chirp';
+    : view.k === 'saved' ? 'Bookmarks' : view.k === 'stats' ? 'Your numbers' : view.k === 'probe' ? 'Container probe' : 'chirp';
   const who = !ME ? '<span>reading only — open in the Polkadot app, or connect a wallet extension</span>'
     : `<b>${ME.mask ? esc(nm(ME as unknown as Who)) : 'no mask yet'}</b><span>${esc(short(ME.address))}</span>`;
   // The mark stands in for the word only where the word would be the app's own
@@ -975,6 +1011,7 @@ function render() {
   const body = view.k === 'home' ? homeView()
     : view.k === 'saved' ? savedView()
     : view.k === 'stats' ? statsView()
+    : view.k === 'probe' ? probeView()
     : view.k === 'search' ? searchView()
     : view.k === 'notif' ? notifView()
     : view.k === 'profile' ? profileView()
@@ -1092,7 +1129,7 @@ async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: strin
  *  leaving it, and a thread can be linked to. */
 function hashOf(v: View): string {
   return v.k === 'home' ? '#/' : v.k === 'search' ? '#/search'
-    : v.k === 'notif' ? '#/notifications' : v.k === 'saved' ? '#/saved' : v.k === 'stats' ? '#/stats'
+    : v.k === 'notif' ? '#/notifications' : v.k === 'saved' ? '#/saved' : v.k === 'stats' ? '#/stats' : v.k === 'probe' ? '#/probe'
     : v.k === 'profile' ? '#/u/' + v.mask
     : v.k === 'people' ? '#/u/' + v.mask + '/' + v.of
     : '#/t/' + v.id;
@@ -1109,6 +1146,7 @@ function viewOf(hash: string): View {
   if (h.startsWith('notifications')) return { k: 'notif' };
   if (h.startsWith('saved')) return { k: 'saved' };
   if (h.startsWith('stats')) return { k: 'stats' };
+  if (h.startsWith('probe')) return { k: 'probe' };
   return { k: 'home' };
 }
 /** Navigate. Pushing the hash is what makes Back work; the hashchange handler
@@ -1359,6 +1397,22 @@ function wire() {
   }));
   document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
   document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
+
+  /* ----------------------------------------------------------------- probe */
+  document.getElementById('runprobe')?.addEventListener('click', async () => {
+    PROBE = []; probing = true; render();
+    await runProbe((f) => { PROBE = [...PROBE, f]; render(); }).catch(() => undefined);
+    probing = false; render();
+  });
+  document.getElementById('copyprobe')?.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(probeReport(PROBE)).catch(() => undefined);
+    flash = { text: 'Report copied.' }; render();
+  });
+  document.getElementById('probefile')?.addEventListener('change', (e) => {
+    const f = (e.target as HTMLInputElement).files?.[0];
+    probeFile = f ? `${f.name}, ${f.size} bytes, ${f.type || 'no type'}` : 'the chooser closed with no file';
+    render();
+  });
 
   /* --------------------------------------------------------------- threads */
   document.getElementById('tadd')?.addEventListener('click', () => {

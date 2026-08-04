@@ -441,3 +441,16 @@ body.locked { overflow: hidden; }
 .tpart-n { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--panel); color: var(--ink-2);
   font-size: 12px; font-weight: 700; display: grid; place-items: center; margin-top: 2px; }
 .tpart-b { flex: 1; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink-2); font-size: 14px; }
+
+/* The container probe. A report, so it reads like one: a verdict you can scan
+   down the left, and the evidence beside it. */
+.probebar { display: flex; gap: 10px; align-items: center; padding: 12px 16px; flex-wrap: wrap; }
+.prow2 { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--hair); align-items: flex-start; }
+.ptag { flex: none; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  border-radius: 999px; padding: 3px 9px; border: 1px solid currentColor; margin-top: 2px; }
+.prow2.yes .ptag { color: var(--green); }
+.prow2.no .ptag { color: var(--rose); }
+.prow2.unknown .ptag { color: var(--ink-2); }
+.pwhat { font-weight: 600; font-size: 14px; }
+.pdetail { color: var(--ink-2); font-size: 13px; margin-top: 3px; overflow-wrap: anywhere;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
