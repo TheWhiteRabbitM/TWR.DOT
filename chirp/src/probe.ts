@@ -193,6 +193,67 @@ async function bulletinQuota(address: string): Promise<Finding> {
   }
 }
 
+/**
+ * Which chains will this host actually serve?
+ *
+ * The question behind it is what chirp can be connected to. The SDK's preset
+ * offers three chains per environment — asset hub, bulletin, individuality — and
+ * nothing else; arbitrary parachains are not in it. But "the SDK names it" and
+ * "the host serves it" are different claims, and `getHostProvider` throws
+ * `ChainNotSupportedError` for a chain a host build has not enabled. There is a
+ * one-line way to ask instead of guessing, so it gets asked.
+ *
+ * Individuality is the one that matters. Proof of personhood is the answer to
+ * the problem X has never solved — one human, one account — and its metadata is
+ * ALREADY in this bundle, pulled in by the devnet loader and never used. If the
+ * host serves it, connecting it costs no bytes at all. If it does not, that is
+ * worth knowing before designing anything on top of it.
+ *
+ * Genesis hashes from the chain-client's own test constants.
+ */
+const CHAINS: Array<[string, string]> = [
+  ['devnet asset hub', '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2'],
+  ['devnet bulletin', '0xe101f0fa4627d29a257645e02be86d80378fea1a2bf8fa6a918d150ebc760a59'],
+  ['devnet individuality', '0xe6c30d6e148f250b887105237bcaa5cb9f16dd203bf7b5b9d4f1da7387cb86ec'],
+  ['paseo asset hub (another environment)', '0xbf0488dbe9daa1de1c08c5f743e26fdc2a4ecd74cf87dd1b4b1eeb99ae4ef19f'],
+];
+
+async function chainSupport(): Promise<Finding[]> {
+  const h = await host();
+  if (!h) return [{ what: 'chain support', result: 'unknown', detail: 'no host' }];
+  const out: Finding[] = [];
+  for (const [name, genesis] of CHAINS) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const r: any = await (h as any).isChainSupported(genesis as `0x${string}`);
+      // `Result<boolean, HostError>`: ok=false means the QUESTION failed, and
+      // value=false means the answer is no. Collapsing the two would report an
+      // unreachable host as "this chain is not served" — a different finding,
+      // and the kind of confident wrong answer this whole screen exists to stop.
+      const asked = Boolean(r?.ok);
+      const yes = asked && Boolean(r?.value);
+      // A name and properties as well, when the host has them — it is the
+      // difference between "enabled" and "enabled and actually reachable".
+      let spec = '';
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const s: any = await (h as any).getChainSpec(genesis as `0x${string}`);
+        const v = s?.ok ? s.value : null;
+        if (v) spec = ' — ' + JSON.stringify(v, (_k, x) => (typeof x === 'bigint' ? x.toString() : x)).slice(0, 140);
+      } catch { /* the support answer is the one that matters */ }
+      out.push({
+        what: `host serves ${name}`,
+        result: !asked ? 'unknown' : yes ? 'yes' : 'no',
+        detail: (asked ? '' : 'could not ask — this is not "the chain is unsupported". ')
+          + `isChainSupported: ${JSON.stringify(r)}${spec}`,
+      });
+    } catch (e) {
+      out.push({ what: `host serves ${name}`, result: 'unknown', detail: `threw: ${(e as Error)?.message}` });
+    }
+  }
+  return out;
+}
+
 /** Host storage: does it survive, and does it hold what we put in it? */
 async function storage(): Promise<Finding> {
   const h = await host();
@@ -232,6 +293,7 @@ export async function runProbe(onStep: (f: Finding) => void, address = ''): Prom
   add(await navigate('https://polkadot.com'));
   for (const f of await preimage()) add(f);
   add(await bulletinQuota(address));
+  for (const f of await chainSupport()) add(f);
   add(await storage());
   return all;
 }
