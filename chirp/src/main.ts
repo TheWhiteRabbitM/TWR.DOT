@@ -20,6 +20,7 @@ import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
   post, postThread, edit, remove, toggleLike, toggleRepost, toggleFollow,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs,
+  pinnedOf, pinChirp, unpinChirp,
   askNotifications, notify, openUrl, gifUrl, gifKind, gifBlob, cachedFeed, TOTAL,
   chatAvailable, discuss, chatRooms, registerBot, serveBot,
   pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, FACE_MAX,
@@ -236,6 +237,8 @@ let DURABLE = false;
 /** The container probe: findings so far, whether it is running, and what the
  *  real file input received when a finger tapped it. */
 let PROBE: Finding[] = [];
+/** The chirp the profile being viewed leads with, and its author. */
+let PINNED = 0;
 let probing = false;
 let probeFile = '';
 let ROOMS = new Set<number>();
@@ -690,7 +693,15 @@ function profileView(): string {
       ${isMe && marks.size ? ` · <a id="gosaved"><b>${marks.size}</b> bookmarked</a>` : ''}
       ${isMe ? ' · <a id="gostats">your numbers</a>' : ''}
     </div>
-  </section>` + list(posts, 'No chirps yet.');
+  </section>`
+    // The pinned chirp leads, marked, and is not repeated below — X shows it
+    // once. If it has been deleted since it was pinned, nothing is shown rather
+    // than an empty slot: the contract stores a number and cannot police it.
+    + (() => {
+      const p = PINNED ? ALL.find((x) => x.id === PINNED && !x.deleted) : undefined;
+      return p ? `<div class="pinrow">${I.bookmark} Pinned</div>` + card(p) : '';
+    })()
+    + list(posts.filter((p) => p.id !== PINNED), 'No chirps yet.');
 }
 
 function peopleView(): string {
@@ -946,6 +957,7 @@ function overlay(): string {
       <button data-m="quote" data-id="${p.id}">Quote</button>
       <button data-m="mark" data-id="${p.id}">${marks.has(p.id) ? 'Remove bookmark' : 'Bookmark'}</button>
       <button data-m="why" data-id="${p.id}">Why am I seeing this?</button>
+      ${mine ? `<button data-m="pin" data-id="${p.id}">${PINNED === p.id ? 'Unpin from your profile' : 'Pin to your profile'}</button>` : ''}
       ${ME?.mask ? `<button data-m="note" data-id="${p.id}">Add context</button>` : ''}
       <button data-m="who" data-id="${p.id}">View profile</button>
       ${mine ? '' : `<button data-m="mute" data-id="${p.id}">${muted.has(p.mask) ? 'Unmute' : 'Mute'} ${esc(at(p.who, p.mask))}</button>`}
@@ -1384,6 +1396,14 @@ function wire() {
     if (m === 'del') { confirmDelete = p.id; return render(); }
     if (m === 'who') return goProfile(p.mask);
     if (m === 'why') { whyFor = whyFor === p.id ? null : p.id; return render(); }
+    if (m === 'pin') {
+      const on = PINNED === p.id;
+      return act(async () => {
+        const r = on ? await unpinChirp(ME!.mask) : await pinChirp(ME!.mask, p.id);
+        if (r.ok) PINNED = on ? 0 : p.id;
+        return r;
+      }, on ? 'Unpinned.' : 'Pinned to your profile.');
+    }
     if (m === 'mark') { marks.toggle(p.id); flash = { text: marks.has(p.id) ? 'Bookmarked on this device.' : 'Bookmark removed.' }; return render(); }
     if (m === 'mute') { muted.toggle(p.mask); flash = { text: muted.has(p.mask) ? 'Muted on this device.' : 'Unmuted.' }; return render(); }
     if (m === 'note') { noteSheet = { chirpId: p.id, kind: 0 }; return render(); }
@@ -1588,7 +1608,10 @@ async function refresh() {
   if (view.k === 'thread') TH = await thread(view.id).catch(() => TH);
   // ALL is handed on rather than re-read: both of these used to fetch the whole
   // timeline again, so a refresh cost it two or three times over.
-  if (view.k === 'profile') PROF = await profile(view.mask, ALL).catch(() => PROF);
+  if (view.k === 'profile') {
+    PROF = await profile(view.mask, ALL).catch(() => PROF);
+    PINNED = await pinnedOf(view.mask).catch(() => 0);
+  }
   if (view.k === 'search' && !PEOPLE.length) PEOPLE = await people().catch(() => []);
   if (view.k === 'notif') {
     NOTIF = await notifications(ME?.mask ?? 0, ALL, ME ?? undefined).catch(() => NOTIF);

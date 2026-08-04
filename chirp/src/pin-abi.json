@@ -1,0 +1,102 @@
+[
+  {
+    "inputs": [],
+    "name": "NotYourMask",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "mask",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "chirpId",
+        "type": "uint256"
+      }
+    ],
+    "name": "Pinned",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "mask",
+        "type": "uint256"
+      }
+    ],
+    "name": "Unpinned",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "MASKS",
+    "outputs": [
+      {
+        "internalType": "contract IMasks",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "mask",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "chirpId",
+        "type": "uint256"
+      }
+    ],
+    "name": "pin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "pinOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "mask",
+        "type": "uint256"
+      }
+    ],
+    "name": "unpin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

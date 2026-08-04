@@ -22,6 +22,7 @@ import HANDLES_ABI from './handles-abi.json';
 import NOTES_ABI from './notes-abi.json';
 import PFP_ABI from './pfp-abi.json';
 import FACE_ABI from './face-abi.json';
+import PIN_ABI from './pin-abi.json';
 
 export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
 export const CHIRP = '0x37A7CE834428636815b2746408343574aD13be7C';
@@ -43,6 +44,9 @@ export const PFP = '0x6f3f9d84161f0bd0eb9d6524a5a2e5089b565470';
  * expiry, no host service, and the same for every reader.
  */
 export const FACE = '0xbc11688b1421bdde1fa1be5ea5bf02e9bb49be03';
+/** The one chirp a profile leads with. On chain, because a pinned post is what
+ *  OTHER people see when they arrive — a local one would pin it for nobody. */
+export const PIN = '0x5f9199ca3c224321593c71ae2b44db29a725aabf';
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
 const IDENTITY_DAPP = 'peoplebook.dot';
 
@@ -317,7 +321,7 @@ type Slot = {
   h160: string;
   kind: 'wallet' | 'app';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  signer: any; manager?: any; masks: any; chirp: any; handles: any; notes: any; pfp: any; face: any;
+  signer: any; manager?: any; masks: any; chirp: any; handles: any; notes: any; pfp: any; face: any; pin: any;
   /** The typed api, needed to wrap a contract call in Proxy.proxy. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   api: any;
@@ -404,7 +408,7 @@ async function browserSlot(): Promise<Slot | null> {
   return {
     address, h160: await h160Of(real ?? address), kind: 'wallet', signer, api, real,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
-    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI),
+    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
   };
 }
 
@@ -501,7 +505,7 @@ async function connect(): Promise<Slot | null> {
   return {
     address, h160: await h160Of(who), kind, signer, manager, api, real,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
-    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI),
+    notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
   };
 }
 
@@ -954,7 +958,7 @@ export async function renewPicture(mask: number): Promise<boolean> {
 /** A signer-less handle over the public RPC, so the timeline is readable without
  *  a wallet. A social nobody can read unless they sign in is not much of one. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let reader: Promise<{ chirp: any; masks: any; handles: any; notes: any; pfp: any; face: any } | null> | null = null;
+let reader: Promise<{ chirp: any; masks: any; handles: any; notes: any; pfp: any; face: any; pin: any } | null> | null = null;
 function pub() {
   if (!reader) {
     reader = (async () => {
@@ -970,7 +974,7 @@ function pub() {
       const mk = (a: string, abi: unknown) => (contracts as any).createContract(rt, a, abi);
       return {
         chirp: mk(CHIRP, CHIRP_ABI), masks: mk(MASKS, MASKS_ABI), handles: mk(HANDLES, HANDLES_ABI),
-        notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI),
+        notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
       };
     })().catch(() => null);
     void reader.then((r) => { if (!r) reader = null; });
@@ -1010,7 +1014,7 @@ function insideHost(): Promise<boolean> {
 }
 
 async function handles() {
-  if (ready) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, me: ready.h160 };
+  if (ready) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, pin: ready.pin, me: ready.h160 };
 
   // INSIDE the container, wait for the session — do not fall back to the public
   // reader. That reader opens a websocket to a public RPC host, and the
@@ -1022,13 +1026,13 @@ async function handles() {
   // import, so this waits on something already in flight.
   if (await insideHost()) {
     const s = await session().catch(() => null);
-    if (s) return { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, face: s.face, me: s.h160 };
-    return { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, me: '' };
+    if (s) return { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, face: s.face, pin: s.pin, me: s.h160 };
+    return { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, pin: null, me: '' };
   }
 
   void session();   // outside: keep it warming, but do not wait on it
   const p = await pub();
-  return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null }), me: '' };
+  return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, pin: null }), me: '' };
 }
 
 /** Handles for reads that are meaningless without an account — following, and
@@ -1800,7 +1804,7 @@ const isNotImplemented = (why: string) =>
   /Not implemented|createTransactionWithLegacyAccount/i.test(why);
 
 async function send(
-  which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp' | 'face',
+  which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp' | 'face' | 'pin',
   method: string,
   args: unknown[],
   retried = false,
@@ -1935,6 +1939,20 @@ export async function postThread(
   }
   onStep?.(parts.length, parts.length);
   return { ok: true, value: parts.length };
+}
+
+/** The chirp a mask leads with, or 0. */
+export async function pinnedOf(mask: number): Promise<number> {
+  const { pin } = await handles();
+  if (!pin || !mask) return 0;
+  return Number((await q(pin, 'pinOf', BigInt(mask))) ?? 0);
+}
+
+export function pinChirp(mask: number, chirpId: number): Promise<Ok | Fail> {
+  return send('pin', 'pin', [BigInt(mask), BigInt(chirpId)]);
+}
+export function unpinChirp(mask: number): Promise<Ok | Fail> {
+  return send('pin', 'unpin', [BigInt(mask)]);
 }
 
 export function edit(id: number, body: string): Promise<Ok | Fail> {
