@@ -93,6 +93,12 @@
     "confidence": "none",
     "why": []
   },
+  "chirpwatch": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "chopdotproof01": {
     "category": "social",
     "source": "derived:manifest",
@@ -263,6 +269,14 @@
       "metrics~"
     ]
   },
+  "doyoulike": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "vote"
+    ]
+  },
   "dragon-realm": {
     "category": "tools",
     "source": "derived:manifest",
@@ -334,6 +348,14 @@
     "source": "owner",
     "confidence": "declared",
     "why": []
+  },
+  "gametheory": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "game~"
+    ]
   },
   "giganetwork": {
     "category": "other",
@@ -422,6 +444,12 @@
       "published~",
       "bulletin~"
     ]
+  },
+  "imthebest": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "ip-assets": {
     "category": "explorers",

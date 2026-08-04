@@ -1,13 +1,31 @@
 {
-  "generatedAt": 1785838158,
-  "count": 127,
+  "generatedAt": 1785846534,
+  "count": 129,
   "apps": [
+    {
+      "label": "countersign",
+      "domain": "countersign.dot",
+      "displayName": "countersign",
+      "description": "Record a document sign-off on chain. The document never leaves your browser.",
+      "tier": 0,
+      "firstSeenAt": 1785842160,
+      "url": "https://countersign.dev-dot.li"
+    },
+    {
+      "label": "vault-control",
+      "domain": "vault-control.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785840480,
+      "url": "https://vault-control.dev-dot.li"
+    },
     {
       "label": "imthebest",
       "domain": "imthebest.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785836604,
       "url": "https://imthebest.dev-dot.li"
     },
@@ -169,7 +187,7 @@
       "domain": "mini-lucky-dev.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785743688,
       "url": "https://mini-lucky-dev.dev-dot.li"
     },

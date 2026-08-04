@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11800310,
-  "updatedAt": "2026-08-04T10:04:18.663Z",
+  "lastBlock": 11804445,
+  "updatedAt": "2026-08-04T12:23:47.534Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "dbf57bdc875ba526aaa38411b8c8ae7e8b509f1e735fac71632bf5a75955cf66",
-    "cid": "bafybeic5xi2nneivsmkzrb5xdcijkhvyievcwsjyjrezxtx3jquavyvyde",
-    "uploadedAt": "2026-08-04T10:10:59.940Z"
+    "digest": "bcc0ca27e3a2a108e3d0e65738a6312e9ad363e18178c8b886983fe87d03c4a4",
+    "cid": "bafybeibwocv4sv6sehids4pedfvvjimpg2rkqtrxzgf7no5lfsf7uusnfu",
+    "uploadedAt": "2026-08-04T12:30:18.622Z"
   },
   "sitePublish": {
-    "treeHash": "a533c657a882513fd533c0f5744eae1312160e93ad0c3e6876c8a1c736a586fe",
-    "publishedAt": "2026-08-04T10:13:26.956Z"
+    "treeHash": "17712f6af16c878f9c0ce4e09210a500ca1c82eed5accd13c57d5cae77d0a857",
+    "publishedAt": "2026-08-04T12:33:22.466Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-04T10:09:18.000Z",
+    "updatedAt": "2026-08-04T12:28:54.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -123,13 +123,16 @@
       "pas-faucet-smoke": "alive",
       "chirpwatch": "alive",
       "doyoulike": "alive",
-      "gametheory": "alive"
+      "gametheory": "alive",
+      "countersign": "alive",
+      "imthebest": "alive",
+      "mini-lucky-dev": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-04T10:09:18.000Z",
+    "updatedAt": "2026-08-04T12:28:54.000Z",
     "bootstrapped": true,
     "names": {
       "ajedreztest01": {
@@ -190,9 +193,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeidwwjh2uy7p7qtwmhouhwuugfi6k53qub2fpkabodkry74yd57i7y",
-        "updateCount": 7,
-        "changedAt": 1785838158,
+        "contenthash": "bafybeih2skae6akuazw5xoh4myh5aieo3n7b5tdt6hoccqvb3eul3gg3pm",
+        "updateCount": 8,
+        "changedAt": 1785846534,
         "live": "alive"
       },
       "chirpwatch": {
@@ -233,6 +236,11 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "countersign": {
+        "contenthash": "bafybeihm6clecmb5uetc224n3ste2o5davct5mdsobwd73rgdbe54pk72e",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "devnet-atlas": {
         "contenthash": "bafybeihvvpmjumatlux4jihjx25vflnxpux6sck5hvttyocdc7b3vskpru",
         "updateCount": 0,
@@ -267,9 +275,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeif6fmwt5unsolmfmq23fu5wxppwgkmgrm4wcxlddfym2ttpapwsni",
-        "updateCount": 52,
-        "changedAt": 1785838158,
+        "contenthash": "bafybeidjoa4j37rjszyeov32v3ctubhgmolgpcb76mij7nahfmzdxqhzsa",
+        "updateCount": 53,
+        "changedAt": 1785846534,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -289,15 +297,15 @@
         "live": "unknown"
       },
       "dotify-test01": {
-        "contenthash": "bafybeihiejklvo7gtbqt2ve5t2zmk3w3sukydocwetn3rkimtaprl6m5va",
-        "updateCount": 7,
-        "changedAt": 1785815285,
+        "contenthash": "bafybeifebo3wuvjwb4tsploic4hfi4kehde7toxlk7ko4osuhn6qgsehgy",
+        "updateCount": 8,
+        "changedAt": 1785846534,
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeihczafxs7cuu2t6ig6emorc2n6knefcwlr4cwyodpwennjfuukpoq",
-        "updateCount": 36,
-        "changedAt": 1785838158,
+        "contenthash": "bafybeifngdnhk55b2y4vd7d45a67x3ypqf7mgtkhwagel5ijoc5zwqrcmm",
+        "updateCount": 37,
+        "changedAt": 1785846534,
         "live": "alive"
       },
       "doyoulike": {
@@ -346,9 +354,9 @@
         "live": "alive"
       },
       "frenchan-app77": {
-        "contenthash": "bafybeiezd6dguk637anp3xmrl3dkfunlfdq2kgkcuytjvaeaa6hqc2olha",
-        "updateCount": 1,
-        "changedAt": 1785815285,
+        "contenthash": "bafybeidpbiie4lblz4rbr3hhiere3e4ssezope5u2ubq7sk42k2grfmhae",
+        "updateCount": 2,
+        "changedAt": 1785846534,
         "live": "alive"
       },
       "gameboyonchain": {
@@ -357,8 +365,9 @@
         "live": "alive"
       },
       "gametheory": {
-        "contenthash": "bafybeichp5ikt63xdn6gw6wrkyfvtaxaiytuuolrzy3ipwxnfeifyktzte",
-        "updateCount": 0,
+        "contenthash": "bafybeihzpy3h2me4ok2ycqbmahlmg5mhgakwk2zukqzbh3iyrzmspxkdg4",
+        "updateCount": 1,
+        "changedAt": 1785846534,
         "live": "alive"
       },
       "giganetwork": {
@@ -417,9 +426,9 @@
         "live": "alive"
       },
       "imthebest": {
-        "contenthash": "",
+        "contenthash": "bafybeibythwzgodq7ni2gxogewcdkbgv2qkijfibgzjwfyrinhovnn2jzy",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "ip-assets": {
         "contenthash": "",
@@ -450,9 +459,9 @@
         "live": "unknown"
       },
       "mini-lucky-dev": {
-        "contenthash": "",
+        "contenthash": "bafybeiekrzhuo3ykxv7hbdv5krvellygpwyyltzbq6ygn6nhbjlyld7nnq",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "mini-lucky-loc": {
         "contenthash": "",
@@ -772,6 +781,11 @@
         "contenthash": "bafybeia44pdaxz3erdjbqtvorngwdfzphsoivx2r5hu4qsyuib2dwlvu6q",
         "updateCount": 0,
         "live": "alive"
+      },
+      "vault-control": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "waldgeist": {
         "contenthash": "bafybeieqyoxywvwr7sxcssxhxjfnf3653brk2ukuyuqosk4y3tdcovioyi",
