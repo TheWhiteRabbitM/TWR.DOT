@@ -812,7 +812,7 @@ export async function openUrl(url: string, onLateFailure?: (t: OpenTrail) => voi
       }, 700);
       return { ok: true, trail: trail.join('>') };
     }
-    trail.push('popup:null');
+    else if (insideKnown !== true) trail.push('popup:null');   // skipped is already recorded
   } catch (e) {
     trail.push('popup:threw:' + ((e as Error)?.name ?? '?'));
   }
@@ -838,7 +838,19 @@ export async function openUrl(url: string, onLateFailure?: (t: OpenTrail) => voi
     document.addEventListener('visibilitychange', noteDeparture, { once: true });
     window.addEventListener('pagehide', noteDeparture, { once: true });
 
-    const r = await withTimeout(Promise.resolve(host.navigateTo(url)), 3000, 'navigate')
+    // https, always, when handing an address to the host.
+    //
+    // The first real trail from a phone read
+    //   popup:skipped-in-app>host:ok>host:said-ok-but-nothing-opened
+    // on `http://www.polkadot.com` — plain http, because that is what the chirp
+    // contained. A host that only hands https to a browser would behave exactly
+    // like that: accept the call, answer ok, open nothing. It may not be the
+    // cause, but it is the one candidate on OUR side of the line, it costs a
+    // string replace, and it must be ruled out before the rest is reported as a
+    // platform bug. The trail records the swap so the next report is unambiguous.
+    const secure = url.replace(/^http:\/\//i, 'https://');
+    if (secure !== url) trail.push('url:http->https');
+    const r = await withTimeout(Promise.resolve(host.navigateTo(secure)), 3000, 'navigate')
       .catch((e) => ({ __threw: (e as Error)?.message ?? '?' }));
     const asAny = r as { ok?: boolean; error?: unknown; __threw?: string } | null;
     if (asAny?.__threw) trail.push('host:threw:' + asAny.__threw);

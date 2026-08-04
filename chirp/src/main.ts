@@ -1218,10 +1218,18 @@ function overlay(): string {
     // clipboard write that was refused — in which case telling somebody it is
     // "already on your clipboard" is precisely the lie this pane exists to stop.
     return `<div class="scrim" id="scrim"><div class="pane">
-      <div class="panehead"><b>${linkWhy === 'copy' ? 'Copying was refused' : 'This app cannot open links'}</b><button class="iconbtn" id="linkclose">✕</button></div>
+      <div class="panehead"><b>${linkWhy === 'copy' ? 'Copying was refused'
+        : linkTrail.includes('said-ok-but-nothing-opened') ? 'The app said yes and did nothing'
+        : 'This app cannot open links'}</b><button class="iconbtn" id="linkclose">✕</button></div>
+      <!-- Refused and "accepted, then nothing" are different failures and the
+           sheet used to call both a refusal. The second one is the interesting
+           case: the host reports success and no browser appears, which is not
+           something this app can work around and IS something worth reporting. -->
       <p class="hint">${linkWhy === 'copy'
         ? 'The container would not let the app write to your clipboard. Here is the text — select it and copy it by hand.'
-        : 'The Polkadot app refused to hand this address to a browser, and a container has no second window of its own. Here it is.'}</p>
+        : linkTrail.includes('said-ok-but-nothing-opened')
+          ? 'The Polkadot app accepted the address and reported success, but no browser appeared and this screen never went to the background. Nothing here can fix that — the line below is the evidence. Here is the address meanwhile.'
+          : 'The Polkadot app refused to hand this address to a browser, and a container has no second window of its own. Here it is.'}</p>
       <div class="linkbox">${esc(linkFor)}</div>
       <button class="primary wide" id="linkcopy">Try copying again</button>
       ${linkTrail ? `<p class="hint trail">Every route was tried, in order — this is what each one
