@@ -2216,11 +2216,43 @@ function wire() {
   document.getElementById('copyprobe')?.addEventListener('click', async () => {
     await copyOrShow(probeReport(PROBE, probeFile), 'Report copied.');
   });
-  document.getElementById('probefile')?.addEventListener('change', (e) => {
-    const f = (e.target as HTMLInputElement).files?.[0];
-    probeFile = f ? `${f.name}, ${f.size} bytes, ${f.type || 'no type'}` : 'the chooser closed with no file';
-    render();
-  });
+  /* The file chooser, instrumented the way navigateTo finally was. "Nothing
+     happened" has two very different causes and they look identical from here:
+     a chooser opened and gave us nothing, or no chooser was ever shown. A
+     WebView displays one only if the app that embeds it handles the request;
+     when it does not, the tap is swallowed with no error and no prompt, because
+     the page is never even asked. So watch three things after the tap: did this
+     page lose visibility (a chooser is another screen), did the input fire
+     `change`, did it fire `cancel`. None of the three means nothing opened,
+     which is the host and not a permission anybody could grant. */
+  const pfile = document.getElementById('probefile') as HTMLInputElement | null;
+  if (pfile) {
+    let waiting = false;
+    let backgrounded = false;
+    const sawHide = () => { if (document.visibilityState === 'hidden') backgrounded = true; };
+    const settle = (text: string) => {
+      waiting = false;
+      document.removeEventListener('visibilitychange', sawHide);
+      probeFile = text;
+      render();
+    };
+    pfile.addEventListener('click', () => {
+      waiting = true;
+      backgrounded = false;
+      document.addEventListener('visibilitychange', sawHide);
+      window.setTimeout(() => {
+        if (!waiting) return;                     // change or cancel already answered
+        settle(backgrounded
+          ? 'a chooser opened and nothing came back'
+          : 'nothing opened: 1.5s after the tap this page had never been backgrounded, and the input fired neither change nor cancel');
+      }, 1500);
+    });
+    pfile.addEventListener('change', (e) => {
+      const f = (e.target as HTMLInputElement).files?.[0];
+      settle(f ? `${f.name}, ${f.size} bytes, ${f.type || 'no type'}` : 'the chooser closed with no file');
+    });
+    pfile.addEventListener('cancel', () => settle('a chooser opened and you closed it, so choosing a file works here'));
+  }
 
   /* --------------------------------------------------------------- threads */
   document.getElementById('tadd')?.addEventListener('click', () => {
