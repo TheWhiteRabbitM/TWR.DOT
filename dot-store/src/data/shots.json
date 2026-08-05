@@ -1,4 +1,10 @@
 {
+  "adventure": {
+    "file": "shots/adventure.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917439
+  },
   "ajedreztest01": {
     "file": "shots/ajedreztest01.webp",
     "w": 480,
@@ -16,6 +22,18 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785747548
+  },
+  "blueprint": {
+    "file": "shots/blueprint.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917377
+  },
+  "broadside": {
+    "file": "shots/broadside.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917328
   },
   "buildboard01": {
     "file": "shots/buildboard01.webp",
@@ -65,11 +83,23 @@
     "h": 970,
     "capturedAt": 1785747157
   },
+  "chirpwatch": {
+    "file": "shots/chirpwatch.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917546
+  },
   "chopdotproof01": {
     "file": "shots/chopdotproof01.webp",
     "w": 480,
     "h": 970,
     "capturedAt": 1785747343
+  },
+  "community": {
+    "file": "shots/community.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917468
   },
   "contribnet01": {
     "file": "shots/contribnet01.webp",
@@ -95,6 +125,12 @@
     "h": 970,
     "capturedAt": 1785748050
   },
+  "countersign": {
+    "file": "shots/countersign.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917497
+  },
   "devnet-atlas": {
     "file": "shots/devnet-atlas.webp",
     "w": 480,
@@ -107,6 +143,12 @@
     "h": 970,
     "capturedAt": 1785747436
   },
+  "discovery": {
+    "file": "shots/discovery.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917458
+  },
   "discreetly": {
     "file": "shots/discreetly.webp",
     "w": 480,
@@ -118,6 +160,18 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785747900
+  },
+  "domain-app": {
+    "file": "shots/domain-app.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917309
+  },
+  "domainservice": {
+    "file": "shots/domainservice.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917318
   },
   "doomarcade00": {
     "file": "shots/doomarcade00.webp",
@@ -149,6 +203,12 @@
     "h": 970,
     "capturedAt": 1785747600
   },
+  "dotfinder": {
+    "file": "shots/dotfinder.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917299
+  },
   "dotify-test01": {
     "file": "shots/dotify-test01.webp",
     "w": 480,
@@ -160,6 +220,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785748166
+  },
+  "doyoulike": {
+    "file": "shots/doyoulike.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917527
   },
   "dragon-realm": {
     "file": "shots/dragon-realm.webp",
@@ -215,6 +281,12 @@
     "h": 970,
     "capturedAt": 1785747354
   },
+  "gametheory": {
+    "file": "shots/gametheory.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917536
+  },
   "guestbook": {
     "file": "shots/guestbook.webp",
     "w": 480,
@@ -239,6 +311,12 @@
     "h": 970,
     "capturedAt": 1785748126
   },
+  "hello-world-pricey-app": {
+    "file": "shots/hello-world-pricey-app.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917566
+  },
   "hellodotworld": {
     "file": "shots/hellodotworld.webp",
     "w": 480,
@@ -257,6 +335,12 @@
     "h": 970,
     "capturedAt": 1785748146
   },
+  "imthebest": {
+    "file": "shots/imthebest.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917517
+  },
   "italiarovente": {
     "file": "shots/italiarovente.webp",
     "w": 480,
@@ -268,6 +352,24 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785747320
+  },
+  "launchpad": {
+    "file": "shots/launchpad.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917348
+  },
+  "lighthouse": {
+    "file": "shots/lighthouse.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917478
+  },
+  "mini-lucky-dev": {
+    "file": "shots/mini-lucky-dev.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917556
   },
   "mini-lucky-smoke": {
     "file": "shots/mini-lucky-smoke.webp",
@@ -310,6 +412,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785831584
+  },
+  "neo-app-demo": {
+    "file": "shots/neo-app-demo.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917488
   },
   "nesonchain": {
     "file": "shots/nesonchain.webp",
@@ -388,6 +496,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785748098
+  },
+  "paperplane": {
+    "file": "shots/paperplane.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917358
   },
   "parlement-populaire": {
     "file": "shots/parlement-populaire.webp",
@@ -497,6 +611,12 @@
     "h": 970,
     "capturedAt": 1785747538
   },
+  "stargazer": {
+    "file": "shots/stargazer.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917368
+  },
   "stealcrown": {
     "file": "shots/stealcrown.webp",
     "w": 480,
@@ -551,17 +671,41 @@
     "h": 970,
     "capturedAt": 1785831618
   },
+  "vault-control": {
+    "file": "shots/vault-control.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917507
+  },
   "waldgeist": {
     "file": "shots/waldgeist.webp",
     "w": 480,
     "h": 970,
     "capturedAt": 1785747144
   },
+  "waldmonster": {
+    "file": "shots/waldmonster.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917289
+  },
   "web3poker": {
     "file": "shots/web3poker.webp",
     "w": 480,
     "h": 970,
     "capturedAt": 1785747259
+  },
+  "wonderland": {
+    "file": "shots/wonderland.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917429
+  },
+  "workspace": {
+    "file": "shots/workspace.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917449
   },
   "wudcommunity": {
     "file": "shots/wudcommunity.webp",
@@ -580,6 +724,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785748040
+  },
+  "zhuzhiliao": {
+    "file": "shots/zhuzhiliao.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1785917338
   },
   "zkdot-devnet": {
     "file": "shots/zkdot-devnet.webp",
