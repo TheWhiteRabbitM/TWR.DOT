@@ -1637,19 +1637,23 @@ function overlay(): string {
  */
 function openLightbox(url: string, alt: string) {
   let box = document.getElementById('lightbox');
+  const close = () => { const b = document.getElementById('lightbox'); if (b) { b.hidden = true; b.innerHTML = ''; } };
   if (!box) {
     box = document.createElement('div');
     box.id = 'lightbox';
     document.body.appendChild(box);
-    box.addEventListener('click', () => { box!.hidden = true; box!.innerHTML = ''; });
+    box.addEventListener('click', close);
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && box && !box.hidden) { box.hidden = true; box.innerHTML = ''; }
+      if (e.key === 'Escape') close();
     });
   }
   box.hidden = false;
   box.innerHTML = `<img src="${url}" alt="${esc(alt)}">`
     + (alt ? `<p class="lbalt">${esc(alt)}</p>` : '')
     + '<button class="lbx" aria-label="Close">✕</button>';
+  // The ✕ closes on its own listener as well as by bubbling to the backdrop.
+  // innerHTML above replaced the button, so this rebinds on every open.
+  box.querySelector('.lbx')?.addEventListener('click', close);
 }
 
 const scrollAt = new Map<string, number>();
