@@ -29,7 +29,7 @@ import {
   pollOn, createPoll, votePoll, forgetPolls, findMine, type Poll,
   rulesFor, setReplyPolicy, isBlocked, setBlocked, mayReply, forgetRules,
   REPLY_EVERYONE, REPLY_FOLLOWING, REPLY_MENTIONED,
-  mediaOf, attachMedia, detachMedia, forgetMedia, MEDIA_MAX,
+  detachMedia, forgetMedia, MEDIA_MAX, shotsOf, attachShot, type Shot,
   CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note, type Stats, type Notice,
 } from './chain';
 import { lists, createList, removeList, toggleInList, listsWith } from './lists';
@@ -234,7 +234,7 @@ let PROF: Awaited<ReturnType<typeof profile>> | null = null;
 let TH: Awaited<ReturnType<typeof thread>> = { parents: [], post: null, replies: [] };
 /** Polls and pictures for what is on screen, filled in the background like faces. */
 const POLLS_BY_CHIRP = new Map<number, Poll | null>();
-const MEDIA_BY_CHIRP = new Map<number, { url: string; alt: string } | null>();
+const MEDIA_BY_CHIRP = new Map<number, Shot[] | null>();
 const pollWanted = new Set<number>();
 const mediaWanted = new Set<number>();
 /** Masks in a block relationship with me, so the feed can hide them. */
@@ -244,7 +244,8 @@ let MYPOLICY = REPLY_EVERYONE;
 /** Composer state for a poll being written alongside a chirp. */
 let pollDraft: null | { options: string[]; minutes: number } = null;
 /** A picture chosen in the composer, waiting for the chirp to exist. */
-let mediaDraft: null | { bytes: Uint8Array; url: string; alt: string } = null;
+/** Up to four pictures chosen in the composer, waiting for the chirp to exist. */
+let mediaDraft: null | { bytes: Uint8Array; url: string; alt: string }[] = null;
 
 let view: View = { k: 'home' };
 let tab: 'foryou' | 'latest' | 'following' = 'foryou';
@@ -640,19 +641,31 @@ function wantPoll(id: number) {
 function wantMedia(id: number, author: number) {
   if (mediaWanted.has(id)) return;
   mediaWanted.add(id);
-  void mediaOf(id, author).then((m) => {
+  void shotsOf(id, author).then((m) => {
     MEDIA_BY_CHIRP.set(id, m);
-    if (m) redrawSoon();
+    if (m && m.length) redrawSoon();
   }).catch(() => mediaWanted.delete(id));
 }
 
 /** The picture on a chirp, once it has arrived. */
+/**
+ * The pictures on a chirp, in X's grid shapes.
+ *
+ * One image keeps its own proportions, because cropping a lone photograph is
+ * the app deciding what the post was about. Two, three and four are cropped
+ * into a shared 16/9 frame instead: once there is more than one, the
+ * composition is the subject and a row of differently-shaped boxes reads as a
+ * mistake.
+ */
 function mediaStrip(id: number, author: number): string {
   const m = MEDIA_BY_CHIRP.get(id);
   if (m === undefined) { wantMedia(id, author); return ''; }
-  if (!m) return '';
-  return `<div class="cmedia"><img src="${m.url}" alt="${esc(m.alt)}" loading="lazy">${
-    m.alt ? `<div class="calt">${esc(m.alt)}</div>` : ''}</div>`;
+  if (!m || !m.length) return '';
+  const n = Math.min(m.length, 4);
+  return `<div class="album n${n}">${m.slice(0, 4).map((s) => `<figure>
+    <img src="${s.url}" alt="${esc(s.alt)}" loading="lazy">
+    ${s.alt ? '<span class="altmark" title="' + esc(s.alt) + '">ALT</span>' : ''}
+  </figure>`).join('')}</div>`;
 }
 
 /**
@@ -1562,22 +1575,33 @@ function overlay(): string {
          chooser, which is exactly why attaching a picture to a post did not
          work. You can also paste straight into the text box without opening
          this panel at all. -->
-    ${picOpen && !mediaDraft ? `<div class="gifpick">
+    ${picOpen && (mediaDraft?.length ?? 0) < 4 ? `<div class="gifpick">
       <div class="pasted" id="pastepic" contenteditable="true" tabindex="0"
            aria-label="Paste or drop a picture here">Copy a picture, then paste it here — or drop one in</div>
       <label class="fileline">or choose a file
-        <input type="file" id="picfile" accept="image/*" class="filein"></label>
+        <input type="file" id="picfile" accept="image/*" class="filein" multiple></label>
       <p class="hint">Pasting works where a file chooser may not. You can also paste into the
-      text box itself while writing.</p>
+      text box itself while writing. Up to four.</p>
       ${picSaid ? `<p class="hint ${picSaid.bad ? 'bad' : ''}">${esc(picSaid.text)}</p>` : ''}
     </div>` : ''}
-    ${mediaDraft ? `<div class="picdraft">
-      <img src="${mediaDraft.url}" alt="">
-      <input id="alttext" placeholder="Describe it, for people who cannot see it" maxlength="120" value="${esc(mediaDraft.alt)}">
-      <button class="ghost small" id="picdrop">Remove picture</button>
-      <p class="hint">The image itself goes into a contract, not a link to it — so it cannot expire
-      and every reader gets the same bytes. It is resized to fit 24 kB before it is sent, and it is
-      attached in a second transaction once the chirp exists.</p>
+    ${mediaDraft?.length ? `<div class="picdraft">
+      <div class="shots">
+        ${mediaDraft.map((m, i) => `<figure>
+          <img src="${m.url}" alt="">
+          <button data-unshot="${i}" aria-label="Remove picture ${i + 1}">✕</button>
+        </figure>`).join('')}
+      </div>
+      <!-- One alt box per picture. A single shared field would describe the
+           first image and silently mislabel the rest. -->
+      ${mediaDraft.map((m, i) => `<input class="altin" data-alt="${i}" maxlength="120"
+        placeholder="Describe picture ${i + 1}, for people who cannot see it" value="${esc(m.alt)}">`).join('')}
+      <div class="row">
+        ${mediaDraft.length < 4 ? '<button class="ghost small" id="picmore">Add another</button>' : ''}
+        <button class="ghost small" id="picdrop">Remove all</button>
+      </div>
+      <p class="hint">The images themselves go into a contract, not links to them — so they cannot
+      expire and every reader gets the same bytes. Each is resized to fit 24 kB, and each is a
+      separate transaction and its own small storage deposit, sent after the chirp exists.</p>
     </div>` : ''}
     ${pollDraft ? `<div class="polldraft">
       <div class="sechead small">Poll</div>
@@ -2402,7 +2426,8 @@ async function refresh() {
     if (poll !== undefined && ((poll && poll.open) || (!poll && young))) {
       POLLS_BY_CHIRP.delete(p.id); pollWanted.delete(p.id); forgetPolls(p.id);
     }
-    if (MEDIA_BY_CHIRP.get(p.id) === null && young) {
+    const shots = MEDIA_BY_CHIRP.get(p.id);
+    if ((shots === null || shots?.length === 0) && young) {
       MEDIA_BY_CHIRP.delete(p.id); mediaWanted.delete(p.id); forgetMedia(p.id);
     }
   }
@@ -2565,11 +2590,24 @@ async function fitWebp(file: File, maxSide = 640): Promise<{ bytes: Uint8Array; 
 async function attachExtras(chirpId: number): Promise<string[]> {
   const said: string[] = [];
   if (!chirpId || !ME?.mask) return said;
-  if (mediaDraft) {
-    const alt = (document.getElementById('alttext') as HTMLInputElement | null)?.value ?? mediaDraft.alt;
-    const r = await attachMedia(chirpId, ME.mask, mediaDraft.bytes, alt).catch(() => ({ ok: false, why: 'the picture did not attach' } as const));
-    said.push(r.ok ? 'picture attached' : 'picture failed: ' + (('why' in r && r.why) || ''));
-    if (r.ok) MEDIA_BY_CHIRP.delete(chirpId);
+  if (mediaDraft?.length) {
+    // Read the alt boxes back before the pane is torn down, and send one
+    // transaction per picture. Each is reported separately: three that landed
+    // and one that did not is a fact worth stating, not a blanket failure.
+    const alts = [...document.querySelectorAll<HTMLInputElement>('.altin')].map((i) => i.value);
+    let done = 0;
+    let failed = '';
+    for (let i = 0; i < mediaDraft.length && i < 4; i++) {
+      const alt = alts[i] ?? mediaDraft[i].alt;
+      const r = await attachShot(chirpId, ME.mask, i, mediaDraft[i].bytes, alt)
+        .catch(() => ({ ok: false, why: 'it did not attach' } as const));
+      if (r.ok) done++;
+      else failed ||= ('why' in r && r.why) || '';
+    }
+    said.push(done === mediaDraft.length
+      ? (done === 1 ? 'picture attached' : `${done} pictures attached`)
+      : `${done} of ${mediaDraft.length} pictures attached${failed ? ' — ' + failed : ''}`);
+    if (done) { MEDIA_BY_CHIRP.delete(chirpId); mediaWanted.delete(chirpId); forgetMedia(chirpId); }
   }
   if (pollDraft) {
     const opts = [...document.querySelectorAll<HTMLInputElement>('.popt-in')].map((i) => i.value);
@@ -2636,16 +2674,32 @@ function bindExtras() {
   // likely to fail, and attaching a picture to a post simply did not work.
   // Avatars already had the answer: paste. It needs no chooser and no
   // permission, because the bytes ride in on the paste event.
-  const usePicked = async (f: File | null | undefined) => {
-    if (!f) { picSaid = { text: 'Nothing there looked like an image.', bad: true }; return render(); }
-    picSaid = { text: 'Resizing…' }; render();
-    try {
-      const fit = await fitWebp(f);
-      mediaDraft = { bytes: fit.bytes, url: fit.url, alt: '' };
+  /** Add one or several pictures to the draft, up to four. */
+  const usePicked = async (files: (File | null | undefined)[] | File | null | undefined) => {
+    const list = (Array.isArray(files) ? files : [files]).filter(Boolean) as File[];
+    if (!list.length) { picSaid = { text: 'Nothing there looked like an image.', bad: true }; return render(); }
+    const room = 4 - (mediaDraft?.length ?? 0);
+    if (room <= 0) { picSaid = { text: 'Four is the limit.', bad: true }; return render(); }
+
+    picSaid = { text: list.length > 1 ? `Resizing ${Math.min(list.length, room)}…` : 'Resizing…' }; render();
+    const added: { bytes: Uint8Array; url: string; alt: string }[] = [];
+    let refused = 0;
+    for (const f of list.slice(0, room)) {
+      try {
+        const fit = await fitWebp(f);
+        added.push({ bytes: fit.bytes, url: fit.url, alt: '' });
+      } catch { refused++; }
+    }
+    if (added.length) {
+      mediaDraft = [...(mediaDraft ?? []), ...added];
       picOpen = false;
       picSaid = null;
-      flash = { text: `Picture ready — ${Math.round(fit.bytes.length / 1000)} kB. It is attached after the chirp.` };
-    } catch {
+      const kb = Math.round(added.reduce((s, a) => s + a.bytes.length, 0) / 1000);
+      flash = {
+        text: `${added.length === 1 ? 'Picture' : added.length + ' pictures'} ready — ${kb} kB. `
+          + `Attached after the chirp${refused ? `, and ${refused} would not fit` : ''}.`,
+      };
+    } else {
       picSaid = { text: 'That picture could not be shrunk enough to fit 24 kB. Try a smaller one.', bad: true };
     }
     render();
@@ -2659,7 +2713,9 @@ function bindExtras() {
   };
 
   document.getElementById('picopen')?.addEventListener('click', () => {
-    if (mediaDraft) { mediaDraft = null; return render(); }   // pressing it again removes
+    // With pictures already chosen the button OPENS the picker for another,
+    // rather than throwing them away — losing four uploads to a stray tap on
+    // the same button that added them would be its own small disaster.
     picOpen = !picOpen; picSaid = null; render();
   });
   document.getElementById('pastepic')?.addEventListener('paste', (e) => {
@@ -2667,7 +2723,7 @@ function bindExtras() {
     void usePicked(f);
   });
   document.getElementById('picfile')?.addEventListener('change', (e) => {
-    void usePicked((e.target as HTMLInputElement).files?.[0]);
+    void usePicked([...((e.target as HTMLInputElement).files ?? [])]);
   });
   // Drop, for a desktop. Cheap to add and it is the other gesture people try.
   const drop = document.getElementById('pastepic');
@@ -2685,9 +2741,18 @@ function bindExtras() {
     if (f) void usePicked(f);
   });
   document.getElementById('picdrop')?.addEventListener('click', () => { mediaDraft = null; render(); });
-  document.getElementById('alttext')?.addEventListener('input', (e) => {
-    if (mediaDraft) mediaDraft.alt = (e.target as HTMLInputElement).value;
-  });
+  app.querySelectorAll<HTMLInputElement>('.altin').forEach((i) => i.addEventListener('input', () => {
+    const at = Number(i.dataset.alt);
+    if (mediaDraft?.[at]) mediaDraft[at].alt = i.value;
+  }));
+  app.querySelectorAll<HTMLElement>('[data-unshot]').forEach((b) => b.addEventListener('click', () => {
+    if (!mediaDraft) return;
+    const at = Number(b.dataset.unshot);
+    mediaDraft = mediaDraft.filter((_, i) => i !== at);
+    if (!mediaDraft.length) mediaDraft = null;
+    render();
+  }));
+  document.getElementById('picmore')?.addEventListener('click', () => { picOpen = true; picSaid = null; render(); });
 
   /* ------------------------------------------------------------- rules */
   app.querySelectorAll<HTMLElement>('[data-policy]').forEach((b) => b.addEventListener('click', () => {

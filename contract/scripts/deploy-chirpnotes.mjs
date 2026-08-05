@@ -20,7 +20,7 @@ import { entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-help
 
 const RPC = 'wss://asset-hub-paseo-rpc.n.dwellir.com';
 /** Which contracts to instantiate. Pass names to do a subset. */
-const ALL = ['chirplens'];
+const ALL = ['chirpalbum'];
 const WANT = process.argv.slice(2).length ? process.argv.slice(2) : ALL;
 
 /** The keystore's shape is not documented and has one entry per environment, so

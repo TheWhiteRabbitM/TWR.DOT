@@ -27,6 +27,7 @@ import POLLS_ABI from './chirppolls-abi.json';
 import RULES_ABI from './chirprules-abi.json';
 import MEDIA_ABI from './chirpmedia-abi.json';
 import LENS_ABI from './chirplens-abi.json';
+import ALBUM_ABI from './chirpalbum-abi.json';
 
 export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
 export const CHIRP = '0x37A7CE834428636815b2746408343574aD13be7C';
@@ -77,6 +78,20 @@ export const MEDIA = '0x02141db68fc4f70f724e8a72110951821f341e57';
  * it did before. A convenience layer that becomes a dependency is a liability.
  */
 export const LENS = '0x9ef3ac89c3a2367cd88af639e9a1ceceb0f74d70';
+/**
+ * Up to four pictures on one chirp.
+ *
+ * ChirpMedia holds exactly one, which was the right first step and the wrong
+ * shape: four photographs of the same afternoon are one post, not four. This
+ * sits BESIDE it rather than replacing it — every chirp that already carries a
+ * single picture keeps it, because those are on chain and are not going to be
+ * migrated. The app reads the album first and falls back to the single.
+ *
+ * Slots rather than an append-only list, so re-attaching replaces instead of
+ * duplicating and a failed second upload leaves no hole. The deposit is per
+ * image: four pictures is four deposits, which is why the cap is four.
+ */
+export const ALBUM = '0x4c0edc9561c353effa72041ff926d17f7e74960d';
 /**
  * The picture ITSELF, on Asset Hub.
  *
@@ -441,7 +456,7 @@ type Slot = {
   h160: string;
   kind: 'wallet' | 'app';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  signer: any; manager?: any; runtime: any; masks: any; chirp: any; handles: any; notes: any; pfp: any; face: any; pin: any; polls: any; rules: any; media: any; lens: any;
+  signer: any; manager?: any; runtime: any; masks: any; chirp: any; handles: any; notes: any; pfp: any; face: any; pin: any; polls: any; rules: any; media: any; lens: any; album: any;
   /** The typed api, needed to wrap a contract call in Proxy.proxy. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   api: any;
@@ -527,7 +542,7 @@ async function browserSlot(): Promise<Slot | null> {
     address, h160: await h160Of(real ?? address), kind: 'wallet', signer, api, real, runtime,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
     notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
-    polls: mk(POLLS, POLLS_ABI), rules: mk(RULES, RULES_ABI), media: mk(MEDIA, MEDIA_ABI), lens: mk(LENS, LENS_ABI),
+    polls: mk(POLLS, POLLS_ABI), rules: mk(RULES, RULES_ABI), media: mk(MEDIA, MEDIA_ABI), lens: mk(LENS, LENS_ABI), album: mk(ALBUM, ALBUM_ABI),
   };
 }
 
@@ -635,7 +650,7 @@ async function connect(): Promise<Slot | null> {
     address, h160: await h160Of(who), kind, signer, manager, api, real, runtime,
     masks: mk(MASKS, MASKS_ABI), chirp: mk(CHIRP, CHIRP_ABI), handles: mk(HANDLES, HANDLES_ABI),
     notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
-    polls: mk(POLLS, POLLS_ABI), rules: mk(RULES, RULES_ABI), media: mk(MEDIA, MEDIA_ABI), lens: mk(LENS, LENS_ABI),
+    polls: mk(POLLS, POLLS_ABI), rules: mk(RULES, RULES_ABI), media: mk(MEDIA, MEDIA_ABI), lens: mk(LENS, LENS_ABI), album: mk(ALBUM, ALBUM_ABI),
   };
 }
 
@@ -1397,7 +1412,7 @@ export function clearPicture(mask: number): Promise<Ok | Fail> {
 /** A signer-less handle over the public RPC, so the timeline is readable without
  *  a wallet. A social nobody can read unless they sign in is not much of one. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let reader: Promise<{ chirp: any; masks: any; handles: any; notes: any; pfp: any; face: any; pin: any; polls: any; rules: any; media: any; lens: any } | null> | null = null;
+let reader: Promise<{ chirp: any; masks: any; handles: any; notes: any; pfp: any; face: any; pin: any; polls: any; rules: any; media: any; lens: any; album: any } | null> | null = null;
 function pub() {
   if (!reader) {
     reader = (async () => {
@@ -1414,7 +1429,7 @@ function pub() {
       return {
         chirp: mk(CHIRP, CHIRP_ABI), masks: mk(MASKS, MASKS_ABI), handles: mk(HANDLES, HANDLES_ABI),
         notes: mk(NOTES, NOTES_ABI), pfp: mk(PFP, PFP_ABI), face: mk(FACE, FACE_ABI), pin: mk(PIN, PIN_ABI),
-    polls: mk(POLLS, POLLS_ABI), rules: mk(RULES, RULES_ABI), media: mk(MEDIA, MEDIA_ABI), lens: mk(LENS, LENS_ABI),
+    polls: mk(POLLS, POLLS_ABI), rules: mk(RULES, RULES_ABI), media: mk(MEDIA, MEDIA_ABI), lens: mk(LENS, LENS_ABI), album: mk(ALBUM, ALBUM_ABI),
       };
     })().catch(() => null);
     void reader.then((r) => { if (!r) reader = null; });
@@ -1503,7 +1518,7 @@ function insideHost(): Promise<boolean> {
 }
 
 async function handles() {
-  if (ready && !readerDead) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, pin: ready.pin, polls: ready.polls, rules: ready.rules, media: ready.media, lens: ready.lens, me: ready.h160 };
+  if (ready && !readerDead) return { chirp: ready.chirp, masks: ready.masks, handles: ready.handles, notes: ready.notes, pfp: ready.pfp, face: ready.face, pin: ready.pin, polls: ready.polls, rules: ready.rules, media: ready.media, lens: ready.lens, album: ready.album, me: ready.h160 };
   if (readerDead) {
     // The session can still SIGN — send() uses it directly. It just cannot read.
     const p = await pub();
@@ -1525,13 +1540,13 @@ async function handles() {
   // signing is unavailable.
   if (await insideHost()) {
     const s = await session().catch(() => null);
-    if (s) return { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, face: s.face, pin: s.pin, polls: s.polls, rules: s.rules, media: s.media, lens: s.lens, me: s.h160 };
+    if (s) return { chirp: s.chirp, masks: s.masks, handles: s.handles, notes: s.notes, pfp: s.pfp, face: s.face, pin: s.pin, polls: s.polls, rules: s.rules, media: s.media, lens: s.lens, album: s.album, me: s.h160 };
   } else {
     void session();   // outside: keep it warming, but do not wait on it
   }
 
   const p = await pub();
-  return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, pin: null, polls: null, rules: null, media: null, lens: null }), me: '' };
+  return { ...(p ?? { chirp: null, masks: null, handles: null, notes: null, pfp: null, face: null, pin: null, polls: null, rules: null, media: null, lens: null, album: null }), me: '' };
 }
 
 /** Handles for reads that are meaningless without an account — following, and
@@ -2518,7 +2533,7 @@ export function rateNote(id: number, mask: number, value: number): Promise<Ok | 
 /** Which weights a call needs. Only the picture write moves kilobytes; giving
  *  everything the large limits would make every dry-run needlessly heavy. */
 const limitsFor = (which: string, method: string) =>
-  clamp((which === 'face' && method === 'setFace') || (which === 'media' && method === 'attach')
+  clamp((which === 'face' && method === 'setFace') || ((which === 'media' || which === 'album') && method === 'attach')
     ? BIG_LIMITS
     : LIMITS);
 
@@ -2571,7 +2586,7 @@ const isNotImplemented = (why: string) =>
   /Not implemented|createTransactionWithLegacyAccount/i.test(why);
 
 async function send(
-  which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp' | 'face' | 'pin' | 'polls' | 'rules' | 'media',
+  which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp' | 'face' | 'pin' | 'polls' | 'rules' | 'media' | 'album',
   method: string,
   args: unknown[],
   retried = false,
@@ -2942,6 +2957,71 @@ export function forgetMedia(chirpId?: number) { if (chirpId) mediaCache.delete(c
 export const MEDIA_MAX = 24_000;
 
 /** The picture attached to a chirp. `null` means the chain said there is none. */
+/** One picture, decoded from the hex a contract hands back. */
+function webpFrom(raw: unknown): string {
+  const hex = typeof raw === 'string' ? raw : (raw as { asHex?: () => string })?.asHex?.() ?? '';
+  if (!hex || hex === '0x') return '';
+  return 'data:image/webp;base64,' + btoa(
+    (hex.slice(2).match(/../g) ?? []).map((b) => String.fromCharCode(parseInt(b, 16))).join(''),
+  );
+}
+
+export type Shot = { url: string; alt: string };
+
+/**
+ * Every picture on a chirp — the album first, the single as a fallback.
+ *
+ * Order matters and is not arbitrary. A chirp posted before ChirpAlbum existed
+ * has its picture in ChirpMedia and always will; asking the album first and
+ * falling back means neither kind of post ever loses its image, and no
+ * migration was needed to get here.
+ *
+ * `null` still means "the chain was not asked, it refused" — the distinction
+ * this app has had to relearn twice. An empty ARRAY means asked, and there are
+ * none.
+ */
+export async function shotsOf(chirpId: number, author: number): Promise<Shot[] | null> {
+  const { album } = await handles();
+  if (album) {
+    const info = await q(album, 'infoOf', BigInt(chirpId));
+    if (info !== undefined) {
+      const by = Number(pick(info, 'mask', 0) ?? 0);
+      const n = Number(pick(info, 'n', 1) ?? 0);
+      const sizes = ((pick(info, 'sizes', 2) ?? []) as unknown[]).map((x) => Number(x));
+      const alts = ((pick(info, 'alts', 3) ?? []) as unknown[]).map((x) => String(x ?? ''));
+      // Attached by somebody other than the author: ignore it. The contract
+      // cannot read Chirp2 to check who wrote the post, so the check lives here.
+      if (n && (!author || !by || by === author)) {
+        const out: Shot[] = [];
+        for (let i = 0; i < n; i++) {
+          if (!sizes[i]) continue;                       // a detached slot
+          const raw = await q(album, 'imageOf', BigInt(chirpId), i);
+          const url = webpFrom(raw);
+          if (url) out.push({ url, alt: alts[i] ?? '' });
+        }
+        if (out.length) return out;
+      }
+    }
+  }
+  const one = await mediaOf(chirpId, author);
+  if (one === null) return null;
+  return one ? [one] : [];
+}
+
+/** Attach one picture to a slot. Slots 0..3; re-attaching a slot replaces it. */
+export async function attachShot(
+  chirpId: number, mask: number, slot: number, bytes: Uint8Array, alt: string,
+): Promise<Ok | Fail> {
+  if (!bytes.length) return { ok: false, why: 'Nothing to attach.' };
+  if (bytes.length > MEDIA_MAX) {
+    return { ok: false, why: 'That picture is ' + Math.round(bytes.length / 1000) + ' kB; the limit is 24 kB.' };
+  }
+  const hex = '0x' + Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('');
+  const r = await send('album', 'attach', [BigInt(chirpId), BigInt(mask), slot, hex, alt.slice(0, 120)]);
+  if (r.ok) mediaCache.delete(chirpId);
+  return r;
+}
+
 export async function mediaOf(chirpId: number, author: number): Promise<{ url: string; alt: string } | null> {
   const hit = mediaCache.get(chirpId);
   if (hit !== undefined) return hit;
