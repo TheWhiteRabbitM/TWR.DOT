@@ -261,6 +261,48 @@ const BIG_LIMITS = {
   storageDepositLimit: 10n ** 18n,
 };
 
+/**
+ * The chain's own ceiling, read from it rather than remembered.
+ *
+ * The figures above were measured off `System.BlockWeights` by hand and written
+ * down. That was right on the day and is a hostage to the next runtime upgrade:
+ * if `max_extrinsic` ever drops below what is hardcoded here, every large write
+ * starts failing on weight before it executes, and the error says nothing about
+ * why. The constant is free — it is in the metadata the app already loads — so
+ * there is no reason to keep a copy.
+ *
+ * Asked once, cached, and never awaited on a path that must stay synchronous.
+ * If it cannot be read the hardcoded pair stands, which is the behaviour that
+ * has been working.
+ */
+let ceiling: { ref_time: bigint; proof_size: bigint } | null = null;
+async function weightCeiling(api: unknown): Promise<typeof ceiling> {
+  if (ceiling) return ceiling;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const bw: any = await (api as any)?.constants?.System?.BlockWeights?.();
+    const max = bw?.per_class?.normal?.max_extrinsic;
+    if (max?.ref_time && max?.proof_size) {
+      ceiling = { ref_time: BigInt(max.ref_time), proof_size: BigInt(max.proof_size) };
+    }
+  } catch { /* keep the measured constants */ }
+  return ceiling;
+}
+
+/** Clamp a limit pair to what the chain will actually accept, leaving a margin
+ *  so a limit is never exactly the ceiling. */
+function clamp(l: typeof LIMITS): typeof LIMITS {
+  if (!ceiling) return l;
+  const cap = (want: bigint, max: bigint) => (want > (max * 9n) / 10n ? (max * 9n) / 10n : want);
+  return {
+    ...l,
+    gasLimit: {
+      ref_time: cap(l.gasLimit.ref_time, ceiling.ref_time),
+      proof_size: cap(l.gasLimit.proof_size, ceiling.proof_size),
+    },
+  };
+}
+
 export type Post = {
   id: number;
   mask: number;
@@ -302,11 +344,26 @@ function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise<T> {
   return Promise.race([p, new Promise<T>((_, r) => setTimeout(() => r(new Error(`${what} timed out`)), ms))]);
 }
 
-/** pallet-revive maps an account to keccak256(public key)'s last 20 bytes.
- *  Contract mappings are keyed by THAT, never by the ss58 the wallet reports. */
+/**
+ * The H160 pallet-revive keys its mappings by — and it is NOT always the keccak.
+ *
+ * `AccountId32Mapper::to_address` branches. An account that was itself derived
+ * from an Ethereum address is stored as `[addr20 ..., 0xEE * 12]`, and for those
+ * the mapper returns **the first twenty bytes verbatim**; only for a native
+ * AccountId32 does it hash. chirp hashed unconditionally, so for a fallback or
+ * eth-derived account it produced an address that belongs to nobody: every
+ * identity read comes back empty and the person appears as an anonymous mask
+ * with no handle and no picture, on a chain that has all three.
+ *
+ * The `0xEE` suffix is the marker the pallet itself uses to recognise the case.
+ */
 async function h160Of(ss58: string): Promise<string> {
   const papi = await import('polkadot-api');
-  return '0x' + Array.from(keccak_256(papi.AccountId().enc(ss58)).slice(12, 32), (b) => b.toString(16).padStart(2, '0')).join('');
+  const raw = papi.AccountId().enc(ss58);
+  const hex = (b: Uint8Array) => '0x' + Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
+  let ethDerived = true;
+  for (let i = 20; i < 32; i++) if (raw[i] !== 0xee) { ethDerived = false; break; }
+  return ethDerived ? hex(raw.slice(0, 20)) : hex(keccak_256(raw).slice(12, 32));
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -717,8 +774,57 @@ export async function askDeviceRights(): Promise<void> {
         host.requestDevicePermission(k).catch(() => undefined))),
       new Promise((r) => setTimeout(r, 2500)),
     ]);
+    await askAllowances(host);
   } catch { /* older host, or no bridge: never block the app on a permission */ }
 }
+
+/**
+ * Resource ALLOCATIONS — a third gate, and chirp had never touched it.
+ *
+ * Network origins and device permissions were both being asked for. Allocations
+ * are neither. From the generated types:
+ *
+ *   BulletinAllowance  "Bulletin chain slot allowance for the product's own
+ *                       allowance account"
+ *   AutoSigning        "Permission to sign on the product's behalf without
+ *                       per-call user prompts"
+ *
+ * The first reframes what we filed as devnet issue #9. We reported that a
+ * user's in-app account has no Bulletin authorisation — which is true, and may
+ * simply be the design: the allowance belongs to the PRODUCT's account and is
+ * minted on request. We never made the request. If the host grants it, the
+ * upload path that issue #13 blocks may open without anyone fixing anything.
+ *
+ * The second is the largest UX lever available to an app where every like is a
+ * transaction: one approval instead of one per tap.
+ *
+ * Asked at startup, never mid-gesture, and every outcome is survivable —
+ * `NotAvailable` just means an older host, and a refusal is a refusal. Nothing
+ * downstream assumes either was granted.
+ */
+async function askAllowances(host: typeof import('@parity/product-sdk-host')): Promise<void> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const req = (host as any).requestResourceAllocation;
+    if (typeof req !== 'function') return;
+    const r = await Promise.race([
+      req([{ tag: 'BulletinAllowance' }, { tag: 'AutoSigning' }]),
+      new Promise((res) => setTimeout(() => res(null), 4000)),
+    ]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const out = (r as any)?.value;
+    if (Array.isArray(out)) {
+      bulletinAllowance = out[0] === 'Allocated';
+      autoSigning = out[1] === 'Allocated';
+    }
+  } catch { /* an older host has no such method; that is not a failure */ }
+}
+
+/** Whether the host minted the product a Bulletin slot allowance, and whether it
+ *  will sign without prompting. Read by the probe so the answers are visible
+ *  rather than assumed — neither is relied on anywhere else yet. */
+export let bulletinAllowance = false;
+export let autoSigning = false;
 
 /** Ask the host for the Notifications permission. False if refused, or if the
  *  app is running outside the host (a browser tab has no such surface). */
@@ -782,18 +888,21 @@ export async function openUrl(url: string, onLateFailure?: (t: OpenTrail) => voi
   // means it failed — is checking a value that cannot answer. Only outside the
   // app does the handle mean what the web platform says it means.
   //
-  // `insideKnown` is a plain cached boolean rather than the promise, because
-  // this branch has to run inside the click's user activation: `await` the
-  // container question and the popup is refused by the blocker even where it
-  // would have worked. It is populated at startup by warmUp.
+  // The test is `nativeWebview()`, NOT "are we inside the container". The first
+  // version of this gate used the container question and turned the popup off
+  // on the dot.li gateway too — where chirp is an iframe on a web page and the
+  // popup works. `isInsideContainer` answers true for any iframe; see
+  // nativeWebview for the whole story. Synchronous either way, because an await
+  // before window.open spends the user activation the popup needs.
   //
   // `noopener` is deliberately ABSENT where the popup IS attempted: per spec
   // `window.open(…, 'noopener')` returns null even on success, which would make
   // a working popup indistinguishable from a blocked one. The opener is severed
   // on the handle instead — same protection, without blinding the caller.
-  if (insideKnown === true) trail.push('popup:skipped-in-app');
+  const native = nativeWebview();
+  if (native) trail.push('popup:skipped-native-webview');
   try {
-    const w = insideKnown === true ? null : window.open(url, '_blank');
+    const w = native ? null : window.open(url, '_blank');
     if (w) {
       try { (w as { opener: unknown }).opener = null; } catch { /* already isolated */ }
       trail.push('popup:handle');
@@ -812,7 +921,7 @@ export async function openUrl(url: string, onLateFailure?: (t: OpenTrail) => voi
       }, 700);
       return { ok: true, trail: trail.join('>') };
     }
-    else if (insideKnown !== true) trail.push('popup:null');   // skipped is already recorded
+    else if (!native) trail.push('popup:null');   // skipped is already recorded
   } catch (e) {
     trail.push('popup:threw:' + ((e as Error)?.name ?? '?'));
   }
@@ -1275,6 +1384,38 @@ let inside: Promise<boolean> | null = null;
 /** The same answer, cached as a plain value once it is known, so a click handler
  *  can branch on it WITHOUT an await — see openUrl for why that matters. */
 let insideKnown: boolean | null = null;
+
+/**
+ * Are we in a NATIVE WEBVIEW — as opposed to merely inside some iframe?
+ *
+ * This distinction cost a working feature. `isInsideContainer()` is built on
+ * truapi's `isCorrectEnvironment()`, which reads:
+ *
+ *     if (isIframe()) return true;
+ *     if (win.__HOST_WEBVIEW_MARK__ === true) return true;
+ *     if (win.__HOST_API_PORT__ != null) return true;
+ *
+ * — the iframe test comes FIRST. So it is true on the dot.li gateway, where
+ * chirp is simply an iframe on a web page and `window.open` works perfectly.
+ * Gating the popup on "inside the container" therefore turned off link opening
+ * on the one host where it works, to fix the host where it does not. Half a fix
+ * is a regression wearing a fix's clothes.
+ *
+ * The webview mark is the narrower question and the right one: only a native
+ * shell sets it. Synchronous, like everything else a click handler may touch
+ * before the popup call — an `await` here would spend the user activation the
+ * popup needs.
+ *
+ * `__HOST_API_PORT__` is deliberately NOT part of this test: a message port can
+ * be injected into an ordinary iframe too, so it would drag the gateway back in.
+ */
+function nativeWebview(): boolean {
+  try {
+    return (window as unknown as { __HOST_WEBVIEW_MARK__?: boolean }).__HOST_WEBVIEW_MARK__ === true;
+  } catch {
+    return false;
+  }
+}
 function insideHost(): Promise<boolean> {
   if (!inside) {
     inside = import('@parity/product-sdk-host')
@@ -2189,7 +2330,7 @@ export function rateNote(id: number, mask: number, value: number): Promise<Ok | 
 /** Which weights a call needs. Only the picture write moves kilobytes; giving
  *  everything the large limits would make every dry-run needlessly heavy. */
 const limitsFor = (which: string, method: string) =>
-  ((which === 'face' && method === 'setFace') || (which === 'media' && method === 'attach')
+  clamp((which === 'face' && method === 'setFace') || (which === 'media' && method === 'attach')
     ? BIG_LIMITS
     : LIMITS);
 
@@ -2256,6 +2397,10 @@ async function send(
   // gets mapped — not on open, when somebody may only want to read.
   await askToSign();
   await mapOnce(s);
+  // Learn the chain's real weight ceiling before the first write, once. Free —
+  // it is a constant in the metadata already loaded — and it is what stops the
+  // hardcoded pair above becoming wrong after a runtime upgrade.
+  await weightCeiling(s.api).catch(() => null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const c = (s as any)[which];
   try {

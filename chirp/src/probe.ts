@@ -316,6 +316,50 @@ async function framing(): Promise<Finding[]> {
   return out;
 }
 
+/**
+ * Resource ALLOCATIONS — the third gate, asked directly.
+ *
+ * Worth its own row because one of the answers may retire an issue we filed.
+ * We reported (devnet #9) that a user's in-app account has no Bulletin storage
+ * authorisation. That is true, and it may also be the design: the allowance
+ * belongs to the PRODUCT's own account and is minted on request, and chirp had
+ * never made the request. If `BulletinAllowance` comes back `Allocated`, the
+ * upload path is not shut after all and #9 needs rewriting rather than fixing.
+ *
+ * `AutoSigning` is the other half: "permission to sign on the product's behalf
+ * without per-call user prompts". For an app where every like is a transaction
+ * that is the difference between one approval and one per tap.
+ */
+async function allocations(): Promise<Finding[]> {
+  const h = await host();
+  if (!h) return [{ what: 'resource allocations', result: 'unknown', detail: 'no host' }];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const req = (h as any).requestResourceAllocation;
+  if (typeof req !== 'function') {
+    return [{
+      what: 'requestResourceAllocation',
+      result: 'no',
+      detail: 'this build of the SDK does not expose it — an older host, not a refusal',
+    }];
+  }
+  const out: Finding[] = [];
+  for (const tag of ['BulletinAllowance', 'AutoSigning'] as const) {
+    try {
+      const r = await req([{ tag }]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const v = (r as any)?.value?.[0];
+      out.push({
+        what: `allocation ${tag}`,
+        result: v === 'Allocated' ? 'yes' : v ? 'no' : 'unknown',
+        detail: `answered: ${JSON.stringify(r)}`,
+      });
+    } catch (e) {
+      out.push({ what: `allocation ${tag}`, result: 'unknown', detail: `threw: ${(e as Error)?.message}` });
+    }
+  }
+  return out;
+}
+
 /** Host storage: does it survive, and does it hold what we put in it? */
 async function storage(): Promise<Finding> {
   const h = await host();
@@ -357,6 +401,7 @@ export async function runProbe(onStep: (f: Finding) => void, address = ''): Prom
   add(await bulletinQuota(address));
   for (const f of await chainSupport()) add(f);
   for (const f of await framing()) add(f);
+  for (const f of await allocations()) add(f);
   add(await storage());
   return all;
 }
