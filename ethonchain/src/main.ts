@@ -128,6 +128,11 @@ function homeView(): string {
     <a href="#/provenance">the provenance panel</a> is the evidence that it is true right now, in your
     browser, measured rather than asserted.</p>
 
+    <div class="btnrow">
+      <a class="btn solid lg" href="#/provenance">See where this page came from</a>
+      <a class="btn lg" href="https://ethereum.org" target="_blank" rel="noopener noreferrer">Visit the real ethereum.org</a>
+    </div>
+
     <div class="cards">
       ${PAGES.map((p) => `
         <a class="card" href="#/${p.slug}">

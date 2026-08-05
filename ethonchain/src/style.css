@@ -212,6 +212,56 @@ li::marker { color: var(--body-medium); }
 }
 .from.bottom { margin: 2.8em 0 0; }
 
+/*
+ * Buttons, from src/components/ui/buttons/Button.tsx.
+ *
+ * Their base is the OUTLINE pattern, not the filled one: primary text with a
+ * border of the same colour and no background, and `solid` is the variant. The
+ * hover effect is a hard-edged offset shadow rather than a blur, which is the
+ * detail that makes their buttons theirs.
+ */
+.btn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 16px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--primary);
+  background: none;
+  cursor: pointer;
+  transition: box-shadow .2s, transform .2s, background-color .2s, color .2s;
+}
+.btn:hover {
+  color: var(--primary-hover);
+  text-decoration: none;
+  box-shadow: 3px 3px 0 var(--primary-hover);
+}
+.btn:active { box-shadow: none; transform: translate(1px, 1px); }
+.btn.solid {
+  color: var(--white);
+  background: var(--primary);
+  border-color: transparent;
+}
+.btn.solid:hover { color: var(--white); background: var(--primary-hover); }
+.btn.lg { min-height: 48px; font-size: 1.125rem; padding: 12px 32px; border-radius: 8px; }
+
+.btnrow { display: flex; flex-wrap: wrap; gap: 12px; margin: 1.6em 0 2em; }
+
+/* Their pictures, at whatever width the column allows. */
+.doc img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.6em auto;
+  border-radius: 8px;
+  background: var(--background-highlight);
+}
+
 .cards { display: grid; gap: 12px; margin: 1.8em 0; }
 @media (min-width: 40rem) { .cards { grid-template-columns: 1fr 1fr; } }
 .card {
