@@ -86,6 +86,25 @@ this way came back only on the device that had set them, and we blamed Bulletin
 retention. They were never stored: the submit was failing, and the app was
 showing its own in-memory copy.
 
+### It is Android-only, and we did not know that when we filed
+
+Running the same probe on **Polkadot Desktop 0.1.1** (Electron 42.4.0, Chrome
+148) the submit **works**:
+
+```
+[YES] preimage submit          key 0x4d2f82f9…31658 in 64332ms
+[YES] preimage lookup of what we just submitted   37 bytes back, identical: true
+```
+
+So the discriminant error is not the surface being broken everywhere; it is a
+skew between one host build and the client. #13 was filed from Android and is
+accurate there, but the sentence in it that generalises — that no app on this
+devnet can accept a file from anybody — is **wrong on desktop**, and we published
+it. Corrected here and in [#13](https://github.com/Polkadot-Community-Foundation/products-devnet-issues/issues/13).
+
+Worth its own note: **64 seconds** for a 37-byte round trip. It returns, and no
+interface can present a minute of silence as anything but broken.
+
 ### Reproduce
 
 chirp → Settings → Diagnostics → Run the probe. Or directly:
@@ -123,6 +142,20 @@ directly:
 
 Not "expired", not "quota exhausted" — **no entry**. Zero transactions, zero
 bytes, no expiry, for a normal account in good standing on the devnet.
+
+Confirmed a second time on **Polkadot Desktop 0.1.1**, a different account
+(`5Exa9Am2Qd…`), same answer: `authorized:false`, zero of everything. So it is
+not one account's bad luck and not one platform.
+
+The allocation route we added at startup on the strength of the SDK's types has
+its answer too, and it is no:
+
+```
+[NO] allocation BulletinAllowance   {"ok":true,"value":["NotAvailable"]}
+[NO] allocation AutoSigning         {"ok":true,"value":["NotAvailable"]}
+```
+
+`NotAvailable` rather than a refusal: there is nothing to grant on this host.
 
 ### Why this is worth a number
 
