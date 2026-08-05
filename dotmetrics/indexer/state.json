@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11858110,
-  "updatedAt": "2026-08-05T19:23:06.578Z",
+  "lastBlock": 11859184,
+  "updatedAt": "2026-08-05T19:57:54.305Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "02d2586981055265be10b0c2c66488be47cd2455b8241b9a62a4f8283b1c8ec1",
-    "cid": "bafybeibwjxekixi724gkha3yrur2ochpfmw2xmix47kao3tw5kux2zylay",
-    "uploadedAt": "2026-08-05T19:30:01.505Z"
+    "digest": "d120c363097e7bb787da009e2c4d1e1caabf35dbba0fa8cab4796b4595f7fbb0",
+    "cid": "bafybeibqyohncmcyahceexvq4xfviabduxvzysroab4rqdjjfgkabltytm",
+    "uploadedAt": "2026-08-05T20:05:10.975Z"
   },
   "sitePublish": {
     "treeHash": "1134d6c96d263b4ecbf107c2dfb47e20d60c6f980a0287f7606f58726cab26c1",
     "publishedAt": "2026-08-05T18:07:00.805Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-05T19:28:36.000Z",
+    "updatedAt": "2026-08-05T20:03:51.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -156,7 +156,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-05T19:28:36.000Z",
+    "updatedAt": "2026-08-05T20:03:51.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -202,9 +202,9 @@
         "live": "alive"
       },
       "broadside": {
-        "contenthash": "bafybeiduh63bevbdbz3oxrx7uuvmqgiqrehyink2dvvbckj5wvoiuvhjpi",
-        "updateCount": 3,
-        "changedAt": 1785958116,
+        "contenthash": "bafybeig25joo5djm36cl2t7t7mgmocf7ait65mgzwnubpvgypmnwv3ycdq",
+        "updateCount": 4,
+        "changedAt": 1785960231,
         "live": "alive"
       },
       "buildboard01": {
@@ -253,9 +253,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeieqnlnwlmqzvskuvb7bf4vyi42qlblucxxw36ialwg4unv6dvnckq",
-        "updateCount": 14,
-        "changedAt": 1785932868,
+        "contenthash": "bafybeiga2zjqc6xrngx6yycm5bzzmi3eymxxt3tke4l4gj6plohpkksify",
+        "updateCount": 15,
+        "changedAt": 1785960231,
         "live": "alive"
       },
       "chirpwatch": {
@@ -368,9 +368,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibrtryflewnjvyai4l4itvgsujarnf6udmbhzdhow3r4zhszl2htu",
-        "updateCount": 65,
-        "changedAt": 1785958116,
+        "contenthash": "bafybeifihnpyqd5nelwaksgjzy3fadgmug7mj3ku2c4icvjdyenegpwqiu",
+        "updateCount": 66,
+        "changedAt": 1785960231,
         "live": "alive"
       },
       "dotcheckapp": {
