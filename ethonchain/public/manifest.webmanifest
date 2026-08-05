@@ -1,0 +1,17 @@
+{
+  "name": "eth on chain (unofficial demonstration)",
+  "short_name": "eth on chain",
+  "description": "Six real pages from ethereum.org served from a content hash, with no server behind them. An unofficial demonstration, not affiliated with the Ethereum Foundation.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#6b7fd7",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

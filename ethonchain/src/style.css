@@ -1,0 +1,262 @@
+/*
+ * The ethereum.org design system, from its own source.
+ *
+ * The palette and the semantic mapping below are transcribed from
+ * src/styles/colors.css and src/styles/semantic-tokens.css in
+ * ethereum/ethereum-org-website (MIT). Using their tokens rather than
+ * approximating them is the difference between "in their style" and "roughly
+ * that sort of purple".
+ *
+ * WHAT IS DELIBERATELY NOT COPIED
+ *   Their logo and wordmark. The identity stays ours, the disclosure banner is
+ *   permanent, and the name is different. Matching a design system that is
+ *   published for reuse is not the same as passing yourself off as its owner,
+ *   and the line between those two is exactly the logo.
+ *
+ * TYPEFACE
+ *   They use Inter throughout. A web font cannot be loaded here: the container
+ *   blocks origins it has not been granted, and this bundle has to stand alone.
+ *   So Inter is asked for first in case the reader already has it, then the
+ *   closest system faces. Nothing is fetched.
+ */
+
+:root {
+  /* Foundational palette, verbatim */
+  --white: #ffffff;
+  --gray-50: #f7f7f7;
+  --gray-100: #ededed;
+  --gray-150: #dedede;
+  --gray-200: #cecece;
+  --gray-300: #ababab;
+  --gray-400: #8c8c8c;
+  --gray-500: #616161;
+  --gray-600: #333333;
+  --gray-700: #222222;
+  --gray-800: #1b1b1b;
+  --gray-900: #121212;
+  --black: #000000;
+  --purple-100: #ede2ff;
+  --purple-400: #b38df0;
+  --purple-500: #945af4;
+  --purple-600: #6c24df;
+  --purple-800: #41128b;
+  --blue-100: #e8f1ff;
+  --blue-500: #4473ef;
+
+  /* Semantic mapping, light */
+  --body: var(--gray-900);
+  --body-medium: var(--gray-500);
+  --background: var(--white);
+  --background-highlight: var(--gray-50);
+  --background-low: var(--gray-100);
+  --primary: var(--purple-600);
+  --primary-hover: var(--purple-500);
+  --primary-low-contrast: var(--purple-100);
+  --border: var(--gray-150);
+  --border-hover: var(--gray-300);
+
+  /* Ours: the disclosure has to stand apart from their palette on purpose. */
+  --warn-bg: #fff6dd;
+  --warn-line: #e6c65e;
+  --warn-body: #4a3708;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --body: var(--gray-100);
+    --body-medium: var(--gray-400);
+    --background: var(--black);
+    --background-highlight: var(--gray-900);
+    --background-low: var(--gray-700);
+    --primary: var(--purple-400);
+    --primary-hover: var(--purple-500);
+    --primary-low-contrast: var(--purple-800);
+    --border: var(--gray-600);
+    --border-hover: var(--gray-500);
+    --warn-bg: #2e2408;
+    --warn-line: #6b5320;
+    --warn-body: #f5e2b8;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--body);
+  font-family: Inter, 'Segoe UI Variable Text', 'Segoe UI', -apple-system,
+    BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { color: var(--primary-hover); text-decoration: underline; }
+
+code {
+  font-family: ui-monospace, SFMono-Regular, 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: .875em;
+  background: var(--background-highlight);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .1em .35em;
+  overflow-wrap: anywhere;
+}
+pre {
+  background: var(--background-highlight);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+}
+pre code { background: none; border: 0; padding: 0; }
+
+/* The disclosure. Not dismissible, never below the fold, and deliberately in a
+   colour their system does not use, so it never reads as part of their page. */
+.warn {
+  background: var(--warn-bg);
+  border-bottom: 1px solid var(--warn-line);
+  color: var(--warn-body);
+  padding: 10px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.warn strong { font-weight: 700; }
+
+.top {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 16px 0;
+  background: var(--background);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: var(--body);
+}
+.brand:hover { color: var(--body); text-decoration: none; }
+.mark {
+  width: 14px; height: 14px;
+  border: 2px solid var(--primary);
+  transform: rotate(45deg);
+  border-radius: 3px;
+  display: inline-block;
+}
+.top nav {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  margin-top: 14px;
+  scrollbar-width: none;
+}
+.top nav::-webkit-scrollbar { display: none; }
+.top nav a {
+  white-space: nowrap;
+  padding: 9px 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--body-medium);
+  font-size: 14px;
+  font-weight: 500;
+}
+.top nav a:hover { color: var(--body); text-decoration: none; }
+.top nav a.on { color: var(--primary); border-bottom-color: var(--primary); }
+
+main { max-width: 45rem; margin: 0 auto; padding: 32px 16px 8px; }
+
+h1 {
+  font-size: 2.25rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin: 0 0 .45em;
+}
+h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+  margin: 2em 0 .5em;
+}
+h3 { font-size: 1.19rem; font-weight: 600; margin: 1.7em 0 .4em; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.5em 0 .4em; }
+p { margin: 0 0 1.15em; }
+ul, ol { margin: 0 0 1.15em; padding-left: 1.4em; }
+li { margin: .35em 0; }
+li::marker { color: var(--body-medium); }
+
+.lede { font-size: 1.09rem; color: var(--body-medium); }
+.dim { color: var(--body-medium); }
+.small { font-size: 13px; }
+
+/* Where a borrowed page came from, at its head and its foot. */
+.from {
+  font-size: 13px;
+  color: var(--body-medium);
+  background: var(--background-highlight);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin-bottom: 1.6em;
+  overflow-wrap: anywhere;
+}
+.from.bottom { margin: 2.8em 0 0; }
+
+.cards { display: grid; gap: 12px; margin: 1.8em 0; }
+@media (min-width: 40rem) { .cards { grid-template-columns: 1fr 1fr; } }
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: var(--background);
+  color: var(--body);
+}
+.card:hover {
+  border-color: var(--primary);
+  background: var(--background-highlight);
+  text-decoration: none;
+  color: var(--body);
+}
+.ct { font-weight: 600; font-size: 1.02rem; }
+.cd { font-size: 13.5px; color: var(--body-medium); line-height: 1.5; }
+.cw { font-size: 12px; color: var(--body-medium); }
+
+/* The panel carrying the actual argument. */
+.prov dl { margin: 1.5em 0; border-top: 1px solid var(--border); }
+.prov .row {
+  display: grid;
+  gap: 2px 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 34rem) { .prov .row { grid-template-columns: 9rem 1fr; } }
+.prov dt { font-weight: 600; color: var(--body-medium); font-size: 14px; }
+.prov dd { margin: 0; overflow-wrap: anywhere; }
+.why { display: block; font-size: 13px; color: var(--body-medium); line-height: 1.5; margin-top: 4px; }
+
+footer {
+  border-top: 1px solid var(--border);
+  background: var(--background-highlight);
+  margin-top: 48px;
+  padding: 22px 16px 36px;
+  color: var(--body-medium);
+  font-size: 13px;
+}
+footer p { max-width: 45rem; margin: 0 auto .5em; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

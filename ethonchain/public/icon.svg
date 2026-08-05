@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="A content hash, drawn as a block">
+  <!-- Deliberately not the Ethereum logo. This demonstration must never be
+       mistakable for the Ethereum Foundation, and an icon is the first thing
+       somebody sees. A hash block is what the page is actually about. -->
+  <rect width="64" height="64" rx="14" fill="#0d1117"/>
+  <g fill="none" stroke="#6b7fd7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 10 L50 21 L50 43 L32 54 L14 43 L14 21 Z"/>
+    <path d="M32 24 L41 29 L41 39 L32 44 L23 39 L23 29 Z" stroke="#9db1ff"/>
+  </g>
+</svg>
