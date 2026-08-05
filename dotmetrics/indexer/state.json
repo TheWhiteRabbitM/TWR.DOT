@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11842054,
-  "updatedAt": "2026-08-05T09:54:02.958Z",
+  "lastBlock": 11846309,
+  "updatedAt": "2026-08-05T12:21:49.078Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "02a508ecb9d6e85107fbc93713e3c6d8ff0bdf6ecb32271b62e7f5b3beb478d6",
-    "cid": "bafybeiaumjlxijqun4w32jculvft4h4bh5m6d2kwz4uaotdj5hghi4q5wa",
-    "uploadedAt": "2026-08-05T10:00:05.953Z"
+    "digest": "66b88091c6f8a29d3b99d2e6a5c57b88786f5a94b12107e8f50b46f9906ff984",
+    "cid": "bafybeibwdbl5sjphlr4bme2lv3nzpwczose5ycq2fmwir4lji6rrb4t5aa",
+    "uploadedAt": "2026-08-05T12:29:05.566Z"
   },
   "sitePublish": {
-    "treeHash": "fd3aa664c141478c1b74818fedcfe7bce74a210bbd334952fcdb70796ec51c98",
-    "publishedAt": "2026-08-05T10:05:16.740Z"
+    "treeHash": "cf6917a737d8cfc97a32f06c4fd2f86d6535fe2c862f4d86622f96d29c39fddc",
+    "publishedAt": "2026-08-05T12:31:23.992Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-05T09:58:40.000Z",
+    "updatedAt": "2026-08-05T12:27:47.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -146,13 +146,14 @@
       "domain-app": "alive",
       "domainservice": "alive",
       "hello-world-pricey-app": "alive",
-      "waldmonster": "alive"
+      "waldmonster": "alive",
+      "unstake-radar": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-05T09:58:40.000Z",
+    "updatedAt": "2026-08-05T12:27:48.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -249,9 +250,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeiarv5gjmv3dsr7kkdt3g2pjwcx2rglqztnsyyha4gkibir7tq4wva",
-        "updateCount": 13,
-        "changedAt": 1785923920,
+        "contenthash": "bafybeieqnlnwlmqzvskuvb7bf4vyi42qlblucxxw36ialwg4unv6dvnckq",
+        "updateCount": 14,
+        "changedAt": 1785932868,
         "live": "alive"
       },
       "chirpwatch": {
@@ -364,9 +365,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeih7jcyurzxztei3gbdxjfra3b6fmvfq3743szh5srg3t2p7f5na24",
-        "updateCount": 61,
-        "changedAt": 1785923920,
+        "contenthash": "bafybeibkg6fz6pbw4gebn5ycqmgxg3jxcdabbdow7wiysfdo2st6p4mrty",
+        "updateCount": 62,
+        "changedAt": 1785932868,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -398,9 +399,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeidmt6h4fjh45w7gq7oczpdcfyzhlfheglp5icexobt4smlr5x43eq",
-        "updateCount": 43,
-        "changedAt": 1785901373,
+        "contenthash": "bafybeigfdtfgdjqrgxpoknyjxiswmmfhr7yukhygfhr5dizqqldwq7zuou",
+        "updateCount": 44,
+        "changedAt": 1785932868,
         "live": "alive"
       },
       "doyoulike": {
@@ -459,9 +460,9 @@
         "live": "alive"
       },
       "frenchan-app77": {
-        "contenthash": "bafybeiemnebbegbdowi5sg4wolg3ldm5px637223jsk3uuvbsdmtn62atm",
-        "updateCount": 5,
-        "changedAt": 1785923920,
+        "contenthash": "bafybeiagksy7ey7sndstivpdklwfilbho7qorurvhoxxedgc2cpwa7ohhy",
+        "updateCount": 6,
+        "changedAt": 1785932868,
         "live": "alive"
       },
       "gameboyonchain": {
@@ -747,9 +748,9 @@
         "live": "unknown"
       },
       "open-docs": {
-        "contenthash": "bafybeihj7bfnui26gjjm5r7ojvqzmeo5mkuevkulj734cpqanzbgcjfluy",
-        "updateCount": 6,
-        "changedAt": 1785923920,
+        "contenthash": "bafybeib32olulchkypjxfd6peh4f73s3zw37lp3vrvvss54yynm3kxarb4",
+        "updateCount": 7,
+        "changedAt": 1785932868,
         "live": "alive"
       },
       "openpetition": {
@@ -995,6 +996,11 @@
       },
       "tutorial-deploy": {
         "contenthash": "bafybeia44pdaxz3erdjbqtvorngwdfzphsoivx2r5hu4qsyuib2dwlvu6q",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "unstake-radar": {
+        "contenthash": "bafybeifsavrn2d5wedrdh5am4vbnj2tihm4sk4qpxfbryyrr5lcot5dppm",
         "updateCount": 0,
         "live": "alive"
       },

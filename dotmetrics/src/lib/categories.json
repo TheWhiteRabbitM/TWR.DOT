@@ -465,6 +465,12 @@
       "game~"
     ]
   },
+  "gavin-pump": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "ggggggggg": {
     "category": "other",
     "source": "unclassified",
@@ -1086,6 +1092,12 @@
     "why": [
       "wallet"
     ]
+  },
+  "substrade-hub": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "sybildrop": {
     "category": "identity",

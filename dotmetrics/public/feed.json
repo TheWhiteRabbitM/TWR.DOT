@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785923920,
-  "count": 177,
+  "generatedAt": 1785932868,
+  "count": 178,
   "apps": [
+    {
+      "label": "unstake-radar",
+      "domain": "unstake-radar.dot",
+      "displayName": "Unstake Radar",
+      "description": "Live radar for Polkadot staking & unstaking. Ranks unstakes by volume, flags potential sell pressure with a red alarm beacon, and tracks the current 2-day unbonding countdown.",
+      "tier": 0,
+      "firstSeenAt": 1785927168,
+      "url": "https://unstake-radar.dev-dot.li"
+    },
     {
       "label": "gavin-pump",
       "domain": "gavin-pump.dot",

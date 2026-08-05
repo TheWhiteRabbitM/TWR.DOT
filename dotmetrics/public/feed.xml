@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 05 Aug 2026 09:58:40 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 05 Aug 2026 12:27:48 GMT</lastBuildDate>
+    <item>
+      <title>Unstake Radar</title>
+      <link>https://unstake-radar.dev-dot.li</link>
+      <description>Live radar for Polkadot staking &amp; unstaking. Ranks unstakes by volume, flags potential sell pressure with a red alarm beacon, and tracks the current 2-day unbonding countdown.</description>
+      <guid isPermaLink="false">unstake-radar</guid>
+      <pubDate>Wed, 05 Aug 2026 10:52:48 GMT</pubDate>
+    </item>
     <item>
       <title>gavin-pump</title>
       <link>https://gavin-pump.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description>Record a document sign-off on chain. The document never leaves your browser.</description>
       <guid isPermaLink="false">countersign</guid>
       <pubDate>Tue, 04 Aug 2026 11:16:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>vault-control</title>
-      <link>https://vault-control.dev-dot.li</link>
-      <description>A security-first control center for your Polkadot accounts: multisigs, keyless cold vaults, delegations - every action approved on your phone.</description>
-      <guid isPermaLink="false">vault-control</guid>
-      <pubDate>Tue, 04 Aug 2026 10:48:00 GMT</pubDate>
     </item>
   </channel>
 </rss>
