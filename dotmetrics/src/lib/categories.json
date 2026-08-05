@@ -430,6 +430,12 @@
       "notary~"
     ]
   },
+  "ethonchain": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "fffffffff": {
     "category": "other",
     "source": "unclassified",
@@ -946,6 +952,12 @@
     "why": []
   },
   "polkadot-builders-hackademy": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "polkanote": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
