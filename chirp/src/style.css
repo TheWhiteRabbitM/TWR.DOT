@@ -548,3 +548,12 @@ body.locked { overflow: hidden; }
   background: var(--panel); border-radius: 8px;
   font-size: 11.5px; overflow-wrap: anywhere; user-select: all; color: var(--ink);
 }
+
+/* The "you are showing up as @maskNN" prompt. Same furniture as the claim gate,
+   with a blue edge so it reads as something to answer rather than a warning. */
+.gate.namefix { border-left: 3px solid var(--blue); }
+.gate.namefix .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.gate.namefix .hint { margin-top: 12px; }
+/* "not on chain yet" — your own name, known to the host but not yet written to
+   your mask. Amber rather than grey: it is a state to resolve, not a caption. */
+.top .who .unsaved { color: #ffd400; }

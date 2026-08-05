@@ -375,7 +375,20 @@ function reason(res: any): string {
       .filter(Boolean).join(' | ');
   } catch { d = String(e); }
   if (/SigningRejected|rejected|cancel/i.test(d)) return 'You cancelled the signature.';
+  // Two different timeouts, and telling them apart matters. A SIGNING timeout
+  // means nothing was ever signed, so "it may still land" invites a duplicate
+  // post; the platform's own guidance is to treat it exactly like a rejection.
+  // Only a timeout waiting for the BLOCK leaves a transaction in flight.
+  if (/signing|permission|wallet|approval/i.test(d) && /Timeout/i.test(d)) {
+    return 'Your wallet never answered, so nothing was signed and nothing was sent. Safe to try again.';
+  }
   if (/Timeout/i.test(d)) return 'Timed out waiting for the block — it may still land.';
+  // Specified as ordinary control flow, not an error: a product that treats it
+  // as a crash is the one behaving badly. The host shows its own prompt, so all
+  // this has to do is name what happened without a raw protocol string.
+  if (/PermissionDenied|permission denied/i.test(d)) {
+    return 'The Polkadot app refused that permission. You can grant it in its settings and try again.';
+  }
   if (/Inability to pay|TransferFailed/i.test(d)) return 'The signing account cannot pay the fee.';
   // Seen through the dot.li gateway: the host holds an account for you but it
   // has no allowance to submit anything, so writing is impossible from there.
@@ -386,7 +399,13 @@ function reason(res: any): string {
   // Naming the call is useless to the person holding the phone; what they need
   // to know is that this build of the app cannot sign with a wallet account.
   if (/Not implemented|createTransactionWithLegacyAccount/i.test(d)) {
-    return 'This build of the Polkadot app cannot sign with your wallet account. chirp will use the account the app derives for it instead — try again.';
+    // "Try again" is only true advice the FIRST time, when send() is about to
+    // retry on the app-derived account. If we are already on that account,
+    // trying again does exactly the same thing and fails the same way — and a
+    // tester duly reported being stuck on a wallet error. Say which it is.
+    return legacyBroken.get()
+      ? 'This build of the Polkadot app cannot sign with your wallet account, and the account it derived for chirp cannot sign either. Nothing here can work around that — it is the host, not the app.'
+      : 'This build of the Polkadot app cannot sign with your wallet account. chirp is switching to the account the app derives for it.';
   }
   // Custom Solidity errors are not decoded on this path — the chain says only
   // that the call reverted, so name what this app can actually hit.

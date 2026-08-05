@@ -321,6 +321,12 @@ let gifOpen = false;
 let picOpen = false;
 /** What the picture panel last said — an encode failure has to be visible. */
 let picSaid: null | { text: string; bad?: boolean } = null;
+/** Whether the 'you are showing up as @maskNN' prompt has been answered or
+ *  dismissed this session. Being a number is a legitimate choice; asking twice
+ *  is nagging. */
+let nameAsked = false;
+/** The username the host already knows, pre-filled into that prompt. */
+let NAMEHINT = '';
 let gifBound = false;
 let gifSaid: { text: string; bad?: boolean } | null = null;
 
@@ -714,6 +720,7 @@ function homeView(): string {
     </div>`
     + (FRESH.length ? `<button class="fresh-btn" id="showfresh">Show ${FRESH.length} new chirp${FRESH.length > 1 ? 's' : ''}</button>` : '')
     + (ME && !ME.mask ? gate() : '')
+    + namePrompt()
     + list(shown, tab === 'following' ? 'Nothing here yet — follow someone from their profile.' : 'No chirps yet.')
     // `>= page` was the wrong test: a feed of exactly the window size looks
     // full whether or not anything is behind it, and once the contract had more
@@ -1070,6 +1077,61 @@ function notesSection(): string {
  * need instead is to know that reading is all of it here, and where to go if
  * they want more.
  */
+/**
+ * "You are showing up as @mask16" — asked where the problem is visible.
+ *
+ * A mask with no handle renders as `@mask16` everywhere, and the only place to
+ * fix that was a field in Settings. Nothing pointed anyone at it; the claim gate
+ * I wrote actually said "leave it empty, you can set your @ name afterwards in
+ * Settings", so a person who claimed a mask and never went back stayed a number
+ * for ever. That is what "users struggle to register their real account" turned
+ * out to mean.
+ *
+ * So it is asked here, once, at the top of their own timeline, with the name the
+ * host already knows pre-filled — and dismissible, because being a number is a
+ * legitimate choice and nagging is not.
+ */
+function namePrompt(): string {
+  if (!ME?.mask || ME.handle || nameAsked) return '';
+
+  // The mobile app asks for a username before anything else, so almost everyone
+  // arriving from a phone ALREADY has one — the host will hand it over via
+  // getUserId().primaryUsername. Asking such a person to type their own name
+  // into an empty box is the app failing to look something up it can look up.
+  //
+  // So when the host knows it, this is not a form: it is one sentence and one
+  // button. The box only appears for somebody who wants a different name, or
+  // for a host that has none to give.
+  if (NAMEHINT) {
+    return `<section class="gate namefix">
+      <h2>You are @${esc(NAMEHINT)} — but not here yet</h2>
+      <p>That is the username the Polkadot app already knows you by. chirp shows
+      <b>${esc(at(ME, ME.mask))}</b> to everyone else until it is written to your mask, which takes
+      one transaction.</p>
+      <div class="row">
+        <button class="primary" id="usehint">Use @${esc(NAMEHINT)} here</button>
+        <button class="ghost small" id="othername">Choose another</button>
+        <button class="ghost small" id="skiphandle">Not now</button>
+      </div>
+      <p class="hint">It carries no tick — Asset Hub cannot read the People chain, so nothing here can
+      prove the username is yours. Only a .dot is checked. Change it any time in Settings.</p>
+    </section>`;
+  }
+
+  return `<section class="gate namefix">
+    <h2>You are showing up as ${esc(at(ME, ME.mask))}</h2>
+    <p>Your mask is claimed — this is just the name on it. Pick the @ name people will see;
+    it is unique, and only you can set it because your mask cannot be moved.</p>
+    <input id="quickhandle" maxlength="32" placeholder="e.g. watanabe.01" autocomplete="off" spellcheck="false">
+    <div class="row">
+      <button class="primary" id="savehandle">Use this name</button>
+      <button class="ghost small" id="skiphandle">Not now</button>
+    </div>
+    <p class="hint">It carries no tick — Asset Hub cannot read the People chain, so nothing here can
+    prove the username is yours. Only a .dot is checked. You can change it in Settings.</p>
+  </section>`;
+}
+
 function gate(): string {
   if (CAN_SIGN === null) return '';        // not known yet — say nothing
   if (!CAN_SIGN) {
@@ -1112,8 +1174,18 @@ function header(): string {
     : view.k === 'search' ? 'Search' : view.k === 'notif' ? 'Notifications'
     : view.k === 'saved' ? 'Bookmarks' : view.k === 'stats' ? 'Your numbers' : view.k === 'probe' ? 'Container probe'
     : view.k === 'lists' ? 'Lists' : view.k === 'list' ? view.name : 'chirp';
+  // Your own name, shown as soon as it is knowable.
+  //
+  // The Polkadot app asks for a username before anything else, so a person
+  // arriving from a phone already has one — and chirp was showing them
+  // "@mask16" because the chain did not have it yet. It can be looked up
+  // (getUserId().primaryUsername), so it is, and the line says plainly that it
+  // is not on chain yet, because to everybody else they really are still a
+  // number until the write lands.
   const who = !ME ? '<span>reading only — open in the Polkadot app, or connect a wallet extension</span>'
-    : `<b>${ME.mask ? esc(nm(ME as unknown as Who)) : 'no mask yet'}</b><span>${esc(short(ME.address))}</span>`;
+    : ME.mask && !ME.handle && NAMEHINT
+      ? `<b>@${esc(NAMEHINT)}</b><span class="unsaved">not on chain yet</span>`
+      : `<b>${ME.mask ? esc(nm(ME as unknown as Who)) : 'no mask yet'}</b><span>${esc(short(ME.address))}</span>`;
   // The mark stands in for the word only where the word would be the app's own
   // name; on a thread or a profile the title is doing real work and is left alone.
   const mark = title === 'chirp'
@@ -1978,6 +2050,33 @@ function wire() {
   }));
   document.getElementById('goprobe')?.addEventListener('click', () => { settingsOpen = false; go({ k: 'probe' }); });
   document.getElementById('gosaved')?.addEventListener('click', () => go({ k: 'saved' }));
+
+  /* ------------------------------------------- the @maskNN name prompt */
+  document.getElementById('skiphandle')?.addEventListener('click', () => { nameAsked = true; render(); });
+  // "Choose another" just drops the hint, which turns the one-button version
+  // back into the box — no second state to keep.
+  document.getElementById('othername')?.addEventListener('click', () => { NAMEHINT = ''; render(); });
+  document.getElementById('usehint')?.addEventListener('click', () => saveHandle(NAMEHINT));
+  document.getElementById('savehandle')?.addEventListener('click', () => {
+    saveHandle((document.getElementById('quickhandle') as HTMLInputElement | null)?.value ?? '');
+  });
+
+  function saveHandle(raw: string) {
+    const v = raw.trim().replace(/^@/, '');
+    if (!v || !ME?.mask) return;
+    nameAsked = true;
+    void act(async () => {
+      const r = await setHandle(ME!.mask, v);
+      if (r.ok) { ME = await me().catch(() => ME); forgetWho(); }
+      // A name is unique across masks, so "taken" is the common failure and it
+      // has to read as somebody else's, not as a bug.
+      else if (/revert|already|taken/i.test(r.why)) {
+        return { ok: false, why: `“${v}” is taken. Names are unique across masks — try another.` };
+      }
+      return r;
+    }, `You are @${v} now.`);
+  }
+
   bindExtras();
 
   /* ----------------------------------------------------------------- probe */
@@ -2685,6 +2784,9 @@ if (!ALL.length) app.innerHTML = header() + '<div class="skel"></div><div class=
   // gateway's optimistic "yes". Until this line runs CAN_SIGN is null, and the
   // things it gates render nothing rather than guess.
   CAN_SIGN = await canSign().catch(() => false);
+  // The username the host already knows, so the "you are @maskNN" prompt opens
+  // with the right answer typed in rather than an empty box.
+  if (ME?.mask && !ME.handle) NAMEHINT = await suggestedName().catch(() => '');
   // Go through refresh() rather than loading the feed by hand: a deep link — a
   // shared thread, someone's profile — has to arrive with ITS data, not with an
   // empty shell and a timeline nobody asked for.
