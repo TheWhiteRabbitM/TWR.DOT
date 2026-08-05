@@ -714,9 +714,9 @@ function homeView(): string {
       ? top   // ALL is read newest-id-first, so this is already chronological
       : rank(top, FOLLOW, NOTED, signals());
   return `<div class="tabs">
-      <button class="tab${tab === 'foryou' ? ' on' : ''}" data-tab="foryou">For you</button>
-      <button class="tab${tab === 'latest' ? ' on' : ''}" data-tab="latest">Latest</button>
-      <button class="tab${tab === 'following' ? ' on' : ''}" data-tab="following">Following</button>
+      <button class="tab${tab === 'foryou' ? ' on' : ''}" data-tab="foryou"><span>For you</span></button>
+      <button class="tab${tab === 'latest' ? ' on' : ''}" data-tab="latest"><span>Latest</span></button>
+      <button class="tab${tab === 'following' ? ' on' : ''}" data-tab="following"><span>Following</span></button>
     </div>`
     + (FRESH.length ? `<button class="fresh-btn" id="showfresh">Show ${FRESH.length} new chirp${FRESH.length > 1 ? 's' : ''}</button>` : '')
     + (ME && !ME.mask ? gate() : '')
@@ -946,9 +946,9 @@ function profileView(): string {
     // the same reason: someone who answers a lot has their own chirps buried
     // under their replies, and a visitor cannot tell what they actually say.
     + `<div class="tabs">
-        <button class="tab${ptab === 'chirps' ? ' on' : ''}" data-ptab="chirps">Chirps</button>
-        <button class="tab${ptab === 'replies' ? ' on' : ''}" data-ptab="replies">Replies</button>
-        <button class="tab${ptab === 'likes' ? ' on' : ''}" data-ptab="likes">Likes</button>
+        <button class="tab${ptab === 'chirps' ? ' on' : ''}" data-ptab="chirps"><span>Chirps</span></button>
+        <button class="tab${ptab === 'replies' ? ' on' : ''}" data-ptab="replies"><span>Replies</span></button>
+        <button class="tab${ptab === 'likes' ? ' on' : ''}" data-ptab="likes"><span>Likes</span></button>
       </div>`
     + (() => {
       if (ptab === 'replies') {

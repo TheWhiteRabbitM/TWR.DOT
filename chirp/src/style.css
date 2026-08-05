@@ -79,7 +79,7 @@ button.ghost:hover { background: var(--panel); }
 /* A card stacks: the "X reposted" line sits ABOVE the post. It used to be a
    flex row itself, which put that label beside the avatar instead. */
 .chirp { display: block; padding: 12px 16px; border-bottom: 1px solid var(--hair); transition: background .12s; }
-.chirp:hover { background: #080808; }
+.chirp:hover { background: rgba(255,255,255,.03); }
 .chirp .grow { flex: 1; min-width: 0; }
 .head { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
 .head .nm { font-weight: 700; }
@@ -215,9 +215,15 @@ button.ghost:hover { background: var(--panel); }
 main { padding-bottom: 88px; }           /* clear the bottom bar */
 
 .tabs { display: flex; border-bottom: 1px solid var(--hair); position: sticky; top: 52px; background: rgba(0,0,0,.75); backdrop-filter: blur(12px); z-index: 4; }
-.tab { flex: 1; background: none; border: 0; color: var(--ink-2); font: 600 15px/1 inherit; padding: 16px 0; cursor: pointer; position: relative; }
+.tab { flex: 1; background: none; border: 0; color: var(--ink-2); font: 600 15px/1 inherit; padding: 0; cursor: pointer;
+  height: 53px; display: grid; place-items: center; transition: background .12s; }
+.tab:hover { background: rgba(255,255,255,.03); }
+.tab > span { position: relative; display: inline-flex; align-items: center; height: 100%; }
 .tab.on { color: var(--ink); }
-.tab.on::after { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 56px; height: 4px; border-radius: 2px; background: var(--blue); }
+/* Sized to the label, not to a guess. A fixed 56px bar sits visibly wrong
+   under a long word like 'Following' and visibly loose under 'Latest'. */
+.tab.on > span::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
+  border-radius: 2px 2px 0 0; background: var(--blue); }
 
 .bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; display: flex; justify-content: space-around;
   background: rgba(0,0,0,.9); backdrop-filter: blur(12px); border-top: 1px solid var(--hair); padding: 8px 0 max(8px, env(safe-area-inset-bottom)); }
@@ -238,7 +244,7 @@ main { padding-bottom: 88px; }           /* clear the bottom bar */
 .searchbar input:focus { border-color: var(--blue); }
 
 .prow { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--hair); cursor: pointer; align-items: center; }
-.prow:hover { background: #080808; }
+.prow:hover { background: rgba(255,255,255,.03); }
 .prow .grow { flex: 1; min-width: 0; }
 .prow .at { color: var(--ink-2); font-size: 13px; }
 
@@ -557,3 +563,47 @@ body.locked { overflow: hidden; }
 /* "not on chain yet" — your own name, known to the host but not yet written to
    your mask. Amber rather than grey: it is a state to resolve, not a caption. */
 .top .who .unsaved { color: #ffd400; }
+
+/* ------------------------------------------------- the last of the X polish */
+
+/* One type size on the name line. X sets the display name, the @handle and the
+   timestamp all at 15px and separates them by WEIGHT and colour, not size —
+   which is why its timeline reads as one line of text rather than a heading
+   with footnotes. chirp had the handle and time a pixel smaller, and that one
+   pixel is most of the difference in feel. */
+.head .at, .head .dot, .head .ts { font-size: 15px; }
+.head .edited { font-size: 14px; }
+
+/* The like, when it lands. A heart that changes colour has happened TO you; one
+   that springs is something you did. 180ms, and nothing at all for anyone who
+   asked the system for less motion. */
+@keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.28); } 100% { transform: scale(1); } }
+.act.like.on svg { animation: pop .18s ease-out; transform-origin: center; }
+
+/* Keyboard focus, which was invisible. Every control in this app is reachable
+   by tab and none of them said so. */
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.chirp:focus-visible { outline-offset: -2px; }
+
+/* Somebody who has asked the system to reduce motion has asked this app too. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The bottom bar's active item, filled rather than merely tinted — the same
+   signal X uses, and the one that survives being glanced at. */
+.navb.on svg { filter: drop-shadow(0 0 0.5px currentColor); }
+.navb { transition: color .12s, background .12s; }
+.navb:hover { background: rgba(255,255,255,.06); }
+
+/* A timeline that is still arriving should not jump when it does. */
+.chirp, .prow { content-visibility: auto; contain-intrinsic-size: auto 120px; }
