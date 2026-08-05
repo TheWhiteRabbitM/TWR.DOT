@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11831009,
-  "updatedAt": "2026-08-05T03:38:59.643Z",
+  "lastBlock": 11836647,
+  "updatedAt": "2026-08-05T06:47:51.841Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "2a6a8e90a7d85fbc7ded008623f7e388314512d2370754921d795542dcabb233",
-    "cid": "bafybeicfo3izwqf7tmacj6vcnkdxj5hf4nw5gplwenbpn6sjyv4xozqb2a",
-    "uploadedAt": "2026-08-05T03:44:10.159Z"
+    "digest": "5d838f829e2ed72069f91e1813ee7c6c5585ea6179328d81c472c7952749a092",
+    "cid": "bafybeicwntefr545hmc66ejbl6oa7m2yxire4xsw7phxy5fkoiro3o4gmi",
+    "uploadedAt": "2026-08-05T06:54:54.161Z"
   },
   "sitePublish": {
     "treeHash": "a607229c146219cb747eca4e7b9ac2f97e7d60c693cadf96c028eeff313c95c7",
     "publishedAt": "2026-08-04T23:31:47.142Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-05T03:42:53.000Z",
+    "updatedAt": "2026-08-05T06:53:23.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -152,7 +152,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-05T03:42:53.000Z",
+    "updatedAt": "2026-08-05T06:53:24.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -364,9 +364,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiaapeno4r7xjse7enfmmrqewy4q7xmq5jeqjidfnejhpulm7yxlfm",
-        "updateCount": 59,
-        "changedAt": 1785901373,
+        "contenthash": "bafybeicgbpjkpnkzi3gj4gaj24w4gf7cma2r7ok7wxpr66ew2dnt42j2na",
+        "updateCount": 60,
+        "changedAt": 1785912804,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -568,9 +568,9 @@
         "live": "alive"
       },
       "italiarovente": {
-        "contenthash": "bafybeiekomaguicw4q57tjhg5inst2ef76sjr3l7ylxq56ut62hne7xndi",
-        "updateCount": 2,
-        "changedAt": 1785879813,
+        "contenthash": "bafybeifzgopxwuui6hlukr7epb7bhqvjao4k7hysjdq7kl2elyl2xvittu",
+        "updateCount": 3,
+        "changedAt": 1785912804,
         "live": "alive"
       },
       "jjjjjjjjj": {
@@ -877,9 +877,9 @@
         "live": "alive"
       },
       "rainbow-dev": {
-        "contenthash": "bafybeibsxrc6cagzwwfxg6crtivoxtql7m5gvxg47sxo53ga54yybsfwba",
-        "updateCount": 3,
-        "changedAt": 1785826104,
+        "contenthash": "bafybeieyuhnsnlxbwxyxn3glsqtxxlcjpkuabkbuqorodsi4xbdrdunrdi",
+        "updateCount": 4,
+        "changedAt": 1785912804,
         "live": "alive"
       },
       "rainbowprobe": {
