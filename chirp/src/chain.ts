@@ -1194,25 +1194,18 @@ export function clearPicture(mask: number): Promise<Ok | Fail> {
   return send('face', 'clear', [BigInt(mask)]);
 }
 
-/** Renew a picture that still lives on Bulletin under the OLD arrangement.
- *
- *  Only those need it — a picture in PeopleFace cannot expire. Kept so nobody
- *  who set one before the change loses their face while they have not replaced
- *  it. Content-addressed, so re-submitting identical bytes gives an identical
- *  key and no transaction is needed. */
-export async function renewPicture(mask: number): Promise<boolean> {
-  if (!mask) return false;
-  const { pfp } = await handles();
-  const raw = pfp ? await q(pfp, 'pfpOf', BigInt(mask)) : undefined;
-  const key = typeof raw === 'string' ? raw : (raw as { asHex?: () => string })?.asHex?.() ?? '';
-  if (!key || key === '0x') return false;
-  // The stored bytes ARE the key; hand them back as the hex the host expects.
-  const bytes = await fetchPreimage(key.startsWith('0x') ? key : '0x' + key);
-  if (!bytes) return false;                       // already gone; nothing to renew
-  const mgr = await preimages();
-  if (!mgr) return false;
-  return await mgr.submit(bytes).then(() => true).catch(() => false);
-}
+// renewPicture lived here and has been removed.
+//
+// It re-submitted an old Bulletin-hosted avatar to push its retention window
+// back, and it ran on every boot for every signed-in person. It ended in
+// `mgr.submit(bytes)`, which throws "Unknown enum discriminant: 236" on this
+// host — products-devnet-issues #13 — so it could only ever return false, after
+// spending a contract read and a subscription that waits up to ten seconds.
+//
+// The legacy READ stays: pictureOf still falls back to the old key-on-Bulletin
+// path, so anyone who set a face before it moved into PeopleFace still has one
+// until they replace it. That is the half of this that still works, and it is
+// why fetchPreimage and preimages() are still here.
 
 /* -------------------------------------------------------------------- reads */
 

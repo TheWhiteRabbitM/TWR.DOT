@@ -23,7 +23,7 @@ import {
   pinnedOf, pinChirp, unpinChirp,
   askNotifications, notify, openUrl, gifUrl, gifKind, gifBlob, cachedFeed, TOTAL,
   chatAvailable, discuss, chatRooms, registerBot, serveBot,
-  pictureOf, setPicture, clearPicture, renewPicture, forgetPicture, FACE_MAX,
+  pictureOf, setPicture, clearPicture, forgetPicture, FACE_MAX,
   notesOn, notedChirps, addNote, rateNote, rank, rankWhy,
   followerCounts, interestsFrom, statsFor,
   pollOn, createPoll, votePoll, forgetPolls, findMine, type Poll,
@@ -1367,8 +1367,9 @@ function overlay(): string {
         : THREAD.length ? `Post all ${THREAD.length + 1}`
         : title === 'New chirp' ? 'Chirp' : title}</button></div>
     ${gifOpen ? `<div class="gifpick">
-      <p class="hint">Paste a Giphy link, or the direct image address of a GIF — the one a keyboard inserts, starting with media.tenor.com or i.giphy.com. Only the link is stored, so a GIF costs nothing on chain and nothing on Bulletin.
-      Only the link is stored, so a GIF costs nothing on chain and nothing on Bulletin.</p>
+      <p class="hint">Paste a Giphy link, or the direct image address of a GIF — the one a keyboard
+      inserts, starting with media.tenor.com or i.giphy.com. Only the link is stored, so a GIF costs
+      nothing on chain and nothing on Bulletin.</p>
       <input id="gifurl" placeholder="https://media.tenor.com/…" autocomplete="off" spellcheck="false">
       <div class="row">
         <button class="ghost small" id="gifpaste">Paste from clipboard</button>
@@ -1560,6 +1561,29 @@ function attachMentions(ta: HTMLTextAreaElement, box: HTMLElement) {
  * some webviews where the async API is gated, and only when both fail does the
  * text go on screen to be selected by hand.
  */
+/**
+ * The ONE way this app opens a link.
+ *
+ * There were three call sites and only one of them handled failure. The other
+ * two — "View on chain" in the share sheet and in the ⋯ menu — called openUrl
+ * bare: no late-failure callback, no look at the result. Inside the Polkadot
+ * app that path resolves `popup:skipped-in-app>host:ok` and opens nothing
+ * (issue #14), so both buttons failed in complete silence, which is the exact
+ * outcome the opener, the trail and the sheet were all built to prevent.
+ *
+ * Having one function makes that unrepeatable: a future call site cannot forget
+ * the fallback, because there is nothing to forget.
+ */
+async function openLink(url: string): Promise<void> {
+  const show = (t: string) => { linkFor = url; linkWhy = 'open'; linkTrail = t; render(); };
+  const r = await openUrl(url, (late) => show(late.trail));
+  if (!r.ok) return show(r.trail);
+  if (r.trail.includes('popup:handle')) {
+    flash = { text: 'Opening the link… if nothing appeared, use ⋯ on the chirp → Copy link.' };
+    render();
+  }
+}
+
 async function copyOrShow(text: string, good = 'Copied.'): Promise<void> {
   try {
     await navigator.clipboard.writeText(text);
@@ -1594,7 +1618,7 @@ async function copyOrShow(text: string, good = 'Copied.'): Promise<void> {
  * stops implying the person is being slow and says what is probably wrong and
  * what to try — which is the difference between a bug and a dead end.
  */
-async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: string) {
+async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: string, light = false) {
   flash = { text: 'Signing… your wallet should ask you to approve this.' }; render();
   const nudge = setTimeout(() => {
     flash = {
@@ -1606,6 +1630,17 @@ async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: strin
   const r = await fn();
   clearTimeout(nudge);
   flash = r.ok ? { text: good } : { text: r.why ?? 'Failed', bad: true };
+  // `light` skips the full reload.
+  //
+  // refresh() re-reads the whole timeline, the notifications, the notes, the
+  // follower counts and the following set — a dozen chain reads. That is right
+  // after a post, which changes what the feed contains. It is waste after a
+  // like or a repost: the count was already flipped optimistically before the
+  // transaction was sent, the chain now agrees with what is on screen, and the
+  // next twenty-second poll will reconcile anything that did not. This is the
+  // same read amplification the poll and picture caches were just fixed for,
+  // left in place on the most-tapped control in the app.
+  if (light) return render();
   await refresh();
 }
 
@@ -1807,7 +1842,7 @@ function wire() {
     // Move the heart now and reconcile after: a like that waits for a block
     // feels broken even when it is working.
     if (p) { p.liked = !p.liked; p.likes += p.liked ? 1 : -1; render(); }
-    act(() => toggleLike(Number(b.dataset.like)), p?.liked ? 'Liked.' : 'Like removed.');
+    act(() => toggleLike(Number(b.dataset.like)), p?.liked ? 'Liked.' : 'Like removed.', true);
   }));
   app.querySelectorAll<HTMLElement>('[data-repost]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -1836,7 +1871,7 @@ function wire() {
     });
   }));
   app.querySelectorAll<HTMLElement>('[data-follow]').forEach((b) => b.addEventListener('click', (e) => {
-    e.stopPropagation(); act(() => toggleFollow(Number(b.dataset.follow)), 'Done.');
+    e.stopPropagation(); act(() => toggleFollow(Number(b.dataset.follow)), 'Done.', true);
   }));
   app.querySelectorAll<HTMLElement>('[data-share]').forEach((b) => b.addEventListener('click', async (e) => {
     e.stopPropagation();
@@ -1884,7 +1919,7 @@ function wire() {
         flash = { text: r.why, bad: true };
       }
     } else if (how === 'chain') {
-      void openUrl(`https://assethub-paseo.subscan.io/account/${CHIRP}`);
+      void openLink(`https://assethub-paseo.subscan.io/account/${CHIRP}`);
     }
     render();
   }));
@@ -1934,7 +1969,7 @@ function wire() {
       void copyOrShow(`${location.origin}${location.pathname}#/t/${p.id}`, 'Link copied.'); return;
     }
     if (m === 'copy') { void copyOrShow(p.body); return; }
-    if (m === 'chain') { void openUrl(`https://assethub-paseo.subscan.io/account/${CHIRP}`); return render(); }
+    if (m === 'chain') { void openLink(`https://assethub-paseo.subscan.io/account/${CHIRP}`); return render(); }
     render();
   }));
   document.getElementById('showfresh')?.addEventListener('click', () => { showFresh(); render(); });
@@ -2044,23 +2079,7 @@ function wire() {
   document.getElementById('gostats')?.addEventListener('click', () => go({ k: 'stats' }));
   app.querySelectorAll<HTMLElement>('[data-url]').forEach((a) => a.addEventListener('click', async (e) => {
     e.stopPropagation(); e.preventDefault();
-    const u = a.dataset.url ?? '';
-    // A tap that silently does nothing is the worst outcome there is, and it is
-    // what was actually happening: the webview handed back a Window object,
-    // openUrl called that success, and nothing appeared and nothing was said.
-    //
-    // Three ways out now. A refusal shows the sheet immediately. A handle that
-    // turns out to be closed a moment later shows it late, through the
-    // callback. And a handle that stays open but may still have shown nothing —
-    // which is not detectable from in here — at least leaves a line on screen
-    // saying what to do, instead of silence.
-    const showSheet = (t: string) => { linkFor = u; linkWhy = 'open'; linkTrail = t; render(); };
-    const r = await openUrl(u, (late) => showSheet(late.trail));
-    if (!r.ok) return showSheet(r.trail);
-    if (r.trail.includes('popup:handle')) {
-      flash = { text: 'Opening the link… if nothing appeared, use ⋯ on the chirp → Copy link.' };
-      render();
-    }
+    await openLink(a.dataset.url ?? '');
   }));
   document.getElementById('linkclose')?.addEventListener('click', () => { linkFor = null; render(); });
   document.getElementById('linkcopy')?.addEventListener('click', async () => {
@@ -2195,7 +2214,11 @@ async function refresh() {
  * The crop is centred rather than offered as a control: a picker with handles is
  * a lot of interface for a 40px circle. 256 is the size the biggest avatar on
  * the page is drawn at, doubled for a retina screen, and nothing is served by
- * uploading more — Bulletin has a quota and this has to be renewed forever.
+ * storing more — every byte is a storage deposit its owner pays once.
+ *
+ * (This used to say "Bulletin has a quota and this has to be renewed forever".
+ * That stopped being true when the picture moved into PeopleFace: the bytes
+ * live in contract storage, they cannot expire, and there is nothing to renew.)
  */
 /**
  * Take a picture from wherever it came — the file chooser or the clipboard —
@@ -2211,7 +2234,11 @@ async function usePicture(f: File) {
   pfpStep = { text: `Got ${f.name || 'the image'} — ${Math.round(f.size / 1024)} KB. Resizing…` }; render();
   const bytes = await squareWebp(f).catch(() => null);
   if (!bytes) { pfpStep = { text: 'That file could not be decoded as an image.', bad: true }; return render(); }
-  pfpStep = { text: `Resized to ${bytes.length} bytes. Uploading to Bulletin…` }; render();
+  // NOT Bulletin. setPicture writes the bytes into the PeopleFace contract on
+  // Asset Hub — one transaction, a storage deposit, and nothing that expires.
+  // The old wording sent people off to wait for a renewal that cannot happen
+  // and hid the fact that they are about to pay a deposit.
+  pfpStep = { text: `Resized to ${bytes.length} bytes. Writing it into the contract…` }; render();
   const r = await setPicture(ME.mask, bytes);
   if (r.ok) {
     PIC.set(ME.mask, 'data:image/webp;base64,' + btoa(String.fromCharCode(...bytes)));
@@ -2662,10 +2689,10 @@ if (!ALL.length) app.innerHTML = header() + '<div class="skel"></div><div class=
   // shared thread, someone's profile — has to arrive with ITS data, not with an
   // empty shell and a timeline nobody asked for.
   await refresh();
-  // Push your picture's retention window back. Content-addressed, so the same
-  // bytes give the same key and the contract still points at it: no transaction,
-  // no chain write, and it is the whole reason a picture survives at all.
-  if (ME?.mask) void renewPicture(ME.mask);
+  // (A picture renewal used to run here every boot. It re-submitted an old
+  //  Bulletin-hosted avatar through the host's preimage path, which throws on
+  //  this host — issue #13 — so it could only ever fail, slowly. A picture in
+  //  PeopleFace is contract storage and has nothing to renew.)
   // Whether the chat bridge exists is a host question, asked once. If it does,
   // find out which chirps already have a room — an app that offers to "start"
   // a conversation that is already running is not paying attention.
