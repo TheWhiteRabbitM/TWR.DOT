@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1785886097,
+  "generatedAt": 1785901373,
   "count": 175,
   "apps": [
     {
@@ -86,9 +86,9 @@
     {
       "label": "dotfinder",
       "domain": "dotfinder.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "Dotfinder",
+      "description": "Check DotNS name availability directly on Products Devnet.",
+      "tier": 0,
       "firstSeenAt": 1785856740,
       "url": "https://dotfinder.dev-dot.li"
     },

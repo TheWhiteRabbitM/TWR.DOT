@@ -4,7 +4,7 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Tue, 04 Aug 2026 23:28:17 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 05 Aug 2026 03:42:53 GMT</lastBuildDate>
     <item>
       <title>WALDMONSTER</title>
       <link>https://waldmonster.dev-dot.li</link>
@@ -69,9 +69,9 @@
       <pubDate>Tue, 04 Aug 2026 15:21:24 GMT</pubDate>
     </item>
     <item>
-      <title>dotfinder</title>
+      <title>Dotfinder</title>
       <link>https://dotfinder.dev-dot.li</link>
-      <description></description>
+      <description>Check DotNS name availability directly on Products Devnet.</description>
       <guid isPermaLink="false">dotfinder</guid>
       <pubDate>Tue, 04 Aug 2026 15:19:00 GMT</pubDate>
     </item>
