@@ -131,11 +131,9 @@
   },
   "chirponchain": {
     "category": "social",
-    "source": "derived:manifest",
-    "confidence": "high",
-    "why": [
-      "post"
-    ]
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "chirpwatch": {
     "category": "other",
@@ -307,9 +305,9 @@
     ]
   },
   "dot-store": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "explorers",
+    "source": "owner",
+    "confidence": "declared",
     "why": []
   },
   "dotcheckapp": {
@@ -428,9 +426,9 @@
     ]
   },
   "ethonchain": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "publishing",
+    "source": "owner",
+    "confidence": "declared",
     "why": []
   },
   "fffffffff": {
@@ -732,6 +730,12 @@
     "confidence": "none",
     "why": []
   },
+  "navalstrike01": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "neo-app-demo": {
     "category": "other",
     "source": "unclassified",
@@ -901,9 +905,9 @@
     "why": []
   },
   "peoplewiki": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "identity",
+    "source": "owner",
+    "confidence": "declared",
     "why": []
   },
   "petitions": {
@@ -1153,14 +1157,10 @@
     "why": []
   },
   "truereviews": {
-    "category": "identity",
-    "source": "derived:manifest",
-    "confidence": "high",
-    "why": [
-      "human",
-      "humans~",
-      "verified"
-    ]
+    "category": "tools",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "trustgraph": {
     "category": "identity",
