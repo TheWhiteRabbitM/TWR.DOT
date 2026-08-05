@@ -325,6 +325,32 @@ async function weightCeiling(api: unknown): Promise<typeof ceiling> {
   return ceiling;
 }
 
+/**
+ * Everything a single extrinsic is allowed to ask for, less the same 10% margin.
+ *
+ * Reached only after an OutOfGas, never by default. Measured: attaching four
+ * 14760-byte pictures in a row succeeds at BIG_LIMITS when the transaction is
+ * signed directly, and the same four fail from the second one on when they go
+ * through the host's signer, which wraps them and charges for the wrapper. The
+ * cause is on the far side of an API we do not control; the headroom is on this
+ * side and unused. proof_size in particular is asked at 5_000_000 against a
+ * ceiling of 8_388_608, so half of what the chain permits was being left on the
+ * table while the write failed for want of it.
+ *
+ * Unused weight is refunded, so the only cost of escalating is a heavier dry
+ * run, which is why it is the second attempt rather than the first.
+ */
+function maxLimits(): typeof LIMITS {
+  if (!ceiling) return BIG_LIMITS;
+  return {
+    ...BIG_LIMITS,
+    gasLimit: {
+      ref_time: (ceiling.ref_time * 9n) / 10n,
+      proof_size: (ceiling.proof_size * 9n) / 10n,
+    },
+  };
+}
+
 /** Clamp a limit pair to what the chain will actually accept, leaving a margin
  *  so a limit is never exactly the ceiling. */
 function clamp(l: typeof LIMITS): typeof LIMITS {
@@ -2585,11 +2611,16 @@ async function askToSign(): Promise<void> {
 const isNotImplemented = (why: string) =>
   /Not implemented|createTransactionWithLegacyAccount/i.test(why);
 
+/** The call ran and ran out of weight. Distinct from being refused before it
+ *  ran, which asking for MORE weight would only make worse. */
+const isOutOfGas = (why: string) => /OutOfGas/i.test(why);
+
 async function send(
   which: 'masks' | 'chirp' | 'handles' | 'notes' | 'pfp' | 'face' | 'pin' | 'polls' | 'rules' | 'media' | 'album',
   method: string,
   args: unknown[],
   retried = false,
+  escalate = false,
 ): Promise<Ok | Fail> {
   // `true`: somebody pressed a button. That is a better reason to attempt the
   // handshake than the last failure is to skip it, so a write is never held back
@@ -2607,8 +2638,9 @@ async function send(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const c = (s as any)[which];
   try {
+    const limits = escalate ? maxLimits() : limitsFor(which, method);
     if (!s.real) {
-      const o = { ...limitsFor(which, method), ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) };
+      const o = { ...limits, ...(s.manager ? { signerManager: s.manager } : { signer: s.signer }) };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res: any = await withTimeout(c[method].tx(...args, o), TX_MS, 'transaction');
       if (res && res.ok === false) {
@@ -2621,12 +2653,14 @@ async function send(
           slot = null;
           return send(which, method, args, true);
         }
+        // It ran and ran out. Come back once with everything the chain permits.
+        if (isOutOfGas(why) && !escalate) return send(which, method, args, retried, true);
         return { ok: false, why };
       }
       return { ok: true, value: undefined };
     }
     const prepared = await withTimeout(
-      c[method].prepare(...args, { ...limitsFor(which, method), origin: s.real }), TX_MS, 'preparing',
+      c[method].prepare(...args, { ...limits, origin: s.real }), TX_MS, 'preparing',
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const inner: any = (prepared as any)?.value ?? prepared;
@@ -2639,7 +2673,11 @@ async function send(
       TX_MS,
       'transaction',
     );
-    if (res && res.ok === false) return { ok: false, why: reason(res) };
+    if (res && res.ok === false) {
+      const why = reason(res);
+      if (isOutOfGas(why) && !escalate) return send(which, method, args, retried, true);
+      return { ok: false, why };
+    }
     return { ok: true, value: undefined };
   } catch (e) {
     const why = reason({ error: e });
@@ -2648,6 +2686,7 @@ async function send(
       slot = null;
       return send(which, method, args, true);
     }
+    if (isOutOfGas(why) && !escalate) return send(which, method, args, retried, true);
     return { ok: false, why };
   }
 }
