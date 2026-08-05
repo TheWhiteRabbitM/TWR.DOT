@@ -1980,8 +1980,19 @@ function wire() {
         flash = { text: 'Posted. Attaching…' }; render();
         const id = await findMine(ME!.mask, v).catch(() => 0);
         if (!id) {
-          mediaDraft = null; pollDraft = null;
-          return { ok: true, why: '' } as { ok: boolean; why?: string };
+          // The chirp is on chain; this reader just never saw it. Keep the
+          // pictures and the poll rather than dropping them, and say so. The
+          // old code cleared both here and returned ok, so somebody who chose
+          // four pictures got a clean "Posted on chain." and no pictures.
+          const held = (mediaDraft?.length ?? 0) + (pollDraft ? 1 : 0);
+          return {
+            ok: true,
+            note: base + (held
+              ? ' Could not re-read the post to attach to, so your '
+                + (mediaDraft?.length ? (mediaDraft.length === 1 ? 'picture is' : 'pictures are') : 'poll is')
+                + ' still here. Try attaching again in a moment.'
+              : ''),
+          };
         }
         const said = await attachExtras(id);
         // Handed back rather than assigned to `flash`, because act() sets the

@@ -2687,11 +2687,21 @@ export function post(mask: number, body: string, replyTo = 0, quoteOf = 0): Prom
 export async function findMine(mask: number, body: string): Promise<number> {
   const { chirp } = await handles();
   if (!chirp) return 0;
-  const total = Number((await q(chirp, 'count')) ?? 0);
-  for (let id = total; id > 0 && id > total - 8; id--) {
-    const [m, b] = await Promise.all([q(chirp, 'meta', BigInt(id)), q(chirp, 'body', BigInt(id))]);
-    if (!m) continue;
-    if (Number(pick(m, 'mask', 0) ?? 0) === mask && String(b ?? '') === body) return id;
+  // Asked ONCE, this was the bug that threw four pictures away. The transaction
+  // is on chain, but the read that follows it can land on a node a block behind,
+  // and `q` turns a refused read into `undefined`, which becomes a count of
+  // zero. Either way the post we just made is not there yet, the id comes back
+  // 0, and everything meant to hang off it is silently dropped while the app
+  // reports success. So keep asking: the chirp exists, the only question is when
+  // this reader can see it.
+  for (let attempt = 0; attempt < 10; attempt++) {
+    if (attempt) await new Promise((r) => setTimeout(r, 1500));
+    const total = Number((await q(chirp, 'count')) ?? 0);
+    for (let id = total; id > 0 && id > total - 8; id--) {
+      const [m, b] = await Promise.all([q(chirp, 'meta', BigInt(id)), q(chirp, 'body', BigInt(id))]);
+      if (!m) continue;
+      if (Number(pick(m, 'mask', 0) ?? 0) === mask && String(b ?? '') === body) return id;
+    }
   }
   return 0;
 }
