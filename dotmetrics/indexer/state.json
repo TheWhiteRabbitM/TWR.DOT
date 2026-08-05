@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11836647,
-  "updatedAt": "2026-08-05T06:47:51.841Z",
+  "lastBlock": 11842054,
+  "updatedAt": "2026-08-05T09:54:02.958Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "5d838f829e2ed72069f91e1813ee7c6c5585ea6179328d81c472c7952749a092",
-    "cid": "bafybeicwntefr545hmc66ejbl6oa7m2yxire4xsw7phxy5fkoiro3o4gmi",
-    "uploadedAt": "2026-08-05T06:54:54.161Z"
+    "digest": "02a508ecb9d6e85107fbc93713e3c6d8ff0bdf6ecb32271b62e7f5b3beb478d6",
+    "cid": "bafybeiaumjlxijqun4w32jculvft4h4bh5m6d2kwz4uaotdj5hghi4q5wa",
+    "uploadedAt": "2026-08-05T10:00:05.953Z"
   },
   "sitePublish": {
-    "treeHash": "a607229c146219cb747eca4e7b9ac2f97e7d60c693cadf96c028eeff313c95c7",
-    "publishedAt": "2026-08-04T23:31:47.142Z"
+    "treeHash": "fd3aa664c141478c1b74818fedcfe7bce74a210bbd334952fcdb70796ec51c98",
+    "publishedAt": "2026-08-05T10:05:16.740Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-05T06:53:23.000Z",
+    "updatedAt": "2026-08-05T09:58:40.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -152,7 +152,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-05T06:53:24.000Z",
+    "updatedAt": "2026-08-05T09:58:40.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -249,9 +249,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeif72syrfahhc4yidnzf6ssaztyzu3wmgzuvdmsd5w45fgh72vbu5q",
-        "updateCount": 12,
-        "changedAt": 1785886097,
+        "contenthash": "bafybeiarv5gjmv3dsr7kkdt3g2pjwcx2rglqztnsyyha4gkibir7tq4wva",
+        "updateCount": 13,
+        "changedAt": 1785923920,
         "live": "alive"
       },
       "chirpwatch": {
@@ -364,9 +364,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeicgbpjkpnkzi3gj4gaj24w4gf7cma2r7ok7wxpr66ew2dnt42j2na",
-        "updateCount": 60,
-        "changedAt": 1785912804,
+        "contenthash": "bafybeih7jcyurzxztei3gbdxjfra3b6fmvfq3743szh5srg3t2p7f5na24",
+        "updateCount": 61,
+        "changedAt": 1785923920,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -459,9 +459,9 @@
         "live": "alive"
       },
       "frenchan-app77": {
-        "contenthash": "bafybeierg4lqzlxiznsibb6mas45aate2y3bzhdrkrgd5ikedgb7u4mwze",
-        "updateCount": 4,
-        "changedAt": 1785901373,
+        "contenthash": "bafybeiemnebbegbdowi5sg4wolg3ldm5px637223jsk3uuvbsdmtn62atm",
+        "updateCount": 5,
+        "changedAt": 1785923920,
         "live": "alive"
       },
       "gameboyonchain": {
@@ -474,6 +474,11 @@
         "updateCount": 2,
         "changedAt": 1785858282,
         "live": "alive"
+      },
+      "gavin-pump": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "ggggggggg": {
         "contenthash": "",
@@ -742,9 +747,9 @@
         "live": "unknown"
       },
       "open-docs": {
-        "contenthash": "bafybeiemqjsv5lhk2g3bmhlqqrkjjf4fq4mu4plkp6lxije7wzvfs6d2pq",
-        "updateCount": 5,
-        "changedAt": 1785838158,
+        "contenthash": "bafybeihj7bfnui26gjjm5r7ojvqzmeo5mkuevkulj734cpqanzbgcjfluy",
+        "updateCount": 6,
+        "changedAt": 1785923920,
         "live": "alive"
       },
       "openpetition": {
@@ -780,9 +785,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeihhafguj5ylrjsrsehwfi7ihegvmvsptx3lkxv5hyluznv27h6vsi",
-        "updateCount": 5,
-        "changedAt": 1785769994,
+        "contenthash": "bafybeiarlql3umjwmeszlsetgohqcylsnbiqqjdbycqnm33xi2yeqzf4ee",
+        "updateCount": 6,
+        "changedAt": 1785923920,
         "live": "alive"
       },
       "peoplewiki": {
@@ -929,6 +934,11 @@
         "updateCount": 5,
         "changedAt": 1785684961,
         "live": "alive"
+      },
+      "substrade-hub": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "sybildrop": {
         "contenthash": "bafybeih5dsc22klk3po7ykhhkbzqxannf3lrazjo4pfhs5jg3bwgq7l4xm",

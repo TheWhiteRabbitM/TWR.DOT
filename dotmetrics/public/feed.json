@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1785912804,
-  "count": 175,
+  "generatedAt": 1785923920,
+  "count": 177,
   "apps": [
+    {
+      "label": "gavin-pump",
+      "domain": "gavin-pump.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785921408,
+      "url": "https://gavin-pump.dev-dot.li"
+    },
+    {
+      "label": "substrade-hub",
+      "domain": "substrade-hub.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785919896,
+      "url": "https://substrade-hub.dev-dot.li"
+    },
     {
       "label": "waldmonster",
       "domain": "waldmonster.dot",

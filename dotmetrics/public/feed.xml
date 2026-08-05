@@ -4,7 +4,21 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 05 Aug 2026 06:53:24 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 05 Aug 2026 09:58:40 GMT</lastBuildDate>
+    <item>
+      <title>gavin-pump</title>
+      <link>https://gavin-pump.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">gavin-pump</guid>
+      <pubDate>Wed, 05 Aug 2026 09:16:48 GMT</pubDate>
+    </item>
+    <item>
+      <title>substrade-hub</title>
+      <link>https://substrade-hub.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">substrade-hub</guid>
+      <pubDate>Wed, 05 Aug 2026 08:51:36 GMT</pubDate>
+    </item>
     <item>
       <title>WALDMONSTER</title>
       <link>https://waldmonster.dev-dot.li</link>
@@ -340,20 +354,6 @@
       <description>A security-first control center for your Polkadot accounts: multisigs, keyless cold vaults, delegations - every action approved on your phone.</description>
       <guid isPermaLink="false">vault-control</guid>
       <pubDate>Tue, 04 Aug 2026 10:48:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>imthebest</title>
-      <link>https://imthebest.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">imthebest</guid>
-      <pubDate>Tue, 04 Aug 2026 09:43:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>Do You Like...?</title>
-      <link>https://doyoulike.dev-dot.li</link>
-      <description>Independent on-chain opinion polls. Vote yes or no with your wallet.</description>
-      <guid isPermaLink="false">doyoulike</guid>
-      <pubDate>Tue, 04 Aug 2026 08:51:48 GMT</pubDate>
     </item>
   </channel>
 </rss>
