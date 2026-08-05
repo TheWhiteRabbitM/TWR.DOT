@@ -29,7 +29,7 @@ import {
   pollOn, createPoll, votePoll, forgetPolls, findMine, type Poll,
   rulesFor, setReplyPolicy, isBlocked, setBlocked, mayReply, forgetRules,
   REPLY_EVERYONE, REPLY_FOLLOWING, REPLY_MENTIONED,
-  detachMedia, forgetMedia, MEDIA_MAX, shotsOf, attachShot, type Shot,
+  detachMedia, forgetMedia, MEDIA_MAX, shotsOf, attachShot, shotCount, type Shot,
   CHIRP, MASKS, NOTES as NOTES_ADDR, type Post, type Me, type Who, type Note, type Stats, type Notice,
 } from './chain';
 import { lists, createList, removeList, toggleInList, listsWith } from './lists';
@@ -1818,7 +1818,16 @@ async function copyOrShow(text: string, good = 'Copied.'): Promise<void> {
  * stops implying the person is being slow and says what is probably wrong and
  * what to try — which is the difference between a bug and a dead end.
  */
-async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: string, light = false) {
+/**
+ * `good` is the message for the ordinary case. When the work knows something
+ * `good` cannot — how many of four pictures actually landed — it returns `note`
+ * and that wins. This used to be overwritten: attachExtras built an accurate
+ * report, and the caller's constant replaced it a line later, so a post that
+ * attached one picture out of four still said "Replied on chain."
+ */
+async function act(
+  fn: () => Promise<{ ok: boolean; why?: string; note?: string }>, good: string, light = false,
+) {
   flash = { text: 'Signing… your wallet should ask you to approve this.' }; render();
   const nudge = setTimeout(() => {
     flash = {
@@ -1829,7 +1838,7 @@ async function act(fn: () => Promise<{ ok: boolean; why?: string }>, good: strin
   }, 8000);
   const r = await fn();
   clearTimeout(nudge);
-  flash = r.ok ? { text: good } : { text: r.why ?? 'Failed', bad: true };
+  flash = r.ok ? { text: r.note ?? good } : { text: r.why ?? 'Failed', bad: true };
   // `light` skips the full reload.
   //
   // refresh() re-reads the whole timeline, the notifications, the notes, the
@@ -1975,8 +1984,9 @@ function wire() {
           return { ok: true, why: '' } as { ok: boolean; why?: string };
         }
         const said = await attachExtras(id);
-        flash = { text: base + (said.length ? ' — ' + said.join(', ') + '.' : '') };
-        return r;
+        // Handed back rather than assigned to `flash`, because act() sets the
+        // flash after this returns and used to clobber it.
+        return { ...r, note: base + (said.length ? ' — ' + said.join(', ') + '.' : '') };
       };
       if (s.mode === 'reply' && s.target) return act(withExtras('Replied on chain.'), 'Replied on chain.');
       if (s.mode === 'quote' && s.target) return act(() => post(ME!.mask, v, 0, s.target!.id), 'Quoted on chain.');
@@ -2627,18 +2637,37 @@ async function attachExtras(chirpId: number): Promise<string[]> {
     // transaction per picture. Each is reported separately: three that landed
     // and one that did not is a fact worth stating, not a blanket failure.
     const alts = [...document.querySelectorAll<HTMLInputElement>('.altin')].map((i) => i.value);
-    let done = 0;
+    const want = Math.min(mediaDraft.length, 4);
     let failed = '';
-    for (let i = 0; i < mediaDraft.length && i < 4; i++) {
+    // One transaction per picture, and a second attempt for any that does not
+    // land. Four rapid signed writes are not four independent events: the
+    // second can be refused for reasons that have gone away by the time it is
+    // asked again, and somebody who signed four times should not be told to
+    // start over because of the third. Sequential, never parallel — they share
+    // a signer and a nonce.
+    for (let i = 0; i < want; i++) {
       const alt = alts[i] ?? mediaDraft[i].alt;
-      const r = await attachShot(chirpId, ME.mask, i, mediaDraft[i].bytes, alt)
+      const once = () => attachShot(chirpId, ME!.mask, i, mediaDraft![i].bytes, alt)
         .catch(() => ({ ok: false, why: 'it did not attach' } as const));
-      if (r.ok) done++;
-      else failed ||= ('why' in r && r.why) || '';
+      let r = await once();
+      if (!r.ok) {
+        await new Promise((ok) => setTimeout(ok, 1200));
+        r = await once();
+      }
+      if (!r.ok) failed ||= ('why' in r && r.why) || '';
     }
-    said.push(done === mediaDraft.length
-      ? (done === 1 ? 'picture attached' : `${done} pictures attached`)
-      : `${done} of ${mediaDraft.length} pictures attached${failed ? ' — ' + failed : ''}`);
+    // What landed is a question for the chain, not for the receipts. Four
+    // transactions each came back ok and one picture arrived, so counting the
+    // ok answers is counting the wrong thing.
+    const on = await shotCount(chirpId).catch(() => null);
+    if (on === null) {
+      said.push(`${want === 1 ? 'picture' : want + ' pictures'} sent; could not re-read the post to confirm`);
+    } else if (on >= want) {
+      said.push(want === 1 ? 'picture attached' : `${want} pictures attached`);
+    } else {
+      said.push(`only ${on} of ${want} pictures are on chain${failed ? ' — ' + failed : ''}`);
+    }
+    const done = on ?? want;
     if (done) { MEDIA_BY_CHIRP.delete(chirpId); mediaWanted.delete(chirpId); forgetMedia(chirpId); }
   }
   if (pollDraft) {

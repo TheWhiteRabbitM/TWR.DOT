@@ -3008,6 +3008,26 @@ export async function shotsOf(chirpId: number, author: number): Promise<Shot[] |
   return one ? [one] : [];
 }
 
+/**
+ * How many pictures the chain actually holds for a chirp.
+ *
+ * A transaction that came back ok is a receipt, not a fact — four of them came
+ * back ok and one picture arrived. So after attaching, ask the album what is
+ * really there and report THAT. Counts filled slots rather than trusting
+ * `count`, which is the highest slot plus one and stays high after a detach.
+ *
+ * `null` means the chain was not asked or refused, which is not the same as
+ * zero and must never be shown as "nothing attached".
+ */
+export async function shotCount(chirpId: number): Promise<number | null> {
+  const { album } = await handles();
+  if (!album) return null;
+  const info = await q(album, 'infoOf', BigInt(chirpId));
+  if (info === undefined) return null;
+  const sizes = ((pick(info, 'sizes', 2) ?? []) as unknown[]).map((x) => Number(x));
+  return sizes.filter((n) => n > 0).length;
+}
+
 /** Attach one picture to a slot. Slots 0..3; re-attaching a slot replaces it. */
 export async function attachShot(
   chirpId: number, mask: number, slot: number, bytes: Uint8Array, alt: string,
