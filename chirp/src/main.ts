@@ -1628,6 +1628,30 @@ function overlay(): string {
 /** Where the reader was, per view. Re-rendering replaces the whole column, so
  *  without this a like halfway down the feed threw you back to the top — the
  *  optimistic update made that worse, not better, because it renders twice. */
+/**
+ * Full-screen photo viewer.
+ *
+ * Imperative and mounted on document.body on purpose: render() owns #app and
+ * rebuilds it wholesale, so anything that must survive a background redraw has
+ * to live outside it. One element, reused; Escape and any tap close it.
+ */
+function openLightbox(url: string, alt: string) {
+  let box = document.getElementById('lightbox');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'lightbox';
+    document.body.appendChild(box);
+    box.addEventListener('click', () => { box!.hidden = true; box!.innerHTML = ''; });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && box && !box.hidden) { box.hidden = true; box.innerHTML = ''; }
+    });
+  }
+  box.hidden = false;
+  box.innerHTML = `<img src="${url}" alt="${esc(alt)}">`
+    + (alt ? `<p class="lbalt">${esc(alt)}</p>` : '')
+    + '<button class="lbx" aria-label="Close">✕</button>';
+}
+
 const scrollAt = new Map<string, number>();
 
 function render() {
@@ -2062,9 +2086,25 @@ function wire() {
     const p = findPost(Number(b.dataset.like));
     // Move the heart now and reconcile after: a like that waits for a block
     // feels broken even when it is working.
-    if (p) { p.liked = !p.liked; p.likes += p.liked ? 1 : -1; render(); }
+    if (p) {
+      p.liked = !p.liked;
+      p.likes += p.liked ? 1 : -1;
+      render();
+      // The render built a fresh button; the burst goes on that one, once.
+      // Keyed to this tap rather than to the `on` class, or every liked heart
+      // would replay it on every redraw.
+      if (p.liked) app.querySelector(`[data-like="${p.id}"]`)?.classList.add('pop');
+    }
     act(() => toggleLike(Number(b.dataset.like)), p?.liked ? 'Liked.' : 'Like removed.', true);
   }));
+  // A picture in the feed opens full screen, the way X does it. The viewer
+  // lives on document.body, OUTSIDE #app, so a background render cannot tear
+  // it down while somebody is looking at a photograph.
+  app.querySelectorAll<HTMLImageElement>('.album img').forEach((img) => img.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openLightbox(img.src, img.alt);
+  }));
+
   app.querySelectorAll<HTMLElement>('[data-repost]').forEach((b) => b.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!ME?.mask) { flash = { text: 'Claim a mask first.', bad: true }; return render(); }
@@ -2972,16 +3012,40 @@ function showFresh(scroll = true) {
   if (scroll) scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+/**
+ * What the feed looks like, cheaply. The background poll used to redraw the
+ * whole app every 20 seconds whether anything had changed or not — off the home
+ * view unconditionally — which is exactly the "sometimes the page flickers
+ * while I am reading" bug. Rebuilding identical HTML is not free: images are
+ * re-created, the browser repaints, and anything transient dies. So the poll
+ * now proves something changed before it is allowed to touch the DOM.
+ */
+const feedPrint = (posts: Post[]) =>
+  posts.map((p) => `${p.id}:${p.likes}:${p.replies}:${p.reposts}:${p.edited}:${p.deleted ? 1 : 0}`).join('|');
+
 async function poll() {
   if (document.visibilityState !== 'visible') return;
   if (busy || sheet || settingsOpen || noteSheet) return;
+  // An open menu would be closed by a redraw, and a focused field would lose
+  // its caret. Neither is ours to take: whatever the poll learned stays for
+  // the next pass, twenty seconds is not stale.
+  if (menuFor || confirmDelete || repostFor || listFor) return;
+  const typing = document.activeElement instanceof HTMLInputElement
+    || document.activeElement instanceof HTMLTextAreaElement;
+  if (typing) return;
+  const before = feedPrint(ALL) + '#' + FRESH.length;
   const fresh = await loadAll(page).catch(() => null);
   if (!fresh) return;                       // a quiet network is not news
   // Replies to you are worth knowing about wherever you are in the app, and they
   // are a slice of the feed we just read — not a second read of it.
   if (ME?.mask) { NOTIF = await notifications(ME.mask, fresh, ME).catch(() => NOTIF); await announce(); }
-  if (view.k !== 'home') { ALL = fresh; return render(); }
-  if (busy || sheet || view.k !== 'home') return;  // it may have changed while we waited
+  if (busy || sheet || menuFor) return;     // it may have changed while we waited
+  if (view.k !== 'home') {
+    ALL = fresh;
+    // Redraw a thread or a profile only when the data under it moved.
+    if (feedPrint(fresh) + '#' + FRESH.length !== before) render();
+    return;
+  }
   const known = new Set(ALL.map((p) => p.id));
   const added = fresh.filter((p) => !known.has(p.id) && !p.replyTo);
   // Counts, likes and edits on chirps already shown can land straight away —
@@ -2989,7 +3053,7 @@ async function poll() {
   const addedIds = new Set(added.map((p) => p.id));
   ALL = fresh.filter((p) => !addedIds.has(p.id));
   FRESH = added;
-  render();
+  if (feedPrint(ALL) + '#' + FRESH.length !== before) render();
 }
 
 /** Push what arrived for you while you were elsewhere — once per chirp, and as
