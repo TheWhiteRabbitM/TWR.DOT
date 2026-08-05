@@ -1183,6 +1183,15 @@
       "deploy~"
     ]
   },
+  "unstake-radar": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "staking",
+      "sell"
+    ]
+  },
   "uuuuuuuuu": {
     "category": "other",
     "source": "unclassified",

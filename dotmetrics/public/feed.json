@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1785932868,
-  "count": 178,
+  "generatedAt": 1785944408,
+  "count": 180,
   "apps": [
+    {
+      "label": "polkanote",
+      "domain": "polkanote.dot",
+      "displayName": "polkanote",
+      "description": "Collaborative documents with verifiable save points.",
+      "tier": 0,
+      "firstSeenAt": 1785939516,
+      "url": "https://polkanote.dev-dot.li"
+    },
+    {
+      "label": "ethonchain",
+      "domain": "ethonchain.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785933168,
+      "url": "https://ethonchain.dev-dot.li"
+    },
     {
       "label": "unstake-radar",
       "domain": "unstake-radar.dot",
@@ -23,9 +41,9 @@
     {
       "label": "substrade-hub",
       "domain": "substrade-hub.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 2,
+      "displayName": "SubsTrade Hub",
+      "description": "Fully on-chain order-book DEX on Asset Hub.",
+      "tier": 0,
       "firstSeenAt": 1785919896,
       "url": "https://substrade-hub.dev-dot.li"
     },

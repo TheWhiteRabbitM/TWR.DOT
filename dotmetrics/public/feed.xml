@@ -4,7 +4,21 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 05 Aug 2026 12:27:48 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 05 Aug 2026 15:40:08 GMT</lastBuildDate>
+    <item>
+      <title>polkanote</title>
+      <link>https://polkanote.dev-dot.li</link>
+      <description>Collaborative documents with verifiable save points.</description>
+      <guid isPermaLink="false">polkanote</guid>
+      <pubDate>Wed, 05 Aug 2026 14:18:36 GMT</pubDate>
+    </item>
+    <item>
+      <title>ethonchain</title>
+      <link>https://ethonchain.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">ethonchain</guid>
+      <pubDate>Wed, 05 Aug 2026 12:32:48 GMT</pubDate>
+    </item>
     <item>
       <title>Unstake Radar</title>
       <link>https://unstake-radar.dev-dot.li</link>
@@ -20,9 +34,9 @@
       <pubDate>Wed, 05 Aug 2026 09:16:48 GMT</pubDate>
     </item>
     <item>
-      <title>substrade-hub</title>
+      <title>SubsTrade Hub</title>
       <link>https://substrade-hub.dev-dot.li</link>
-      <description></description>
+      <description>Fully on-chain order-book DEX on Asset Hub.</description>
       <guid isPermaLink="false">substrade-hub</guid>
       <pubDate>Wed, 05 Aug 2026 08:51:36 GMT</pubDate>
     </item>
@@ -340,20 +354,6 @@
       <description></description>
       <guid isPermaLink="false">neo-app-demo</guid>
       <pubDate>Tue, 04 Aug 2026 13:59:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>archelabs</title>
-      <link>https://archelabs.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">archelabs</guid>
-      <pubDate>Tue, 04 Aug 2026 13:47:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>countersign</title>
-      <link>https://countersign.dev-dot.li</link>
-      <description>Record a document sign-off on chain. The document never leaves your browser.</description>
-      <guid isPermaLink="false">countersign</guid>
-      <pubDate>Tue, 04 Aug 2026 11:16:00 GMT</pubDate>
     </item>
   </channel>
 </rss>

@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11846309,
-  "updatedAt": "2026-08-05T12:21:49.078Z",
+  "lastBlock": 11851744,
+  "updatedAt": "2026-08-05T15:34:14.917Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "66b88091c6f8a29d3b99d2e6a5c57b88786f5a94b12107e8f50b46f9906ff984",
-    "cid": "bafybeibwdbl5sjphlr4bme2lv3nzpwczose5ycq2fmwir4lji6rrb4t5aa",
-    "uploadedAt": "2026-08-05T12:29:05.566Z"
+    "digest": "b0d06baf631cdbcc04244b77707abf74d7d9c73d80572b923f3f7adc3d9d749c",
+    "cid": "bafybeihxcvllosgo4ml5u4jgvhwtjo6d3fhyluoo4umr5dj3ctgodf4pjq",
+    "uploadedAt": "2026-08-05T15:42:22.711Z"
   },
   "sitePublish": {
-    "treeHash": "cf6917a737d8cfc97a32f06c4fd2f86d6535fe2c862f4d86622f96d29c39fddc",
-    "publishedAt": "2026-08-05T12:31:23.992Z"
+    "treeHash": "2533b10efc416c467898fd0499081a4f796c2e206ecd440836156bd702a3c1eb",
+    "publishedAt": "2026-08-05T15:44:24.961Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-05T12:27:47.000Z",
+    "updatedAt": "2026-08-05T15:40:08.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -147,13 +147,16 @@
       "domainservice": "alive",
       "hello-world-pricey-app": "alive",
       "waldmonster": "alive",
-      "unstake-radar": "alive"
+      "unstake-radar": "alive",
+      "ethonchain": "alive",
+      "polkanote": "alive",
+      "substrade-hub": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-05T12:27:48.000Z",
+    "updatedAt": "2026-08-05T15:40:08.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -365,9 +368,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibkg6fz6pbw4gebn5ycqmgxg3jxcdabbdow7wiysfdo2st6p4mrty",
-        "updateCount": 62,
-        "changedAt": 1785932868,
+        "contenthash": "bafybeievbtjaivrser3dyt4htik7e2su7q7ohizbuibdkdd3zfsyvzfs7i",
+        "updateCount": 63,
+        "changedAt": 1785944408,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -399,9 +402,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeigfdtfgdjqrgxpoknyjxiswmmfhr7yukhygfhr5dizqqldwq7zuou",
-        "updateCount": 44,
-        "changedAt": 1785932868,
+        "contenthash": "bafybeigtcjhyy6xb3uwbunuyo35umsaevtaggwvukuu7nrvjk7ol2hw6qq",
+        "updateCount": 45,
+        "changedAt": 1785944408,
         "live": "alive"
       },
       "doyoulike": {
@@ -445,6 +448,11 @@
       },
       "eternalize-notary": {
         "contenthash": "bafybeibh62tcwdrhxwfv5ujk2zv4stqymn643kswjijt7sb64vnwtyx7sm",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "ethonchain": {
+        "contenthash": "bafybeigax47woqpar2iwlsocqh5s6jy7yf6mcnuassqabvwaihw7akpqye",
         "updateCount": 0,
         "live": "alive"
       },
@@ -748,9 +756,9 @@
         "live": "unknown"
       },
       "open-docs": {
-        "contenthash": "bafybeib32olulchkypjxfd6peh4f73s3zw37lp3vrvvss54yynm3kxarb4",
-        "updateCount": 7,
-        "changedAt": 1785932868,
+        "contenthash": "bafybeiemezwfkk4x3y5ipittmcf5lozc7t2vp2vi3ft45z2gnojty2p7q4",
+        "updateCount": 8,
+        "changedAt": 1785944408,
         "live": "alive"
       },
       "openpetition": {
@@ -826,6 +834,11 @@
       },
       "polkadot-builders-hackademy": {
         "contenthash": "bafybeibndit5pcpro6mhfolzny4egpemb7pia75xrkl2kmyx7g7jp6725u",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "polkanote": {
+        "contenthash": "bafybeihxqu3e34jnj4xpxmuxiiwvvy2hqrsooe4pc4hdnmhqzwd45iugky",
         "updateCount": 0,
         "live": "alive"
       },
@@ -937,9 +950,9 @@
         "live": "alive"
       },
       "substrade-hub": {
-        "contenthash": "",
+        "contenthash": "bafybeih7diftelhux6ljzdt3nkvwstp26zg4mg7kejlhyrvptg3vagldea",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "sybildrop": {
         "contenthash": "bafybeih5dsc22klk3po7ykhhkbzqxannf3lrazjo4pfhs5jg3bwgq7l4xm",
@@ -1010,8 +1023,9 @@
         "live": "unknown"
       },
       "vault-control": {
-        "contenthash": "bafybeibmnumlab4sspz4qck76aoogohzgoep7jq5lmahzarm3u6l63jh2q",
-        "updateCount": 0,
+        "contenthash": "bafybeibfuvtofqubrjiqnu4glp2xbmjqtv3sy7xrsdi4vgcovomp4ojcum",
+        "updateCount": 1,
+        "changedAt": 1785944408,
         "live": "alive"
       },
       "vvvvvvvvv": {
