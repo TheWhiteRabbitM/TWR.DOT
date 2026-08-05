@@ -92,22 +92,44 @@ async function imageVsFetch(url: string): Promise<Finding[]> {
   ];
 }
 
-/** What navigateTo actually returns, and how long it takes to say it. The claim
- *  was that it neither opens nor answers; this records which. */
+/**
+ * Does navigateTo open anything?
+ *
+ * This used to report YES whenever the call settled with ok, which is the exact
+ * mistake issue #14 is about: `ok` means the request was accepted, not that a
+ * browser appeared, and a probe that grades on the return value launders the bug
+ * into a clean bill of health. It said YES on the very host where nothing opens.
+ *
+ * So the answer is cross-checked against something the host cannot fake: opening
+ * a browser puts this page in the background. If we never lose visibility, no
+ * browser was shown, whatever the call said.
+ */
 async function navigate(url: string): Promise<Finding> {
   const h = await host();
   if (!h) return { what: 'navigateTo', result: 'unknown', detail: 'no host' };
   const t = ms();
+  let hidden = false;
+  const watch = () => { if (document.visibilityState === 'hidden') hidden = true; };
+  document.addEventListener('visibilitychange', watch);
   const raced = await Promise.race([
     h.navigateTo(url).then((r) => ({ settled: true, r })).catch((e) => ({ settled: true, r: `threw: ${(e as Error)?.message}` })),
     new Promise<{ settled: false }>((res) => setTimeout(() => res({ settled: false }), 6000)),
   ]);
+  const said = ms() - t;
+  // Give the host a moment after it answers: the answer and the window are not
+  // required to arrive together.
+  if (raced.settled) await new Promise((r) => setTimeout(r, 1500));
+  document.removeEventListener('visibilitychange', watch);
+  if (!raced.settled) {
+    return { what: `navigateTo(${url})`, result: 'no', detail: 'did not settle within 6s: neither opened nor answered' };
+  }
+  const answer = JSON.stringify((raced as { r: unknown }).r);
   return {
     what: `navigateTo(${url})`,
-    result: raced.settled ? 'yes' : 'no',
-    detail: raced.settled
-      ? `settled in ${ms() - t}ms: ${JSON.stringify((raced as { r: unknown }).r)}`
-      : 'did not settle within 6s — neither opened nor answered',
+    result: hidden ? 'yes' : 'no',
+    detail: hidden
+      ? `answered in ${said}ms with ${answer}, and this page went to the background, so something opened`
+      : `answered in ${said}ms with ${answer}, but 1.5s later this page had never been backgrounded: it said yes and opened nothing (issue #14)`,
   };
 }
 
