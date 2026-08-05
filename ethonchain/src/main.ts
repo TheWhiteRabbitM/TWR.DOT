@@ -19,7 +19,7 @@ import './style.css';
 
 type Page = {
   slug: string; label: string; title: string; description: string;
-  source: string; words: number; html: string;
+  source: string; words: number; toc: { id: string; text: string }[]; html: string;
 };
 const PAGES = CONTENT.pages as Page[];
 
@@ -150,12 +150,22 @@ function homeView(): string {
 }
 
 function pageView(p: Page): string {
+  const mins = Math.max(1, Math.round(p.words / 220));
   return `
   <article class="doc">
     <p class="from">From <a href="${p.source}" target="_blank" rel="noopener noreferrer">${p.source}</a>,
     unedited. Interactive components in the original are not reproduced here.</p>
     <h1>${escapeHtml(p.title)}</h1>
     ${p.description ? `<p class="lede">${escapeHtml(p.description)}</p>` : ''}
+    <p class="meta">${p.words.toLocaleString('en')} words &middot; about ${mins} min</p>
+    ${p.toc.length > 1 ? `
+      <!-- Their headings carry their own anchors, so this links where their own
+           page links. Built from the document rather than written by hand, which
+           is why it cannot drift out of step with the text under it. -->
+      <nav class="toc" aria-label="On this page">
+        <p class="toch">On this page</p>
+        <ol>${p.toc.map((t) => `<li><a href="#/${p.slug}#${t.id}">${escapeHtml(t.text)}</a></li>`).join('')}</ol>
+      </nav>` : ''}
     ${p.html}
     <p class="from bottom">Text &copy; ethereum.org contributors, MIT licensed. Read it on
     <a href="${p.source}" target="_blank" rel="noopener noreferrer">ethereum.org</a>, which is the
@@ -170,16 +180,23 @@ function notFound(): string {
 
 /* ------------------------------------------------------------------ shell */
 
-function route(): string {
-  const h = location.hash.replace(/^#\/?/, '');
-  if (!h) return homeView();
-  if (h === 'provenance') return provenanceView();
-  const p = PAGES.find((x) => x.slug === h);
+/** `#/slug` and `#/slug#section`. The second hash is a position inside a page,
+ *  not a route, so it is split off before anything is matched. */
+function parseHash(): { path: string; anchor: string | null } {
+  const raw = location.hash.replace(/^#\/?/, '');
+  const at = raw.indexOf('#');
+  return at < 0 ? { path: raw, anchor: null } : { path: raw.slice(0, at), anchor: raw.slice(at + 1) };
+}
+
+function route(path: string): string {
+  if (!path) return homeView();
+  if (path === 'provenance') return provenanceView();
+  const p = PAGES.find((x) => x.slug === path);
   return p ? pageView(p) : notFound();
 }
 
 function render() {
-  const here = location.hash.replace(/^#\/?/, '');
+  const { path: here, anchor } = parseHash();
   const app = document.getElementById('app');
   if (!app) return;
 
@@ -200,7 +217,7 @@ function render() {
     </nav>
   </header>
 
-  <main>${route()}</main>
+  <main>${route(here)}</main>
 
   <footer>
     <p>Content from <a href="https://ethereum.org" target="_blank" rel="noopener noreferrer">ethereum.org</a>,
@@ -209,9 +226,12 @@ function render() {
     <p>Served from a content hash on the Polkadot products devnet. <a href="#/provenance">See the numbers</a>.</p>
   </footer>`;
 
-  // A hash route changes nothing about scroll position on its own, and landing
-  // halfway down a long article you did not choose is disorienting.
-  window.scrollTo(0, 0);
+  // A hash route changes nothing about scroll position on its own. Landing
+  // halfway down an article you did not choose is disorienting; NOT landing at
+  // the section you did choose is worse, so the anchor wins when there is one.
+  const target = anchor ? document.getElementById(anchor) : null;
+  if (target) target.scrollIntoView({ block: 'start' });
+  else window.scrollTo(0, 0);
 }
 
 window.addEventListener('hashchange', render);

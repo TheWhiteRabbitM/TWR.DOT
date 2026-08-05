@@ -262,6 +262,29 @@ li::marker { color: var(--body-medium); }
   background: var(--background-highlight);
 }
 
+.meta { font-size: 13px; color: var(--body-medium); margin: -.4em 0 1.6em; }
+
+/* Built from the document's own headings, so it cannot drift from the text. */
+.toc {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--background-highlight);
+  padding: 16px 20px;
+  margin: 0 0 2.2em;
+}
+.toch {
+  margin: 0 0 .5em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--body-medium);
+}
+.toc ol { margin: 0; padding-left: 1.2em; }
+.toc li { margin: .28em 0; }
+.toc a { color: var(--body); }
+.toc a:hover { color: var(--primary); }
+
 .cards { display: grid; gap: 12px; margin: 1.8em 0; }
 @media (min-width: 40rem) { .cards { grid-template-columns: 1fr 1fr; } }
 .card {

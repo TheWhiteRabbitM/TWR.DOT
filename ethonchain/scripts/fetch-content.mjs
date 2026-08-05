@@ -128,6 +128,7 @@ function inline(s, pictures) {
 /** MDX to HTML, for the subset these pages actually use. */
 function render(md, pictures) {
   const dropped = [];
+  const toc = [];
   let body = md;
 
   // Frontmatter first: it holds the title and description.
@@ -161,8 +162,15 @@ function render(md, pictures) {
     if (h) {
       closeList();
       const level = h[1].length;
-      const text = h[2].replace(/\s*\{#[^}]*\}\s*$/, '');   // drop {#anchor}
-      out.push(`<h${level}>${inline(esc(text), pictures)}</h${level}>`);
+      // The `{#anchor}` suffix is not noise to be stripped: it is the id their
+      // own page uses for deep links, chosen by whoever wrote the section. Keep
+      // it, so a link into the middle of an article still lands where it says.
+      // Fall back to a slug of the text where a heading has none.
+      const anchor = /\{#([^}]+)\}/.exec(h[2])?.[1];
+      const text = h[2].replace(/\s*\{#[^}]*\}\s*$/, '');
+      const id = anchor ?? text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      if (level === 2 && id) toc.push({ id, text });
+      out.push(`<h${level} id="${id}">${inline(esc(text), pictures)}</h${level}>`);
       continue;
     }
 
@@ -184,7 +192,7 @@ function render(md, pictures) {
   }
   closeList();
 
-  return { meta, html: out.join('\n'), dropped };
+  return { meta, html: out.join('\n'), dropped, toc };
 }
 
 mkdirSync(new URL('../src', import.meta.url), { recursive: true });
@@ -215,7 +223,7 @@ for (const [slug, label] of PAGES) {
     shippedBytes += out.length;
   }
 
-  const { meta, html, dropped } = render(md, pictures);
+  const { meta, html, dropped, toc } = render(md, pictures);
   const counts = dropped.reduce((a, d) => ({ ...a, [d]: (a[d] ?? 0) + 1 }), {});
   pages.push({
     slug,
@@ -224,6 +232,7 @@ for (const [slug, label] of PAGES) {
     description: meta.description ?? '',
     source: `https://ethereum.org/en/${slug}/`,
     words: html.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length,
+    toc,
     html,
   });
   console.log(`${(md.length / 1000).toFixed(1)} kB markdown, ${html.length} chars html`
