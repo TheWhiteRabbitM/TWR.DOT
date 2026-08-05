@@ -866,6 +866,42 @@ async function askAllowances(host: typeof import('@parity/product-sdk-host')): P
 export let bulletinAllowance = false;
 export let autoSigning = false;
 
+/**
+ * Follow the host's light/dark setting.
+ *
+ * chirp was dark-only, which is a decision it never actually made — the host
+ * publishes the person's choice and the app simply was not listening. Outside a
+ * container there is no host to ask, so the browser's own preference is used
+ * instead, which is the same question answered by whoever can answer it.
+ *
+ * Returns an unsubscribe, and calls back immediately with the current value so
+ * the caller never has to guess a starting state.
+ */
+export async function onTheme(cb: (dark: boolean) => void): Promise<() => void> {
+  // The browser's answer first, so there is never a flash of the wrong theme
+  // while the host is still being asked.
+  try {
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    cb(!mq.matches);
+    const onChange = () => cb(!mq.matches);
+    mq.addEventListener?.('change', onChange);
+    var stopMq = () => mq.removeEventListener?.('change', onChange);
+  } catch { /* no matchMedia; the host or the default will do */ }
+
+  try {
+    const host = await import('@parity/product-sdk-host');
+    const p = await host.getThemeProvider?.().catch(() => null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sub = (p as any)?.subscribeTheme?.((t: any) => {
+      const variant = typeof t === 'string' ? t : t?.variant;
+      if (variant === 'Light' || variant === 'Dark') cb(variant === 'Dark');
+    });
+    return () => { try { sub?.unsubscribe?.(); } catch { /* gone */ } stopMq?.(); };
+  } catch {
+    return () => stopMq?.();
+  }
+}
+
 /** Ask the host for the Notifications permission. False if refused, or if the
  *  app is running outside the host (a browser tab has no such surface). */
 export async function askNotifications(): Promise<boolean> {

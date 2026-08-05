@@ -14,11 +14,11 @@
  */
 import './style.css';
 import { keccak_256 } from '@noble/hashes/sha3';
-import { keep, hydrate, durable } from './keep';
+import { keep, recall, hydrate, durable } from './keep';
 import { runProbe, probeReport, type Finding } from './probe';
 import {
   warmUp, me, loadAll, thread, people, following, profile, notifications,
-  post, postThread, edit, remove, toggleLike, toggleRepost, toggleFollow,
+  post, postThread, edit, remove, toggleLike, toggleRepost, toggleFollow, onTheme,
   claimMask, saveProfile, suggestedName, forgetWho, connections, setHandle, actingAs, canSign,
   pinnedOf, pinChirp, unpinChirp,
   askNotifications, notify, openUrl, gifUrl, gifKind, gifBlob, cachedFeed, TOTAL,
@@ -250,6 +250,9 @@ let view: View = { k: 'home' };
 let tab: 'foryou' | 'latest' | 'following' = 'foryou';
 /** Which slice of a profile is showing. X splits a profile the same way. */
 let ptab: 'chirps' | 'replies' | 'likes' = 'chirps';
+/** How replies under a chirp are ordered. X defaults to relevance because on a
+ *  busy post the newest reply is rarely the one worth reading first. */
+let rtab: 'top' | 'latest' = 'top';
 let sheet: null | { mode: 'new' | 'reply' | 'quote' | 'edit'; target?: Post } = null;
 let settingsOpen = false;
 let menuFor: number | null = null;
@@ -414,6 +417,60 @@ function localSet(key: string) {
 }
 const marks = localSet('chirp.marks');
 const muted = localSet('chirp.muted');
+
+/**
+ * Muted WORDS, as distinct from muted people.
+ *
+ * X separates the two and so should this: muting a person is a judgement about
+ * them, muting a word is a judgement about a subject you are tired of. Kept on
+ * the device for the same reason lists are — it is nobody else's business what
+ * you would rather not read, and publishing it would broadcast an opinion you
+ * never offered to share.
+ *
+ * Matched case-insensitively on whole words, so muting "dot" does not also hide
+ * "polkadot". A substring match here would be the difference between a useful
+ * filter and an unusable one.
+ */
+const MUTEWORDS = 'chirp.mutewords';
+const mutewords = {
+  list(): string[] {
+    try { return (JSON.parse(recall(MUTEWORDS) ?? '[]') as unknown[]).map(String).filter(Boolean).slice(0, 60); }
+    catch { return []; }
+  },
+  add(w: string) {
+    const v = w.trim().toLowerCase();
+    if (!v) return;
+    const all = mutewords.list();
+    if (!all.includes(v)) keep(MUTEWORDS, JSON.stringify([...all, v]));
+  },
+  remove(w: string) {
+    keep(MUTEWORDS, JSON.stringify(mutewords.list().filter((x) => x !== w.toLowerCase())));
+  },
+  /** Does this text carry a muted word? Whole words only. */
+  hits(text: string): boolean {
+    const all = mutewords.list();
+    if (!all.length) return false;
+    const low = ' ' + text.toLowerCase().replace(/[^\p{L}\p{N}#@]+/gu, ' ') + ' ';
+    return all.some((w) => low.includes(' ' + w + ' '));
+  },
+};
+
+/**
+ * Light or dark, and who decided.
+ *
+ * The host publishes the reader's choice and chirp was not listening — dark was
+ * never a decision this app made, it was one it failed to notice. `chirp.theme`
+ * holds an explicit override; while it is absent the host (or, outside a
+ * container, the browser) is followed.
+ */
+const THEMEKEY = 'chirp.theme';
+function applyTheme(dark: boolean) {
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+}
+function themeOverride(): 'dark' | 'light' | null {
+  const v = recall(THEMEKEY);
+  return v === 'dark' || v === 'light' ? v : null;
+}
 
 /** The newest id already pushed, so the same mention is not announced twice. */
 const PUSHED = 'chirp.pushed';
@@ -700,7 +757,10 @@ function homeView(): string {
   // public chain nothing can stop them reading you; what a block does is
   // published on chain so every client applies it, where a mute is only ever
   // this device's business.
-  const top = ALL.filter((p) => !p.replyTo && !muted.has(p.mask) && !BLOCKED.has(p.mask));
+  // Your own words are never muted from you — a filter that hides what you
+  // just wrote reads as the post having failed.
+  const top = ALL.filter((p) => !p.replyTo && !muted.has(p.mask) && !BLOCKED.has(p.mask)
+    && (p.mask === ME?.mask || !mutewords.hits(p.body)));
   // Following stays strictly chronological — that is the point of it, and X
   // breaking that promise is the complaint people actually have. For you is
   // ranked, and says so.
@@ -991,8 +1051,26 @@ function threadView(): string {
   // "Replying to @yourself", and a rule down the avatar gutter joining the
   // posts. Written as separate cards it read as five strangers answering each
   // other — which is not what happened, and looked it.
+  // Replies in the order the reader asked for.
+  //
+  // X offers relevance or recency and defaults to relevance, because on a busy
+  // post the newest reply is rarely the one worth reading first. chirp had the
+  // ranker already — it ranks the timeline — and was using chain order for
+  // replies, which is neither of those things, just an accident of ids.
+  //
+  // A self-thread is never reordered: those are one person's sentences in the
+  // order they wrote them, and sorting them by likes would shuffle a paragraph.
+  const sortReplies = (rs: Post[], author: number): Post[] => {
+    if (rs.length < 2) return rs;
+    if (rs.length === 1 || rs.every((r) => r.mask === author)) return rs;
+    if (rtab === 'latest') return [...rs].sort((a, b) => b.time - a.time);
+    return [...rs].sort((a, b) =>
+      (b.likes * 2 + b.replies * 3 + b.reposts * 2) - (a.likes * 2 + a.replies * 3 + a.reposts * 2)
+      || b.time - a.time);
+  };
+
   const branch = (id: number, depth: number, author: number): string =>
-    (byParent.get(id) ?? []).map((r, _i, arr) => {
+    sortReplies(byParent.get(id) ?? [], author).map((r, _i, arr) => {
       const cont = arr.length === 1 && r.mask === author;
       return `<div class="branch${cont ? ' cont' : ''}" style="--d:${cont ? depth : Math.min(depth, 4)}">`
         + card(r, false, cont, runsOn(r))
@@ -1017,7 +1095,11 @@ function threadView(): string {
     + (TH.post ? card(TH.post, true, false, runsOn(TH.post)) : '')
     + notesSection()
     + (quotes.length ? `<div class="sechead">Quotes</div>` + quotes.map((p) => card(p)).join('') : '')
-    + (TH.post && runsOn(TH.post) ? '' : `<div class="sechead">Replies</div>`)
+    + (TH.post && runsOn(TH.post) ? '' : `<div class="sechead">Replies
+        ${(byParent.get(id)?.length ?? 0) > 1 ? `<span class="row seg rsort">
+          <button class="ghost small${rtab === 'top' ? ' on' : ''}" data-rsort="top">Most relevant</button>
+          <button class="ghost small${rtab === 'latest' ? ' on' : ''}" data-rsort="latest">Latest</button>
+        </span>` : ''}</div>`)
     + (byParent.get(id)?.length
       ? branch(id, 0, TH.post?.mask ?? last?.mask ?? -1)
       : '<div class="note">No replies yet. Be the first.</div>');
@@ -1280,6 +1362,28 @@ function overlay(): string {
       <label>Diagnostics</label>
       <p class="hint">What this container actually allows — measured on this device. Worth running if
       something here fails silently: it produces a report you can paste into a bug report.</p>
+      <label>Appearance</label>
+      <div class="row seg">
+        ${([['', 'Follow the app'], ['dark', 'Dark'], ['light', 'Light']] as const)
+          .map(([v, l]) => `<button class="ghost small${(themeOverride() ?? '') === v ? ' on' : ''}" data-theme="${v}">${l}</button>`).join('')}
+      </div>
+      <p class="hint">“Follow the app” takes the Polkadot app's own light/dark setting, and changes with
+      it. In a browser it follows the system instead.</p>
+
+      <label>Muted words</label>
+      <div class="wordrow">
+        ${mutewords.list().map((w) => `<button class="wchip" data-unmute="${esc(w)}">${esc(w)} ✕</button>`).join('')
+          || '<span class="hint">Nothing muted.</span>'}
+      </div>
+      <div class="row">
+        <input id="newmute" maxlength="30" placeholder="a word you would rather not read" autocomplete="off">
+        <button class="ghost small" id="addmute">Mute it</button>
+      </div>
+      <p class="hint">Whole words, so muting “dot” does not also hide “polkadot”. Kept on this device —
+      what you would rather not read is nobody else's business, and putting it on chain would publish
+      an opinion you never offered to share. Muting a WORD is different from muting a person: one is
+      about a subject, the other about somebody.</p>
+
       <button class="ghost wide" id="golists">Your lists</button>
       <button class="ghost wide" id="goprobe">Test what this app allows</button>
     </div></div>`;
@@ -2629,7 +2733,35 @@ function bindExtras() {
   app.querySelectorAll<HTMLElement>('[data-list]').forEach((b) => b.addEventListener('click', () => {
     go({ k: 'list', name: b.dataset.list ?? '' });
   }));
+  app.querySelectorAll<HTMLElement>('[data-rsort]').forEach((b) => b.addEventListener('click', () => {
+    rtab = b.dataset.rsort as 'top' | 'latest'; render();
+  }));
   document.getElementById('golists')?.addEventListener('click', () => { settingsOpen = false; go({ k: 'lists' }); });
+
+  /* --------------------------------------------------- appearance and words */
+  app.querySelectorAll<HTMLElement>('[data-theme]').forEach((b) => b.addEventListener('click', () => {
+    const v = b.dataset.theme ?? '';
+    keep(THEMEKEY, v);                       // '' means "follow the app again"
+    if (v) applyTheme(v === 'dark');
+    else void onTheme((dark) => { if (!themeOverride()) applyTheme(dark); }).catch(() => undefined);
+    render();
+  }));
+  const addMute = () => {
+    const el = document.getElementById('newmute') as HTMLInputElement | null;
+    const v = el?.value ?? '';
+    if (!v.trim()) return;
+    mutewords.add(v);
+    flash = { text: `“${v.trim().toLowerCase()}” muted on this device.` };
+    render();
+  };
+  document.getElementById('addmute')?.addEventListener('click', addMute);
+  document.getElementById('newmute')?.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') addMute();
+  });
+  app.querySelectorAll<HTMLElement>('[data-unmute]').forEach((b) => b.addEventListener('click', () => {
+    mutewords.remove(b.dataset.unmute ?? '');
+    render();
+  }));
 }
 
 /* ------------------------------------------------------------ pull to refresh */
@@ -2760,6 +2892,11 @@ addEventListener('hashchange', () => { view = viewOf(location.hash); refresh(); 
 /* --------------------------------------------------------------------- boot */
 view = viewOf(location.hash);
 warmUp();
+// Theme before the first paint, so nobody sees the wrong one and then a flip.
+// An explicit choice wins; without one the host — or the browser, outside a
+// container — is followed, and followed live if the reader changes it there.
+applyTheme(themeOverride() !== 'light');
+void onTheme((dark) => { if (!themeOverride()) applyTheme(dark); }).catch(() => undefined);
 // Pull anything the HOST is holding into this origin before the first render
 // reads it. A new bundle is a new content hash and, in most containers, a new
 // origin with empty storage — so without this every publish silently reset

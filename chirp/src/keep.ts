@@ -54,6 +54,8 @@ const KEYS = [
   'chirp.nolegacy',   // this host cannot sign with a wallet account
   'chirp.draft',      // an unsent chirp
   'chirp.lists',      // curated timelines: name -> masks
+  'chirp.theme',      // light/dark, when the reader overrode the host
+  'chirp.mutewords',  // words that keep a chirp out of the timeline
 ] as const;
 
 const local = {
