@@ -358,12 +358,9 @@
   },
   "dotmetrics": {
     "category": "explorers",
-    "source": "derived:manifest",
-    "confidence": "high",
-    "why": [
-      "analytics",
-      "metrics~"
-    ]
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "doyoulike": {
     "category": "social",
@@ -614,12 +611,10 @@
     ]
   },
   "italiarovente": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": [
-      "map~"
-    ]
+    "category": "publishing",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "jjjjjjjjj": {
     "category": "other",
@@ -859,11 +854,9 @@
   },
   "openpetition": {
     "category": "social",
-    "source": "derived:manifest",
-    "confidence": "medium",
-    "why": [
-      "petition~"
-    ]
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "pactprotocol": {
     "category": "finance",
@@ -1136,14 +1129,10 @@
     "why": []
   },
   "thebutton": {
-    "category": "identity",
-    "source": "derived:manifest",
-    "confidence": "high",
-    "why": [
-      "personhood",
-      "human",
-      "proof"
-    ]
+    "category": "curiosities",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "thepipersguild": {
     "category": "other",
@@ -1261,13 +1250,10 @@
     "why": []
   },
   "wudcommunity": {
-    "category": "social",
-    "source": "derived:manifest",
-    "confidence": "high",
-    "why": [
-      "chat~",
-      "community"
-    ]
+    "category": "finance",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "wwwwwwwww": {
     "category": "other",

@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785960231,
-  "count": 180,
+  "generatedAt": 1785966057,
+  "count": 181,
   "apps": [
+    {
+      "label": "navalstrike01",
+      "domain": "navalstrike01.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785960000,
+      "url": "https://navalstrike01.dev-dot.li"
+    },
     {
       "label": "polkanote",
       "domain": "polkanote.dot",
@@ -14,9 +23,9 @@
     {
       "label": "ethonchain",
       "domain": "ethonchain.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "eth on chain",
+      "description": "Six real pages from ethereum.org served from a content hash, with no server behind them. Unofficial demonstration; provenance measured in your browser.",
+      "tier": 0,
       "firstSeenAt": 1785933168,
       "url": "https://ethonchain.dev-dot.li"
     },

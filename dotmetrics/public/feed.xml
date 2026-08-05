@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 05 Aug 2026 20:03:51 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 05 Aug 2026 21:40:57 GMT</lastBuildDate>
+    <item>
+      <title>navalstrike01</title>
+      <link>https://navalstrike01.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">navalstrike01</guid>
+      <pubDate>Wed, 05 Aug 2026 20:00:00 GMT</pubDate>
+    </item>
     <item>
       <title>polkanote</title>
       <link>https://polkanote.dev-dot.li</link>
@@ -13,9 +20,9 @@
       <pubDate>Wed, 05 Aug 2026 14:18:36 GMT</pubDate>
     </item>
     <item>
-      <title>ethonchain</title>
+      <title>eth on chain</title>
       <link>https://ethonchain.dev-dot.li</link>
-      <description></description>
+      <description>Six real pages from ethereum.org served from a content hash, with no server behind them. Unofficial demonstration; provenance measured in your browser.</description>
       <guid isPermaLink="false">ethonchain</guid>
       <pubDate>Wed, 05 Aug 2026 12:32:48 GMT</pubDate>
     </item>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">lighthouse</guid>
       <pubDate>Tue, 04 Aug 2026 14:08:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>neo-app-demo</title>
-      <link>https://neo-app-demo.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">neo-app-demo</guid>
-      <pubDate>Tue, 04 Aug 2026 13:59:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

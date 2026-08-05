@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11859184,
-  "updatedAt": "2026-08-05T19:57:54.305Z",
+  "lastBlock": 11862091,
+  "updatedAt": "2026-08-05T21:36:21.195Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "d120c363097e7bb787da009e2c4d1e1caabf35dbba0fa8cab4796b4595f7fbb0",
-    "cid": "bafybeibqyohncmcyahceexvq4xfviabduxvzysroab4rqdjjfgkabltytm",
-    "uploadedAt": "2026-08-05T20:05:10.975Z"
+    "digest": "0f7c89df930c3209f7004c5b194d51c23ededfec87d3565316af6921a964f68b",
+    "cid": "bafybeigvm4cedhgdmjihnbiypszjopfssmxeivx5f4djtywywnqovdsajq",
+    "uploadedAt": "2026-08-05T21:42:11.667Z"
   },
   "sitePublish": {
-    "treeHash": "1134d6c96d263b4ecbf107c2dfb47e20d60c6f980a0287f7606f58726cab26c1",
-    "publishedAt": "2026-08-05T18:07:00.805Z"
+    "treeHash": "be0f5a1fd77fe7d052ae707034569e3160054e0ac25f36e220ec98a9a4b4711d",
+    "publishedAt": "2026-08-05T21:44:05.854Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-05T20:03:51.000Z",
+    "updatedAt": "2026-08-05T21:40:57.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -150,13 +150,14 @@
       "unstake-radar": "alive",
       "ethonchain": "alive",
       "polkanote": "alive",
-      "substrade-hub": "alive"
+      "substrade-hub": "alive",
+      "navalstrike01": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-05T20:03:51.000Z",
+    "updatedAt": "2026-08-05T21:40:57.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -368,9 +369,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifihnpyqd5nelwaksgjzy3fadgmug7mj3ku2c4icvjdyenegpwqiu",
-        "updateCount": 66,
-        "changedAt": 1785960231,
+        "contenthash": "bafybeie646uc6klau4qliu4rbt6erbyo5bk5izuin6blugraaismbbhfnm",
+        "updateCount": 67,
+        "changedAt": 1785966057,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -468,9 +469,9 @@
         "live": "alive"
       },
       "frenchan-app77": {
-        "contenthash": "bafybeiagksy7ey7sndstivpdklwfilbho7qorurvhoxxedgc2cpwa7ohhy",
-        "updateCount": 6,
-        "changedAt": 1785932868,
+        "contenthash": "bafybeiehychw6ijpjiklljagdugrfeaui7bu5ypcabozvy2c64baeacflm",
+        "updateCount": 7,
+        "changedAt": 1785966057,
         "live": "alive"
       },
       "gameboyonchain": {
@@ -678,6 +679,11 @@
         "contenthash": "",
         "updateCount": 0,
         "live": "unknown"
+      },
+      "navalstrike01": {
+        "contenthash": "bafybeigdj6dxqbn4cioxhwvsaykq4xmmk756jss53owz4jaaq5refkgvom",
+        "updateCount": 0,
+        "live": "alive"
       },
       "neo-app-demo": {
         "contenthash": "bafybeidtilc23vbiebcklpebibkmo2xasswt2d2dl3iuo6o3ei2n35jmni",
