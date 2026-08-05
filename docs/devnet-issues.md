@@ -1,4 +1,11 @@
-# Three issues for the products devnet, with evidence — and three claims withdrawn
+# Four issues for the products devnet, with evidence — and three claims withdrawn
+
+All four are filed at
+[Polkadot-Community-Foundation/products-devnet-issues](https://github.com/Polkadot-Community-Foundation/products-devnet-issues):
+Issue 1 is [#13](https://github.com/Polkadot-Community-Foundation/products-devnet-issues/issues/13),
+Issue 2 restates [#9](https://github.com/Polkadot-Community-Foundation/products-devnet-issues/issues/9),
+Issue 3 is [#14](https://github.com/Polkadot-Community-Foundation/products-devnet-issues/issues/14),
+Issue 4 is [#15](https://github.com/Polkadot-Community-Foundation/products-devnet-issues/issues/15).
 
 Written after building **chirponchain.dot**, a text-only social app that keeps
 everything in Asset Hub contracts. Every line below came out of a probe that
@@ -221,6 +228,44 @@ app show the address up front instead of offering a control that cannot work.
 **What the app does meanwhile.** Shows the address, copyable, with the trail
 attached — because a tap that silently does nothing is the worst outcome
 available, and the second worst is telling somebody it worked.
+
+---
+
+# Issue 4 — the light client panics while fetching an app bundle
+
+**Severity: it is the first thing anyone sees of a published app.**
+
+Opening a published `.dot` app with the content source set to **Verified**
+sometimes never gets the bundle. The screen says "Failed to load content":
+
+```
+bitswap_v1_get failed (code=-32603): panicked at wasm-node/rust/src/platform.rs:1035:37:
+called `Option::unwrap()` on a `None` value
+(via smoldot-bitswap)
+```
+
+Three things about that line matter more than the failure:
+
+- **It is a panic, not a fetch error.** `-32603` is JSON-RPC *internal error* —
+  the light client's platform layer unwound and the message reached the UI
+  through the RPC boundary. Content that genuinely cannot be found should not
+  look like this.
+- **It is intermittent.** Same app, same CID, same device: retry and it usually
+  loads. That is a race, not bad content.
+- **No app code has run yet.** Nothing a publisher can do, and nothing to catch.
+
+What we could not confirm: which smoldot version the app ships, so which
+`unwrap()` line 1035 is. In current `smol-dot/smoldot` HEAD the unwraps in that
+region are map lookups made when the JavaScript side reports a connection or
+stream event — consistent with an event arriving for a connection already torn
+down. That is a reading of the source, not a diagnosis.
+
+**Workaround:** Retry, or switch the panel from Verified to **Trusted**, which
+does not take the bitswap path at all.
+
+**Ask:** a missing entry in that map is a connection that went away, which is an
+ordinary thing for a connection to do. Failing the fetch cleanly so the layer
+above can retry turns this from a dead end into a hiccup nobody notices.
 
 ---
 
