@@ -446,7 +446,10 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); }
   .side { padding: 12px 8px; align-items: stretch; }
   .compose { justify-content: center; padding: 12px 0; }
   .navbtn { justify-content: center; padding: 10px 0; border-radius: 12px; }
-  .navbtn .fl, .navbtn .badge, .compose .fl { display: none; }
+  /* The section heading has to go too. Hiding the button labels but leaving
+     this one turned "Ordinary email" into two clipped lines down the rail. */
+  .navbtn .fl, .navbtn .badge, .compose .fl, .navhead { display: none; }
+  .classicnav { margin-top: 14px; padding-top: 12px; }
   .mid { flex-basis: 100%; border-right: 0; }
   .mid.hasopen { display: none; }
   .reader.blank { display: none; }

@@ -31,10 +31,15 @@ export const icon = {
  *  being 16 pixels tall in a browser tab. */
 export const logo = (size = 24) => `
 <svg width="${size}" height="${size}" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-  <rect x="3" y="7" width="26" height="18" rx="4" stroke="currentColor" stroke-width="2"/>
-  <path d="M3.8 10.5L16 18.2l12.2-7.7" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" opacity=".45"/>
-  <circle cx="16" cy="16" r="4.6" fill="var(--seal-bg, #0b0e14)"/>
-  <circle cx="16" cy="16" r="4.6" stroke="currentColor" stroke-width="2"/>
-  <circle cx="16" cy="16" r="1.5" fill="currentColor"/>
+  <rect x="3" y="7" width="26" height="18" rx="3" stroke="currentColor" stroke-width="2"/>
+  <!-- The flap, at full strength. At .45 it vanished under 30px and the mark
+       read as a camera: a rounded rectangle with a dot in the middle. The two
+       diagonals are the only thing that says envelope, so they carry weight. -->
+  <path d="M3.6 9.4L16 18.4 28.4 9.4" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- The seal sits over the join, punched out of the flap so it reads as wax
+       laid on top rather than a hole. -->
+  <circle cx="16" cy="17.6" r="4.4" fill="var(--seal-bg, #0f0f0f)"/>
+  <circle cx="16" cy="17.6" r="4.4" stroke="currentColor" stroke-width="2"/>
+  <circle cx="16" cy="17.6" r="1.4" fill="currentColor"/>
 </svg>`;

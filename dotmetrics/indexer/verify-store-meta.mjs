@@ -10,7 +10,7 @@ import { contracts, nodeOf } from './dotns.mjs';
 
 const LABELS = [
   'thebutton', 'openpetition', 'dotmetrics', 'wudcommunity', 'italiarovente',
-  'truereviews', 'dot-store', 'chirponchain', 'peoplewiki', 'ethonchain',
+  'truereviews', 'dot-store', 'chirponchain', 'peoplewiki', 'ethonchain', 'dotmailbox',
   'arcadeonchain', 'peoplebook', 'gameboyonchain', 'nesonchain',
 ];
 

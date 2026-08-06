@@ -25,6 +25,17 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
+/**
+ * A second view worth showing, for apps where scrolling gives nothing.
+ *
+ * An empty inbox has nothing below the fold, so the second frame came back
+ * byte-identical and was dropped, leaving a one-picture listing. Clicking to a
+ * genuinely different screen is what a second screenshot is for.
+ */
+const SECOND_VIEW = {
+  dotmail: () => document.getElementById('mailboxbtn')?.click(),
+};
+
 /** Directory name -> settle time. Apps that read the chain need longer. */
 const APPS = {
   thebutton: 16_000,
@@ -36,6 +47,9 @@ const APPS = {
   'dot-store': 12_000,
   chirp: 18_000,
   ethonchain: 6_000,
+  // dotmail derives a key and scans the whole envelope stream before it can
+  // draw an inbox, so it needs longer than a page that only reads.
+  dotmail: 20_000,
 };
 
 const MIME = {
@@ -83,15 +97,37 @@ for (const [app, settle] of Object.entries(APPS)) {
     const outDir = path.join(ROOT, app, 'shots');
     fs.mkdirSync(outDir, { recursive: true });
     let kept = 0;
+    let previous = null;
     for (const [i, scroll] of [0, 1].entries()) {
-      if (scroll) {
-        // One viewport down, and give lazy content a moment to paint.
-        await page.evaluate(() => scrollTo({ top: innerHeight, behavior: 'instant' }));
+      if (scroll && SECOND_VIEW[app]) {
+        await page.evaluate(SECOND_VIEW[app]);
+        await page.waitForTimeout(1500);
+      } else if (scroll) {
+        // Scroll the deepest thing that CAN scroll, not the window.
+        //
+        // dotmail keeps `overflow: hidden` on the body and scrolls its panes
+        // instead, so window.scrollTo moved nothing and the second frame came
+        // back byte-identical to the first. Two identical screenshots upload to
+        // the SAME CID, which is how this was noticed at all.
+        await page.evaluate(() => {
+          const scrollable = [...document.querySelectorAll('*')]
+            .filter((e) => e.scrollHeight > e.clientHeight + 40 && /auto|scroll/.test(getComputedStyle(e).overflowY))
+            .sort((a, b) => b.scrollHeight - a.scrollHeight)[0];
+          if (scrollable) scrollable.scrollTop = scrollable.clientHeight;
+          else scrollTo({ top: innerHeight, behavior: 'instant' });
+        });
         await page.waitForTimeout(1200);
       }
       const raw = await page.screenshot({ type: 'png' });
       if (await flat(raw)) { console.log(`${app}: frame ${i + 1} came back flat, dropped`); continue; }
-      const out = path.join(outDir, `store-${i + 1}.webp`);
+      // Shipping the same picture twice is not two screenshots, and a store
+      // that shows it twice looks broken rather than thorough.
+      if (previous && Buffer.compare(raw, previous) === 0) {
+        console.log(`${app}: frame ${i + 1} is identical to the one before, dropped`);
+        continue;
+      }
+      previous = raw;
+      const out = path.join(outDir, `store-${kept + 1}.webp`);
       await sharp(raw).resize({ width: 1080 }).webp({ quality: 82 }).toFile(out);
       kept++;
     }
