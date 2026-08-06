@@ -16,15 +16,13 @@
  *   - CONFIRM FROM THE CHAIN, NOT THE RECEIPT. Four transactions came back ok
  *     and one picture arrived. Counting the ok answers counts the wrong thing.
  */
-import { createContractRuntimeFromClient, createContract } from '@parity/product-sdk/contracts';
+import { createContract } from '@parity/product-sdk/contracts';
+import { sharedChain } from './conn.ts';
 import { DOTMAIL, type MailStore, type Head, type Body } from './store.ts';
 import { SLOTS } from './seal.ts';
 import { keccak_256 } from '@noble/hashes/sha3.js';
 import { hex, unhex } from './keys.ts';
 import ABI from './dotmail-abi.json';
-
-/** Devnet Asset Hub, the chain DotMail is deployed on. */
-const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2' as const;
 
 /**
  * The .dot this app is published under, and the string the host scopes its
@@ -104,20 +102,15 @@ export class ContractStore implements MailStore {
    */
   static async open(): Promise<ContractStore | null> {
     try {
-      const host = await import('@parity/product-sdk-host');
-      const { createClient } = await import('polkadot-api');
-      const descriptors = await import('@parity/product-sdk-descriptors/devnet-asset-hub');
-
-      // A genesis HASH, not a descriptor: the descriptor goes to the contract
-      // runtime, the hash to the provider, and they are not interchangeable.
-      const provider = await host.getHostProvider(GENESIS);
-      if (!provider) return null;
-
-      const client = createClient(provider as never);
-      const rt = createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
+      // The SHARED connection. Opening a second client on the same host
+      // provider does not give two connections, it gives one that works and one
+      // that hangs: this store read fine while every lookup in names.ts sat
+      // there forever, on its own second client, until they were merged.
+      const conn = await sharedChain();
+      if (!conn) return null;
 
       // The app-scoped account, named by the .dot this app belongs to.
-      const accounts = await host.getAccountsProvider();
+      const accounts = await conn.host.getAccountsProvider();
       // The contract records msg.sender, an H160, so `me()` has to be the same
       // H160 or Sent and Inbox swap places. A ProductAccount hands back a
       // public key, and the mapping is not a plain truncation: an eth-derived
@@ -125,12 +118,12 @@ export class ContractStore implements MailStore {
       // anything else is keccak'd. Getting this wrong is silent and total.
       const account = accounts
         ? await accounts.getProductAccount(APP_NAME).match(
-          (a) => h160Of(a.publicKey),
+          (a: { publicKey: Uint8Array }) => h160Of(a.publicKey),
           () => null,
         )
         : null;
 
-      const c = createContract(rt, DOTMAIL, ABI, {}) as unknown as AnyContract;
+      const c = createContract(conn.rt, DOTMAIL, ABI, {}) as unknown as AnyContract;
 
       // The proof that this context can actually read. An answer, any answer.
       const probe = await c.count.query();

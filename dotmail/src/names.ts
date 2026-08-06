@@ -19,6 +19,7 @@
  *   nothing but anonymous envelopes.
  */
 import { keccak_256 } from '@noble/hashes/sha3.js';
+import { sharedChain, withTimeout, READ_MS } from './conn.ts';
 
 /** The DotNS content resolver. Read DIRECTLY, never through
  *  registry.resolver(), which is the trap dotmetrics documented. */
@@ -27,8 +28,6 @@ export const CONTENT_RESOLVER = '0x326bdE29315199c814B1c58b431D84D16EA5cE41';
 /** The text record a mailbox key lives under. */
 export const KEY_RECORD = 'dotmail';
 
-/** Devnet Asset Hub, where DotNS lives. */
-const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2' as const;
 
 const RESOLVER_ABI = [
   {
@@ -121,21 +120,13 @@ export const keyFromHex = (s: string) =>
 export async function keyForName(rawName: string): Promise<Uint8Array | null | undefined> {
   const name = toDotted(rawName);
   try {
-    const host = await import('@parity/product-sdk-host');
-    const { createClient } = await import('polkadot-api');
-    const descriptors = await import('@parity/product-sdk-descriptors/devnet-asset-hub');
-    const { createContractRuntimeFromClient, createContract } = await import('@parity/product-sdk/contracts');
-
-    const provider = await host.getHostProvider(GENESIS);
-    if (!provider) return null;
-
-    const client = createClient(provider as never);
-    const rt = createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
+    const c = await withTimeout(sharedChain(), READ_MS);
+    if (c === 'timeout' || !c) return null;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const resolver = createContract(rt, CONTENT_RESOLVER, RESOLVER_ABI as any, {}) as any;
+    const resolver = c.sdk.createContract(c.rt, CONTENT_RESOLVER, RESOLVER_ABI as never, {}) as any;
 
-    const r = await resolver.text.query(nodeOf(name), KEY_RECORD);
-    if (r?.value === undefined) return null;
+    const r = await withTimeout<{ value?: unknown }>(resolver.text.query(nodeOf(name), KEY_RECORD), READ_MS);
+    if (r === 'timeout' || r?.value === undefined) return null;
     const text = String(r.value ?? '').trim();
     if (!text) return undefined;                 // asked; nothing published
     return looksLikeKey(text) ? keyFromHex(text) : undefined;
@@ -170,12 +161,9 @@ export type PublishResult =
 export async function publishKeyToName(rawName: string, keyHex: string): Promise<PublishResult> {
   const name = toDotted(rawName);
   try {
-    const host = await import('@parity/product-sdk-host');
-    const { createClient } = await import('polkadot-api');
-    const descriptors = await import('@parity/product-sdk-descriptors/devnet-asset-hub');
-    const { createContractRuntimeFromClient, createContract } = await import('@parity/product-sdk/contracts');
-
-    const accounts = await host.getAccountsProvider();
+    const c = await withTimeout(sharedChain(), READ_MS);
+    if (c === 'timeout' || !c) return { ok: false, hostCannot: true, why: 'no chain connection' };
+    const accounts = await c.host.getAccountsProvider();
     if (!accounts) return { ok: false, hostCannot: true, why: 'there is no wallet here to sign with' };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -187,16 +175,11 @@ export async function publishKeyToName(rawName: string, keyHex: string): Promise
     }
     const signer = accounts.getLegacyAccountSigner({ publicKey: account.publicKey, name: account.name });
 
-    const provider = await host.getHostProvider(GENESIS);
-    if (!provider) return { ok: false, hostCannot: true, why: 'no chain connection' };
-
-    const client = createClient(provider as never);
-    const rt = createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
     // `defaultSigner`, not `signer`: the option is named differently on the
     // contract factory than on a call, and passing the wrong one type-checks
     // nowhere and silently signs with nothing.
-    const resolver = createContract(
-      rt, CONTENT_RESOLVER, RESOLVER_ABI as never, { defaultSigner: signer } as never,
+    const resolver = c.sdk.createContract(
+      c.rt, CONTENT_RESOLVER, RESOLVER_ABI as never, { defaultSigner: signer } as never,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any;
 
@@ -287,30 +270,6 @@ const KEYS_ABI = [
 /** A bare handle: no dots, no at sign. `watanabe`, not `watanabe.dot`. */
 export const looksLikeHandle = (s: string) => /^[a-z0-9_.]{2,32}$/i.test(s.trim()) && !s.includes('@');
 
-/**
- * A read that cannot hang forever.
- *
- * "I pressed it and nothing happened" is what an unresolved promise looks like
- * from a chair, and it is indistinguishable from a broken button. Every chain
- * call here is bounded so the interface can always say SOMETHING, even if what
- * it says is that the chain did not answer.
- */
-function withTimeout<T>(p: Promise<T>, ms: number): Promise<T | 'timeout'> {
-  return Promise.race([p, new Promise<'timeout'>((r) => setTimeout(() => r('timeout'), ms))]);
-}
-const READ_MS = 15_000;
-
-/** One connection, reused by every lookup below. */
-async function chain() {
-  const host = await import('@parity/product-sdk-host');
-  const { createClient } = await import('polkadot-api');
-  const descriptors = await import('@parity/product-sdk-descriptors/devnet-asset-hub');
-  const sdk = await import('@parity/product-sdk/contracts');
-  const provider = await host.getHostProvider(GENESIS);
-  if (!provider) return null;
-  const client = createClient(provider as never);
-  return { rt: sdk.createContractRuntimeFromClient(client, descriptors.devnet_asset_hub), sdk, host };
-}
 
 /**
  * The mask that holds a handle, and the mailbox key hanging off it.
@@ -322,7 +281,7 @@ async function chain() {
  */
 export async function keyForHandle(handle: string): Promise<Uint8Array | null | undefined> {
   try {
-    const c = await chain();
+    const c = await sharedChain();
     if (!c) return null;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handles = c.sdk.createContract(c.rt, HANDLES, HANDLES_ABI as never, {}) as any;
@@ -353,7 +312,7 @@ export async function keyForHandle(handle: string): Promise<Uint8Array | null | 
  */
 export async function myMask(owner: string, upTo = 60): Promise<{ mask: number; handle: string } | null | undefined> {
   try {
-    const c = await chain();
+    const c = await sharedChain();
     if (!c) return null;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const masks = c.sdk.createContract(c.rt, MASKS, MASKS_ABI as never, {}) as any;
@@ -419,7 +378,7 @@ export async function walletAddress(): Promise<string | null> {
 /** Publish the mailbox key against a mask you own. */
 export async function publishKeyToMask(mask: number, keyHex: string): Promise<PublishResult> {
   try {
-    const c = await chain();
+    const c = await sharedChain();
     if (!c) return { ok: false, hostCannot: true, why: 'no chain connection' };
     const accounts = await c.host.getAccountsProvider();
     if (!accounts) return { ok: false, hostCannot: true, why: 'there is no wallet here to sign with' };
@@ -470,7 +429,7 @@ export async function publishKeyToMask(mask: number, keyHex: string): Promise<Pu
  */
 export async function maskForHandle(handle: string): Promise<{ mask: number } | null | undefined> {
   try {
-    const c = await withTimeout(chain(), READ_MS);
+    const c = await withTimeout(sharedChain(), READ_MS);
     if (c === 'timeout' || !c) return null;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handles = c.sdk.createContract(c.rt, HANDLES, HANDLES_ABI as never, {}) as any;
@@ -488,26 +447,19 @@ export async function maskForHandle(handle: string): Promise<{ mask: number } | 
  *  `null` could not ask, `undefined` nobody holds it. */
 export async function accountForHandle(handle: string): Promise<string | null | undefined> {
   try {
-    const host = await import('@parity/product-sdk-host');
-    const { createClient } = await import('polkadot-api');
-    const descriptors = await import('@parity/product-sdk-descriptors/devnet-asset-hub');
-    const { createContractRuntimeFromClient, createContract } = await import('@parity/product-sdk/contracts');
-
-    const provider = await host.getHostProvider(GENESIS);
-    if (!provider) return null;
-    const client = createClient(provider as never);
-    const rt = createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
+    const c = await withTimeout(sharedChain(), READ_MS);
+    if (c === 'timeout' || !c) return null;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handles = createContract(rt, HANDLES, HANDLES_ABI as never, {}) as any;
+    const handles = c.sdk.createContract(c.rt, HANDLES, HANDLES_ABI as never, {}) as any;
     const hash = toHex(keccak_256(enc.encode(handle.trim().toLowerCase())));
-    const m = await handles.maskOfHandle.query(hash);
-    if (m?.value === undefined) return null;
+    const m = await withTimeout<{ value?: unknown }>(handles.maskOfHandle.query(hash), READ_MS);
+    if (m === 'timeout' || m?.value === undefined) return null;
     const mask = BigInt(m.value as bigint);
     if (mask === 0n) return undefined;              // asked; nobody holds it
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const masks = createContract(rt, MASKS, MASKS_ABI as never, {}) as any;
+    const masks = c.sdk.createContract(c.rt, MASKS, MASKS_ABI as never, {}) as any;
     const o = await masks.ownerOf.query(mask);
     if (o?.value === undefined) return null;
     const owner = String((o.value as { asHex?: () => string })?.asHex?.() ?? o.value ?? '');
