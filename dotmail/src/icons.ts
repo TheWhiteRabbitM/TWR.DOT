@@ -24,6 +24,10 @@ export const icon = {
   search: svg('<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>'),
   back: svg('<path d="M15 5l-7 7 7 7"/>'),
   shield: svg('<path d="M12 3.5l7 2.5v5.5c0 4.2-2.9 7.6-7 8.5-4.1-.9-7-4.3-7-8.5V6z"/><path d="M9.5 12l1.8 1.8 3.4-3.6"/>'),
+  /** The same shield with the tick replaced by a bar and a dot: a name that
+   *  does not belong to the account that paid. Deliberately the SAME outline,
+   *  so the two read as answers to one question rather than two symbols. */
+  warn: svg('<path d="M12 3.5l7 2.5v5.5c0 4.2-2.9 7.6-7 8.5-4.1-.9-7-4.3-7-8.5V6z"/><path d="M12 8.6v4.2"/><path d="M12 15.9v.1"/>'),
 };
 
 /** The mark. An envelope whose flap has not been opened, with the seal still

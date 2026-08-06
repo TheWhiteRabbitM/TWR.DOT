@@ -24,6 +24,7 @@ import {
   publishCommand, publishKeyToName, publishKeyToMask, accountForHandle, myMask,
   walletAddress, maskForHandle,
 } from './names.ts';
+import { whoIs, checkSender, nameNow, shortAddr, looksLikeAddress, type Verdict } from './who.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
@@ -88,6 +89,117 @@ function hue(s: string): number {
 }
 const avatar = (name: string, cls = '') =>
   `<span class="av ${cls}" style="--h:${hue(name)}">${esc(initial(name))}</span>`;
+
+/* ------------------------------------------------------------------ senders
+ *
+ * The name on a letter is written by whoever sent it. The account that paid is
+ * written by the chain. Those are not the same kind of thing and this app had
+ * been showing them as though they were: the claim large, the fact small and
+ * grey underneath.
+ *
+ * So each letter gets looked up once — who the payer is, and whether they hold
+ * the name the letter is signed with — and the answer is cached by letter id.
+ * The lookups are chain reads, so they cannot happen during a render; they run
+ * after, and re-render only if something actually changed. Re-rendering on
+ * every resolved letter would redraw the list forty times on a first scan.
+ */
+const SENDER = new Map<number, Verdict>();
+/** How many times a letter has been looked up and taught us nothing. Without
+ *  this, a chain that is simply unreachable makes every render fire sixty
+ *  reads that will fail, for as long as the app is open. */
+const tries = new Map<number, number>();
+const GIVE_UP_AFTER = 3;
+let resolving = false;
+
+async function resolveSenders() {
+  if (resolving) return;
+  resolving = true;
+  try {
+    // Only what is on screen. Resolving a thousand letters to draw twenty is
+    // the sort of politeness the chain does not thank you for.
+    const shown = visible().flat().slice(0, 60);
+    let learned = false;
+
+    for (const l of shown) {
+      if (l.outgoing) continue;                     // our own; nothing to check
+      if (SENDER.has(l.id)) continue;
+      const n = tries.get(l.id) ?? 0;
+      if (n >= GIVE_UP_AFTER) continue;
+      tries.set(l.id, n + 1);
+
+      // Who paid, so a sender with no handle still gets a name rather than hex.
+      const who = await whoIs(l.payer);
+      const verdict = await checkSender(l.from, l.payer);
+
+      // `unchecked` is not an answer, it is the absence of one, so it is not
+      // stored: the next pass tries again rather than freezing a node hiccup
+      // into a permanent shrug. But it does not count as having LEARNED
+      // anything either, and saying it did is what made every render schedule
+      // another one.
+      if (verdict.kind !== 'unchecked') { SENDER.set(l.id, verdict); learned = true; }
+      if (who.kind === 'person') learned = true;
+    }
+    if (learned) render();
+  } finally {
+    resolving = false;
+  }
+}
+
+/** What to print where a sender's name goes. Never forty-two characters. */
+const senderName = (l: Received) =>
+  l.outgoing ? (looksLikeAddress(l.to) ? shortAddr(l.to) : l.to || 'unknown')
+             : nameNow(l.from, l.payer);
+
+/**
+ * The line under the name, which is where the actual FACT goes.
+ *
+ * The address is shown short with the whole thing on hover, because a reader
+ * who wants to compare two payers can, and one who does not should not have to
+ * read forty-two characters to get to the date.
+ */
+function senderLine(l: Received): string {
+  if (l.outgoing) return `paid by you`;
+  const v = SENDER.get(l.id);
+  const paid = `paid by <code title="${esc(l.payer)}">${esc(shortAddr(l.payer))}</code>`;
+
+  if (v?.kind === 'held') {
+    return `<span class="ok">${paid}, who holds this handle</span>`;
+  }
+  if (v?.kind === 'selfaddressed') {
+    return `<span class="ok">${paid}, and signed with that same account</span>`;
+  }
+  if (v?.kind === 'mismatch') {
+    const real = v.realHolder
+      ? `, and <code title="${esc(v.realHolder)}">${esc(shortAddr(v.realHolder))}</code> is who holds that name`
+      : '';
+    return `<span class="no">${paid}, which does not hold the name on this letter${real}</span>`;
+  }
+  return paid;
+}
+
+/**
+ * The mark beside a sender.
+ *
+ * Green only when the chain confirmed the payer holds that name. A letter with
+ * no mark is not accused of anything: most letters simply carry a name nobody
+ * registered, and that is normal rather than suspicious.
+ */
+function senderMark(l: Received): string {
+  const v = SENDER.get(l.id);
+  if (!v) return '';
+  if (v.kind === 'held') {
+    return `<span class="vmark ok" title="The account that paid for this letter holds this handle in chirp's registry.">${icon.shield}</span>`;
+  }
+  // The name IS the paying account. Trivially true, and true is true: the
+  // person reading has as much assurance here as with a registered handle.
+  if (v.kind === 'selfaddressed') {
+    return `<span class="vmark ok" title="This letter is signed with the account that paid for it.">${icon.shield}</span>`;
+  }
+  if (v.kind === 'mismatch') {
+    return `<span class="vmark no" title="This letter is signed with a name the paying account does not hold.">${icon.warn}</span>`;
+  }
+  return '';
+}
 
 /* ---------------------------------------------------------------- filtering */
 
@@ -240,13 +352,13 @@ function listPane(): string {
     ${groups.map((g) => {
       const l = g[g.length - 1];
       const isRead = hasFlag(l.id, 'read');
-      const who = folder === 'sent' ? (l.to || 'unknown') : (l.from || 'unknown');
+      const who = senderName(l);
       const shown = folder === 'sent' ? `To ${who}` : who;
       return `<div class="rowitem ${isRead ? '' : 'unread'} ${openId === l.id ? 'sel' : ''}" data-open="${l.id}">
         <button class="star ${hasFlag(l.id, 'star') ? 'on' : ''}" data-star="${l.id}"
                 aria-label="${hasFlag(l.id, 'star') ? 'Remove star' : 'Star'}">${icon.star}</button>
         ${avatar(who)}
-        <span class="who">${esc(shown)}${g.length > 1 ? ` <em>${g.length}</em>` : ''}</span>
+        <span class="who">${esc(shown)}${senderMark(l)}${g.length > 1 ? ` <em>${g.length}</em>` : ''}</span>
         <span class="subj">${esc(l.subject) || '(no subject)'}<span class="prev"> &mdash; ${esc(l.body.slice(0, 120))}</span></span>
         <span class="when">${when(l.receivedAt)}</span>
       </div>`;
@@ -303,14 +415,17 @@ function readerPane(): string {
       </div>
     </div>
     ${thread.map((l) => {
-      const who = l.outgoing ? (l.to || 'unknown') : (l.from || 'unknown');
+      const who = senderName(l);
+      // `esc` on a string containing `&rarr;` printed the entity itself. The
+      // arrow is ours, not the sender's, so it goes in AFTER escaping.
+      const line = l.outgoing ? `You &rarr; ${esc(who)}` : esc(who);
       return `
       <article class="msg">
         <div class="mhead">
           ${avatar(who)}
           <div>
-            <div class="mwho">${esc(l.outgoing ? `You &rarr; ${who}` : who)}</div>
-            <div class="mmeta">paid by <code>${esc(l.payer)}</code> &middot; ${when(l.receivedAt)}</div>
+            <div class="mwho">${line}${senderMark(l)}</div>
+            <div class="mmeta">${senderLine(l)} &middot; ${when(l.receivedAt)}</div>
           </div>
         </div>
         <div class="mbody">${esc(l.body).replace(/\n/g, '<br>')}</div>
@@ -507,6 +622,12 @@ function render() {
   </div>
   ${composing ? composeView() : ''}`;
   bind();
+
+  // Names come from the chain, so they cannot be fetched while drawing. This
+  // runs after the frame is on screen and re-renders only if it learned
+  // something, and it guards against re-entry, so the render it triggers does
+  // not trigger another.
+  void resolveSenders();
 }
 
 /* ------------------------------------------------------------------ actions */
