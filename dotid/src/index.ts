@@ -51,6 +51,16 @@ export const HANDLES = '0x7C61D99564C61e667C6Fd5D41aC2466327ea4109';
 const MASKS_ABI = [
   { inputs: [{ name: 'id', type: 'uint256' }], name: 'ownerOf',
     outputs: [{ name: '', type: 'address' }], stateMutability: 'view', type: 'function' },
+  // The reverse index, which the contract has had all along. Walking every mask
+  // comparing owners was sixty reads to answer what this answers in one.
+  { inputs: [{ name: 'who', type: 'address' }], name: 'maskOf',
+    outputs: [{ name: '', type: 'uint256' }], stateMutability: 'view', type: 'function' },
+  { inputs: [{ name: 'id', type: 'uint256' }], name: 'tierOf',
+    outputs: [{ name: '', type: 'uint8' }], stateMutability: 'view', type: 'function' },
+  { inputs: [{ name: 'id', type: 'uint256' }], name: 'profileOf',
+    outputs: [{ name: '', type: 'string' }, { name: '', type: 'string' },
+      { name: '', type: 'string' }, { name: '', type: 'string' }],
+    stateMutability: 'view', type: 'function' },
 ];
 const HANDLES_ABI = [
   { inputs: [{ name: 'h', type: 'bytes32' }], name: 'maskOfHandle',
@@ -224,7 +234,7 @@ export async function ownerOfMask(mask: number): Promise<Answer<string>> {
  * owner-to-id index. Bounded: a person has one mask, and scanning forever to
  * prove they have none is worse than saying so.
  */
-export async function whoAmI(upTo = 60): Promise<Answer<Identity>> {
+export async function whoAmI(): Promise<Answer<Identity>> {
   const s = await withTimeout(session());
   if (s === 'timeout' || !s) return null;
   if (!s.address) return undefined;
@@ -234,20 +244,15 @@ export async function whoAmI(upTo = 60): Promise<Answer<Identity>> {
 
   try {
     const c = s.sdk.createContract(s.rt, MASKS, MASKS_ABI, {});
-    for (let from = 1; from <= upTo; from += 12) {
-      const ids = Array.from({ length: Math.min(12, upTo - from + 1) }, (_, i) => from + i);
-      const owners = await Promise.all(
-        ids.map((id) => c.ownerOf.query(BigInt(id)).catch(() => null)),
-      );
-      for (const [i, o] of owners.entries()) {
-        if (o?.value === undefined) continue;
-        const a = String((o.value as { asHex?: () => string })?.asHex?.() ?? o.value ?? '').toLowerCase();
-        if (a !== h160) continue;
-        const handle = await handleOfMask(ids[i]);
-        return { address: s.address, h160, mask: ids[i], handle: handle ?? '' };
-      }
-    }
-    return { address: s.address, h160, mask: null, handle: '' };
+    // ONE read. The first version of this walked sixty masks comparing owners,
+    // because I did not look at the ABI before writing it: `maskOf` had been
+    // there the whole time.
+    const r = await withTimeout<{ value?: unknown }>(c.maskOf.query(h160));
+    if (r === 'timeout' || r?.value === undefined) return null;
+    const mask = Number(r.value as bigint);
+    if (!mask) return { address: s.address, h160, mask: null, handle: '' };
+    const handle = await handleOfMask(mask);
+    return { address: s.address, h160, mask, handle: handle ?? '' };
   } catch {
     return null;
   }
