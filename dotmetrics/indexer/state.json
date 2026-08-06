@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11883595,
-  "updatedAt": "2026-08-06T10:01:47.435Z",
+  "lastBlock": 11887778,
+  "updatedAt": "2026-08-06T12:24:10.998Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "c89aca388b3acf4eeaa7c0adbf8d27f3dc96d7791682e0219bb97c427af4534e",
-    "cid": "bafybeidkanchxrnycuy6gzu362alo4nqvpneehrnzypspymramgdmd4yfe",
-    "uploadedAt": "2026-08-06T10:09:10.489Z"
+    "digest": "0d1adb5b320d5056a22346296305c65e603d040810a3534da2bd57fa65f56cdf",
+    "cid": "bafybeigb422bcl5tdx5lx2bopulnoq3sibfu2dscyawuugmgsicsvrcfzu",
+    "uploadedAt": "2026-08-06T12:32:12.664Z"
   },
   "sitePublish": {
-    "treeHash": "5a8bd7c645f8a471bb119b60a6ffdeeb4a8ceeab1f2c42b1ad8ff488df2bdfe6",
-    "publishedAt": "2026-08-06T10:11:29.101Z"
+    "treeHash": "1ebd6bb3b12c06a06255ff0aba7270048c927e56f7aed0471f81dda68a57a218",
+    "publishedAt": "2026-08-06T12:34:19.666Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-06T10:07:43.000Z",
+    "updatedAt": "2026-08-06T12:30:15.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -159,7 +159,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-06T10:07:43.000Z",
+    "updatedAt": "2026-08-06T12:30:15.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -205,9 +205,9 @@
         "live": "alive"
       },
       "broadside": {
-        "contenthash": "bafybeiduzcr3pqwvm67zoqn3riq2remz22rzlab74zvcilrxfjxpmh6c7u",
-        "updateCount": 5,
-        "changedAt": 1786010863,
+        "contenthash": "bafybeicfepgjr6oyjqavk3bes4m6u7wocwdkybad5zn2doxfg7bojjgd7q",
+        "updateCount": 6,
+        "changedAt": 1786019415,
         "live": "alive"
       },
       "buildboard01": {
@@ -332,8 +332,9 @@
         "live": "alive"
       },
       "dforms-app": {
-        "contenthash": "bafybeickk6qppb3ba2hrzws6suse3cfhohz6t5pap74e3vx5akioqqsrou",
-        "updateCount": 0,
+        "contenthash": "bafybeia23vthv5jxnu5aycxmzm3becparpsvd65d5anqyofzioro4v6tyi",
+        "updateCount": 1,
+        "changedAt": 1786019415,
         "live": "alive"
       },
       "discovery": {
@@ -376,9 +377,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeihjlxenomgfvhk34ducvcwggmov3yfoj4kn3lqgo3i4jiheqtag3i",
-        "updateCount": 72,
-        "changedAt": 1786010863,
+        "contenthash": "bafybeialj5vluj4tmkel3dwwnnaz3nqyqbvcb5v5cpw2ghkf3iztvjrjsi",
+        "updateCount": 73,
+        "changedAt": 1786019415,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -410,15 +411,15 @@
         "live": "alive"
       },
       "dotmailbox": {
-        "contenthash": "bafybeicvagi4ayaxver4hnrm3z2clfpjzqp6r22hxrpvoamebjbvpjslni",
-        "updateCount": 1,
-        "changedAt": 1786010863,
+        "contenthash": "bafybeiarnmbwsdo5kumdd7o3z34xxqmjatnuao2nloedyvk6ks34agwiui",
+        "updateCount": 2,
+        "changedAt": 1786019415,
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeidaoduv7ytzpkjg5mbuj55vhbkef6afi3h5isw42ypspw2b5caadi",
-        "updateCount": 49,
-        "changedAt": 1785988293,
+        "contenthash": "bafybeicuj2caahwgtobtwgvwdfyur5z4ni6ajdhqmxf57xzjesgdbekdzu",
+        "updateCount": 50,
+        "changedAt": 1786019415,
         "live": "alive"
       },
       "doyoulike": {
@@ -482,9 +483,9 @@
         "live": "alive"
       },
       "frenchan-app77": {
-        "contenthash": "bafybeiehychw6ijpjiklljagdugrfeaui7bu5ypcabozvy2c64baeacflm",
-        "updateCount": 7,
-        "changedAt": 1785966057,
+        "contenthash": "bafybeigjwrrpntad3fyiqz2kzsq3ruvxf3a4oizhwg2wjy5cxlxg6npuqi",
+        "updateCount": 8,
+        "changedAt": 1786019415,
         "live": "alive"
       },
       "gameboyonchain": {
@@ -775,9 +776,9 @@
         "live": "unknown"
       },
       "open-docs": {
-        "contenthash": "bafybeiemezwfkk4x3y5ipittmcf5lozc7t2vp2vi3ft45z2gnojty2p7q4",
-        "updateCount": 8,
-        "changedAt": 1785944408,
+        "contenthash": "bafybeih5zklf4jw7btzjwv4h4h25nodc6iyqbo6rcz7cu25b66r7b25uby",
+        "updateCount": 9,
+        "changedAt": 1786019415,
         "live": "alive"
       },
       "openpetition": {
