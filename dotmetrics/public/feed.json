@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786007896,
-  "count": 182,
+  "generatedAt": 1786010863,
+  "count": 183,
   "apps": [
+    {
+      "label": "dforms-app",
+      "domain": "dforms-app.dot",
+      "displayName": "dforms",
+      "description": "Encrypted forms on Polkadot. Responses are readable only by their creator.",
+      "tier": 0,
+      "firstSeenAt": 1786009620,
+      "url": "https://dforms-app.dev-dot.li"
+    },
     {
       "label": "dotmailbox",
       "domain": "dotmailbox.dot",

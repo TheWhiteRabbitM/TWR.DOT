@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 06 Aug 2026 09:18:16 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 06 Aug 2026 10:07:43 GMT</lastBuildDate>
+    <item>
+      <title>dforms</title>
+      <link>https://dforms-app.dev-dot.li</link>
+      <description>Encrypted forms on Polkadot. Responses are readable only by their creator.</description>
+      <guid isPermaLink="false">dforms-app</guid>
+      <pubDate>Thu, 06 Aug 2026 09:47:00 GMT</pubDate>
+    </item>
     <item>
       <title>dotmail</title>
       <link>https://dotmailbox.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">discovery</guid>
       <pubDate>Tue, 04 Aug 2026 14:11:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>community</title>
-      <link>https://community.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">community</guid>
-      <pubDate>Tue, 04 Aug 2026 14:10:00 GMT</pubDate>
     </item>
   </channel>
 </rss>

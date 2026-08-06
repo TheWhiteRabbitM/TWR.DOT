@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11882185,
-  "updatedAt": "2026-08-06T09:14:17.210Z",
+  "lastBlock": 11883595,
+  "updatedAt": "2026-08-06T10:01:47.435Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "19a67ec9ac561ef4eed4ba4a8879e6ef30676b075128752de306285774cf0077",
-    "cid": "bafybeid2q4qxvg43e5c7mv7wv6c5jccrmq6tx4mnc42mtok4mg2j2osw6a",
-    "uploadedAt": "2026-08-06T09:20:17.221Z"
+    "digest": "c89aca388b3acf4eeaa7c0adbf8d27f3dc96d7791682e0219bb97c427af4534e",
+    "cid": "bafybeidkanchxrnycuy6gzu362alo4nqvpneehrnzypspymramgdmd4yfe",
+    "uploadedAt": "2026-08-06T10:09:10.489Z"
   },
   "sitePublish": {
-    "treeHash": "9046be60e049a1606f2029182c214fb7e1784b86963131ec922d6656c2b20018",
-    "publishedAt": "2026-08-05T23:31:00.719Z"
+    "treeHash": "5a8bd7c645f8a471bb119b60a6ffdeeb4a8ceeab1f2c42b1ad8ff488df2bdfe6",
+    "publishedAt": "2026-08-06T10:11:29.101Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-06T09:18:15.000Z",
+    "updatedAt": "2026-08-06T10:07:43.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -152,13 +152,14 @@
       "polkanote": "alive",
       "substrade-hub": "alive",
       "navalstrike01": "alive",
-      "dotmailbox": "alive"
+      "dotmailbox": "alive",
+      "dforms-app": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-06T09:18:16.000Z",
+    "updatedAt": "2026-08-06T10:07:43.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -204,9 +205,9 @@
         "live": "alive"
       },
       "broadside": {
-        "contenthash": "bafybeig25joo5djm36cl2t7t7mgmocf7ait65mgzwnubpvgypmnwv3ycdq",
-        "updateCount": 4,
-        "changedAt": 1785960231,
+        "contenthash": "bafybeiduzcr3pqwvm67zoqn3riq2remz22rzlab74zvcilrxfjxpmh6c7u",
+        "updateCount": 5,
+        "changedAt": 1786010863,
         "live": "alive"
       },
       "buildboard01": {
@@ -330,6 +331,11 @@
         "changedAt": 1785684961,
         "live": "alive"
       },
+      "dforms-app": {
+        "contenthash": "bafybeickk6qppb3ba2hrzws6suse3cfhohz6t5pap74e3vx5akioqqsrou",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "discovery": {
         "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
         "updateCount": 0,
@@ -370,9 +376,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeid73y2v2jou2wzc7pztlhmbcdl2gkfc2zdwecdkrvhvtqp52rycia",
-        "updateCount": 71,
-        "changedAt": 1786007896,
+        "contenthash": "bafybeihjlxenomgfvhk34ducvcwggmov3yfoj4kn3lqgo3i4jiheqtag3i",
+        "updateCount": 72,
+        "changedAt": 1786010863,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -404,8 +410,9 @@
         "live": "alive"
       },
       "dotmailbox": {
-        "contenthash": "bafybeie3qrtlqgrlskk2gmhxi4o6g6pwxvwptbp6yjjv2m2yydcrzgsey4",
-        "updateCount": 0,
+        "contenthash": "bafybeicvagi4ayaxver4hnrm3z2clfpjzqp6r22hxrpvoamebjbvpjslni",
+        "updateCount": 1,
+        "changedAt": 1786010863,
         "live": "alive"
       },
       "dotmetrics": {

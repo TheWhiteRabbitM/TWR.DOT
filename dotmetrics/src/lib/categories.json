@@ -354,6 +354,12 @@
       "listen~"
     ]
   },
+  "dotmailbox": {
+    "category": "social",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
   "dotmetrics": {
     "category": "explorers",
     "source": "owner",
