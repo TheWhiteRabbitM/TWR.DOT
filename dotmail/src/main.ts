@@ -19,7 +19,9 @@ import {
   type Attachment, type Part,
 } from './attach.ts';
 import { inbox as jmapInbox, allowHost, type JmapConfig, type ClassicMail } from './jmap.ts';
-import { keyForName, looksLikeKey, looksLikeName, keyFromHex, publishCommand } from './names.ts';
+import {
+  keyForName, looksLikeKey, looksLikeName, keyFromHex, publishCommand, publishKeyToName,
+} from './names.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
@@ -360,9 +362,10 @@ function composeView(): string {
   </div>`;
 }
 
-/** A placeholder for the publish command. Deliberately obvious rather than a
- *  guess at somebody's real name, which would be a command they run by mistake. */
-const nameGuess = () => 'yourname.dot';
+let myName = '';
+let nameState: { text: string; bad?: boolean } | null = null;
+/** Only after the host has actually refused, never as a first offer. */
+let nameFallback = false;
 
 function mailboxView(): string {
   if (!BOX) return '<div class="reader"><p class="dim">Deriving…</p></div>';
@@ -385,15 +388,19 @@ function mailboxView(): string {
            that is actually yours.`}</div>
     </div>
     <h2>Be reachable by name</h2>
-    <p class="dim">Publish this key under a <code>.dot</code> you own and people can write to
-    <strong>${esc(nameGuess())}</strong> instead of sixty-four characters. Publishing it costs
-    you nothing in privacy: the key is how people reach you, and the chain still records only
-    anonymous envelopes.</p>
-    <p class="dim small">The app cannot write this record for you. It belongs to the name's
-    owner, and the app signs as its own product account, which does not own your name. So this
-    is the line to run:</p>
-    <pre class="key" id="pubcmd">${esc(publishCommand(nameGuess(), hex(BOX.pub)))}</pre>
-    <div class="rfoot"><button class="btn" id="copycmd">Copy the command</button></div>
+    <p class="dim">Publish this key under a <code>.dot</code> you own, and people can write to
+    your name instead of sixty-four characters. It costs you nothing in privacy: the key is how
+    people reach you, and the chain still records only anonymous envelopes.</p>
+    <div class="row2">
+      <input id="myname" value="${esc(myName)}" placeholder="yourname.dot" autocomplete="off">
+      <button class="btn solid" id="publishname">Publish</button>
+    </div>
+    ${nameState ? `<p class="${nameState.bad ? 'bad' : 'dim'} small">${esc(nameState.text)}</p>` : ''}
+    ${nameFallback ? `
+      <p class="dim small">This host will not let the app sign with your wallet account, and the
+      record belongs to whoever owns the name. From a desktop, this is the line:</p>
+      <pre class="key" id="pubcmd">${esc(publishCommand(myName || 'yourname.dot', hex(BOX.pub)))}</pre>
+      <div class="rfoot"><button class="btn" id="copycmd">Copy the command</button></div>` : ''}
 
     <h2>People you know</h2>
     <p class="dim small">Kept in this browser and sent nowhere. An address book is a list of
@@ -713,6 +720,34 @@ function bind() {
     catch { flash = { text: 'Could not reach the clipboard. The key is on screen to copy by hand.', bad: true }; }
     render();
   });
+
+  document.getElementById('publishname')?.addEventListener('click', async () => {
+    if (!BOX) return;
+    const name = (document.getElementById('myname') as HTMLInputElement)?.value.trim() ?? '';
+    myName = name;
+    if (!looksLikeName(name)) {
+      nameState = { text: 'A name like alice.dot, please.', bad: true };
+      return render();
+    }
+    busy = `Publishing your key under ${name}…`;
+    nameState = null;
+    render();
+    const r = await publishKeyToName(name, hex(BOX.pub));
+    busy = '';
+    if (r.ok) {
+      nameState = { text: `Done. People can write to ${name} now, and the record reads back from the chain.` };
+      nameFallback = false;
+    } else {
+      nameState = { text: r.why, bad: true };
+      // The command is offered ONLY once the host has actually refused. Leading
+      // with it told a phone user to open a terminal they do not have.
+      nameFallback = r.hostCannot;
+    }
+    render();
+  });
+
+  const nameInput = document.getElementById('myname') as HTMLInputElement | null;
+  nameInput?.addEventListener('input', () => { myName = nameInput.value; });
 
   document.getElementById('copycmd')?.addEventListener('click', async () => {
     const cmd = document.getElementById('pubcmd')?.textContent ?? '';
