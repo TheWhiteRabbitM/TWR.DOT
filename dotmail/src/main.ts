@@ -17,11 +17,12 @@ import {
   shrink, split, join, newGroup, dataUrl, humanSize,
   type Attachment, type Part,
 } from './attach.ts';
+import { inbox as jmapInbox, allowHost, type JmapConfig, type ClassicMail } from './jmap.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
 
-type Folder = 'inbox' | 'starred' | 'sent' | 'archive' | 'trash';
+type Folder = 'inbox' | 'starred' | 'sent' | 'archive' | 'trash' | 'classic';
 
 const FOLDERS: { id: Folder; label: string; icon: string }[] = [
   { id: 'inbox', label: 'Inbox', icon: icon.inbox },
@@ -36,6 +37,15 @@ let STORE: MailStore = new LocalStore();
 let LETTERS: Received[] = [];
 /** Slices of pictures, by group, gathered by the same scan that finds letters. */
 let PARTS = new Map<string, Part[]>();
+
+/* Ordinary email, kept deliberately apart from everything above. Different
+   state, different folder, different colour on screen: these arrived through a
+   provider that read them, and nothing here changes that. */
+let CLASSIC: ClassicMail[] = [];
+let classicCfg: JmapConfig | null = null;
+let classicErr: { why: string; at: string } | null = null;
+let classicOpen: string | null = null;
+const CLASSIC_KEY = 'dotmail.jmap';
 /** Pictures waiting on the composer, already shrunk so the cost is knowable. */
 let pending: { name: string; type: string; bytes: Uint8Array; url: string }[] = [];
 let scannedTo = 0;
@@ -119,10 +129,94 @@ function sidebar(): string {
         </button>`;
       }).join('')}
     </nav>
+    <!-- Below the rule, and in its own colour. Ordinary email is a different
+         promise from the folders above it, so it does not sit in the same list
+         looking like one more of them. -->
+    <div class="classicnav">
+      <p class="navhead">Ordinary email</p>
+      <button class="navbtn plain ${folder === 'classic' && !showMailbox ? 'on' : ''}"
+              data-folder="classic" title="Ordinary email, not sealed">
+        ${icon.inbox}<span class="fl">${classicCfg ? esc(classicCfg.email) : 'Not connected'}</span>
+        ${CLASSIC.filter((m) => !m.seen).length ? `<span class="badge plain">${CLASSIC.filter((m) => !m.seen).length}</span>` : ''}
+      </button>
+    </div>
     <button class="navbtn mbx ${showMailbox ? 'on' : ''}" id="mailboxbtn" title="Your mailbox">
       ${icon.key}<span class="fl">Your mailbox</span>
     </button>
   </aside>`;
+}
+
+/** Ordinary email. Its own list, its own banner, never dressed as a sealed one. */
+function classicPane(): string {
+  if (!classicCfg) {
+    return `<div class="list empty">
+      <h2>Connect an ordinary mailbox</h2>
+      <p class="dim">Read your existing email here too, over JMAP, with no server of ours in
+      between. Fastmail speaks it; many hosts do not yet.</p>
+      <label class="lbl">Server</label>
+      <input id="jhost" placeholder="api.fastmail.com" autocomplete="off">
+      <label class="lbl">Your address</label>
+      <input id="jmail" placeholder="you@example.com" autocomplete="off">
+      <label class="lbl">App password</label>
+      <input id="jtok" type="password" placeholder="Not your account password" autocomplete="off">
+      <div class="rfoot"><button class="btn solid" id="jsave">Connect</button></div>
+      <div class="note warn">${icon.shield}<div><strong>These letters are not sealed.</strong>
+      They came through a provider that read them and sit on a server that can read them still.
+      Nothing dotmail does changes that, which is why they live in their own place with their own
+      colour. The password is kept on this device and is as safe as the device, no safer.</div></div>
+    </div>`;
+  }
+  if (classicErr) {
+    return `<div class="list empty">
+      <h2>Could not read that mailbox</h2>
+      <p class="bad">${esc(classicErr.why)}</p>
+      <p class="dim small">Asked: <code>${esc(classicErr.at)}</code></p>
+      <div class="rfoot">
+        <button class="btn solid" id="jretry">Try again</button>
+        <button class="btn" id="jforget">Forget this mailbox</button>
+      </div>
+    </div>`;
+  }
+  if (!CLASSIC.length) {
+    return `<div class="list empty"><h2>Nothing here yet</h2>
+      <p class="dim">Connected to ${esc(classicCfg.email)}.</p>
+      <div class="rfoot"><button class="btn" id="jretry">Fetch</button>
+      <button class="btn" id="jforget">Forget this mailbox</button></div></div>`;
+  }
+  return `<div class="list">
+    ${CLASSIC.map((m) => `
+      <div class="rowitem plainrow ${m.seen ? '' : 'unread'} ${classicOpen === m.id ? 'sel' : ''}"
+           data-classic="${esc(m.id)}">
+        <span class="star ghost">${m.hasAttachments ? icon.archive : ''}</span>
+        ${avatar(m.from)}
+        <span class="who">${esc(m.from)}</span>
+        <span class="subj">${esc(m.subject) || '(no subject)'}<span class="prev"> &mdash; ${esc(m.preview.slice(0, 120))}</span></span>
+        <span class="when">${when(m.receivedAt)}</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+function classicReader(): string {
+  const m = CLASSIC.find((x) => x.id === classicOpen);
+  if (!m) {
+    return `<div class="reader blank"><div class="blankinner">${logo(46)}
+      <p>Ordinary email.</p><p class="small">Not sealed, and not private from the provider it came through.</p>
+    </div></div>`;
+  }
+  return `<div class="reader">
+    <div class="plainbar">${icon.shield} Ordinary email. Not sealed, and readable by the server it came from.</div>
+    <div class="rtop">
+      <h1>${esc(m.subject) || '(no subject)'}</h1>
+      <div class="racts"><button class="ib" id="closer" title="Close">${icon.close}</button></div>
+    </div>
+    <article class="msg">
+      <div class="mhead">${avatar(m.from)}
+        <div><div class="mwho">${esc(m.from)}</div>
+        <div class="mmeta">to ${esc(m.to) || 'you'} &middot; ${when(m.receivedAt)}</div></div>
+      </div>
+      <div class="mbody">${esc(m.body).replace(/\n/g, '<br>')}</div>
+    </article>
+  </div>`;
 }
 
 function listPane(): string {
@@ -324,7 +418,9 @@ function render() {
 
   <div class="shell">
     ${sidebar()}
-    ${showMailbox ? mailboxView() : `
+    ${showMailbox ? mailboxView() : folder === 'classic' ? `
+      <div class="mid plain ${classicOpen ? 'hasopen' : ''}">${classicPane()}</div>
+      ${classicReader()}` : `
       <div class="mid ${openId !== null ? 'hasopen' : ''}">${listPane()}</div>
       ${readerPane()}`}
   </div>
@@ -432,9 +528,32 @@ function bind() {
   document.querySelectorAll<HTMLElement>('[data-folder]').forEach((b) =>
     b.addEventListener('click', () => {
       folder = b.dataset.folder as Folder;
-      openId = null; showMailbox = false; flash = null;
+      openId = null; classicOpen = null; showMailbox = false; flash = null;
       render();
+      if (folder === 'classic' && classicCfg && !CLASSIC.length && !classicErr) void fetchClassic();
     }));
+
+  document.querySelectorAll<HTMLElement>('[data-classic]').forEach((r) =>
+    r.addEventListener('click', () => { classicOpen = r.dataset.classic ?? null; render(); }));
+
+  document.getElementById('jsave')?.addEventListener('click', async () => {
+    const host = (document.getElementById('jhost') as HTMLInputElement)?.value.trim() ?? '';
+    const email = (document.getElementById('jmail') as HTMLInputElement)?.value.trim() ?? '';
+    const token = (document.getElementById('jtok') as HTMLInputElement)?.value ?? '';
+    if (!host || !email || !token) { flash = { text: 'Server, address and app password, please.', bad: true }; return render(); }
+    classicCfg = { host: host.replace(/^https?:\/\//, '').replace(/\/+$/, ''), email, token };
+    await (await storeForClassic()).set(JSON.stringify(classicCfg));
+    await fetchClassic();
+  });
+
+  document.getElementById('jretry')?.addEventListener('click', () => void fetchClassic());
+
+  document.getElementById('jforget')?.addEventListener('click', async () => {
+    classicCfg = null; CLASSIC = []; classicErr = null; classicOpen = null;
+    await (await storeForClassic()).set('');
+    flash = { text: 'Forgotten on this device. Nothing was ever sent anywhere else.' };
+    render();
+  });
 
   document.getElementById('mailboxbtn')?.addEventListener('click', () => {
     showMailbox = true; openId = null; render(); void showContacts();
@@ -456,7 +575,9 @@ function bind() {
       render();
     }));
 
-  document.getElementById('closer')?.addEventListener('click', () => { openId = null; render(); });
+  document.getElementById('closer')?.addEventListener('click', () => {
+    openId = null; classicOpen = null; render();
+  });
 
   document.getElementById('archive')?.addEventListener('click', () => {
     if (openId === null) return;
@@ -581,6 +702,45 @@ function bind() {
   });
 }
 
+/* ------------------------------------------------------------ classic mail */
+
+async function storeForClassic() {
+  const h = await import('@parity/product-sdk-host').catch(() => null);
+  try {
+    const s = h && (await h.getHostLocalStorage());
+    if (s) return { get: () => s.readString(CLASSIC_KEY), set: (v: string) => s.writeString(CLASSIC_KEY, v) };
+  } catch { /* fall through */ }
+  return {
+    get: async () => localStorage.getItem(CLASSIC_KEY) ?? '',
+    set: async (v: string) => { localStorage.setItem(CLASSIC_KEY, v); },
+  };
+}
+
+async function loadClassicConfig() {
+  try {
+    const raw = await (await storeForClassic()).get();
+    classicCfg = raw ? (JSON.parse(raw) as JmapConfig) : null;
+  } catch { classicCfg = null; }
+}
+
+async function fetchClassic() {
+  if (!classicCfg) return;
+  busy = `Reading ${classicCfg.email}…`;
+  classicErr = null;
+  render();
+  const granted = await allowHost(classicCfg.host);
+  if (!granted) {
+    busy = '';
+    classicErr = { why: 'the container would not allow a request to that host', at: classicCfg.host };
+    return render();
+  }
+  const r = await jmapInbox(classicCfg);
+  busy = '';
+  if (r.ok) { CLASSIC = r.value; classicErr = null; }
+  else { CLASSIC = []; classicErr = { why: r.why, at: r.at }; }
+  render();
+}
+
 async function showContacts() {
   const el = document.getElementById('contacts');
   if (!el || !(STORE instanceof LocalStore)) return;
@@ -597,6 +757,7 @@ async function showContacts() {
   render();
   BOX = await mailbox();
   await STORE.setKey(BOX.pub);
+  await loadClassicConfig();
   console.info(`dotmail: ${SLOTS} slots per envelope, key from ${BOX.origin}`);
   render();
   await refresh();

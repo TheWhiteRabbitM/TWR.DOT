@@ -11,59 +11,81 @@
  * read in daylight; the dark variant keeps the same warmth instead of turning
  * the paper blue. */
 
+/* POLKADOT.COM'S OWN PALETTE AND TYPE.
+ *
+ * Read off the live site rather than approximated: the warm stone neutrals it
+ * declares as --color-bg, --color-text-primary and so on, its serif display
+ * face for headings at weight 400 with tight tracking, and its restraint about
+ * accent colour. That restraint is the actual house style — almost everything
+ * is neutral, and the few coloured things earn it.
+ *
+ * The typefaces are named first and fall back to what a system already has:
+ * this bundle cannot fetch a web font, because the container blocks origins it
+ * was not granted and the whole thing has to stand alone. */
+
 :root {
   color-scheme: light dark;
 
-  --bg: #fdfcfa;          /* paper */
-  --pane: #f5f1ea;        /* the sidebar, a shade warmer */
-  --panel: #ece6dc;
-  --hover: #f0ebe2;
-  --line: #e2dace;
-  --line-soft: #efe9df;
+  --bg: #fafaf9;
+  --pane: #ffffff;
+  --panel: #f5f5f4;
+  --hover: #f0efee;
+  --line: #e7e5e4;
+  --line-soft: #efedec;
+  --line-strong: #d6d3d1;
 
   --ink: #1c1917;
-  --ink-soft: #423b35;
-  --dim: #837a70;
+  --ink-soft: #57534e;
+  --dim: #78716c;
 
-  --accent: #a8243c;      /* sealing wax */
-  --accent-soft: #f9e7ea;
-  --accent-ink: #fffaf8;
-  --bad: #b4231b;
-  --star: #c98a12;
+  --accent: #1c1917;
+  --accent-soft: #eceae9;
+  --accent-ink: #fafaf9;
+  --bad: #9f1239;
+  --star: #b45309;
 
-  --warn-bg: #fdf3d8;
-  --warn-line: #e0c477;
-  --warn-ink: #52400d;
+  /* The one place colour is spent: a wax seal, on the mark and nowhere else. */
+  --seal: #9f1239;
 
-  --seal-bg: #fdfcfa;
-  --radius: 12px;
-  --side: 232px;
+  --warn-bg: #fdf6e3;
+  --warn-line: #e2d5a8;
+  --warn-ink: #57451a;
+
+  --seal-bg: #fafaf9;
+  --radius: 10px;
+  --side: 236px;
+
+  --sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'DM Serif Display', Georgia, 'Times New Roman', serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #16120f;
-    --pane: #1d1815;
-    --panel: #272019;
-    --hover: #2e2620;
-    --line: #382e26;
-    --line-soft: #241e19;
+    --bg: #0f0f0f;
+    --pane: #171716;
+    --panel: #1c1c1b;
+    --hover: #262625;
+    --line: #292928;
+    --line-soft: #1f1f1e;
+    --line-strong: #3a3a38;
 
-    --ink: #f4efe8;
-    --ink-soft: #d5cabd;
-    --dim: #9d9086;
+    --ink: #fafaf9;
+    --ink-soft: #d6d3d1;
+    --dim: #a8a29e;
 
-    --accent: #f0687f;
-    --accent-soft: #3b1d23;
-    --accent-ink: #20090d;
-    --bad: #ff8b80;
-    --star: #e8b74a;
+    --accent: #fafaf9;
+    --accent-soft: #262625;
+    --accent-ink: #0f0f0f;
+    --bad: #fb7185;
+    --star: #d99b3a;
 
-    --warn-bg: #33290f;
-    --warn-line: #6b5520;
-    --warn-ink: #f2e0b4;
+    --seal: #e11d48;
 
-    --seal-bg: #16120f;
+    --warn-bg: #2a2413;
+    --warn-line: #574c26;
+    --warn-ink: #eadfbc;
+
+    --seal-bg: #0f0f0f;
   }
 }
 
@@ -73,7 +95,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 14px/1.55 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font: 14px/1.55 var(--sans);
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
 }
@@ -92,10 +114,11 @@ svg { display: block; flex: 0 0 auto; }
 }
 .brand {
   display: inline-flex; align-items: center; gap: 9px;
-  font-size: 16px; font-weight: 680; letter-spacing: -0.01em;
+  font-family: var(--serif); font-size: 21px; font-weight: 400;
+  letter-spacing: -0.02em;
   color: var(--ink); flex: 0 0 auto;
 }
-.brand svg { color: var(--accent); }
+.brand svg { color: var(--seal); }
 
 .searchwrap {
   flex: 1 1 auto; min-width: 0; max-width: 42rem;
@@ -172,7 +195,29 @@ svg { display: block; flex: 0 0 auto; }
   white-space: nowrap; overflow: hidden;
 }
 .navbtn:hover { background: var(--hover); color: var(--ink); }
-.navbtn.on { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
+.navbtn.on { background: var(--accent-soft); color: var(--ink); font-weight: 650; }
+
+/* Ordinary email, below a rule and in outline rather than solid, so the eye
+   never files it with the sealed folders above it. */
+.classicnav { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.navhead {
+  margin: 0 0 6px 14px; font-size: 11px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--dim);
+}
+.navbtn.plain.on { background: none; box-shadow: inset 0 0 0 1px var(--line-strong); color: var(--ink); }
+.badge.plain { background: none; border: 1px solid var(--line-strong); color: var(--dim); }
+.rowitem.plainrow.sel { background: var(--panel); box-shadow: inset 3px 0 0 var(--line-strong); }
+.star.ghost { color: var(--dim); pointer-events: none; }
+.star.ghost svg { width: 15px; height: 15px; }
+.plainbar {
+  display: flex; align-items: center; gap: 9px;
+  margin: -4px 0 16px; padding: 9px 13px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--panel); color: var(--ink-soft); font-size: 12.5px;
+}
+.plainbar svg { width: 17px; height: 17px; flex: 0 0 auto; }
+.mid.plain { background: var(--panel); }
+.lbl { display: block; font-size: 12.5px; color: var(--dim); margin: 1.1em 0 .35em; }
 .navbtn svg { width: 20px; height: 20px; }
 .navbtn .fl { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; }
 .badge {
@@ -250,7 +295,11 @@ svg { display: block; flex: 0 0 auto; }
 .reader.pane { max-width: 48rem; }
 
 .rtop { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
-.rtop h1 { flex: 1 1 auto; font-size: 1.35rem; line-height: 1.3; margin: 0; letter-spacing: -0.01em; }
+.rtop h1 {
+  flex: 1 1 auto; margin: 0;
+  font-family: var(--serif); font-weight: 400;
+  font-size: 1.7rem; line-height: 1.25; letter-spacing: -0.02em;
+}
 .racts { display: flex; gap: 2px; flex: 0 0 auto; }
 .ib {
   background: none; border: 0; color: var(--dim);
@@ -296,8 +345,15 @@ svg { display: block; flex: 0 0 auto; }
 .pcost { margin: 2px 0 0; }
 .attbtn { cursor: pointer; }
 
-h1 { font-size: 1.35rem; margin: 0 0 .5em; letter-spacing: -0.01em; }
-h2 { font-size: 1.02rem; margin: 1.9em 0 .5em; }
+h1 {
+  font-family: var(--serif); font-weight: 400;
+  font-size: 1.7rem; margin: 0 0 .45em; letter-spacing: -0.02em; line-height: 1.25;
+}
+h2 {
+  font-family: var(--serif); font-weight: 400;
+  font-size: 1.25rem; margin: 1.7em 0 .45em; letter-spacing: -0.015em;
+}
+.list.empty h2 { font-family: var(--serif); font-weight: 400; font-size: 1.3rem; }
 p { margin: 0 0 .9em; }
 .dim { color: var(--dim); }
 .small { font-size: 12.5px; }
