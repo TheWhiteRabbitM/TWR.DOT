@@ -19,6 +19,7 @@ import {
   type Attachment, type Part,
 } from './attach.ts';
 import { inbox as jmapInbox, allowHost, type JmapConfig, type ClassicMail } from './jmap.ts';
+import { keyForName, looksLikeKey, looksLikeName, keyFromHex, publishCommand } from './names.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
@@ -333,7 +334,7 @@ function composeView(): string {
   return `<div class="composer">
     <div class="chead">${draft.replyTo !== undefined ? 'Reply' : 'New letter'}
       <button class="ib" id="ccancel" title="Discard">${icon.close}</button></div>
-    <input id="to" value="${esc(draft.to)}" placeholder="To: a name you know, or a 64-character key" autocomplete="off">
+    <input id="to" value="${esc(draft.to)}" placeholder="To: alice.dot, a name you know, or a 64-character key" autocomplete="off">
     <input id="subject" value="${esc(draft.subject)}" placeholder="Subject (sealed with the body, never on chain)" autocomplete="off">
     <textarea id="body" placeholder="Write.">${esc(draft.body)}</textarea>
     ${pending.length ? `<div class="pend">
@@ -359,6 +360,10 @@ function composeView(): string {
   </div>`;
 }
 
+/** A placeholder for the publish command. Deliberately obvious rather than a
+ *  guess at somebody's real name, which would be a command they run by mistake. */
+const nameGuess = () => 'yourname.dot';
+
 function mailboxView(): string {
   if (!BOX) return '<div class="reader"><p class="dim">Deriving…</p></div>';
   return `<div class="reader pane">
@@ -379,6 +384,17 @@ function mailboxView(): string {
            one was invented and kept here. Open dotmail inside the Polkadot app for a mailbox
            that is actually yours.`}</div>
     </div>
+    <h2>Be reachable by name</h2>
+    <p class="dim">Publish this key under a <code>.dot</code> you own and people can write to
+    <strong>${esc(nameGuess())}</strong> instead of sixty-four characters. Publishing it costs
+    you nothing in privacy: the key is how people reach you, and the chain still records only
+    anonymous envelopes.</p>
+    <p class="dim small">The app cannot write this record for you. It belongs to the name's
+    owner, and the app signs as its own product account, which does not own your name. So this
+    is the line to run:</p>
+    <pre class="key" id="pubcmd">${esc(publishCommand(nameGuess(), hex(BOX.pub)))}</pre>
+    <div class="rfoot"><button class="btn" id="copycmd">Copy the command</button></div>
+
     <h2>People you know</h2>
     <p class="dim small">Kept in this browser and sent nowhere. An address book is a list of
     who you talk to, which is exactly what this app exists not to publish.</p>
@@ -455,14 +471,33 @@ async function doSend() {
   if (!to) { flash = { text: 'Who is it for?', bad: true }; return render(); }
   if (!body.trim()) { flash = { text: 'The letter is empty.', bad: true }; return render(); }
 
+  // Three ways to name a recipient, tried in the order that cannot be wrong:
+  // a key IS the answer, a .dot name is looked up on chain, anything else is
+  // an address the contract might know.
   let pub: Uint8Array | null | undefined;
-  if (/^[0-9a-f]{64}$/i.test(to)) {
-    pub = new Uint8Array((to.match(/../g) ?? []).map((b) => parseInt(b, 16)));
+  if (looksLikeKey(to)) {
+    pub = keyFromHex(to);
+  } else if (looksLikeName(to)) {
+    busy = `Looking up ${to}…`;
+    render();
+    pub = await keyForName(to);
+    busy = '';
   } else {
     pub = await STORE.keyOf(to);
   }
-  if (pub === null) { flash = { text: 'Could not look that up. Not the same as "no such mailbox" — try again.', bad: true }; return render(); }
-  if (pub === undefined) { flash = { text: `No published key for "${to}". They need a mailbox first.`, bad: true }; return render(); }
+  if (pub === null) {
+    flash = { text: `Could not look up "${to}". That is not the same as "no such mailbox" — try again.`, bad: true };
+    return render();
+  }
+  if (pub === undefined) {
+    flash = {
+      text: looksLikeName(to)
+        ? `${to} has no mailbox key published yet. They publish one from their own Mailbox screen.`
+        : `No published key for "${to}". They need a mailbox first.`,
+      bad: true,
+    };
+    return render();
+  }
 
   const letter: Letter = {
     from: (await STORE.me()) ?? 'unknown',
@@ -676,6 +711,13 @@ function bind() {
     if (!BOX) return;
     try { await navigator.clipboard.writeText(hex(BOX.pub)); flash = { text: 'Key copied.' }; }
     catch { flash = { text: 'Could not reach the clipboard. The key is on screen to copy by hand.', bad: true }; }
+    render();
+  });
+
+  document.getElementById('copycmd')?.addEventListener('click', async () => {
+    const cmd = document.getElementById('pubcmd')?.textContent ?? '';
+    try { await navigator.clipboard.writeText(cmd); flash = { text: 'Command copied.' }; }
+    catch { flash = { text: 'Could not reach the clipboard. The command is on screen.', bad: true }; }
     render();
   });
 
