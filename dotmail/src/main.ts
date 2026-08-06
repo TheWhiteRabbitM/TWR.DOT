@@ -13,6 +13,10 @@ import { LocalStore, setFlag, hasFlag, type MailStore } from './store.ts';
 import { seal, sealedSize, SLOTS, type Letter } from './seal.ts';
 import { scan, threads, type Received } from './inbox.ts';
 import { icon, logo } from './icons.ts';
+import {
+  shrink, split, join, newGroup, dataUrl, humanSize,
+  type Attachment, type Part,
+} from './attach.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
@@ -30,6 +34,10 @@ const FOLDERS: { id: Folder; label: string; icon: string }[] = [
 let BOX: Mailbox | null = null;
 let STORE: MailStore = new LocalStore();
 let LETTERS: Received[] = [];
+/** Slices of pictures, by group, gathered by the same scan that finds letters. */
+let PARTS = new Map<string, Part[]>();
+/** Pictures waiting on the composer, already shrunk so the cost is knowable. */
+let pending: { name: string; type: string; bytes: Uint8Array; url: string }[] = [];
 let scannedTo = 0;
 let complete = true;
 
@@ -146,6 +154,32 @@ function listPane(): string {
   </div>`;
 }
 
+/**
+ * Pictures on a letter, reassembled from the slices the scan set aside.
+ *
+ * A missing slice is stated rather than papered over: showing four fifths of a
+ * photograph as though it were the photograph is the kind of quiet wrongness
+ * this whole app is written against.
+ */
+function attachmentsView(l: Received): string {
+  if (!l.attachments?.length) return '';
+  return `<div class="atts">${l.attachments.map((a: Attachment) => {
+    const have = PARTS.get(a.group) ?? [];
+    const bytes = join(have);
+    if (!bytes) {
+      return `<div class="att missing">
+        ${icon.archive}
+        <div><strong>${esc(a.name)}</strong>
+        <span class="dim small">${have.length} of ${a.parts} pieces arrived, so it cannot be put back together yet.</span></div>
+      </div>`;
+    }
+    return `<figure class="att">
+      <img src="${dataUrl(bytes, a.type)}" alt="${esc(a.name)}" loading="lazy">
+      <figcaption>${esc(a.name)} &middot; ${humanSize(bytes.length)} &middot; ${a.parts} envelope${a.parts === 1 ? '' : 's'}</figcaption>
+    </figure>`;
+  }).join('')}</div>`;
+}
+
 function readerPane(): string {
   if (openId === null) {
     return `<div class="reader blank"><div class="blankinner">
@@ -180,6 +214,7 @@ function readerPane(): string {
           </div>
         </div>
         <div class="mbody">${esc(l.body).replace(/\n/g, '<br>')}</div>
+        ${attachmentsView(l)}
       </article>`;
     }).join('')}
     <div class="rfoot">
@@ -191,6 +226,12 @@ function readerPane(): string {
   </div>`;
 }
 
+/** How many transactions this send will actually cost: the letter, plus one
+ *  per slice of every picture waiting on it. */
+function envelopeCount(): number {
+  return 1 + pending.reduce((n, p) => n + Math.ceil(p.bytes.length / 9000), 0);
+}
+
 function composeView(): string {
   const size = sealedSize({ from: '', to: draft.to, subject: draft.subject, body: draft.body, sentAt: 0 });
   const over = size > MAX_SEALED;
@@ -200,8 +241,24 @@ function composeView(): string {
     <input id="to" value="${esc(draft.to)}" placeholder="To: a name you know, or a 64-character key" autocomplete="off">
     <input id="subject" value="${esc(draft.subject)}" placeholder="Subject (sealed with the body, never on chain)" autocomplete="off">
     <textarea id="body" placeholder="Write.">${esc(draft.body)}</textarea>
+    ${pending.length ? `<div class="pend">
+      ${pending.map((p, i) => `<div class="pitem">
+        <img src="${p.url}" alt="">
+        <div class="pinfo"><strong>${esc(p.name)}</strong>
+          <span class="dim small">${humanSize(p.bytes.length)} &middot; ${Math.ceil(p.bytes.length / 9000)} envelope${Math.ceil(p.bytes.length / 9000) === 1 ? '' : 's'}</span></div>
+        <button class="ib" data-unpend="${i}" title="Remove">${icon.close}</button>
+      </div>`).join('')}
+      <!-- Said before anything is signed. Five envelopes is five transactions
+           and five deposits, and a client that reveals that only when the
+           wallet asks the fifth time has lied by omission. -->
+      <p class="dim small pcost">${envelopeCount()} envelope${envelopeCount() === 1 ? '' : 's'} in total,
+      each one a separate transaction you will be asked to approve.</p>
+    </div>` : ''}
     <div class="cfoot">
       <button class="btn solid" id="send" ${over ? 'disabled' : ''}>Seal and send</button>
+      <label class="ib attbtn" title="Attach a picture">
+        ${icon.archive}<input type="file" id="attach" accept="image/*" multiple hidden>
+      </label>
       <span class="dim small ${over ? 'bad' : ''}" id="size">${size.toLocaleString('en')} of ${MAX_SEALED.toLocaleString('en')} bytes</span>
     </div>
   </div>`;
@@ -286,6 +343,7 @@ async function refresh() {
     if (el) el.textContent = `Scanning ${p.scanned}/${p.total}…`;
   });
   LETTERS = r.letters;
+  PARTS = r.parts;
   scannedTo = r.scannedTo;
   complete = r.complete;
   busy = '';
@@ -315,21 +373,56 @@ async function doSend() {
     replyTo: draft.replyTo,
     sentAt: Math.floor(Date.now() / 1000),
   };
+  draft.to = to; draft.subject = subject; draft.body = body;   // survive a failure
   if (sealedSize(letter) > MAX_SEALED) { flash = { text: 'Too long to seal.', bad: true }; return render(); }
 
-  busy = 'Sealing and sending…';
-  render();
   // Sealed to THEM and to us. The second slot is the only reason Sent can
   // exist: a letter sealed only to its recipient is one its writer can never
   // read again.
-  const env = seal(letter, [pub, BOX.pub]);
+  const readers = [pub, BOX.pub];
+
+  // Pictures go FIRST. If a slice fails, the letter never claims an attachment
+  // the recipient will never be able to assemble, and the whole send is
+  // abandoned with the draft still on screen rather than half-delivered.
+  const attachments: Attachment[] = [];
+  let sentParts = 0;
+  for (const p of pending) {
+    const group = newGroup();
+    const parts = split(p.bytes, group);
+    for (const [i, part] of parts.entries()) {
+      busy = `Sending ${p.name}, piece ${i + 1} of ${parts.length}…`;
+      render();
+      const e = seal(part, readers);
+      const r = await STORE.send(e.tags, e.eph, e.sealed);
+      if (!r.ok) {
+        busy = '';
+        flash = {
+          text: `${p.name} stopped at piece ${i + 1} of ${parts.length}: ${r.why ?? 'it did not send'}. `
+            + `Nothing was claimed in a letter, so nobody is waiting on a picture that will not arrive.`,
+          bad: true,
+        };
+        return render();
+      }
+      sentParts++;
+    }
+    attachments.push({ name: p.name, type: p.type, size: p.bytes.length, group, parts: parts.length });
+  }
+  if (attachments.length) letter.attachments = attachments;
+
+  busy = 'Sealing the letter…';
+  render();
+  const env = seal(letter, readers);
   const r = await STORE.send(env.tags, env.eph, env.sealed);
   busy = '';
   flash = r.ok
-    ? { text: STORE.kind === 'chain' ? 'Sealed and on chain.' : 'Sealed and stored locally.' }
+    ? {
+      text: (STORE.kind === 'chain' ? 'Sealed and on chain.' : 'Sealed and stored locally.')
+        + (sentParts ? ` ${sentParts + 1} envelopes in all.` : ''),
+    }
     : { text: r.why ?? 'It did not send.', bad: true };
   if (r.ok) {
     draft = { to: '', subject: '', body: '', replyTo: undefined };
+    pending = [];
     composing = false;
     await refresh();
   } else render();
@@ -406,7 +499,43 @@ function bind() {
     bind();
   });
 
+  /* Pictures. The chooser is offered, and PASTING works too, because next door
+     in chirp the file chooser turned out to open nothing at all inside the app
+     while paste needed neither a chooser nor a permission. */
+  const takeFiles = async (files: File[]) => {
+    const pics = files.filter((f) => f.type.startsWith('image/'));
+    if (!pics.length) return;
+    busy = `Shrinking ${pics.length} picture${pics.length === 1 ? '' : 's'}…`;
+    render();
+    for (const f of pics) {
+      try {
+        const s = await shrink(f);
+        pending.push({ name: f.name || 'picture.webp', type: s.type, bytes: s.bytes, url: dataUrl(s.bytes, s.type) });
+      } catch (e) {
+        flash = { text: `${f.name}: ${(e as Error).message}`, bad: true };
+      }
+    }
+    busy = '';
+    render();
+  };
+
+  (document.getElementById('attach') as HTMLInputElement | null)
+    ?.addEventListener('change', (e) => void takeFiles([...((e.target as HTMLInputElement).files ?? [])]));
+
+  document.querySelectorAll<HTMLElement>('[data-unpend]').forEach((b) =>
+    b.addEventListener('click', () => {
+      pending.splice(Number(b.dataset.unpend), 1);
+      render();
+    }));
+
   const body = document.getElementById('body') as HTMLTextAreaElement | null;
+  body?.addEventListener('paste', (e) => {
+    const files = [...(e.clipboardData?.items ?? [])]
+      .filter((i) => i.type.startsWith('image/'))
+      .map((i) => i.getAsFile())
+      .filter(Boolean) as File[];
+    if (files.length) { e.preventDefault(); void takeFiles(files); }
+  });
   body?.addEventListener('input', () => {
     draft.body = body.value;
     draft.subject = (document.getElementById('subject') as HTMLInputElement)?.value ?? '';

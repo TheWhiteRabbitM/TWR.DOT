@@ -15,7 +15,8 @@
  *   them is who paid, which is the one sender fact the chain records. Your own
  *   address on the envelope means you wrote it.
  */
-import { slotFor, open, type Letter, type Envelope } from './seal.ts';
+import { slotFor, open, isPart, type Letter, type Envelope } from './seal.ts';
+import type { Part } from './attach.ts';
 import type { MailStore } from './store.ts';
 import type { Mailbox } from './keys.ts';
 
@@ -35,19 +36,21 @@ export async function scan(
   store: MailStore,
   box: Mailbox,
   onProgress?: (p: ScanProgress) => void,
-): Promise<{ letters: Received[]; scannedTo: number; complete: boolean }> {
+): Promise<{ letters: Received[]; parts: Map<string, Part[]>; scannedTo: number; complete: boolean }> {
   const total = await store.count();
-  if (total === null) return { letters: [], scannedTo: 0, complete: false };
+  if (total === null) return { letters: [], parts: new Map(), scannedTo: 0, complete: false };
 
   const me = (await store.me()) ?? '';
   const letters: Received[] = [];
+  /** Slices of pictures, kept aside by group rather than shown as letters. */
+  const parts = new Map<string, Part[]>();
   let at = 0;
 
   while (at < total) {
     const heads = await store.heads(at, Math.min(PAGE, total - at));
     if (heads === null) {
       // A refused read is not an empty stream. Stop, and say where we stopped.
-      return { letters, scannedTo: at, complete: false };
+      return { letters, parts, scannedTo: at, complete: false };
     }
 
     const hits: { id: number; slot: number; head: (typeof heads)[number] }[] = [];
@@ -63,11 +66,20 @@ export async function scan(
           const hit = hits.find((h) => h.id === b.id);
           if (!hit) continue;
           const env: Envelope = { tags: hit.head.tags, eph: hit.head.eph, sealed: b.sealed };
-          const letter = open(env, hit.slot, box.priv, box.pub);
+          const payload = open(env, hit.slot, box.priv, box.pub);
           // A slot that matched but a body that will not authenticate is a
           // forgery or a bad read. Either way it is not a letter, and it is
           // not shown to anybody.
-          if (!letter) continue;
+          if (!payload) continue;
+          // A slice of a picture. Set aside, never shown as an inbox row: an
+          // inbox full of fragments is what this would be otherwise.
+          if (isPart(payload)) {
+            const list = parts.get(payload.group) ?? [];
+            list.push(payload);
+            parts.set(payload.group, list);
+            continue;
+          }
+          const letter = payload;
           letters.push({
             ...letter,
             id: b.id,
@@ -84,7 +96,7 @@ export async function scan(
     if (!heads.length) break;
   }
 
-  return { letters, scannedTo: at, complete: true };
+  return { letters, parts, scannedTo: at, complete: true };
 }
 
 export const byNewest = (a: Received, b: Received) => b.receivedAt - a.receivedAt || b.id - a.id;

@@ -268,6 +268,34 @@ svg { display: block; flex: 0 0 auto; }
 .mbody { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; color: var(--ink-soft); }
 .rfoot { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 22px; }
 
+/* Pictures, reassembled from the slices the scan set aside. */
+.atts { display: grid; gap: 12px; margin-top: 16px; }
+.att {
+  margin: 0;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--panel); overflow: hidden;
+}
+.att img { display: block; width: 100%; height: auto; background: var(--hover); }
+.att figcaption { padding: 8px 12px; font-size: 12.5px; color: var(--dim); }
+.att.missing {
+  display: flex; gap: 11px; align-items: flex-start;
+  padding: 13px 15px; font-size: 13px;
+}
+.att.missing svg { width: 19px; height: 19px; color: var(--dim); flex: 0 0 auto; }
+.att.missing span { display: block; margin-top: 2px; }
+
+/* Waiting on the composer, already shrunk so the cost is knowable. */
+.pend { border-bottom: 1px solid var(--line); padding: 10px 16px; display: grid; gap: 8px; }
+.pitem { display: flex; align-items: center; gap: 11px; }
+.pitem img {
+  width: 46px; height: 46px; object-fit: cover;
+  border-radius: 8px; border: 1px solid var(--line); flex: 0 0 auto;
+}
+.pinfo { flex: 1 1 auto; min-width: 0; }
+.pinfo strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pcost { margin: 2px 0 0; }
+.attbtn { cursor: pointer; }
+
 h1 { font-size: 1.35rem; margin: 0 0 .5em; letter-spacing: -0.01em; }
 h2 { font-size: 1.02rem; margin: 1.9em 0 .5em; }
 p { margin: 0 0 .9em; }

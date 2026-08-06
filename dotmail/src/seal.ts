@@ -49,15 +49,29 @@ export const WRAP_CTX = 'dotmail:wrap:v2';
 const NONCE = 24;
 const WRAPPED = 32 + 16;             // content key + Poly1305 tag
 
+import type { Attachment, Part } from './attach.ts';
+
 export type Letter = {
+  kind?: 'letter';
   /** The sender's name, as CLAIMED. The payer on chain is the fact. */
   from: string;
   to: string;
   subject: string;
   body: string;
   replyTo?: number;
+  attachments?: Attachment[];
   sentAt: number;
 };
+
+/**
+ * What a sealed envelope contains: a letter, or one slice of a picture too big
+ * to fit in one. Both are sealed identically, so a slice is as unreadable and
+ * as unattributable as the letter it belongs to, and the reader tells them
+ * apart only after opening.
+ */
+export type Payload = Letter | Part;
+
+export const isPart = (p: Payload): p is Part => (p as Part).kind === 'part';
 
 const enc = new TextEncoder();
 const dec = new TextDecoder();
@@ -87,7 +101,7 @@ export type Envelope = {
  * caller decides that rather than this function assuming it, because a letter
  * you deliberately cannot re-read later is a legitimate thing to want.
  */
-export function seal(letter: Letter, readers: Uint8Array[]): Envelope {
+export function seal(letter: Payload, readers: Uint8Array[]): Envelope {
   if (!readers.length) throw new Error('a letter needs at least one reader');
   if (readers.length > SLOTS) throw new Error(`at most ${SLOTS} readers`);
   for (const r of readers) if (r.length !== 32) throw new Error('keys must be 32 bytes');
@@ -133,7 +147,7 @@ export function slotFor(env: Pick<Envelope, 'tags' | 'eph'>, myPriv: Uint8Array)
 
 /** Open an envelope whose slot already matched. `null` when the bytes do not
  *  authenticate, which is a forgery or a bad read and never a letter to show. */
-export function open(env: Envelope, slot: number, myPriv: Uint8Array, myPub: Uint8Array): Letter | null {
+export function open(env: Envelope, slot: number, myPriv: Uint8Array, myPub: Uint8Array): Payload | null {
   try {
     const s = x25519.getSharedSecret(myPriv, env.eph);
     const wrapped = env.sealed.subarray(slot * WRAPPED, (slot + 1) * WRAPPED);
@@ -142,15 +156,21 @@ export function open(env: Envelope, slot: number, myPriv: Uint8Array, myPub: Uin
     const at = SLOTS * WRAPPED;
     const nonce = env.sealed.subarray(at, at + NONCE);
     const body = env.sealed.subarray(at + NONCE);
-    const letter = JSON.parse(dec.decode(xchacha20poly1305(contentKey, nonce).decrypt(body))) as Letter;
-    if (typeof letter?.body !== 'string' || typeof letter?.subject !== 'string') return null;
-    return letter;
+    const payload = JSON.parse(dec.decode(xchacha20poly1305(contentKey, nonce).decrypt(body))) as Payload;
+
+    // Authenticated bytes that are not a shape we recognise are still not a
+    // letter. Better to drop them than to render half an object.
+    if (isPart(payload)) {
+      return typeof payload.data === 'string' && Number.isInteger(payload.total) ? payload : null;
+    }
+    if (typeof payload?.body !== 'string' || typeof payload?.subject !== 'string') return null;
+    return payload;
   } catch {
     return null;
   }
 }
 
 /** Sealed size, so the composer can warn before the contract refuses. */
-export function sealedSize(letter: Letter): number {
+export function sealedSize(letter: Payload): number {
   return SLOTS * WRAPPED + NONCE + enc.encode(JSON.stringify(letter)).length + 16;
 }
