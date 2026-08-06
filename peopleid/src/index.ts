@@ -1,5 +1,11 @@
 /**
- * dotid — one identity for the whole .dot suite.
+ * peopleid — one identity for the whole suite.
+ *
+ * NAMED AFTER peoplebook, DELIBERATELY
+ *   It was called `dotid` for an afternoon, which was careless: DotID is
+ *   somebody else's project and we have nothing to do with them. This is named
+ *   after the app that actually owns the identity here, which is also the app
+ *   name the host derives every account from. The name and the thing agree.
  *
  * WHY THIS IS A PACKAGE AND NOT A PATTERN
  *   Every app in this workspace had its own copy of "who is this person". The

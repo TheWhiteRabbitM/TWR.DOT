@@ -25,7 +25,7 @@
 import './style.css';
 import data from './data.json';
 import { icon, logo } from './icons';
-import { reachOf, type Where } from './reach';
+import { reachOf, claimedCount, eachClaimed, type Where, type Claimed } from './reach';
 import { claim, setProfile, warmUp, signerInfo, myMask, type ClaimStep, type Socials } from './claim';
 
 type User = { name: string; owner: string; tier?: number; social?: Socials };
@@ -74,6 +74,10 @@ let MYADDR = '';
 let looked = false;
 let REACH: Where[] | null = null;
 let query = '';
+/** Masks that really exist, read from the chain, filling in as they land.
+ *  `null` while nothing has come back yet, which is NOT the same as none. */
+let CLAIMED: Claimed[] | null = null;
+let claimedTotal: number | null = null;
 let busy = '';
 let flash: { text: string; bad?: boolean } | null = null;
 let editing = false;
@@ -186,30 +190,70 @@ function editView(): string {
   </section>`;
 }
 
+/**
+ * The register, in two halves that are NOT the same thing.
+ *
+ * A claimed mask exists on chain and has a number and an owner. A directory
+ * name is somebody the People chain knows about who has not claimed anything
+ * here. The old page listed them together and called them all masks, which
+ * inflated the count by every person who never turned up.
+ */
 function registerSection(): string {
   const q = query.trim().toLowerCase();
-  const list = D.users
-    .filter((u) => !q || u.name.toLowerCase().includes(q) || (u.social?.name ?? '').toLowerCase().includes(q))
-    .slice(0, 60);
+
+  const claimed = (CLAIMED ?? [])
+    .filter((c) => !q || c.handle.toLowerCase().includes(q) || String(c.mask) === q);
+
+  // Anybody in the static directory whose handle is not on a claimed mask.
+  const taken = new Set((CLAIMED ?? []).map((c) => c.handle.toLowerCase()).filter(Boolean));
+  const unclaimed = D.users
+    .filter((u) => !taken.has(u.name.toLowerCase()))
+    .filter((u) => !q || u.name.toLowerCase().includes(q))
+    .slice(0, 40);
+
+  const counted = claimedTotal === null
+    ? 'The chain would not say how many masks exist.'
+    : `<strong>${claimedTotal}</strong> ${claimedTotal === 1 ? 'mask has' : 'masks have'} been claimed,
+       out of ${D.users.length.toLocaleString('en')} names the People chain knows.`;
+
   return `<section class="sec">
     <div class="sechead">${icon.register}<h2>The register</h2></div>
-    <p class="lede">${D.users.length.toLocaleString('en')} masks have been claimed. Each one belongs
-    to exactly one account and cannot be moved to another.</p>
+    <p class="lede">${counted} A claimed mask exists on chain, belongs to exactly one account, and
+    cannot be moved to another. A name without one is just somebody who has not turned up yet.</p>
     <div class="searchwrap">
       ${icon.search}
-      <input id="q" value="${esc(query)}" placeholder="Search the register">
+      <input id="q" value="${esc(query)}" placeholder="Search by handle or mask number">
     </div>
+
+    <h3 style="margin-top:22px">Claimed${CLAIMED === null ? ' <span class="dim small">reading…</span>' : ` <span class="dim small">${claimed.length}</span>`}</h3>
     <div class="people">
-      ${list.length ? list.map((u) => `
+      ${CLAIMED === null ? '<p class="dim small">Asking the chain which masks exist…</p>'
+        : claimed.length ? claimed.map((c) => `
         <div class="person">
-          <span class="mask">${avatar(u.name)}</span>
+          <span class="mask">${avatar(String(c.mask))}</span>
           <span>
-            <span class="nm">${esc(u.social?.name || u.name)}</span><br>
-            <span class="hd">${esc(u.name)}</span>
+            <span class="nm">${esc(c.handle || `Mask ${c.mask}`)}</span><br>
+            <span class="hd">Mask ${c.mask} &middot; <span class="mono">${esc(short(c.owner))}</span></span>
           </span>
-          <span class="tier">${TIERS[u.tier ?? 4] ?? ''}</span>
+          <span class="fact proved" style="padding:3px 10px">${icon.check}${esc(TIERS[c.tier ?? 4] ?? '')}</span>
         </div>`).join('')
-        : '<p class="dim">Nobody matches that.</p>'}
+        : '<p class="dim small">No claimed mask matches that.</p>'}
+    </div>
+
+    <h3 style="margin-top:26px">Not claimed yet <span class="dim small">${unclaimed.length}${unclaimed.length === 40 ? '+' : ''}</span></h3>
+    <p class="dim small">Known to the People chain, with no mask here. Nothing about them is
+    verified by this contract, so they are drawn plainly.</p>
+    <div class="people">
+      ${unclaimed.length ? unclaimed.map((u) => `
+        <div class="person">
+          <span class="mask" style="opacity:.4">${avatar(u.name)}</span>
+          <span>
+            <span class="nm" style="font-weight:500">${esc(u.name)}</span><br>
+            <span class="hd">no mask</span>
+          </span>
+          <span class="tier"></span>
+        </div>`).join('')
+        : '<p class="dim small">Everybody in the directory has claimed.</p>'}
     </div>
   </section>`;
 }
@@ -312,3 +356,15 @@ function bind() {
 warmUp();
 render();
 void loadMine();
+
+/** The register, filled in as the chain answers rather than after it finishes. */
+void (async () => {
+  claimedTotal = await claimedCount();
+  if (claimedTotal === null) { CLAIMED = []; return render(); }
+  CLAIMED = [];
+  render();
+  await eachClaimed(claimedTotal, (rows) => {
+    CLAIMED = [...(CLAIMED ?? []), ...rows].sort((a, b) => a.mask - b.mask);
+    render();
+  });
+})();
