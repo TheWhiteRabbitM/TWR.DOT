@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 06 Aug 2026 12:30:15 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 06 Aug 2026 15:40:37 GMT</lastBuildDate>
+    <item>
+      <title>confidaoapp</title>
+      <link>https://confidaoapp.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">confidaoapp</guid>
+      <pubDate>Thu, 06 Aug 2026 15:10:24 GMT</pubDate>
+    </item>
     <item>
       <title>dforms</title>
       <link>https://dforms-app.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">workspace</guid>
       <pubDate>Tue, 04 Aug 2026 14:13:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>discovery</title>
-      <link>https://discovery.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">discovery</guid>
-      <pubDate>Tue, 04 Aug 2026 14:11:48 GMT</pubDate>
     </item>
   </channel>
 </rss>

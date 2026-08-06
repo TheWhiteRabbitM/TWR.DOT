@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786019415,
-  "count": 183,
+  "generatedAt": 1786030837,
+  "count": 184,
   "apps": [
+    {
+      "label": "confidaoapp",
+      "domain": "confidaoapp.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786029024,
+      "url": "https://confidaoapp.dev-dot.li"
+    },
     {
       "label": "dforms-app",
       "domain": "dforms-app.dot",
@@ -61,7 +70,7 @@
       "domain": "gavin-pump.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785921408,
       "url": "https://gavin-pump.dev-dot.li"
     },
