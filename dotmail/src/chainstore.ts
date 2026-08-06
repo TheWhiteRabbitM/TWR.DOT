@@ -26,9 +26,16 @@ import ABI from './dotmail-abi.json';
 /** Devnet Asset Hub, the chain DotMail is deployed on. */
 const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2' as const;
 
-/** The .dot this app is published under, which is how the host scopes its
- *  account. A different name is a different account and a different mailbox. */
-const APP_NAME = 'dotmail.dot';
+/**
+ * The .dot this app is published under, and the string the host scopes its
+ * derived account by. A different name here is a DIFFERENT ACCOUNT and so a
+ * different mailbox: get it wrong and everybody quietly writes from an identity
+ * their letters are not addressed to.
+ *
+ * `dotmail` itself needs Full Personhood — anything under nine characters does —
+ * so the registered name is this one.
+ */
+const APP_NAME = 'dotmailbox.dot';
 
 /* Weights. Sized for a 16 kB write, clamped to what the chain allows. */
 const LIMITS = {
