@@ -21,7 +21,8 @@ import {
 import { inbox as jmapInbox, allowHost, type JmapConfig, type ClassicMail } from './jmap.ts';
 import {
   keyForName, keyForHandle, looksLikeKey, looksLikeName, looksLikeHandle, keyFromHex,
-  publishCommand, publishKeyToName, publishKeyToMask, accountForHandle, myMask, walletAddress,
+  publishCommand, publishKeyToName, publishKeyToMask, accountForHandle, myMask,
+  walletAddress, maskForHandle,
 } from './names.ts';
 import './style.css';
 
@@ -370,9 +371,19 @@ let nameState: { text: string; bad?: boolean } | null = null;
  * `null`, so a failed lookup rendered as a search that never ended — the exact
  * conflation this app keeps having to unpick.
  */
-type MaskState = { kind: 'searching' } | { kind: 'failed' } | { kind: 'none' }
+type MaskState =
+  | { kind: 'searching' }
+  /** The registry itself would not answer. */
+  | { kind: 'failed' }
+  /** No wallet account to search under — a different problem, and saying
+   *  "could not read the registry" for it sent me looking in the wrong place
+   *  for twenty minutes. */
+  | { kind: 'nowallet' }
+  | { kind: 'none' }
+  | { kind: 'nosuchhandle'; handle: string }
   | { kind: 'found'; mask: number; handle: string };
 let maskState: MaskState = { kind: 'searching' };
+let handleTry = '';
 let maskSaid: { text: string; bad?: boolean } | null = null;
 /** Only after the host has actually refused, never as a first offer. */
 let nameFallback = false;
@@ -404,22 +415,30 @@ function mailboxView(): string {
          derives a different address for every app, so before this nobody was
          reachable at all. -->
     ${maskState.kind === 'searching' ? '<p class="dim">Looking for your mask…</p>'
-      : maskState.kind === 'failed' ? `
-        <p class="bad">Could not read the mask registry. That is not the same as you not having
-        one, so nothing is assumed here.</p>
-        <div class="rfoot"><button class="btn" id="retrymask">Look again</button></div>`
-      : maskState.kind === 'none' ? `
-        <p class="dim">No mask is held by your wallet account yet. A mask is the identity chirp
-        and peoplebook already share, and claiming one in chirp is what makes you reachable here
-        by the same name.</p>
-        <div class="rfoot"><button class="btn" id="retrymask">Look again</button></div>`
-      : `<div class="note">${icon.shield}<div>
+      : maskState.kind === 'found' ? `<div class="note">${icon.shield}<div>
           <strong>Mask ${maskState.mask}${maskState.handle ? ` &middot; @${esc(maskState.handle)}` : ''}</strong>
           <span class="dim small" style="display:block;margin-top:3px">The same mask chirp and
           peoplebook know you by. Publishing your key against it makes one person one mailbox
           across all three, instead of a different you in each.</span>
         </div></div>
-        <div class="rfoot"><button class="btn solid" id="publishmask">Publish against this mask</button></div>`}
+        <div class="rfoot"><button class="btn solid" id="publishmask">Publish against this mask</button></div>`
+      : `
+        <!-- Ask the person their own name instead of hunting for it. One read
+             of the handle registry, no wallet account, no scan: the automatic
+             route needs getLegacyAccounts, which this host does not really
+             provide, and that is a limitation to state rather than retry. -->
+        <p class="dim">${maskState.kind === 'nowallet'
+          ? 'This host will not tell the app which wallet account you are using, so your mask cannot be found automatically.'
+          : maskState.kind === 'failed'
+            ? 'The mask registry did not answer. That is not the same as you not having a mask, so nothing is assumed.'
+            : maskState.kind === 'nosuchhandle'
+              ? `Nobody holds <strong>@${esc(maskState.handle)}</strong>. Check the spelling, or claim it in chirp.`
+              : 'No mask found automatically.'}
+        Type the handle you use in chirp and it will be looked up directly.</p>
+        <div class="row2">
+          <input id="handletry" value="${esc(handleTry)}" placeholder="your chirp handle, e.g. watanabe.01" autocomplete="off">
+          <button class="btn solid" id="findbyhandle">Find my mask</button>
+        </div>`}
     ${maskSaid ? `<p class="${maskSaid.bad ? 'bad' : 'dim'} small">${esc(maskSaid.text)}</p>` : ''}
 
     <h3>Or under a .dot you own</h3>
@@ -779,6 +798,15 @@ function bind() {
 
   document.getElementById('retrymask')?.addEventListener('click', () => void findMask(true));
 
+  const ht = document.getElementById('handletry') as HTMLInputElement | null;
+  ht?.addEventListener('input', () => { handleTry = ht.value; });
+  ht?.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') void findByHandle(ht.value.trim());
+  });
+  document.getElementById('findbyhandle')?.addEventListener('click', () => {
+    void findByHandle((document.getElementById('handletry') as HTMLInputElement)?.value.trim() ?? '');
+  });
+
   document.getElementById('publishmask')?.addEventListener('click', async () => {
     if (!BOX || maskState.kind !== 'found') return;
     const { mask, handle } = maskState;
@@ -908,12 +936,32 @@ async function findMask(force = false) {
   render();
 
   const wallet = await walletAddress();
-  if (!wallet) { maskState = { kind: 'failed' }; return render(); }
+  // No wallet is a DIFFERENT problem from a registry that will not answer, and
+  // reporting the second for the first sent me looking in the wrong place.
+  if (!wallet) { maskState = { kind: 'nowallet' }; return render(); }
 
   const found = await myMask(wallet);
   maskState = found === null ? { kind: 'failed' }
     : found === undefined ? { kind: 'none' }
     : { kind: 'found', mask: found.mask, handle: found.handle };
+  render();
+}
+
+/** The reliable route: the person types the name they already know. */
+async function findByHandle(handle: string) {
+  handleTry = handle;
+  if (!looksLikeHandle(handle)) {
+    maskSaid = { text: 'A chirp handle, like watanabe.01.', bad: true };
+    return render();
+  }
+  maskSaid = null;
+  busy = `Looking up @${handle}…`;
+  render();
+  const got = await maskForHandle(handle);
+  busy = '';
+  maskState = got === null ? { kind: 'failed' }
+    : got === undefined ? { kind: 'nosuchhandle', handle }
+    : { kind: 'found', mask: got.mask, handle };
   render();
 }
 

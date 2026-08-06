@@ -445,6 +445,32 @@ export async function publishKeyToMask(mask: number, keyHex: string): Promise<Pu
   }
 }
 
+/**
+ * The mask behind a handle. One read, no wallet account, no scanning.
+ *
+ * Finding somebody's mask by walking every id and comparing owners needed the
+ * wallet address, and getting that needs `getLegacyAccounts`, which some host
+ * builds do not really offer. Asking the handle registry instead needs none of
+ * that: the person knows their own name, and the registry answers in one call.
+ * Ownership is checked where it matters anyway — the contract refuses a setKey
+ * from anyone but the holder.
+ */
+export async function maskForHandle(handle: string): Promise<{ mask: number } | null | undefined> {
+  try {
+    const c = await chain();
+    if (!c) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handles = c.sdk.createContract(c.rt, HANDLES, HANDLES_ABI as never, {}) as any;
+    const hash = toHex(keccak_256(enc.encode(handle.trim().toLowerCase())));
+    const m = await handles.maskOfHandle.query(hash);
+    if (m?.value === undefined) return null;
+    const mask = Number(m.value as bigint);
+    return mask > 0 ? { mask } : undefined;
+  } catch {
+    return null;
+  }
+}
+
 /** The account that holds a handle, through chirp's registry.
  *  `null` could not ask, `undefined` nobody holds it. */
 export async function accountForHandle(handle: string): Promise<string | null | undefined> {
