@@ -166,10 +166,13 @@ export async function publishKeyToName(rawName: string, keyHex: string): Promise
     const accounts = await c.host.getAccountsProvider();
     if (!accounts) return { ok: false, hostCannot: true, why: 'there is no wallet here to sign with' };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const list: any = await accounts.getLegacyAccounts();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const account = (list?.value ?? []).find((a: any) => a?.publicKey);
+    // `.match(ok, err)`. This is a neverthrow ResultAsync, so reading `.value`
+    // off the awaited thing gives undefined and every account looks absent.
+    const account = await accounts.getLegacyAccounts().match(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (as: any[]) => (as ?? []).find((a) => a?.publicKey) ?? null,
+      () => null,
+    );
     if (!account) {
       return { ok: false, hostCannot: true, why: 'this host did not offer a wallet account' };
     }
@@ -360,10 +363,11 @@ export async function walletAddress(): Promise<string | null> {
     const host = await import('@parity/product-sdk-host');
     const accounts = await host.getAccountsProvider();
     if (!accounts) return null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const list: any = await accounts.getLegacyAccounts();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const a = (list?.value ?? []).find((x: any) => x?.publicKey);
+    const a = await accounts.getLegacyAccounts().match(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (as: any[]) => (as ?? []).find((x) => x?.publicKey) ?? null,
+      () => null,
+    );
     if (!a?.publicKey) return null;
 
     // Same H160 rule pallet-revive uses: an eth-derived account keeps its first
@@ -461,9 +465,14 @@ export async function publishKeyToMask(mask: number, keyHex: string): Promise<Pu
     const accounts = await c.host.getAccountsProvider();
     if (!accounts) return { ok: false, hostCannot: true, why: 'there is no wallet here to sign with' };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const list: any = await accounts.getLegacyAccounts().catch(() => null);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const account = (list?.value ?? []).find((a: any) => a?.publicKey);
+    // `.match(ok, err)`, NOT `.catch`: this returns a neverthrow ResultAsync,
+    // which is thenable but is not a Promise, and calling .catch on it throws
+    // "catch is not a function" — a crash where a refusal was intended.
+    const account = await accounts.getLegacyAccounts().match(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (as: any[]) => (as ?? []).find((a) => a?.publicKey) ?? null,
+      () => null,
+    );
 
     // No wallet account on this host. Act as the mask owner's PROXY instead,
     // which is the route chirp already proved: the host signs with an account it
