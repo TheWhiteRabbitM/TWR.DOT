@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 06 Aug 2026 06:58:14 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 06 Aug 2026 09:18:16 GMT</lastBuildDate>
+    <item>
+      <title>dotmail</title>
+      <link>https://dotmailbox.dev-dot.li</link>
+      <description>Sealed mail on Asset Hub. No envelope names its recipient, so nobody can see who writes to whom. Reads an ordinary mailbox too, kept visibly apart.</description>
+      <guid isPermaLink="false">dotmailbox</guid>
+      <pubDate>Thu, 06 Aug 2026 07:28:24 GMT</pubDate>
+    </item>
     <item>
       <title>navalstrike01</title>
       <link>https://navalstrike01.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">community</guid>
       <pubDate>Tue, 04 Aug 2026 14:10:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>lighthouse</title>
-      <link>https://lighthouse.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">lighthouse</guid>
-      <pubDate>Tue, 04 Aug 2026 14:08:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

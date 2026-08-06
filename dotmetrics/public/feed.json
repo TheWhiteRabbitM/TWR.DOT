@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1785999494,
-  "count": 181,
+  "generatedAt": 1786007896,
+  "count": 182,
   "apps": [
+    {
+      "label": "dotmailbox",
+      "domain": "dotmailbox.dot",
+      "displayName": "dotmail",
+      "description": "Sealed mail on Asset Hub. No envelope names its recipient, so nobody can see who writes to whom. Reads an ordinary mailbox too, kept visibly apart.",
+      "tier": 0,
+      "firstSeenAt": 1786001304,
+      "url": "https://dotmailbox.dev-dot.li"
+    },
     {
       "label": "navalstrike01",
       "domain": "navalstrike01.dot",
