@@ -21,7 +21,7 @@ import {
 import { inbox as jmapInbox, allowHost, type JmapConfig, type ClassicMail } from './jmap.ts';
 import {
   keyForName, keyForHandle, looksLikeKey, looksLikeName, looksLikeHandle, keyFromHex,
-  publishCommand, publishKeyToName, publishKeyToMask, accountForHandle, myMask,
+  publishCommand, publishKeyToName, publishKeyToMask, accountForHandle, myMask, walletAddress,
 } from './names.ts';
 import './style.css';
 
@@ -365,8 +365,14 @@ function composeView(): string {
 
 let myName = '';
 let nameState: { text: string; bad?: boolean } | null = null;
-/** `null` while looking, `undefined` when this signer holds no mask. */
-let maskState: { mask: number; handle: string } | null | undefined = null;
+/**
+ * Four states, not two. "Still looking" and "could not be read" were both
+ * `null`, so a failed lookup rendered as a search that never ended — the exact
+ * conflation this app keeps having to unpick.
+ */
+type MaskState = { kind: 'searching' } | { kind: 'failed' } | { kind: 'none' }
+  | { kind: 'found'; mask: number; handle: string };
+let maskState: MaskState = { kind: 'searching' };
 let maskSaid: { text: string; bad?: boolean } | null = null;
 /** Only after the host has actually refused, never as a first offer. */
 let nameFallback = false;
@@ -397,10 +403,16 @@ function mailboxView(): string {
          share. Hanging the key off an address instead was the bug: the host
          derives a different address for every app, so before this nobody was
          reachable at all. -->
-    ${maskState === undefined ? `
-      <p class="dim">You have no mask yet. A mask is the identity chirp and peoplebook already
-      share, and claiming one in chirp is what makes you reachable here by the same name.</p>`
-      : maskState === null ? '<p class="dim">Looking for your mask…</p>'
+    ${maskState.kind === 'searching' ? '<p class="dim">Looking for your mask…</p>'
+      : maskState.kind === 'failed' ? `
+        <p class="bad">Could not read the mask registry. That is not the same as you not having
+        one, so nothing is assumed here.</p>
+        <div class="rfoot"><button class="btn" id="retrymask">Look again</button></div>`
+      : maskState.kind === 'none' ? `
+        <p class="dim">No mask is held by your wallet account yet. A mask is the identity chirp
+        and peoplebook already share, and claiming one in chirp is what makes you reachable here
+        by the same name.</p>
+        <div class="rfoot"><button class="btn" id="retrymask">Look again</button></div>`
       : `<div class="note">${icon.shield}<div>
           <strong>Mask ${maskState.mask}${maskState.handle ? ` &middot; @${esc(maskState.handle)}` : ''}</strong>
           <span class="dim small" style="display:block;margin-top:3px">The same mask chirp and
@@ -765,17 +777,20 @@ function bind() {
     render();
   });
 
+  document.getElementById('retrymask')?.addEventListener('click', () => void findMask(true));
+
   document.getElementById('publishmask')?.addEventListener('click', async () => {
-    if (!BOX || !maskState) return;
-    busy = `Publishing your key against mask ${maskState.mask}…`;
+    if (!BOX || maskState.kind !== 'found') return;
+    const { mask, handle } = maskState;
+    busy = `Publishing your key against mask ${mask}…`;
     maskSaid = null;
     render();
-    const r = await publishKeyToMask(maskState.mask, hex(BOX.pub));
+    const r = await publishKeyToMask(mask, hex(BOX.pub));
     busy = '';
     maskSaid = r.ok
       ? {
-        text: maskState.handle
-          ? `Done, and read back from the chain. People can write to @${maskState.handle} now.`
+        text: handle
+          ? `Done, and read back from the chain. People can write to @${handle} now.`
           : 'Done, and read back from the chain. Claim a handle in chirp and that name will reach you here.',
       }
       : { text: r.why, bad: true };
@@ -880,12 +895,25 @@ async function fetchClassic() {
   render();
 }
 
-/** Find the mask this signer owns, once, when the Mailbox screen is opened. */
-async function findMask() {
-  if (maskState !== null) return;                  // already looked
-  const me = await STORE.me();
-  if (!me) { maskState = undefined; return render(); }
-  maskState = await myMask(me);
+/**
+ * Find the mask, under the WALLET account.
+ *
+ * Not `STORE.me()`, which is the product account the host derives per app: the
+ * mask chirp knows somebody by belongs to the wallet behind both apps, so
+ * searching under dotmail's own account could only ever come back empty.
+ */
+async function findMask(force = false) {
+  if (!force && maskState.kind !== 'searching') return;
+  maskState = { kind: 'searching' };
+  render();
+
+  const wallet = await walletAddress();
+  if (!wallet) { maskState = { kind: 'failed' }; return render(); }
+
+  const found = await myMask(wallet);
+  maskState = found === null ? { kind: 'failed' }
+    : found === undefined ? { kind: 'none' }
+    : { kind: 'found', mask: found.mask, handle: found.handle };
   render();
 }
 

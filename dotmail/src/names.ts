@@ -347,15 +347,57 @@ export async function myMask(owner: string, upTo = 60): Promise<{ mask: number; 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handles = c.sdk.createContract(c.rt, HANDLES, HANDLES_READ_ABI as never, {}) as any;
     const want = owner.toLowerCase();
-    for (let id = 1; id <= upTo; id++) {
-      const o = await masks.ownerOf.query(BigInt(id)).catch(() => null);
-      if (o?.value === undefined) continue;
-      const a = String((o.value as { asHex?: () => string })?.asHex?.() ?? o.value ?? '').toLowerCase();
-      if (a !== want) continue;
-      const h = await handles.handleOf.query(BigInt(id)).catch(() => null);
-      return { mask: id, handle: String(h?.value ?? '').trim() };
+
+    // In batches, not one at a time. Sixty sequential reads at a tenth of a
+    // second each is six seconds of a screen saying "looking", which is how
+    // this first appeared to hang.
+    for (let from = 1; from <= upTo; from += 12) {
+      const ids = Array.from({ length: Math.min(12, upTo - from + 1) }, (_, i) => from + i);
+      const owners = await Promise.all(
+        ids.map((id) => masks.ownerOf.query(BigInt(id)).catch(() => null)),
+      );
+      for (const [i, o] of owners.entries()) {
+        if (o?.value === undefined) continue;
+        const a = String((o.value as { asHex?: () => string })?.asHex?.() ?? o.value ?? '').toLowerCase();
+        if (a !== want) continue;
+        const id = ids[i];
+        const h = await handles.handleOf.query(BigInt(id)).catch(() => null);
+        return { mask: id, handle: String(h?.value ?? '').trim() };
+      }
     }
     return undefined;                              // asked; this signer has none
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The WALLET address, which is what owns a mask.
+ *
+ * Not the product account: the host derives one of those per app, so the mask
+ * chirp knows you by is owned by neither dotmail's account nor chirp's, but by
+ * the wallet behind both. Looking for a mask under the product account was
+ * guaranteed to find nothing, and the screen sat on "looking for your mask"
+ * forever because of it.
+ */
+export async function walletAddress(): Promise<string | null> {
+  try {
+    const host = await import('@parity/product-sdk-host');
+    const accounts = await host.getAccountsProvider();
+    if (!accounts) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const list: any = await accounts.getLegacyAccounts();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const a = (list?.value ?? []).find((x: any) => x?.publicKey);
+    if (!a?.publicKey) return null;
+
+    // Same H160 rule pallet-revive uses: an eth-derived account keeps its first
+    // twenty bytes, anything else is keccak'd.
+    const pk: Uint8Array = a.publicKey;
+    let ethDerived = pk.length === 32;
+    if (ethDerived) for (let i = 20; i < 32; i++) if (pk[i] !== 0xee) { ethDerived = false; break; }
+    const bytes = ethDerived ? pk.slice(0, 20) : keccak_256(pk).slice(12, 32);
+    return toHex(bytes).toLowerCase();
   } catch {
     return null;
   }
