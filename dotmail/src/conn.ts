@@ -18,6 +18,21 @@
  */
 export const GENESIS = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2' as const;
 
+/**
+ * ONE IDENTITY, ONE APP NAME.
+ *
+ * The host derives a different account per app name, so every app in this
+ * ecosystem must ask for the SAME one or the same person ends up as two.
+ * chirp's own header says this in as many words, and dotmail spent an evening
+ * proving it the hard way: asking for `dotmailbox.dot` made this app a
+ * different human being from the one holding the mask, so no key could ever be
+ * published against it and no letter could ever be addressed to it.
+ *
+ * Changing this string changes who you are. It is not this app's name; it is
+ * the ecosystem's.
+ */
+export const IDENTITY_DAPP = 'peoplebook.dot';
+
 type Conn = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rt: any;
@@ -25,6 +40,16 @@ type Conn = {
   sdk: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   host: any;
+  /** The typed api, for wrapping a call in Proxy.proxy. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  api: any;
+  /** The account this app acts as. The SAME one chirp acts as, by construction. */
+  address: string | null;
+  /** Bound on the contract as `signerManager`, which is what actually raises
+   *  the wallet sheet. `getProductAccountSigner` never does, so a write signed
+   *  with it hangs until it times out rather than asking anybody anything. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  manager: any;
 };
 
 let pending: Promise<Conn | null> | null = null;
@@ -41,7 +66,33 @@ async function connect(): Promise<Conn | null> {
 
     const client = createClient(provider as never);
     const rt = sdk.createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
-    return { rt, sdk, host };
+    const api = client.getTypedApi(descriptors.devnet_asset_hub);
+
+    // The signer, chirp's way. A SignerManager asked for the ECOSYSTEM's app
+    // name, so the host derives the same account chirp gets, which is the one
+    // that owns the mask.
+    let address: string | null = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let manager: any = null;
+    try {
+      const signerPkg = await import('@parity/product-sdk-signer');
+      manager = new signerPkg.SignerManager({ dappName: IDENTITY_DAPP });
+      await manager.connect().catch(() => undefined);
+      const deadline = Date.now() + 12_000;
+      for (;;) {
+        const st = manager.getState();
+        let acc = st.selectedAccount ?? null;
+        if (!acc && st.accounts[0]) {
+          const picked = manager.selectAccount(st.accounts[0].address);
+          if (picked.ok) acc = picked.value;
+        }
+        if (acc) { address = acc.address; break; }
+        if (Date.now() > deadline) break;
+        await new Promise((r) => setTimeout(r, 250));
+      }
+    } catch { manager = null; }
+
+    return { rt, sdk, host, api, address, manager };
   } catch {
     return null;
   }

@@ -24,17 +24,6 @@ import { keccak_256 } from '@noble/hashes/sha3.js';
 import { hex, unhex } from './keys.ts';
 import ABI from './dotmail-abi.json';
 
-/**
- * The .dot this app is published under, and the string the host scopes its
- * derived account by. A different name here is a DIFFERENT ACCOUNT and so a
- * different mailbox: get it wrong and everybody quietly writes from an identity
- * their letters are not addressed to.
- *
- * `dotmail` itself needs Full Personhood — anything under nine characters does —
- * so the registered name is this one.
- */
-const APP_NAME = 'dotmailbox.dot';
-
 /* Weights. Sized for a 16 kB write, clamped to what the chain allows. */
 const LIMITS = {
   gasLimit: { ref_time: 1_400_000_000_000n, proof_size: 5_000_000n },
@@ -109,21 +98,20 @@ export class ContractStore implements MailStore {
       const conn = await sharedChain();
       if (!conn) return null;
 
-      // The app-scoped account, named by the .dot this app belongs to.
-      const accounts = await conn.host.getAccountsProvider();
-      // The contract records msg.sender, an H160, so `me()` has to be the same
-      // H160 or Sent and Inbox swap places. A ProductAccount hands back a
-      // public key, and the mapping is not a plain truncation: an eth-derived
-      // account is [addr20, 0xEE * 12] and keeps its first 20 bytes verbatim,
-      // anything else is keccak'd. Getting this wrong is silent and total.
-      const account = accounts
-        ? await accounts.getProductAccount(APP_NAME).match(
-          (a: { publicKey: Uint8Array }) => h160Of(a.publicKey),
-          () => null,
-        )
-        : null;
+      // The ECOSYSTEM's account, the same one chirp acts as. `me()` has to be
+      // its H160 or Sent and Inbox swap places, and the mapping is not a plain
+      // truncation: an eth-derived account is [addr20, 0xEE * 12] and keeps its
+      // first 20 bytes, anything else is keccak'd.
+      const { AccountId } = await import('polkadot-api');
+      const account = conn.address ? h160Of(AccountId().enc(conn.address)) : null;
 
-      const c = createContract(conn.rt, DOTMAIL, ABI, {}) as unknown as AnyContract;
+      // Writes are signed the way chirp signs: the manager bound here, not a
+      // `signer` in the per-call options, which is not a ContractOptions key
+      // and is dropped without a word.
+      const c = createContract(
+        conn.rt, DOTMAIL, ABI,
+        (conn.manager ? { signerManager: conn.manager, defaultOrigin: conn.address } : {}) as never,
+      ) as unknown as AnyContract;
 
       // The proof that this context can actually read. An answer, any answer.
       const probe = await c.count.query();
