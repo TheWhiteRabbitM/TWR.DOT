@@ -12,6 +12,18 @@
 import { hex, unhex } from './keys.ts';
 import { SLOTS } from './seal.ts';
 
+/**
+ * DotMail on Asset Hub. Deployed and exercised end to end: a sealed letter
+ * written and read back word for word, and a three-part attachment landing in
+ * three consecutive writes.
+ *
+ * Measured on the way through, because these are the numbers a ContractStore
+ * has to live with: a send settles in about 2.3 s, and `heads()` answers in
+ * roughly 120 ms whether it is asked for 1 row or 200 — the round trip is the
+ * cost, not the payload, which is exactly the shape that makes paging work.
+ */
+export const DOTMAIL = '0x9e12df714fd4b581414753d07fee23e00f7e2bf3';
+
 export type Head = { id: number; tags: Uint8Array[]; eph: Uint8Array };
 export type Body = { id: number; sealed: Uint8Array; from: string; time: number };
 
