@@ -103,10 +103,22 @@ export function toAtForm(name: string): string {
  *  out of a block explorer that their perfectly good key is not a key. */
 export const looksLikeKey = (s: string) => /^(0x)?[0-9a-f]{64}$/i.test(s.trim());
 
-/** Accepts both spellings, and requires at least two labels either way. */
-export const looksLikeName = (s: string) =>
-  /^[a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)+$/i.test(toDotted(s))
-  && (s.match(/@/g) ?? []).length <= 1;
+/**
+ * A DotNS name, which must END IN `.dot`.
+ *
+ * Shape alone cannot tell `alice.dot` from `watanabe.01`: chirp handles contain
+ * dots too. Treating "has a dot in it" as "is a domain" sent every reply to the
+ * DotNS resolver looking for a record that was never going to be there, and the
+ * app then told people that a correspondent it had just received a letter from
+ * had no mailbox.
+ *
+ * The suffix is the only honest discriminator, so it is required.
+ */
+export const looksLikeName = (s: string) => {
+  const d = toDotted(s);
+  return /^[a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)*\.dot$/i.test(d)
+    && (s.match(/@/g) ?? []).length <= 1;
+};
 
 /** Strips `0x` first. Without it a prefixed value comes back one byte long and
  *  shifted by one, silently, which cost an evening in the inbox. */
