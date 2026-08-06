@@ -237,6 +237,9 @@ export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
 /** Mailbox keys, hung off the MASK so the three apps mean one person. */
 export const DOTMAIL_KEYS = '0x9d03cc0f36d123f964b09cfb154458816817b5be';
 
+/** The .dot the host scopes this app's derived account by. */
+const APP_SCOPE = 'dotmailbox.dot';
+
 const HANDLES_ABI = [
   {
     inputs: [{ name: 'h', type: 'bytes32' }], name: 'maskOfHandle',
@@ -376,6 +379,81 @@ export async function walletAddress(): Promise<string | null> {
 }
 
 /** Publish the mailbox key against a mask you own. */
+/**
+ * Write the key as somebody's PROXY.
+ *
+ * The host gives this app an account of its own, which owns no mask and so
+ * cannot pass `ownerOf(mask) == msg.sender`. But if the person has made that
+ * account a proxy of the account that DOES own the mask, the call can be built
+ * unsigned and wrapped in `Proxy.proxy`, and the contract then sees the real
+ * account as the caller.
+ *
+ * Which real account? Not guessed: read off `Proxy.Proxies` by looking for the
+ * one that named us as a delegate. If there is more than one, none is chosen —
+ * acting for the wrong person is worse than not acting.
+ */
+async function proxySetKey(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  c: any, mask: number, keyHex: string,
+): Promise<PublishResult> {
+  try {
+    const accounts = await c.host.getAccountsProvider();
+    const signer = accounts?.getProductAccountSigner?.(APP_SCOPE)
+      ?? accounts?.getProductAccountSigner?.();
+    if (!signer) {
+      return { ok: false, hostCannot: true, why: 'no wallet account, and no app account to act as your proxy either' };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const me: any = await accounts.getProductAccount(APP_SCOPE).match((a: any) => a, () => null);
+    if (!me?.publicKey) return { ok: false, hostCannot: true, why: 'the host would not name this app\'s account' };
+
+    const api = c.rt?.client?.getUnsafeApi?.() ?? c.rt?.api;
+    if (!api?.query?.Proxy?.Proxies) {
+      return { ok: false, hostCannot: true, why: 'this build cannot read the proxy list' };
+    }
+
+    const ss58 = String(me.address ?? '');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rows: any[] = await api.query.Proxy.Proxies.getEntries();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mine = rows.filter((e: any) => (e?.value?.[0] ?? []).some((d: any) => String(d?.delegate) === ss58));
+    if (mine.length !== 1) {
+      return {
+        ok: false,
+        hostCannot: true,
+        why: mine.length
+          ? 'this app account is a proxy for more than one account, so none was chosen'
+          : 'this host offers no wallet account, and this app account is nobody\'s proxy yet. In chirp, add it as a proxy of the account that owns your mask, and this will work.',
+      };
+    }
+    const real = String(mine[0]?.keyArgs?.[0] ?? '');
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const keys = c.sdk.createContract(c.rt, DOTMAIL_KEYS, KEYS_ABI as never, {}) as any;
+    const prepared = await keys.setKey.prepare(BigInt(mask), '0x' + keyHex, {
+      gasLimit: { ref_time: 900_000_000_000n, proof_size: 2_000_000n },
+      storageDepositLimit: 10n ** 18n,
+      origin: real,
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const inner: any = (prepared as any)?.value ?? prepared;
+    const call = inner?.decodedCall ?? inner?.call ?? inner;
+    if (!call) return { ok: false, hostCannot: false, why: 'could not build the call to send through your proxy' };
+
+    const res = await api.tx.Proxy.proxy({
+      real: { type: 'Id', value: real },
+      force_proxy_type: undefined,
+      call,
+    }).signAndSubmit(signer);
+    if (res?.ok === false) {
+      return { ok: false, hostCannot: false, why: JSON.stringify(res).slice(0, 200) };
+    }
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, hostCannot: false, why: (e as Error)?.message ?? String(e) };
+  }
+}
+
 export async function publishKeyToMask(mask: number, keyHex: string): Promise<PublishResult> {
   try {
     const c = await sharedChain();
@@ -383,10 +461,17 @@ export async function publishKeyToMask(mask: number, keyHex: string): Promise<Pu
     const accounts = await c.host.getAccountsProvider();
     if (!accounts) return { ok: false, hostCannot: true, why: 'there is no wallet here to sign with' };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const list: any = await accounts.getLegacyAccounts();
+    const list: any = await accounts.getLegacyAccounts().catch(() => null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const account = (list?.value ?? []).find((a: any) => a?.publicKey);
-    if (!account) return { ok: false, hostCannot: true, why: 'this host did not offer a wallet account' };
+
+    // No wallet account on this host. Act as the mask owner's PROXY instead,
+    // which is the route chirp already proved: the host signs with an account it
+    // derives per app, and if that account has been made a proxy of the real
+    // one, Proxy.proxy makes the contract see the real account as msg.sender.
+    // Verified next door on a function gated on this very check.
+    if (!account) return proxySetKey(c, mask, keyHex);
+
     const signer = accounts.getLegacyAccountSigner({ publicKey: account.publicKey, name: account.name });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
