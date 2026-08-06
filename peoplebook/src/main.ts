@@ -95,6 +95,14 @@ function identityCard(): string {
   if (!looked) {
     return `<div class="card"><p class="dim" style="margin:0">Reading your mask from the chain…</p></div>`;
   }
+  if (!MINE && readFailed) {
+    return `<div class="card">
+      <h3>The chain did not answer</h3>
+      <p class="dim">That is not the same as you not having a mask, so nothing is assumed here.
+      Open peoplebook inside the Polkadot app, or try again.</p>
+      <div class="row"><button class="btn" id="retry">Try again</button></div>
+    </div>`;
+  }
   if (!MINE) {
     return `<div class="card">
       <h3>You do not hold a mask yet</h3>
@@ -289,14 +297,26 @@ function render() {
 
 /* ---------------------------------------------------------------- actions */
 
+/** Nothing here may hang for ever: an unresolved promise looks exactly like a
+ *  broken page, and this one sat on "Reading your mask from the chain" until
+ *  somebody complained. */
+const cap = <T>(p: Promise<T>, ms = 20_000): Promise<T | null> =>
+  Promise.race([p.catch(() => null), new Promise<null>((r) => setTimeout(() => r(null), ms))]);
+
+let readFailed = false;
+
 async function loadMine() {
-  const info = await signerInfo().catch(() => null);
+  const info = await cap(signerInfo());
   MYADDR = info?.address ?? '';
-  MINE = await myMask().catch(() => null);
+  const mask = await cap(myMask());
+  MINE = mask;
+  // No mask and no address means we never got an answer at all, which is a
+  // different thing from "you have not claimed one".
+  readFailed = !info && !mask;
   looked = true;
   render();
   if (MINE) {
-    REACH = await reachOf(MINE.id).catch(() => null);
+    REACH = await cap(reachOf(MINE.id));
     render();
   }
 }
@@ -319,6 +339,10 @@ function bind() {
       : { text: r.why, bad: true };
     render();
     await loadMine();
+  });
+
+  document.getElementById('retry')?.addEventListener('click', () => {
+    looked = false; readFailed = false; render(); void loadMine();
   });
 
   document.getElementById('edit')?.addEventListener('click', () => { editing = true; render(); });

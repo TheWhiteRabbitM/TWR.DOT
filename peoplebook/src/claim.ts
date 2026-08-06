@@ -13,6 +13,7 @@
  * host, so nothing here opens its own wallet or its own socket.
  */
 import { keccak_256 } from '@noble/hashes/sha3';
+import { hostClient } from './chain';
 import ABI from './abi.json';
 
 const ADDRESS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
@@ -205,7 +206,7 @@ async function richest<T extends { address: string } & Record<string, any>>(acco
     ]);
     const provider = await withTimeout(host.getHostProvider(GENESIS as `0x${string}`), CONNECT_MS, 'chain');
     if (!provider) return accounts[0];
-    const api = papi.createClient(provider).getTypedApi(descriptors.devnet_asset_hub);
+    const api = (await hostClient()).getTypedApi(descriptors.devnet_asset_hub);
     const withBalance = await Promise.all(
       accounts.slice(0, 6).map(async (a) => {
         try {
@@ -279,7 +280,7 @@ async function bind(): Promise<Bound | null> {
 
   const provider = await withTimeout(host.getHostProvider(GENESIS as `0x${string}`), CONNECT_MS, 'chain');
   if (!provider) return null;
-  const client = papi.createClient(provider);
+  const client = await hostClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const runtime = (contracts as any).createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
 

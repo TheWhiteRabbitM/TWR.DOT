@@ -14,20 +14,41 @@ export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
 export const HANDLES = '0x7C61D99564C61e667C6Fd5D41aC2466327ea4109';
 export const DOTMAIL_KEYS = '0x9d03cc0f36d123f964b09cfb154458816817b5be';
 
+/**
+ * The one papi client, shared by every caller in this app.
+ *
+ * `claim.ts` opened its own in three separate places and this file opened a
+ * fourth. Only the first works: the rest sit there for ever with no error,
+ * which is why the register filled in normally while "Reading your mask from
+ * the chain" never finished. Two halves of one page, one connection each,
+ * and only one of them alive.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let clientPending: Promise<any> | null = null;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function hostClient(): Promise<any> {
+  if (!clientPending) {
+    clientPending = (async () => {
+      const host = await import('@parity/product-sdk-host');
+      const { createClient } = await import('polkadot-api');
+      const provider = await host.getHostProvider(GENESIS);
+      if (!provider) throw new Error('no host provider');
+      return createClient(provider as never);
+    })();
+  }
+  return clientPending;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Runtime = { rt: any; sdk: any };
 let pending: Promise<Runtime | null> | null = null;
 
 async function connect(): Promise<Runtime | null> {
   try {
-    const host = await import('@parity/product-sdk-host');
-    const { createClient } = await import('polkadot-api');
     const descriptors = await import('@parity/product-sdk-descriptors/devnet-asset-hub');
     const sdk = await import('@parity/product-sdk/contracts');
-
-    const provider = await host.getHostProvider(GENESIS);
-    if (!provider) return null;
-    const client = createClient(provider as never);
+    const client = await hostClient();
     return { rt: sdk.createContractRuntimeFromClient(client, descriptors.devnet_asset_hub), sdk };
   } catch {
     return null;
