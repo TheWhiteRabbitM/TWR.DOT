@@ -251,11 +251,19 @@ export const publishCommand = (name: string, keyHex: string) =>
  */
 export const HANDLES = '0x7C61D99564C61e667C6Fd5D41aC2466327ea4109';
 export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
+/** Mailbox keys, hung off the MASK so the three apps mean one person. */
+export const DOTMAIL_KEYS = '0x9d03cc0f36d123f964b09cfb154458816817b5be';
 
 const HANDLES_ABI = [
   {
     inputs: [{ name: 'h', type: 'bytes32' }], name: 'maskOfHandle',
     outputs: [{ name: '', type: 'uint256' }], stateMutability: 'view', type: 'function',
+  },
+];
+const HANDLES_READ_ABI = [
+  {
+    inputs: [{ name: 'mask', type: 'uint256' }], name: 'handleOf',
+    outputs: [{ name: '', type: 'string' }], stateMutability: 'view', type: 'function',
   },
 ];
 const MASKS_ABI = [
@@ -265,8 +273,135 @@ const MASKS_ABI = [
   },
 ];
 
+const KEYS_ABI = [
+  {
+    inputs: [{ name: 'mask', type: 'uint256' }], name: 'keyOf',
+    outputs: [{ name: '', type: 'bytes32' }], stateMutability: 'view', type: 'function',
+  },
+  {
+    inputs: [{ name: 'mask', type: 'uint256' }, { name: 'key', type: 'bytes32' }],
+    name: 'setKey', outputs: [], stateMutability: 'nonpayable', type: 'function',
+  },
+];
+
 /** A bare handle: no dots, no at sign. `watanabe`, not `watanabe.dot`. */
 export const looksLikeHandle = (s: string) => /^[a-z0-9_.]{2,32}$/i.test(s.trim()) && !s.includes('@');
+
+/** One connection, reused by every lookup below. */
+async function chain() {
+  const host = await import('@parity/product-sdk-host');
+  const { createClient } = await import('polkadot-api');
+  const descriptors = await import('@parity/product-sdk-descriptors/devnet-asset-hub');
+  const sdk = await import('@parity/product-sdk/contracts');
+  const provider = await host.getHostProvider(GENESIS);
+  if (!provider) return null;
+  const client = createClient(provider as never);
+  return { rt: sdk.createContractRuntimeFromClient(client, descriptors.devnet_asset_hub), sdk, host };
+}
+
+/**
+ * The mask that holds a handle, and the mailbox key hanging off it.
+ *
+ * This is the whole point of DotMailKeys: chirp and peoplebook already agree
+ * that a person IS a mask, so mail resolves through the same thing rather than
+ * through an address that differs per app. Before this existed, zero of
+ * eighteen mask owners had a key, which is what a second list buys you.
+ */
+export async function keyForHandle(handle: string): Promise<Uint8Array | null | undefined> {
+  try {
+    const c = await chain();
+    if (!c) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handles = c.sdk.createContract(c.rt, HANDLES, HANDLES_ABI as never, {}) as any;
+    const hash = toHex(keccak_256(enc.encode(handle.trim().toLowerCase())));
+    const m = await handles.maskOfHandle.query(hash);
+    if (m?.value === undefined) return null;
+    const mask = BigInt(m.value as bigint);
+    if (mask === 0n) return undefined;             // asked; nobody holds it
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const keys = c.sdk.createContract(c.rt, DOTMAIL_KEYS, KEYS_ABI as never, {}) as any;
+    const k = await keys.keyOf.query(mask);
+    if (k?.value === undefined) return null;
+    const hex = String((k.value as { asHex?: () => string })?.asHex?.() ?? k.value ?? '');
+    if (!hex || /^0x0+$/.test(hex)) return undefined;   // has a mask, no mailbox
+    return keyFromHex(hex.replace(/^0x/, ''));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The mask this signer owns, and its handle. `null` when nothing could be read.
+ *
+ * Walked rather than looked up, because Masks has no owner-to-id index. Bounded
+ * at a sane number: a person has one mask, and scanning forever to prove they
+ * have none is worse than saying so.
+ */
+export async function myMask(owner: string, upTo = 60): Promise<{ mask: number; handle: string } | null | undefined> {
+  try {
+    const c = await chain();
+    if (!c) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const masks = c.sdk.createContract(c.rt, MASKS, MASKS_ABI as never, {}) as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handles = c.sdk.createContract(c.rt, HANDLES, HANDLES_READ_ABI as never, {}) as any;
+    const want = owner.toLowerCase();
+    for (let id = 1; id <= upTo; id++) {
+      const o = await masks.ownerOf.query(BigInt(id)).catch(() => null);
+      if (o?.value === undefined) continue;
+      const a = String((o.value as { asHex?: () => string })?.asHex?.() ?? o.value ?? '').toLowerCase();
+      if (a !== want) continue;
+      const h = await handles.handleOf.query(BigInt(id)).catch(() => null);
+      return { mask: id, handle: String(h?.value ?? '').trim() };
+    }
+    return undefined;                              // asked; this signer has none
+  } catch {
+    return null;
+  }
+}
+
+/** Publish the mailbox key against a mask you own. */
+export async function publishKeyToMask(mask: number, keyHex: string): Promise<PublishResult> {
+  try {
+    const c = await chain();
+    if (!c) return { ok: false, hostCannot: true, why: 'no chain connection' };
+    const accounts = await c.host.getAccountsProvider();
+    if (!accounts) return { ok: false, hostCannot: true, why: 'there is no wallet here to sign with' };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const list: any = await accounts.getLegacyAccounts();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const account = (list?.value ?? []).find((a: any) => a?.publicKey);
+    if (!account) return { ok: false, hostCannot: true, why: 'this host did not offer a wallet account' };
+    const signer = accounts.getLegacyAccountSigner({ publicKey: account.publicKey, name: account.name });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const keys = c.sdk.createContract(
+      c.rt, DOTMAIL_KEYS, KEYS_ABI as never, { defaultSigner: signer } as never,
+    ) as any;
+    const r = await keys.setKey.tx(BigInt(mask), '0x' + keyHex, {
+      gasLimit: { ref_time: 900_000_000_000n, proof_size: 2_000_000n },
+      storageDepositLimit: 10n ** 18n,
+      signer,
+    });
+    if (r?.ok === false) {
+      const why = JSON.stringify(r).slice(0, 200);
+      return { ok: false, hostCannot: /Not implemented|LegacyAccount/i.test(why), why };
+    }
+    // Confirmed from the chain, never from the receipt.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const read = c.sdk.createContract(c.rt, DOTMAIL_KEYS, KEYS_ABI as never, {}) as any;
+    const back = await read.keyOf.query(BigInt(mask));
+    const got = String((back?.value as { asHex?: () => string })?.asHex?.() ?? back?.value ?? '');
+    if (!got || /^0x0+$/.test(got)) {
+      return { ok: false, hostCannot: false, why: 'the write was accepted and the key still reads as empty' };
+    }
+    return { ok: true };
+  } catch (e) {
+    const why = (e as Error)?.message ?? String(e);
+    return { ok: false, hostCannot: /Not implemented|LegacyAccount/i.test(why), why };
+  }
+}
 
 /** The account that holds a handle, through chirp's registry.
  *  `null` could not ask, `undefined` nobody holds it. */

@@ -20,8 +20,8 @@ import {
 } from './attach.ts';
 import { inbox as jmapInbox, allowHost, type JmapConfig, type ClassicMail } from './jmap.ts';
 import {
-  keyForName, looksLikeKey, looksLikeName, looksLikeHandle, keyFromHex,
-  publishCommand, publishKeyToName, accountForHandle,
+  keyForName, keyForHandle, looksLikeKey, looksLikeName, looksLikeHandle, keyFromHex,
+  publishCommand, publishKeyToName, publishKeyToMask, accountForHandle, myMask,
 } from './names.ts';
 import './style.css';
 
@@ -365,6 +365,9 @@ function composeView(): string {
 
 let myName = '';
 let nameState: { text: string; bad?: boolean } | null = null;
+/** `null` while looking, `undefined` when this signer holds no mask. */
+let maskState: { mask: number; handle: string } | null | undefined = null;
+let maskSaid: { text: string; bad?: boolean } | null = null;
 /** Only after the host has actually refused, never as a first offer. */
 let nameFallback = false;
 
@@ -389,6 +392,25 @@ function mailboxView(): string {
            that is actually yours.`}</div>
     </div>
     <h2>Be reachable by name</h2>
+
+    <!-- The mask first, because it is the identity chirp and peoplebook already
+         share. Hanging the key off an address instead was the bug: the host
+         derives a different address for every app, so before this nobody was
+         reachable at all. -->
+    ${maskState === undefined ? `
+      <p class="dim">You have no mask yet. A mask is the identity chirp and peoplebook already
+      share, and claiming one in chirp is what makes you reachable here by the same name.</p>`
+      : maskState === null ? '<p class="dim">Looking for your mask…</p>'
+      : `<div class="note">${icon.shield}<div>
+          <strong>Mask ${maskState.mask}${maskState.handle ? ` &middot; @${esc(maskState.handle)}` : ''}</strong>
+          <span class="dim small" style="display:block;margin-top:3px">The same mask chirp and
+          peoplebook know you by. Publishing your key against it makes one person one mailbox
+          across all three, instead of a different you in each.</span>
+        </div></div>
+        <div class="rfoot"><button class="btn solid" id="publishmask">Publish against this mask</button></div>`}
+    ${maskSaid ? `<p class="${maskSaid.bad ? 'bad' : 'dim'} small">${esc(maskSaid.text)}</p>` : ''}
+
+    <h3>Or under a .dot you own</h3>
     <p class="dim">Publish this key under a <code>.dot</code> you own, and people can write to
     your name instead of sixty-four characters. It costs you nothing in privacy: the key is how
     people reach you, and the chain still records only anonymous envelopes.</p>
@@ -494,19 +516,22 @@ async function doSend() {
     pub = await keyForName(to);
     busy = '';
   } else if (looksLikeHandle(to)) {
-    // A bare handle goes through chirp's registry, which already guarantees one
-    // holder per name. Not a second list of our own, which would immediately
-    // disagree with that one.
+    // Through the MASK, which chirp and peoplebook already agree is the person.
+    // Resolving to an address instead was the bug: the address differs per app,
+    // so nobody was ever reachable.
     busy = `Looking up @${to}…`;
     render();
-    const account = await accountForHandle(to);
+    pub = await keyForHandle(to);
     busy = '';
-    if (account === null) pub = null;
-    else if (account === undefined) {
-      flash = { text: `Nobody holds the handle @${to}. Handles are claimed in chirp.`, bad: true };
+    if (pub === undefined) {
+      const account = await accountForHandle(to);
+      flash = {
+        text: account
+          ? `@${to} exists but has not published a mailbox key yet.`
+          : `Nobody holds the handle @${to}. Handles are claimed in chirp.`,
+        bad: true,
+      };
       return render();
-    } else {
-      pub = await STORE.keyOf(account);
     }
   } else {
     pub = await STORE.keyOf(to);
@@ -618,7 +643,7 @@ function bind() {
   });
 
   document.getElementById('mailboxbtn')?.addEventListener('click', () => {
-    showMailbox = true; openId = null; render(); void showContacts();
+    showMailbox = true; openId = null; render(); void showContacts(); void findMask();
   });
 
   document.querySelectorAll<HTMLElement>('[data-open]').forEach((r) =>
@@ -740,6 +765,23 @@ function bind() {
     render();
   });
 
+  document.getElementById('publishmask')?.addEventListener('click', async () => {
+    if (!BOX || !maskState) return;
+    busy = `Publishing your key against mask ${maskState.mask}…`;
+    maskSaid = null;
+    render();
+    const r = await publishKeyToMask(maskState.mask, hex(BOX.pub));
+    busy = '';
+    maskSaid = r.ok
+      ? {
+        text: maskState.handle
+          ? `Done, and read back from the chain. People can write to @${maskState.handle} now.`
+          : 'Done, and read back from the chain. Claim a handle in chirp and that name will reach you here.',
+      }
+      : { text: r.why, bad: true };
+    render();
+  });
+
   document.getElementById('publishname')?.addEventListener('click', async () => {
     if (!BOX) return;
     const name = (document.getElementById('myname') as HTMLInputElement)?.value.trim() ?? '';
@@ -835,6 +877,15 @@ async function fetchClassic() {
   busy = '';
   if (r.ok) { CLASSIC = r.value; classicErr = null; }
   else { CLASSIC = []; classicErr = { why: r.why, at: r.at }; }
+  render();
+}
+
+/** Find the mask this signer owns, once, when the Mailbox screen is opened. */
+async function findMask() {
+  if (maskState !== null) return;                  // already looked
+  const me = await STORE.me();
+  if (!me) { maskState = undefined; return render(); }
+  maskState = await myMask(me);
   render();
 }
 
