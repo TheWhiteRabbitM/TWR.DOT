@@ -13,5 +13,7 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "comment": "seal.test.ts is a Node script, not part of the bundle: it uses Buffer and process, which the DOM lib has no business knowing about.",
+  "include": ["src"],
+  "exclude": ["src/seal.test.ts"]
 }

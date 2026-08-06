@@ -10,6 +10,7 @@
  */
 import { mailbox, hex, type Mailbox } from './keys.ts';
 import { LocalStore, setFlag, hasFlag, type MailStore } from './store.ts';
+import { ContractStore } from './chainstore.ts';
 import { seal, sealedSize, SLOTS, type Letter } from './seal.ts';
 import { scan, threads, type Received } from './inbox.ts';
 import { icon, logo } from './icons.ts';
@@ -756,9 +757,17 @@ async function showContacts() {
 (async () => {
   render();
   BOX = await mailbox();
+
+  // The chain if this context can actually READ it, this browser otherwise.
+  // Tested by attempting a read rather than by asking whether a signer exists:
+  // the gateway hands out a session with a signer and a provider that cannot
+  // read a thing, and believing the signer there cost a day next door.
+  const onChain = await ContractStore.open();
+  if (onChain) STORE = onChain;
+
   await STORE.setKey(BOX.pub);
   await loadClassicConfig();
-  console.info(`dotmail: ${SLOTS} slots per envelope, key from ${BOX.origin}`);
+  console.info(`dotmail: ${SLOTS} slots, key from ${BOX.origin}, store ${STORE.kind}`);
   render();
   await refresh();
 })();

@@ -12,9 +12,11 @@
     "@noble/ciphers": "^1.2.1",
     "@noble/curves": "^1.8.1",
     "@noble/hashes": "^1.7.1",
-    "@parity/product-sdk": "^0.14.1",
+    "@parity/product-sdk": "^0.19.1",
+    "@parity/product-sdk-descriptors": "^0.8.0",
     "@parity/product-sdk-host": "^0.14.1",
-    "polkadot-api": "^1.9.5"
+    "@parity/product-sdk-signer": "^0.11.1",
+    "polkadot-api": "^2.2.1"
   },
   "devDependencies": {
     "typescript": "^5.6.0",
