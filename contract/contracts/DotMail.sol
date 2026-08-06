@@ -38,15 +38,27 @@ contract DotMail {
     /// and every byte is a storage deposit paid by the sender.
     uint256 public constant MAX = 16_000;
 
+    /// FOUR, ALWAYS, WHETHER OR NOT THEY ARE USED.
+    ///
+    /// A letter is sealed to the recipient's key, so its sender cannot re-read
+    /// it afterwards: "Sent" is a second sealing, to yourself. Rather than pay
+    /// for a second envelope, the body is encrypted once and its key wrapped
+    /// per reader, one slot each.
+    ///
+    /// The count is FIXED because a variable one would publish how many people
+    /// a letter went to. Unused slots carry random bytes that no observer can
+    /// tell from real ones, so every envelope on this chain looks alike.
+    uint8 public constant SLOTS = 4;
+
     event KeySet(address indexed who, bytes32 key);
-    event Mail(uint256 indexed id, bytes32 indexed tag, address indexed from);
+    event Mail(uint256 indexed id, address indexed from);
 
     struct Envelope {
-        bytes32 tag;        // H(shared secret): only the recipient can match it
-        bytes32 eph;        // sender's throwaway X25519 public key
-        address from;       // the payer, recorded because it is public anyway
-        uint40 time;        // block time, so a client need not index events
-        bytes sealed_;      // nonce ++ ciphertext ++ tag, opaque to this chain
+        bytes32[SLOTS] tags; // H(shared secret) per reader; only they can match one
+        bytes32 eph;         // sender's throwaway X25519 public key
+        address from;        // the payer, recorded because it is public anyway
+        uint40 time;         // block time, so a client need not index events
+        bytes sealed_;       // wrapped keys ++ nonce ++ ciphertext, opaque here
     }
 
     Envelope[] private _mail;
@@ -62,12 +74,15 @@ contract DotMail {
         emit KeySet(msg.sender, key);
     }
 
-    function send(bytes32 tag, bytes32 eph, bytes calldata sealed_) external returns (uint256 id) {
+    function send(bytes32[SLOTS] calldata tags, bytes32 eph, bytes calldata sealed_)
+        external
+        returns (uint256 id)
+    {
         if (sealed_.length == 0) revert Empty();
         if (sealed_.length > MAX) revert TooBig(sealed_.length);
-        _mail.push(Envelope(tag, eph, msg.sender, uint40(block.timestamp), sealed_));
+        _mail.push(Envelope(tags, eph, msg.sender, uint40(block.timestamp), sealed_));
         id = _mail.length - 1;
-        emit Mail(id, tag, msg.sender);
+        emit Mail(id, msg.sender);
     }
 
     function count() external view returns (uint256) {
@@ -81,6 +96,9 @@ contract DotMail {
     ///      the two 32-byte fields a client needs to decide, and nothing else.
     ///      Reading a page at a time is what took a chirp timeline from fifty
     ///      round trips to one.
+    /// @dev `tags` comes back FLAT: SLOTS entries per envelope, in order. A
+    ///      nested array would cost more to encode for no gain, and the client
+    ///      already knows the stride.
     function heads(uint256 start, uint256 n)
         external
         view
@@ -91,11 +109,11 @@ contract DotMail {
         uint256 end = start + n;
         if (end > total) end = total;
         uint256 len = end - start;
-        tags = new bytes32[](len);
+        tags = new bytes32[](len * SLOTS);
         ephs = new bytes32[](len);
         for (uint256 i = 0; i < len; i++) {
             Envelope storage e = _mail[start + i];
-            tags[i] = e.tag;
+            for (uint8 s = 0; s < SLOTS; s++) tags[i * SLOTS + s] = e.tags[s];
             ephs[i] = e.eph;
         }
     }
@@ -104,10 +122,10 @@ contract DotMail {
     function envelope(uint256 id)
         external
         view
-        returns (bytes32 tag, bytes32 eph, address from, uint40 time, bytes memory sealed_)
+        returns (bytes32[SLOTS] memory tags, bytes32 eph, address from, uint40 time, bytes memory sealed_)
     {
         Envelope storage e = _mail[id];
-        return (e.tag, e.eph, e.from, e.time, e.sealed_);
+        return (e.tags, e.eph, e.from, e.time, e.sealed_);
     }
 
     /// Several bodies at once, for an inbox that just matched a page of tags.

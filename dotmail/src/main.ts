@@ -1,25 +1,42 @@
 /**
- * dotmail — mail with no server, no provider, and no visible recipient.
+ * dotmail — mail with no server, no provider, and no envelope that names its
+ * recipient.
  *
- * The interface has one job beyond showing letters: never let somebody believe
- * a stronger claim than the one that is true. So the store says whether it is
- * the chain or this browser, the sender name says whether it was verified or
- * merely claimed, and the scan says how far it got.
+ * The shape is the one everybody already knows: folders down the left, a list
+ * in the middle, a letter on the right. What is different is underneath, and
+ * the interface's second job is to never let somebody believe a stronger claim
+ * than the true one. So the store says whether it is the chain or this browser,
+ * Trash says that a chain does not forget, and the scan says how far it got.
  */
 import { mailbox, hex, type Mailbox } from './keys.ts';
-import { LocalStore, type MailStore } from './store.ts';
-import { seal, sealedSize, type Letter } from './seal.ts';
+import { LocalStore, setFlag, hasFlag, type MailStore } from './store.ts';
+import { seal, sealedSize, SLOTS, type Letter } from './seal.ts';
 import { scan, threads, type Received } from './inbox.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
 
+type Folder = 'inbox' | 'starred' | 'sent' | 'archive' | 'trash';
+
+const FOLDERS: { id: Folder; label: string; icon: string }[] = [
+  { id: 'inbox', label: 'Inbox', icon: '▤' },
+  { id: 'starred', label: 'Starred', icon: '★' },
+  { id: 'sent', label: 'Sent', icon: '➤' },
+  { id: 'archive', label: 'Archive', icon: '▣' },
+  { id: 'trash', label: 'Trash', icon: '🗑' },
+];
+
 let BOX: Mailbox | null = null;
 let STORE: MailStore = new LocalStore();
 let LETTERS: Received[] = [];
 let scannedTo = 0;
-let view: 'inbox' | 'compose' | 'identity' = 'inbox';
+let complete = true;
+
+let folder: Folder = 'inbox';
 let openId: number | null = null;
+let composing = false;
+let showMailbox = false;
+let query = '';
 let busy = '';
 let flash: { text: string; bad?: boolean } | null = null;
 let draft = { to: '', subject: '', body: '', replyTo: undefined as number | undefined };
@@ -27,129 +44,174 @@ let draft = { to: '', subject: '', body: '', replyTo: undefined as number | unde
 const esc = (s: string) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const ago = (t: number) => {
-  const s = Math.max(0, Math.floor(Date.now() / 1000) - t);
-  if (s < 60) return 'just now';
-  if (s < 3600) return `${Math.floor(s / 60)}m`;
-  if (s < 86400) return `${Math.floor(s / 3600)}h`;
-  return new Date(t * 1000).toLocaleDateString();
+const when = (t: number) => {
+  const d = new Date(t * 1000);
+  const sameDay = new Date().toDateString() === d.toDateString();
+  return sameDay
+    ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : d.toLocaleDateString([], { day: 'numeric', month: 'short' });
 };
 
-const short = (s: string) => (s.length > 18 ? `${s.slice(0, 8)}…${s.slice(-6)}` : s);
+const initial = (s: string) => (s.trim()[0] ?? '?').toUpperCase();
 
-/* ------------------------------------------------------------------ views */
+/* ---------------------------------------------------------------- filtering */
 
-function identityView(): string {
-  if (!BOX) return '<p class="dim">Deriving your mailbox…</p>';
-  return `
-  <section>
-    <h1>Your mailbox</h1>
-    <p class="lede">Give somebody this key and they can write to you. It is not
-    an address: nothing on chain will ever record that a letter was for you.</p>
-
-    <label class="lbl">Your public key</label>
-    <pre class="key" id="mykey">${hex(BOX.pub)}</pre>
-    <div class="row">
-      <button class="btn solid" id="copykey">Copy</button>
-      <button class="btn" id="publish">Publish it so people can find you</button>
-    </div>
-
-    <div class="note ${BOX.origin === 'host' ? '' : 'warn'}">
-      ${BOX.origin === 'host'
-        ? `<strong>Derived from your account.</strong> Sign in on another device and the
-           same mailbox comes back. Nothing was written down, here or anywhere, so there
-           is no private key to steal and none to lose.`
-        : `<strong>This is a trial mailbox.</strong> There is no host to derive a key from
-           in a plain browser, so one was invented and kept in this browser. It is for
-           trying the app. Open dotmail inside the Polkadot app for a mailbox that is
-           actually yours.`}
-    </div>
-
-    <h2>Add someone</h2>
-    <p class="dim">Paste a public key and a name to remember it by. Stored in this
-    browser, never sent anywhere: an address book is a list of who you talk to, and
-    that is precisely what this app exists not to publish.</p>
-    <div class="row">
-      <input id="cname" placeholder="alice" autocomplete="off">
-      <input id="ckey" placeholder="their 64-character public key" autocomplete="off">
-      <button class="btn solid" id="addc">Add</button>
-    </div>
-    <div id="contacts"></div>
-  </section>`;
+/** Which letters belong in a folder. Trash and Archive win over everything,
+ *  the way they do in every mail client, or a trashed letter keeps reappearing
+ *  in Inbox and the button looks broken. */
+function inFolder(l: Received, f: Folder): boolean {
+  const trashed = hasFlag(l.id, 'trash');
+  const archived = hasFlag(l.id, 'archive');
+  if (f === 'trash') return trashed;
+  if (trashed) return false;
+  if (f === 'archive') return archived;
+  if (f === 'starred') return hasFlag(l.id, 'star') && !archived;
+  if (archived) return false;
+  if (f === 'sent') return l.outgoing;
+  return !l.outgoing;                       // inbox
 }
 
-function letterView(l: Received): string {
-  const from = l.fromVerified === true
-    ? `<span class="ok" title="This name really is owned by the account that paid">${esc(l.from)} ✓</span>`
-    : l.fromVerified === false
-      ? `<span class="bad" title="The claimed name is not owned by the paying account">${esc(l.from)} (unverified claim)</span>`
-      : `<span title="Ownership could not be checked">${esc(l.from || 'unknown')}</span>`;
-  return `
-  <article class="letter">
-    <button class="btn small" id="back">Back</button>
-    <h1>${esc(l.subject) || '<span class="dim">No subject</span>'}</h1>
-    <p class="meta">From ${from} · paid by <code>${esc(short(l.payer))}</code> · ${ago(l.receivedAt)}</p>
-    <div class="body">${esc(l.body).replace(/\n/g, '<br>')}</div>
-    <div class="row">
-      <button class="btn solid" id="reply">Reply</button>
-    </div>
-  </article>`;
+function visible(): Received[][] {
+  const q = query.trim().toLowerCase();
+  const pool = LETTERS.filter((l) => inFolder(l, folder)).filter((l) =>
+    !q || l.subject.toLowerCase().includes(q) || l.body.toLowerCase().includes(q)
+    || l.from.toLowerCase().includes(q) || l.to.toLowerCase().includes(q));
+  return threads(pool);
 }
 
-function inboxView(): string {
-  if (openId !== null) {
-    const l = LETTERS.find((x) => x.id === openId);
-    if (l) return letterView(l);
-  }
-  const groups = threads(LETTERS);
-  if (!groups.length) {
-    return `
-    <section>
-      <h1>Inbox</h1>
-      <p class="lede">Nothing yet.</p>
-      <p class="dim">Scanned ${scannedTo} envelope${scannedTo === 1 ? '' : 's'}. Because no
-      envelope names its recipient, finding yours means trying each one; that is the cost
-      of nobody being able to see who writes to you.</p>
-    </section>`;
-  }
+const unread = (f: Folder) =>
+  LETTERS.filter((l) => inFolder(l, f) && !hasFlag(l.id, 'read')).length;
+
+/* -------------------------------------------------------------------- views */
+
+function sidebar(): string {
   return `
-  <section>
-    <h1>Inbox</h1>
-    <p class="dim">${LETTERS.length} letter${LETTERS.length === 1 ? '' : 's'} ·
-    ${scannedTo} envelope${scannedTo === 1 ? '' : 's'} scanned</p>
-    <ul class="list">
-      ${groups.map((g) => {
-        const l = g[g.length - 1];
-        return `<li><button data-open="${l.id}">
-          <span class="lfrom">${esc(l.from || 'unknown')}${g.length > 1 ? ` <em>(${g.length})</em>` : ''}</span>
-          <span class="lsub">${esc(l.subject) || 'No subject'}</span>
-          <span class="lprev">${esc(l.body.slice(0, 90))}</span>
-          <span class="ltime">${ago(l.receivedAt)}</span>
-        </button></li>`;
+  <aside class="side">
+    <button class="compose" id="compose"><span>✎</span> Compose</button>
+    <nav>
+      ${FOLDERS.map((f) => {
+        const n = f.id === 'inbox' || f.id === 'starred' ? unread(f.id) : 0;
+        return `<button data-folder="${f.id}" class="${folder === f.id && !showMailbox ? 'on' : ''}">
+          <span class="ic">${f.icon}</span><span class="fl">${f.label}</span>
+          ${n ? `<span class="badge">${n}</span>` : ''}
+        </button>`;
       }).join('')}
-    </ul>
-  </section>`;
+    </nav>
+    <button class="mbx ${showMailbox ? 'on' : ''}" id="mailboxbtn"><span class="ic">⚿</span><span class="fl">Your mailbox</span></button>
+  </aside>`;
+}
+
+function listPane(): string {
+  const groups = visible();
+  if (!groups.length) {
+    return `<div class="list empty">
+      <p class="dim">Nothing in ${FOLDERS.find((f) => f.id === folder)?.label}.</p>
+      <p class="dim small">${scannedTo} envelope${scannedTo === 1 ? '' : 's'} scanned.
+      No envelope names its recipient, so finding yours means trying each one.
+      That is the cost of nobody seeing who writes to you.</p>
+    </div>`;
+  }
+  return `<div class="list">
+    ${groups.map((g) => {
+      const l = g[g.length - 1];
+      const isRead = hasFlag(l.id, 'read');
+      const who = folder === 'sent' ? `To ${l.to || 'unknown'}` : (l.from || 'unknown');
+      return `<div class="row ${isRead ? '' : 'unread'} ${openId === l.id ? 'sel' : ''}" data-open="${l.id}">
+        <button class="star ${hasFlag(l.id, 'star') ? 'on' : ''}" data-star="${l.id}"
+                aria-label="${hasFlag(l.id, 'star') ? 'Unstar' : 'Star'}">★</button>
+        <span class="av">${esc(initial(who))}</span>
+        <span class="who">${esc(who)}${g.length > 1 ? ` <em>${g.length}</em>` : ''}</span>
+        <span class="sub">${esc(l.subject) || '(no subject)'}<span class="prev"> — ${esc(l.body.slice(0, 110))}</span></span>
+        <span class="when">${when(l.receivedAt)}</span>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function readerPane(): string {
+  if (openId === null) {
+    return `<div class="reader empty"><p class="dim">Pick a letter.</p></div>`;
+  }
+  const all = LETTERS.filter((l) => l.id === openId || threads(LETTERS).some((g) => g.some((x) => x.id === openId) && g.some((x) => x.id === l.id)));
+  const thread = threads(all).find((g) => g.some((x) => x.id === openId)) ?? [];
+  const head = thread[0] ?? LETTERS.find((l) => l.id === openId);
+  if (!head) return `<div class="reader empty"><p class="dim">Gone.</p></div>`;
+
+  return `<div class="reader">
+    <div class="rtop">
+      <h1>${esc(head.subject) || '(no subject)'}</h1>
+      <div class="racts">
+        <button class="ib" id="archive" title="Archive">▣</button>
+        <button class="ib" id="trash" title="Move to Trash">🗑</button>
+        <button class="ib" id="closer" title="Close">✕</button>
+      </div>
+    </div>
+    ${thread.map((l) => `
+      <article class="msg">
+        <div class="mhead">
+          <span class="av">${esc(initial(l.outgoing ? l.to : l.from))}</span>
+          <div>
+            <div class="mwho">${esc(l.outgoing ? `You → ${l.to || 'unknown'}` : (l.from || 'unknown'))}</div>
+            <div class="mmeta">paid by <code>${esc(l.payer)}</code> · ${when(l.receivedAt)}</div>
+          </div>
+        </div>
+        <div class="mbody">${esc(l.body).replace(/\n/g, '<br>')}</div>
+      </article>`).join('')}
+    <div class="rfoot">
+      <button class="btn solid" id="reply">Reply</button>
+      ${folder === 'trash'
+        ? `<span class="dim small">Trash hides it here. The envelope stays on the chain, because a chain does not forget.</span>`
+        : ''}
+    </div>
+  </div>`;
 }
 
 function composeView(): string {
-  const size = sealedSize({ from: '', subject: draft.subject, body: draft.body, sentAt: 0 });
+  const size = sealedSize({ from: '', to: draft.to, subject: draft.subject, body: draft.body, sentAt: 0 });
   const over = size > MAX_SEALED;
-  return `
-  <section>
-    <h1>${draft.replyTo !== undefined ? 'Reply' : 'Write'}</h1>
-    <label class="lbl">To</label>
-    <input id="to" value="${esc(draft.to)}" placeholder="a name from your address book, or a 64-character key" autocomplete="off">
-    <label class="lbl">Subject</label>
-    <input id="subject" value="${esc(draft.subject)}" placeholder="Sealed with the body, never on chain" autocomplete="off">
-    <label class="lbl">Letter</label>
-    <textarea id="body" rows="12" placeholder="Write.">${esc(draft.body)}</textarea>
-    <p class="dim small ${over ? 'bad' : ''}">${size.toLocaleString('en')} bytes sealed
-      ${over ? `— over the ${MAX_SEALED.toLocaleString('en')} byte limit, shorten it` : `of ${MAX_SEALED.toLocaleString('en')}`}</p>
-    <div class="row">
+  return `<div class="composer">
+    <div class="chead">${draft.replyTo !== undefined ? 'Reply' : 'New letter'}
+      <button class="ib" id="ccancel" title="Discard">✕</button></div>
+    <input id="to" value="${esc(draft.to)}" placeholder="To: a name you know, or a 64-character key" autocomplete="off">
+    <input id="subject" value="${esc(draft.subject)}" placeholder="Subject (sealed with the body, never on chain)" autocomplete="off">
+    <textarea id="body" placeholder="Write.">${esc(draft.body)}</textarea>
+    <div class="cfoot">
       <button class="btn solid" id="send" ${over ? 'disabled' : ''}>Seal and send</button>
-      <button class="btn" id="cancel">Cancel</button>
+      <span class="dim small ${over ? 'bad' : ''}" id="size">${size.toLocaleString('en')} of ${MAX_SEALED.toLocaleString('en')} bytes</span>
     </div>
-  </section>`;
+  </div>`;
+}
+
+function mailboxView(): string {
+  if (!BOX) return '<div class="reader"><p class="dim">Deriving…</p></div>';
+  return `<div class="reader pane">
+    <h1>Your mailbox</h1>
+    <p class="dim">Give somebody this key and they can write to you. It is not an
+    address: nothing on chain will ever record that a letter was for you.</p>
+    <pre class="key" id="mykey">${hex(BOX.pub)}</pre>
+    <div class="rfoot">
+      <button class="btn solid" id="copykey">Copy key</button>
+      <button class="btn" id="publish">Publish it</button>
+    </div>
+    <div class="note ${BOX.origin === 'host' ? '' : 'warn'}">
+      ${BOX.origin === 'host'
+        ? `<strong>Derived from your account.</strong> Sign in on another device and the same
+           mailbox comes back. No private key was written down here or anywhere, so there is
+           none to steal and none to lose.`
+        : `<strong>Trial mailbox.</strong> A plain browser has no host to derive a key from, so
+           one was invented and kept here. Open dotmail inside the Polkadot app for a mailbox
+           that is actually yours.`}
+    </div>
+    <h2>People you know</h2>
+    <p class="dim small">Kept in this browser and sent nowhere. An address book is a list of
+    who you talk to, which is exactly what this app exists not to publish.</p>
+    <div class="row2">
+      <input id="cname" placeholder="Name" autocomplete="off">
+      <input id="ckey" placeholder="Their 64-character public key" autocomplete="off">
+      <button class="btn solid" id="addc">Add</button>
+    </div>
+    <div id="contacts"></div>
+  </div>`;
 }
 
 function render() {
@@ -158,46 +220,46 @@ function render() {
   app.innerHTML = `
   <header class="top">
     <span class="brand"><span class="mark"></span> dotmail</span>
-    <nav>
-      <button data-view="inbox" class="${view === 'inbox' ? 'on' : ''}">Inbox</button>
-      <button data-view="compose" class="${view === 'compose' ? 'on' : ''}">Write</button>
-      <button data-view="identity" class="${view === 'identity' ? 'on' : ''}">Mailbox</button>
-    </nav>
+    <input class="search" id="q" value="${esc(query)}" placeholder="Search your letters (locally, in what you can already read)">
+    <span class="who-am-i">${BOX ? esc(BOX.origin === 'host' ? 'your account' : 'trial mailbox') : '…'}</span>
   </header>
 
   <!-- Which store answered. Never a footnote: "on chain" and "in this browser"
-       are different promises and the difference is the whole product. -->
+       are different promises, and the difference is the whole product. -->
   <div class="where ${STORE.kind}">
     ${STORE.kind === 'chain'
-      ? 'Letters are on Asset Hub.'
-      : '<strong>Local mode.</strong> Letters are in this browser only. Nothing has been sent anywhere.'}
-    <span class="dim">${esc(STORE.where)}</span>
+      ? `Letters are on Asset Hub. <span class="dim">${esc(STORE.where)}</span>`
+      : `<strong>Local mode.</strong> Letters are in this browser only. Nothing has been sent anywhere.`}
   </div>
 
-  ${busy ? `<p class="busy">${esc(busy)}</p>` : ''}
-  ${flash ? `<p class="flash ${flash.bad ? 'bad' : ''}">${esc(flash.text)}</p>` : ''}
+  ${busy ? `<div class="busy">${esc(busy)}</div>` : ''}
+  ${flash ? `<div class="flash ${flash.bad ? 'bad' : ''}">${esc(flash.text)}</div>` : ''}
+  ${!complete ? `<div class="flash bad">The store stopped answering partway through. This is what was read, not the whole of it.</div>` : ''}
 
-  <main>${view === 'inbox' ? inboxView() : view === 'compose' ? composeView() : identityView()}</main>`;
+  <div class="shell">
+    ${sidebar()}
+    ${showMailbox ? mailboxView() : `
+      <div class="mid ${openId !== null ? 'hasopen' : ''}">${listPane()}</div>
+      ${readerPane()}`}
+  </div>
+  ${composing ? composeView() : ''}`;
   bind();
 }
 
-/* ----------------------------------------------------------------- actions */
+/* ------------------------------------------------------------------ actions */
 
 async function refresh() {
   if (!BOX) return;
   busy = 'Scanning…';
   render();
-  const r = await scan(STORE, BOX, 0, (p) => {
-    busy = `Scanning ${p.scanned}/${p.total}…`;
-    // Repainting on every page would fight the scan for the main thread; the
-    // text is updated in place instead.
+  const r = await scan(STORE, BOX, (p) => {
     const el = document.querySelector('.busy');
-    if (el) el.textContent = busy;
+    if (el) el.textContent = `Scanning ${p.scanned}/${p.total}…`;
   });
   LETTERS = r.letters;
   scannedTo = r.scannedTo;
+  complete = r.complete;
   busy = '';
-  if (!r.complete) flash = { text: 'The store stopped answering partway through. This is what was read, not the whole of it.', bad: true };
   render();
 }
 
@@ -216,11 +278,11 @@ async function doSend() {
     pub = await STORE.keyOf(to);
   }
   if (pub === null) { flash = { text: 'Could not look that up. Not the same as "no such mailbox" — try again.', bad: true }; return render(); }
-  if (pub === undefined) { flash = { text: `No published key for "${to}". They need a mailbox before they can be written to.`, bad: true }; return render(); }
+  if (pub === undefined) { flash = { text: `No published key for "${to}". They need a mailbox first.`, bad: true }; return render(); }
 
   const letter: Letter = {
     from: (await STORE.me()) ?? 'unknown',
-    subject, body,
+    to, subject, body,
     replyTo: draft.replyTo,
     sentAt: Math.floor(Date.now() / 1000),
   };
@@ -228,62 +290,102 @@ async function doSend() {
 
   busy = 'Sealing and sending…';
   render();
-  const e = seal(letter, pub);
-  const r = await STORE.send(e.tag, e.eph, e.sealed);
+  // Sealed to THEM and to us. The second slot is the only reason Sent can
+  // exist: a letter sealed only to its recipient is one its writer can never
+  // read again.
+  const env = seal(letter, [pub, BOX.pub]);
+  const r = await STORE.send(env.tags, env.eph, env.sealed);
   busy = '';
   flash = r.ok
     ? { text: STORE.kind === 'chain' ? 'Sealed and on chain.' : 'Sealed and stored locally.' }
     : { text: r.why ?? 'It did not send.', bad: true };
-  if (r.ok) { draft = { to: '', subject: '', body: '', replyTo: undefined }; view = 'inbox'; await refresh(); }
-  else render();
+  if (r.ok) {
+    draft = { to: '', subject: '', body: '', replyTo: undefined };
+    composing = false;
+    await refresh();
+  } else render();
 }
 
 function bind() {
-  document.querySelectorAll<HTMLElement>('[data-view]').forEach((b) =>
+  document.querySelectorAll<HTMLElement>('[data-folder]').forEach((b) =>
     b.addEventListener('click', () => {
-      view = b.dataset.view as typeof view;
-      openId = null;
-      flash = null;
+      folder = b.dataset.folder as Folder;
+      openId = null; showMailbox = false; flash = null;
       render();
     }));
 
-  document.querySelectorAll<HTMLElement>('[data-open]').forEach((b) =>
-    b.addEventListener('click', () => { openId = Number(b.dataset.open); render(); }));
+  document.getElementById('mailboxbtn')?.addEventListener('click', () => {
+    showMailbox = true; openId = null; render(); void showContacts();
+  });
 
-  document.getElementById('back')?.addEventListener('click', () => { openId = null; render(); });
+  document.querySelectorAll<HTMLElement>('[data-open]').forEach((r) =>
+    r.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).dataset.star) return;   // the star is its own control
+      openId = Number(r.dataset.open);
+      setFlag(openId, 'read', true);
+      render();
+    }));
+
+  document.querySelectorAll<HTMLElement>('[data-star]').forEach((b) =>
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = Number(b.dataset.star);
+      setFlag(id, 'star', !hasFlag(id, 'star'));
+      render();
+    }));
+
+  document.getElementById('closer')?.addEventListener('click', () => { openId = null; render(); });
+
+  document.getElementById('archive')?.addEventListener('click', () => {
+    if (openId === null) return;
+    setFlag(openId, 'archive', !hasFlag(openId, 'archive'));
+    flash = { text: 'Archived here. The envelope is untouched on the chain.' };
+    openId = null; render();
+  });
+
+  document.getElementById('trash')?.addEventListener('click', () => {
+    if (openId === null) return;
+    setFlag(openId, 'trash', true);
+    flash = { text: 'Moved to Trash in this app. The envelope stays on the chain, which does not forget.' };
+    openId = null; render();
+  });
+
+  document.getElementById('compose')?.addEventListener('click', () => {
+    draft = { to: '', subject: '', body: '', replyTo: undefined };
+    composing = true; render();
+  });
+  document.getElementById('ccancel')?.addEventListener('click', () => { composing = false; render(); });
+  document.getElementById('send')?.addEventListener('click', () => void doSend());
 
   document.getElementById('reply')?.addEventListener('click', () => {
     const l = LETTERS.find((x) => x.id === openId);
     if (!l) return;
     draft = {
-      to: l.from,
+      to: l.outgoing ? l.to : l.from,
       subject: l.subject.startsWith('Re: ') ? l.subject : `Re: ${l.subject}`,
       body: '',
       replyTo: l.id,
     };
-    view = 'compose';
-    openId = null;
-    render();
+    composing = true; render();
   });
 
-  document.getElementById('send')?.addEventListener('click', () => void doSend());
-  document.getElementById('cancel')?.addEventListener('click', () => {
-    draft = { to: '', subject: '', body: '', replyTo: undefined };
-    view = 'inbox';
-    render();
+  const q = document.getElementById('q') as HTMLInputElement | null;
+  q?.addEventListener('input', () => {
+    query = q.value;
+    const mid = document.querySelector('.mid');
+    if (mid) mid.innerHTML = listPane();
+    bind();
   });
 
-  // Keep the size counter honest as you type, without a full repaint.
   const body = document.getElementById('body') as HTMLTextAreaElement | null;
   body?.addEventListener('input', () => {
     draft.body = body.value;
     draft.subject = (document.getElementById('subject') as HTMLInputElement)?.value ?? '';
-    const size = sealedSize({ from: '', subject: draft.subject, body: draft.body, sentAt: 0 });
-    const el = document.querySelector('.small');
+    draft.to = (document.getElementById('to') as HTMLInputElement)?.value ?? '';
+    const size = sealedSize({ from: '', to: draft.to, subject: draft.subject, body: draft.body, sentAt: 0 });
+    const el = document.getElementById('size');
     if (el) {
-      el.textContent = `${size.toLocaleString('en')} bytes sealed ${size > MAX_SEALED
-        ? `— over the ${MAX_SEALED.toLocaleString('en')} byte limit, shorten it`
-        : `of ${MAX_SEALED.toLocaleString('en')}`}`;
+      el.textContent = `${size.toLocaleString('en')} of ${MAX_SEALED.toLocaleString('en')} bytes`;
       el.classList.toggle('bad', size > MAX_SEALED);
     }
     const btn = document.getElementById('send') as HTMLButtonElement | null;
@@ -299,8 +401,7 @@ function bind() {
 
   document.getElementById('publish')?.addEventListener('click', async () => {
     if (!BOX) return;
-    busy = 'Publishing your key…';
-    render();
+    busy = 'Publishing…'; render();
     const r = await STORE.setKey(BOX.pub);
     busy = '';
     flash = r.ok ? { text: 'Key published. People can write to you now.' } : { text: r.why ?? 'It did not publish.', bad: true };
@@ -318,28 +419,27 @@ function bind() {
       await STORE.addContact(name, new Uint8Array((key.match(/../g) ?? []).map((b) => parseInt(b, 16))));
       flash = { text: `${name} added.` };
     }
-    render();
-    void showContacts();
+    render(); void showContacts();
   });
-
-  void showContacts();
 }
 
 async function showContacts() {
   const el = document.getElementById('contacts');
   if (!el || !(STORE instanceof LocalStore)) return;
-  const names = await STORE.contacts();
-  el.innerHTML = names.length
-    ? `<ul class="chips">${names.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>`
+  const people = await STORE.contacts();
+  el.innerHTML = people.length
+    ? `<ul class="chips">${people.map((p) =>
+        `<li title="${esc(p.key)}"><span class="av small">${esc(initial(p.name))}</span>${esc(p.name)}</li>`).join('')}</ul>`
     : '<p class="dim small">Nobody yet.</p>';
 }
 
-/* -------------------------------------------------------------------- boot */
+/* --------------------------------------------------------------------- boot */
 
 (async () => {
   render();
   BOX = await mailbox();
-  await STORE.setKey(BOX.pub);         // so this browser can write to itself
+  await STORE.setKey(BOX.pub);
+  console.info(`dotmail: ${SLOTS} slots per envelope, key from ${BOX.origin}`);
   render();
   await refresh();
 })();

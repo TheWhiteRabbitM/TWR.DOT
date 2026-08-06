@@ -1,80 +1,55 @@
 /**
  * store.ts — where envelopes live, behind one interface with two backings.
  *
- * WHY TWO
- *   `ContractStore` is the real thing: the DotMail contract on Asset Hub.
- *   `LocalStore` keeps the same envelopes in this browser so the app can be
- *   built, exercised and demonstrated before anything is deployed.
+ * `LocalStore` keeps them in this browser so the app can be built and shown
+ * before anything is deployed. A contract-backed store will implement the same
+ * interface. They are NOT interchangeable in what they mean, only in what they
+ * do, and every screen says which one answered.
  *
- *   They are NOT interchangeable in what they mean, only in what they do, and
- *   the interface says which one is answering. Every screen shows it. This app
- *   spent a whole day next door learning what happens when software reports a
- *   success it did not achieve, and "your mail is on chain" is a worse thing to
- *   be wrong about than most.
- *
- * WHAT A STORE NEVER DOES
- *   Decrypt. It moves opaque bytes. All of the meaning is in seal.ts, and the
- *   store cannot tell a letter from a photograph of a wall.
+ * A store never decrypts. It moves opaque bytes and cannot tell a letter from
+ * a photograph of a wall.
  */
 import { hex, unhex } from './keys.ts';
+import { SLOTS } from './seal.ts';
 
-export type Head = { id: number; tag: Uint8Array; eph: Uint8Array };
+export type Head = { id: number; tags: Uint8Array[]; eph: Uint8Array };
 export type Body = { id: number; sealed: Uint8Array; from: string; time: number };
 
 export interface MailStore {
-  /** `chain` or `local`, for the interface to state plainly. */
   readonly kind: 'chain' | 'local';
-  /** Where this store can be reached, for the diagnostics screen. */
   readonly where: string;
-  /** Total envelopes. `null` means the store could not be asked, which is not
-   *  the same as zero and must never be rendered as an empty inbox. */
+  /** `null` means the store could not be asked, which is never an empty inbox. */
   count(): Promise<number | null>;
-  /** Tags and ephemeral keys, cheap, in pages. */
   heads(start: number, n: number): Promise<Head[] | null>;
-  /** Full envelopes, only for ids whose tag already matched. */
   bodies(ids: number[]): Promise<Body[] | null>;
-  /** Publish a recipient key so people can write to you. */
   setKey(pub: Uint8Array): Promise<{ ok: boolean; why?: string }>;
-  /** Look up somebody's published key. `null` = could not ask; `undefined` =
-   *  asked, and they have not published one. The distinction decides whether
-   *  the composer says "try again" or "they have no mailbox yet". */
+  /** `null` = could not ask. `undefined` = asked, they have no mailbox. */
   keyOf(who: string): Promise<Uint8Array | null | undefined>;
-  send(tag: Uint8Array, eph: Uint8Array, sealed: Uint8Array): Promise<{ ok: boolean; why?: string }>;
-  /** Who this store thinks we are, for display. */
+  send(tags: Uint8Array[], eph: Uint8Array, sealed: Uint8Array): Promise<{ ok: boolean; why?: string }>;
   me(): Promise<string | null>;
 }
-
-/* ------------------------------------------------------------------ local */
 
 const LKEY = 'dotmail.local.envelopes';
 const LKEYS = 'dotmail.local.keys';
 const LME = 'dotmail.local.me';
 
-type StoredEnvelope = { tag: string; eph: string; sealed: string; from: string; time: number };
+type Stored = { tags: string[]; eph: string; sealed: string; from: string; time: number };
 
-/**
- * The whole mailbox in this browser.
- *
- * Deliberately the same shape the contract exposes — pages of heads, bodies by
- * id — so that switching to the chain changes one line and not the app. If the
- * local store had a convenient extra method, the real one would be missing it
- * exactly when it mattered.
- */
 export class LocalStore implements MailStore {
   readonly kind = 'local' as const;
   readonly where = 'this browser only';
 
-  private read(): StoredEnvelope[] {
-    try { return JSON.parse(localStorage.getItem(LKEY) ?? '[]') as StoredEnvelope[]; } catch { return []; }
+  private read(): Stored[] {
+    try { return JSON.parse(localStorage.getItem(LKEY) ?? '[]') as Stored[]; } catch { return []; }
   }
-  private write(all: StoredEnvelope[]) { localStorage.setItem(LKEY, JSON.stringify(all)); }
+  private write(all: Stored[]) { localStorage.setItem(LKEY, JSON.stringify(all)); }
   private keys(): Record<string, string> {
     try { return JSON.parse(localStorage.getItem(LKEYS) ?? '{}') as Record<string, string>; } catch { return {}; }
   }
 
   async me() {
     let id = localStorage.getItem(LME);
-    if (!id) { id = 'local:' + Math.random().toString(36).slice(2, 10); localStorage.setItem(LME, id); }
+    if (!id) { id = 'you'; localStorage.setItem(LME, id); }
     return id;
   }
 
@@ -82,7 +57,9 @@ export class LocalStore implements MailStore {
 
   async heads(start: number, n: number) {
     return this.read().slice(start, start + n).map((e, i) => ({
-      id: start + i, tag: unhex(e.tag), eph: unhex(e.eph),
+      id: start + i,
+      tags: e.tags.slice(0, SLOTS).map(unhex),
+      eph: unhex(e.eph),
     }));
   }
 
@@ -95,35 +72,65 @@ export class LocalStore implements MailStore {
 
   async setKey(pub: Uint8Array) {
     const k = this.keys();
-    k[await this.me() ?? 'me'] = hex(pub);
+    k[(await this.me()) ?? 'you'] = hex(pub);
     localStorage.setItem(LKEYS, JSON.stringify(k));
     return { ok: true };
   }
 
   async keyOf(who: string) {
     const v = this.keys()[who];
-    return v ? unhex(v) : undefined;             // asked, and there is none
+    return v ? unhex(v) : undefined;
   }
 
-  async send(tag: Uint8Array, eph: Uint8Array, sealed: Uint8Array) {
+  async send(tags: Uint8Array[], eph: Uint8Array, sealed: Uint8Array) {
     const all = this.read();
     all.push({
-      tag: hex(tag), eph: hex(eph), sealed: hex(sealed),
-      from: (await this.me()) ?? 'local', time: Math.floor(Date.now() / 1000),
+      tags: tags.map(hex), eph: hex(eph), sealed: hex(sealed),
+      from: (await this.me()) ?? 'you', time: Math.floor(Date.now() / 1000),
     });
     this.write(all);
     return { ok: true };
   }
 
-  /** Local only: publish a key under an arbitrary handle, so one browser can
-   *  play both correspondents while the app is being built. */
   async addContact(handle: string, pub: Uint8Array) {
     const k = this.keys();
     k[handle] = hex(pub);
     localStorage.setItem(LKEYS, JSON.stringify(k));
   }
 
-  async contacts(): Promise<string[]> {
-    return Object.keys(this.keys());
+  async contacts(): Promise<{ name: string; key: string }[]> {
+    return Object.entries(this.keys()).map(([name, key]) => ({ name, key }));
   }
+}
+
+/* -------------------------------------------------------------- local flags
+ *
+ * Read, starred, archived, trashed. All of it lives here and nowhere else, and
+ * the interface says so, because none of it CAN go on chain without undoing
+ * the privacy: a public "read" flag tells an observer when you opened a letter
+ * they already could not read, which is a surprising amount to give away.
+ *
+ * Deleting deserves the same honesty. Trash hides a letter from you; the
+ * envelope stays on the chain forever, because that is what a chain is. Any
+ * mail client that offers a delete button which quietly does not delete is
+ * lying, so this one says it on the button.
+ */
+const FLAGS = 'dotmail.flags';
+export type Flag = 'read' | 'star' | 'archive' | 'trash';
+
+type FlagMap = Record<string, Flag[]>;
+
+const readFlags = (): FlagMap => {
+  try { return JSON.parse(localStorage.getItem(FLAGS) ?? '{}') as FlagMap; } catch { return {}; }
+};
+
+export const flagsOf = (id: number): Flag[] => readFlags()[String(id)] ?? [];
+export const hasFlag = (id: number, f: Flag) => flagsOf(id).includes(f);
+
+export function setFlag(id: number, f: Flag, on: boolean) {
+  const all = readFlags();
+  const cur = new Set(all[String(id)] ?? []);
+  if (on) cur.add(f); else cur.delete(f);
+  all[String(id)] = [...cur];
+  localStorage.setItem(FLAGS, JSON.stringify(all));
 }
