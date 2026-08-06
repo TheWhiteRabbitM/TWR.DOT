@@ -59,7 +59,11 @@ const toHex = (b: Uint8Array) => '0x' + Array.from(b, (x) => x.toString(16).padS
  * right, hashing each label and concatenating. Implemented here rather than
  * pulled in with ethers, which would cost more than the whole app.
  */
-export function nodeOf(name: string): string {
+export function nodeOf(rawName: string): string {
+  // Accept either spelling here too, so a caller that forgot to normalise
+  // cannot silently hash a name with an at sign in it and get a node that
+  // resolves to nothing.
+  const name = toDotted(rawName);
   // Copied into a fresh array each round rather than reassigned: keccak hands
   // back a Uint8Array over an ArrayBufferLike, and threading that through the
   // loop makes the type drift away from the plain Uint8Array everything else
@@ -76,8 +80,32 @@ export function nodeOf(name: string): string {
   return toHex(node);
 }
 
+/**
+ * `alice@dotmailbox.dot` and `alice.dotmailbox.dot` are the SAME NAME.
+ *
+ * The at sign is a display convention, not a second naming system: DotNS
+ * already has subnames, and `alice.dotmailbox.dot` is one. Writing it with an
+ * `@` costs nothing, needs no registry of its own, and is the form every person
+ * on earth already knows how to read and type.
+ *
+ * Everything downstream works on the dotted form, so the swap happens once,
+ * here, at the edge.
+ */
+export const toDotted = (s: string) => s.trim().replace('@', '.').toLowerCase();
+
+/** The friendly form: the first label becomes the local part. Only for
+ *  DISPLAY — never feed this back into a lookup. */
+export function toAtForm(name: string): string {
+  const at = name.indexOf('.');
+  return at < 0 ? name : `${name.slice(0, at)}@${name.slice(at + 1)}`;
+}
+
 export const looksLikeKey = (s: string) => /^[0-9a-f]{64}$/i.test(s.trim());
-export const looksLikeName = (s: string) => /^[a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)+$/i.test(s.trim());
+
+/** Accepts both spellings, and requires at least two labels either way. */
+export const looksLikeName = (s: string) =>
+  /^[a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)+$/i.test(toDotted(s))
+  && (s.match(/@/g) ?? []).length <= 1;
 
 export const keyFromHex = (s: string) =>
   new Uint8Array((s.trim().match(/../g) ?? []).map((b) => parseInt(b, 16)));
@@ -90,7 +118,8 @@ export const keyFromHex = (s: string) =>
  * conflating them would tell somebody a correspondent does not exist because a
  * node hiccuped.
  */
-export async function keyForName(name: string): Promise<Uint8Array | null | undefined> {
+export async function keyForName(rawName: string): Promise<Uint8Array | null | undefined> {
+  const name = toDotted(rawName);
   try {
     const host = await import('@parity/product-sdk-host');
     const { createClient } = await import('polkadot-api');
@@ -138,7 +167,8 @@ export type PublishResult =
   | { ok: true }
   | { ok: false; hostCannot: boolean; why: string };
 
-export async function publishKeyToName(name: string, keyHex: string): Promise<PublishResult> {
+export async function publishKeyToName(rawName: string, keyHex: string): Promise<PublishResult> {
+  const name = toDotted(rawName);
   try {
     const host = await import('@parity/product-sdk-host');
     const { createClient } = await import('polkadot-api');
@@ -197,4 +227,76 @@ export async function publishKeyToName(name: string, keyHex: string): Promise<Pu
 
 /** The desktop way, shown only when the app itself could not do it. */
 export const publishCommand = (name: string, keyHex: string) =>
-  `dotns text set ${name} ${KEY_RECORD} ${keyHex} --env devnet`;
+  `dotns text set ${toDotted(name)} ${KEY_RECORD} ${keyHex} --env devnet`;
+
+/* ------------------------------------------------------- handles, chirp's way
+ *
+ * WHY NOT A SECOND REGISTRY
+ *   Subnames under a domain we own are in OUR gift: whoever holds the parent can
+ *   mint any child. Proof, from this afternoon: `claude.dotmailbox.dot` exists
+ *   because we minted it, and nothing stopped us minting somebody else's name
+ *   instead. A mail address handed out by us is not an identity, it is a
+ *   favour, and it makes us the thing this whole project is against.
+ *
+ *   chirp already solved uniqueness: ChirpHandles maps a handle to exactly one
+ *   mask, first come, and a mask has an owner. So dotmail reads THAT rather than
+ *   inventing a rival list which would immediately disagree with it.
+ *
+ * WHAT THIS PROVES, AND WHAT IT DOES NOT
+ *   It proves the handle is unique and that one account holds it. It does NOT
+ *   prove the holder is the same person as the People-chain username of the
+ *   same spelling: Asset Hub cannot read the People chain, so nothing here can
+ *   check that. chirp shows such a handle without a tick for exactly this
+ *   reason, and so does this. A claim displayed as a fact is the failure mode.
+ */
+export const HANDLES = '0x7C61D99564C61e667C6Fd5D41aC2466327ea4109';
+export const MASKS = '0x4c1fe8F4D4fa617aC421cE54b4c8441AB8d0bD4a';
+
+const HANDLES_ABI = [
+  {
+    inputs: [{ name: 'h', type: 'bytes32' }], name: 'maskOfHandle',
+    outputs: [{ name: '', type: 'uint256' }], stateMutability: 'view', type: 'function',
+  },
+];
+const MASKS_ABI = [
+  {
+    inputs: [{ name: 'id', type: 'uint256' }], name: 'ownerOf',
+    outputs: [{ name: '', type: 'address' }], stateMutability: 'view', type: 'function',
+  },
+];
+
+/** A bare handle: no dots, no at sign. `watanabe`, not `watanabe.dot`. */
+export const looksLikeHandle = (s: string) => /^[a-z0-9_.]{2,32}$/i.test(s.trim()) && !s.includes('@');
+
+/** The account that holds a handle, through chirp's registry.
+ *  `null` could not ask, `undefined` nobody holds it. */
+export async function accountForHandle(handle: string): Promise<string | null | undefined> {
+  try {
+    const host = await import('@parity/product-sdk-host');
+    const { createClient } = await import('polkadot-api');
+    const descriptors = await import('@parity/product-sdk-descriptors/devnet-asset-hub');
+    const { createContractRuntimeFromClient, createContract } = await import('@parity/product-sdk/contracts');
+
+    const provider = await host.getHostProvider(GENESIS);
+    if (!provider) return null;
+    const client = createClient(provider as never);
+    const rt = createContractRuntimeFromClient(client, descriptors.devnet_asset_hub);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handles = createContract(rt, HANDLES, HANDLES_ABI as never, {}) as any;
+    const hash = toHex(keccak_256(enc.encode(handle.trim().toLowerCase())));
+    const m = await handles.maskOfHandle.query(hash);
+    if (m?.value === undefined) return null;
+    const mask = BigInt(m.value as bigint);
+    if (mask === 0n) return undefined;              // asked; nobody holds it
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const masks = createContract(rt, MASKS, MASKS_ABI as never, {}) as any;
+    const o = await masks.ownerOf.query(mask);
+    if (o?.value === undefined) return null;
+    const owner = String((o.value as { asHex?: () => string })?.asHex?.() ?? o.value ?? '');
+    return owner && !/^0x0+$/.test(owner) ? owner : undefined;
+  } catch {
+    return null;
+  }
+}

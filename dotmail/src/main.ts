@@ -20,7 +20,8 @@ import {
 } from './attach.ts';
 import { inbox as jmapInbox, allowHost, type JmapConfig, type ClassicMail } from './jmap.ts';
 import {
-  keyForName, looksLikeKey, looksLikeName, keyFromHex, publishCommand, publishKeyToName,
+  keyForName, looksLikeKey, looksLikeName, looksLikeHandle, keyFromHex,
+  publishCommand, publishKeyToName, accountForHandle,
 } from './names.ts';
 import './style.css';
 
@@ -336,7 +337,7 @@ function composeView(): string {
   return `<div class="composer">
     <div class="chead">${draft.replyTo !== undefined ? 'Reply' : 'New letter'}
       <button class="ib" id="ccancel" title="Discard">${icon.close}</button></div>
-    <input id="to" value="${esc(draft.to)}" placeholder="To: alice.dot, a name you know, or a 64-character key" autocomplete="off">
+    <input id="to" value="${esc(draft.to)}" placeholder="To: alice@dotmailbox.dot, alice.dot, or a 64-character key" autocomplete="off">
     <input id="subject" value="${esc(draft.subject)}" placeholder="Subject (sealed with the body, never on chain)" autocomplete="off">
     <textarea id="body" placeholder="Write.">${esc(draft.body)}</textarea>
     ${pending.length ? `<div class="pend">
@@ -392,9 +393,12 @@ function mailboxView(): string {
     your name instead of sixty-four characters. It costs you nothing in privacy: the key is how
     people reach you, and the chain still records only anonymous envelopes.</p>
     <div class="row2">
-      <input id="myname" value="${esc(myName)}" placeholder="yourname.dot" autocomplete="off">
+      <input id="myname" value="${esc(myName)}" placeholder="you@dotmailbox.dot, or yourname.dot" autocomplete="off">
       <button class="btn solid" id="publishname">Publish</button>
     </div>
+    <p class="dim small">Either spelling works. <code>you@dotmailbox.dot</code> and
+    <code>you.dotmailbox.dot</code> are the same name: the at sign is how people read an
+    address, and a subname is what DotNS already calls it.</p>
     ${nameState ? `<p class="${nameState.bad ? 'bad' : 'dim'} small">${esc(nameState.text)}</p>` : ''}
     ${nameFallback ? `
       <p class="dim small">This host will not let the app sign with your wallet account, and the
@@ -489,6 +493,21 @@ async function doSend() {
     render();
     pub = await keyForName(to);
     busy = '';
+  } else if (looksLikeHandle(to)) {
+    // A bare handle goes through chirp's registry, which already guarantees one
+    // holder per name. Not a second list of our own, which would immediately
+    // disagree with that one.
+    busy = `Looking up @${to}…`;
+    render();
+    const account = await accountForHandle(to);
+    busy = '';
+    if (account === null) pub = null;
+    else if (account === undefined) {
+      flash = { text: `Nobody holds the handle @${to}. Handles are claimed in chirp.`, bad: true };
+      return render();
+    } else {
+      pub = await STORE.keyOf(account);
+    }
   } else {
     pub = await STORE.keyOf(to);
   }
