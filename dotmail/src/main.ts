@@ -12,6 +12,7 @@ import { mailbox, hex, type Mailbox } from './keys.ts';
 import { LocalStore, setFlag, hasFlag, type MailStore } from './store.ts';
 import { seal, sealedSize, SLOTS, type Letter } from './seal.ts';
 import { scan, threads, type Received } from './inbox.ts';
+import { icon, logo } from './icons.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
@@ -19,11 +20,11 @@ const MAX_SEALED = 16_000;
 type Folder = 'inbox' | 'starred' | 'sent' | 'archive' | 'trash';
 
 const FOLDERS: { id: Folder; label: string; icon: string }[] = [
-  { id: 'inbox', label: 'Inbox', icon: '▤' },
-  { id: 'starred', label: 'Starred', icon: '★' },
-  { id: 'sent', label: 'Sent', icon: '➤' },
-  { id: 'archive', label: 'Archive', icon: '▣' },
-  { id: 'trash', label: 'Trash', icon: '🗑' },
+  { id: 'inbox', label: 'Inbox', icon: icon.inbox },
+  { id: 'starred', label: 'Starred', icon: icon.star },
+  { id: 'sent', label: 'Sent', icon: icon.sent },
+  { id: 'archive', label: 'Archive', icon: icon.archive },
+  { id: 'trash', label: 'Trash', icon: icon.trash },
 ];
 
 let BOX: Mailbox | null = null;
@@ -53,6 +54,16 @@ const when = (t: number) => {
 };
 
 const initial = (s: string) => (s.trim()[0] ?? '?').toUpperCase();
+
+/** A stable colour per correspondent. Same name, same hue, every session, so
+ *  the eye learns who is who before it reads the row. */
+function hue(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360;
+  return h;
+}
+const avatar = (name: string, cls = '') =>
+  `<span class="av ${cls}" style="--h:${hue(name)}">${esc(initial(name))}</span>`;
 
 /* ---------------------------------------------------------------- filtering */
 
@@ -87,41 +98,48 @@ const unread = (f: Folder) =>
 function sidebar(): string {
   return `
   <aside class="side">
-    <button class="compose" id="compose"><span>✎</span> Compose</button>
+    <button class="compose" id="compose" title="Write a letter">
+      ${icon.compose}<span class="fl">Compose</span>
+    </button>
     <nav>
       ${FOLDERS.map((f) => {
         const n = f.id === 'inbox' || f.id === 'starred' ? unread(f.id) : 0;
-        return `<button data-folder="${f.id}" class="${folder === f.id && !showMailbox ? 'on' : ''}">
-          <span class="ic">${f.icon}</span><span class="fl">${f.label}</span>
+        return `<button class="navbtn ${folder === f.id && !showMailbox ? 'on' : ''}"
+                        data-folder="${f.id}" title="${f.label}">
+          ${f.icon}<span class="fl">${f.label}</span>
           ${n ? `<span class="badge">${n}</span>` : ''}
         </button>`;
       }).join('')}
     </nav>
-    <button class="mbx ${showMailbox ? 'on' : ''}" id="mailboxbtn"><span class="ic">⚿</span><span class="fl">Your mailbox</span></button>
+    <button class="navbtn mbx ${showMailbox ? 'on' : ''}" id="mailboxbtn" title="Your mailbox">
+      ${icon.key}<span class="fl">Your mailbox</span>
+    </button>
   </aside>`;
 }
 
 function listPane(): string {
   const groups = visible();
   if (!groups.length) {
+    const label = FOLDERS.find((f) => f.id === folder)?.label ?? '';
     return `<div class="list empty">
-      <p class="dim">Nothing in ${FOLDERS.find((f) => f.id === folder)?.label}.</p>
-      <p class="dim small">${scannedTo} envelope${scannedTo === 1 ? '' : 's'} scanned.
-      No envelope names its recipient, so finding yours means trying each one.
-      That is the cost of nobody seeing who writes to you.</p>
+      <h2>Nothing in ${label}</h2>
+      <p class="dim">${scannedTo.toLocaleString('en')} envelope${scannedTo === 1 ? '' : 's'} scanned.</p>
+      <p class="dim small">No envelope names its recipient, so finding yours means trying each
+      one. That is the cost of nobody being able to see who writes to you.</p>
     </div>`;
   }
   return `<div class="list">
     ${groups.map((g) => {
       const l = g[g.length - 1];
       const isRead = hasFlag(l.id, 'read');
-      const who = folder === 'sent' ? `To ${l.to || 'unknown'}` : (l.from || 'unknown');
-      return `<div class="row ${isRead ? '' : 'unread'} ${openId === l.id ? 'sel' : ''}" data-open="${l.id}">
+      const who = folder === 'sent' ? (l.to || 'unknown') : (l.from || 'unknown');
+      const shown = folder === 'sent' ? `To ${who}` : who;
+      return `<div class="rowitem ${isRead ? '' : 'unread'} ${openId === l.id ? 'sel' : ''}" data-open="${l.id}">
         <button class="star ${hasFlag(l.id, 'star') ? 'on' : ''}" data-star="${l.id}"
-                aria-label="${hasFlag(l.id, 'star') ? 'Unstar' : 'Star'}">★</button>
-        <span class="av">${esc(initial(who))}</span>
-        <span class="who">${esc(who)}${g.length > 1 ? ` <em>${g.length}</em>` : ''}</span>
-        <span class="sub">${esc(l.subject) || '(no subject)'}<span class="prev"> — ${esc(l.body.slice(0, 110))}</span></span>
+                aria-label="${hasFlag(l.id, 'star') ? 'Remove star' : 'Star'}">${icon.star}</button>
+        ${avatar(who)}
+        <span class="who">${esc(shown)}${g.length > 1 ? ` <em>${g.length}</em>` : ''}</span>
+        <span class="subj">${esc(l.subject) || '(no subject)'}<span class="prev"> &mdash; ${esc(l.body.slice(0, 120))}</span></span>
         <span class="when">${when(l.receivedAt)}</span>
       </div>`;
     }).join('')}
@@ -130,7 +148,11 @@ function listPane(): string {
 
 function readerPane(): string {
   if (openId === null) {
-    return `<div class="reader empty"><p class="dim">Pick a letter.</p></div>`;
+    return `<div class="reader blank"><div class="blankinner">
+      ${logo(46)}
+      <p>Pick a letter.</p>
+      <p class="small">Nothing on this chain records that any of them were for you.</p>
+    </div></div>`;
   }
   const all = LETTERS.filter((l) => l.id === openId || threads(LETTERS).some((g) => g.some((x) => x.id === openId) && g.some((x) => x.id === l.id)));
   const thread = threads(all).find((g) => g.some((x) => x.id === openId)) ?? [];
@@ -141,24 +163,27 @@ function readerPane(): string {
     <div class="rtop">
       <h1>${esc(head.subject) || '(no subject)'}</h1>
       <div class="racts">
-        <button class="ib" id="archive" title="Archive">▣</button>
-        <button class="ib" id="trash" title="Move to Trash">🗑</button>
-        <button class="ib" id="closer" title="Close">✕</button>
+        <button class="ib" id="archive" title="Archive">${icon.archive}</button>
+        <button class="ib" id="trash" title="Move to Trash">${icon.trash}</button>
+        <button class="ib" id="closer" title="Close">${icon.close}</button>
       </div>
     </div>
-    ${thread.map((l) => `
+    ${thread.map((l) => {
+      const who = l.outgoing ? (l.to || 'unknown') : (l.from || 'unknown');
+      return `
       <article class="msg">
         <div class="mhead">
-          <span class="av">${esc(initial(l.outgoing ? l.to : l.from))}</span>
+          ${avatar(who)}
           <div>
-            <div class="mwho">${esc(l.outgoing ? `You → ${l.to || 'unknown'}` : (l.from || 'unknown'))}</div>
-            <div class="mmeta">paid by <code>${esc(l.payer)}</code> · ${when(l.receivedAt)}</div>
+            <div class="mwho">${esc(l.outgoing ? `You &rarr; ${who}` : who)}</div>
+            <div class="mmeta">paid by <code>${esc(l.payer)}</code> &middot; ${when(l.receivedAt)}</div>
           </div>
         </div>
         <div class="mbody">${esc(l.body).replace(/\n/g, '<br>')}</div>
-      </article>`).join('')}
+      </article>`;
+    }).join('')}
     <div class="rfoot">
-      <button class="btn solid" id="reply">Reply</button>
+      <button class="btn solid" id="reply">${icon.reply} Reply</button>
       ${folder === 'trash'
         ? `<span class="dim small">Trash hides it here. The envelope stays on the chain, because a chain does not forget.</span>`
         : ''}
@@ -171,7 +196,7 @@ function composeView(): string {
   const over = size > MAX_SEALED;
   return `<div class="composer">
     <div class="chead">${draft.replyTo !== undefined ? 'Reply' : 'New letter'}
-      <button class="ib" id="ccancel" title="Discard">✕</button></div>
+      <button class="ib" id="ccancel" title="Discard">${icon.close}</button></div>
     <input id="to" value="${esc(draft.to)}" placeholder="To: a name you know, or a 64-character key" autocomplete="off">
     <input id="subject" value="${esc(draft.subject)}" placeholder="Subject (sealed with the body, never on chain)" autocomplete="off">
     <textarea id="body" placeholder="Write.">${esc(draft.body)}</textarea>
@@ -194,13 +219,13 @@ function mailboxView(): string {
       <button class="btn" id="publish">Publish it</button>
     </div>
     <div class="note ${BOX.origin === 'host' ? '' : 'warn'}">
-      ${BOX.origin === 'host'
+      ${icon.shield}<div>${BOX.origin === 'host'
         ? `<strong>Derived from your account.</strong> Sign in on another device and the same
            mailbox comes back. No private key was written down here or anywhere, so there is
            none to steal and none to lose.`
         : `<strong>Trial mailbox.</strong> A plain browser has no host to derive a key from, so
            one was invented and kept here. Open dotmail inside the Polkadot app for a mailbox
-           that is actually yours.`}
+           that is actually yours.`}</div>
     </div>
     <h2>People you know</h2>
     <p class="dim small">Kept in this browser and sent nowhere. An address book is a list of
@@ -219,8 +244,12 @@ function render() {
   if (!app) return;
   app.innerHTML = `
   <header class="top">
-    <span class="brand"><span class="mark"></span> dotmail</span>
-    <input class="search" id="q" value="${esc(query)}" placeholder="Search your letters (locally, in what you can already read)">
+    <span class="brand">${logo(26)} dotmail</span>
+    <span class="searchwrap">
+      ${icon.search}
+      <input class="search" id="q" value="${esc(query)}"
+             placeholder="Search the letters you can already read">
+    </span>
     <span class="who-am-i">${BOX ? esc(BOX.origin === 'host' ? 'your account' : 'trial mailbox') : '…'}</span>
   </header>
 
@@ -429,7 +458,7 @@ async function showContacts() {
   const people = await STORE.contacts();
   el.innerHTML = people.length
     ? `<ul class="chips">${people.map((p) =>
-        `<li title="${esc(p.key)}"><span class="av small">${esc(initial(p.name))}</span>${esc(p.name)}</li>`).join('')}</ul>`
+        `<li title="${esc(p.key)}">${avatar(p.name)}${esc(p.name)}</li>`).join('')}</ul>`
     : '<p class="dim small">Nobody yet.</p>';
 }
 
