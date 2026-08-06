@@ -58,7 +58,20 @@ async function store() {
 }
 
 const hex = (u: Uint8Array) => Array.from(u).map((b) => b.toString(16).padStart(2, '0')).join('');
-const unhex = (s: string) => new Uint8Array((s.match(/../g) ?? []).map((b) => parseInt(b, 16)));
+/**
+ * Hex to bytes, WITH the `0x` prefix stripped.
+ *
+ * Without that strip, a value off the chain came back one byte long and shifted
+ * by one: `"0x6d58…"` splits into `["0x", "6d", "58", …]`, `parseInt("0x", 16)`
+ * is 0, and every tag and ephemeral key was quietly wrong. Nothing threw. The
+ * inbox simply matched nothing, for ever, and reported "5 envelopes scanned"
+ * while comparing garbage.
+ *
+ * It went unnoticed because LocalStore stores its own hex WITHOUT a prefix, so
+ * every local test passed and only the real chain produced the broken input.
+ */
+const unhex = (s: string) =>
+  new Uint8Array((s.replace(/^0x/i, '').match(/../g) ?? []).map((b) => parseInt(b, 16)));
 
 let cached: Mailbox | null = null;
 

@@ -99,15 +99,19 @@ export function toAtForm(name: string): string {
   return at < 0 ? name : `${name.slice(0, at)}@${name.slice(at + 1)}`;
 }
 
-export const looksLikeKey = (s: string) => /^[0-9a-f]{64}$/i.test(s.trim());
+/** Accepts the `0x` form too. Rejecting it would tell somebody who copied a key
+ *  out of a block explorer that their perfectly good key is not a key. */
+export const looksLikeKey = (s: string) => /^(0x)?[0-9a-f]{64}$/i.test(s.trim());
 
 /** Accepts both spellings, and requires at least two labels either way. */
 export const looksLikeName = (s: string) =>
   /^[a-z0-9][a-z0-9-]*(\.[a-z0-9-]+)+$/i.test(toDotted(s))
   && (s.match(/@/g) ?? []).length <= 1;
 
+/** Strips `0x` first. Without it a prefixed value comes back one byte long and
+ *  shifted by one, silently, which cost an evening in the inbox. */
 export const keyFromHex = (s: string) =>
-  new Uint8Array((s.trim().match(/../g) ?? []).map((b) => parseInt(b, 16)));
+  new Uint8Array((s.trim().replace(/^0x/i, '').match(/../g) ?? []).map((b) => parseInt(b, 16)));
 
 /**
  * The mailbox key published under a .dot name.

@@ -872,12 +872,15 @@ function bind() {
   document.getElementById('addc')?.addEventListener('click', async () => {
     const name = (document.getElementById('cname') as HTMLInputElement)?.value.trim() ?? '';
     const key = (document.getElementById('ckey') as HTMLInputElement)?.value.trim() ?? '';
-    if (!name || !/^[0-9a-f]{64}$/i.test(key)) {
+    if (!name || !looksLikeKey(key)) {
       flash = { text: 'A name and a 64-character hex key, please.', bad: true };
       return render();
     }
     if (STORE instanceof LocalStore) {
-      await STORE.addContact(name, new Uint8Array((key.match(/../g) ?? []).map((b) => parseInt(b, 16))));
+      // keyFromHex, not a hand-rolled split: somebody pasting a key WITH the
+      // 0x prefix would otherwise get 33 shifted bytes and a contact nobody
+      // could ever write to.
+      await STORE.addContact(name, keyFromHex(key));
       flash = { text: `${name} added.` };
     }
     render(); void showContacts();
