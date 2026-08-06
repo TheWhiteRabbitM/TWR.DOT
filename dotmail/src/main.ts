@@ -582,7 +582,13 @@ async function doSend() {
   }
 
   const letter: Letter = {
-    from: (await STORE.me()) ?? 'unknown',
+    // The HANDLE, which is how people know each other, not the H160, which is
+    // how the chain does. `me()` returns the address, and using it put a forty
+    // character hex string where a name belongs on every letter sent.
+    //
+    // It stays a CLAIM either way: the payer is recorded separately and is the
+    // fact. But a claim people can read beats a fact nobody can.
+    from: myHandleOrAddress(),
     to, subject, body,
     replyTo: draft.replyTo,
     sentAt: Math.floor(Date.now() / 1000),
@@ -927,6 +933,23 @@ async function fetchClassic() {
 }
 
 /**
+ * The name a letter is signed with.
+ *
+ * The HANDLE when we know it, because that is how people know each other. It
+ * was `STORE.me()` before, which is the H160, so every letter arrived signed
+ * with forty characters of hex where a name belongs.
+ *
+ * It is a CLAIM either way. The payer is recorded separately and is the fact,
+ * and the reader shows both. But a claim somebody can read beats a fact nobody
+ * can.
+ */
+function myHandleOrAddress(): string {
+  if (maskState.kind === 'found' && maskState.handle) return maskState.handle;
+  return myAddress || 'unknown';
+}
+let myAddress = '';
+
+/**
  * Find the mask, under the WALLET account.
  *
  * Not `STORE.me()`, which is the product account the host derives per app: the
@@ -1002,7 +1025,12 @@ async function showContacts() {
   if (onChain) STORE = onChain;
 
   await STORE.setKey(BOX.pub);
+  myAddress = (await STORE.me()) ?? '';
   await loadClassicConfig();
+  // Look for the mask at BOOT, not only when the Mailbox screen is opened:
+  // otherwise the first letter of a session is signed with an address because
+  // nobody had been to that screen yet.
+  void findMask();
   console.info(`dotmail: ${SLOTS} slots, key from ${BOX.origin}, store ${STORE.kind}`);
   render();
   await refresh();
