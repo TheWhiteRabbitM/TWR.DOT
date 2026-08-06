@@ -32,6 +32,24 @@ export type Received = Letter & {
 const PAGE = 500;
 export type ScanProgress = { scanned: number; total: number; found: number };
 
+/**
+ * Did we pay for this letter? The one line that decides Inbox from Sent.
+ *
+ * Pulled out and exported so it can be tested, because it was wrong for as
+ * long as it was one inline `===` nobody could get at: the two addresses are
+ * built in different places and only ever agreed on their bytes.
+ *
+ * `me()` writes its hex with `toString(16)`, which is lowercase. The payer
+ * arrives from the chain through `asHex()`, which is EIP-55 checksummed. So
+ * `0xc40c…` and `0xC40c…` were never equal, every letter this account sent
+ * failed the test, and all of them filed into Inbox while Sent sat empty.
+ *
+ * An unknown `me` means nothing is outgoing. If we could not learn who we are,
+ * an empty Sent is the honest answer and a guess is not.
+ */
+export const isMine = (payer: string, me: string) =>
+  !!me && !!payer && payer.toLowerCase() === me.toLowerCase();
+
 export async function scan(
   store: MailStore,
   box: Mailbox,
@@ -84,7 +102,7 @@ export async function scan(
             ...letter,
             id: b.id,
             payer: b.from,
-            outgoing: b.from === me,
+            outgoing: isMine(b.from, me),
             receivedAt: b.time,
           });
         }
