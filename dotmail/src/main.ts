@@ -954,14 +954,24 @@ async function findByHandle(handle: string) {
     maskSaid = { text: 'A chirp handle, like watanabe.01.', bad: true };
     return render();
   }
-  maskSaid = null;
+  // Said IN the panel, not only in the banner at the top of the screen: on a
+  // phone that banner is off-screen while you are reading this section, so the
+  // button looked dead while it was working.
+  maskSaid = { text: `Looking up @${handle}…` };
+  maskState = { kind: 'searching' };
   busy = `Looking up @${handle}…`;
   render();
+
   const got = await maskForHandle(handle);
   busy = '';
   maskState = got === null ? { kind: 'failed' }
     : got === undefined ? { kind: 'nosuchhandle', handle }
     : { kind: 'found', mask: got.mask, handle };
+  maskSaid = got === null
+    ? { text: 'The chain did not answer within fifteen seconds. Nothing is assumed from that.', bad: true }
+    : got === undefined
+      ? { text: `Nobody holds @${handle}.`, bad: true }
+      : { text: `Found: mask ${got.mask}.` };
   render();
 }
 

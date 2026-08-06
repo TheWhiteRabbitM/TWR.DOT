@@ -287,6 +287,19 @@ const KEYS_ABI = [
 /** A bare handle: no dots, no at sign. `watanabe`, not `watanabe.dot`. */
 export const looksLikeHandle = (s: string) => /^[a-z0-9_.]{2,32}$/i.test(s.trim()) && !s.includes('@');
 
+/**
+ * A read that cannot hang forever.
+ *
+ * "I pressed it and nothing happened" is what an unresolved promise looks like
+ * from a chair, and it is indistinguishable from a broken button. Every chain
+ * call here is bounded so the interface can always say SOMETHING, even if what
+ * it says is that the chain did not answer.
+ */
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T | 'timeout'> {
+  return Promise.race([p, new Promise<'timeout'>((r) => setTimeout(() => r('timeout'), ms))]);
+}
+const READ_MS = 15_000;
+
 /** One connection, reused by every lookup below. */
 async function chain() {
   const host = await import('@parity/product-sdk-host');
@@ -457,13 +470,13 @@ export async function publishKeyToMask(mask: number, keyHex: string): Promise<Pu
  */
 export async function maskForHandle(handle: string): Promise<{ mask: number } | null | undefined> {
   try {
-    const c = await chain();
-    if (!c) return null;
+    const c = await withTimeout(chain(), READ_MS);
+    if (c === 'timeout' || !c) return null;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handles = c.sdk.createContract(c.rt, HANDLES, HANDLES_ABI as never, {}) as any;
     const hash = toHex(keccak_256(enc.encode(handle.trim().toLowerCase())));
-    const m = await handles.maskOfHandle.query(hash);
-    if (m?.value === undefined) return null;
+    const m = await withTimeout<{ value?: unknown }>(handles.maskOfHandle.query(hash), READ_MS);
+    if (m === 'timeout' || m?.value === undefined) return null;
     const mask = Number(m.value as bigint);
     return mask > 0 ? { mask } : undefined;
   } catch {
