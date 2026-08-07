@@ -60,6 +60,17 @@ export type Letter = {
   body: string;
   replyTo?: number;
   attachments?: Attachment[];
+  /**
+   * A file that is too big to live in the envelope, sitting on Bulletin
+   * instead, with the key that opens it right here.
+   *
+   * ADDITIVE ON PURPOSE. A client that knows nothing about this field still
+   * shows the body, and the body says in words what the file is and when it
+   * expires. The alternative, a new payload `kind`, would render in every
+   * older client as a letter with no text: a working send that looks broken,
+   * which is the worst failure available.
+   */
+  file?: import('./file.ts').Stored;
   sentAt: number;
 };
 

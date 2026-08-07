@@ -25,6 +25,8 @@ import {
   walletAddress, maskForHandle,
 } from './names.ts';
 import { whoIs, checkSender, nameNow, shortAddr, type Verdict } from './who.ts';
+import { openBytes, timeLeft, isExpired as fileExpired, humanSize as fileSize } from './file.ts';
+import { cloud } from './cloud.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
@@ -415,6 +417,33 @@ function listPane(): string {
  * photograph as though it were the photograph is the kind of quiet wrongness
  * this whole app is written against.
  */
+/**
+ * A file that came by dot-drive: the bytes are on Bulletin, the key is in this
+ * letter, and this is the only place the two are ever together.
+ *
+ * The expiry is shown and enforced rather than mentioned. Past it, no download
+ * button appears at all: an app that offers a button which cannot work has
+ * told you the file is there when it is not.
+ */
+function fileView(l: Received): string {
+  const f = l.file;
+  if (!f) return '';
+  const dead = fileExpired(f);
+  const when = new Date(f.expires).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' });
+  return `<div class="bigfile ${dead ? 'dead' : ''}">
+    ${icon.archive}
+    <div class="bfmain">
+      <strong>${esc(f.name)}</strong>
+      <span class="dim small">${fileSize(f.size)} &middot;
+        <span class="${dead ? 'bad' : ''}">${dead ? `expired ${when}` : timeLeft(f.expires)}</span>
+        &middot; on Bulletin, sealed</span>
+    </div>
+    ${dead
+      ? `<span class="dim small">The bytes are gone.</span>`
+      : `<button class="btn" data-getfile="${l.id}">${icon.archive} Download</button>`}
+  </div>`;
+}
+
 function attachmentsView(l: Received): string {
   if (!l.attachments?.length) return '';
   return `<div class="atts">${l.attachments.map((a: Attachment) => {
@@ -488,6 +517,7 @@ function readerPane(): string {
         </div>
         <div class="mbody">${esc(l.body).replace(/\n/g, '<br>')}</div>
         ${attachmentsView(l)}
+        ${fileView(l)}
       </article>`;
     }).join('')}
     <div class="rfoot">
@@ -896,6 +926,52 @@ const onAll = (sel: string, type: string, fn: (el: HTMLElement, e: Event) => voi
 
 const byId = (id: string) => document.getElementById(id);
 
+/**
+ * Fetch a dot-drive file and hand the bytes to the browser.
+ *
+ * Three failures, said as three different things, because they need three
+ * different responses from the reader: no host means open it in the Polkadot
+ * app; nothing came back means try again; the key did not open it means the
+ * letter and the bytes do not belong together and trying again will not help.
+ */
+async function getFile(f: NonNullable<Received['file']>) {
+  const c = await cloud();
+  if (c.kind !== 'ready') {
+    flash = {
+      text: c.kind === 'nohost'
+        ? 'Bulletin is reachable only from inside the Polkadot app, so the file cannot be fetched here.'
+        : `The host would not come up: ${c.why}`,
+      bad: true,
+    };
+    return render();
+  }
+  busy = `Fetching ${f.name}…`;
+  render();
+  const blob = await c.cloud.fetch(f.cid);
+  busy = '';
+  if (!blob) {
+    flash = {
+      text: fileExpired(f)
+        ? `${f.name} expired and the bytes are gone.`
+        : `Bulletin did not return ${f.name}. That is not the same as it being gone — try again.`,
+      bad: true,
+    };
+    return render();
+  }
+  const plain = openBytes(blob, f.key);
+  if (!plain) {
+    flash = { text: 'The bytes came back but the key in this letter did not open them.', bad: true };
+    return render();
+  }
+  const url = URL.createObjectURL(new Blob([plain as unknown as BlobPart], { type: f.type }));
+  const a = document.createElement('a');
+  a.href = url; a.download = f.name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  flash = { text: `${f.name} decrypted, ${fileSize(plain.length)}.` };
+  render();
+}
+
 function bind() {
   onAll('[data-folder]', 'click', (b) => {
     folder = b.dataset.folder as Folder;
@@ -976,6 +1052,11 @@ function bind() {
     for (const id of ids) { setFlag(id, 'trash', false); setFlag(id, 'archive', false); }
     flash = { text: 'Back where it was.' };
     openId = null; render();
+  });
+
+  onAll('[data-getfile]', 'click', (b) => {
+    const l = LETTERS.find((x) => x.id === Number(b.dataset.getfile));
+    if (l?.file) void getFile(l.file);
   });
 
   on(byId('compose'), 'click', () => {

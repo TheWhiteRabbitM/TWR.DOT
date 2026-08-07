@@ -477,3 +477,21 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); }
 }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/*
+ * A file that came by dot-drive. The bytes are on Bulletin and the key is in
+ * the letter, and this row is the only place the two are ever together.
+ *
+ * `dead` is not decoration: past the expiry no download button is rendered at
+ * all, because a button that cannot work has told you the file is there.
+ */
+.bigfile {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin: 12px 0 0; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--panel);
+}
+.bigfile.dead { opacity: .6; }
+.bigfile > svg { width: 20px; height: 20px; color: var(--dim); }
+.bfmain { flex: 1 1 12rem; min-width: 0; display: grid; }
+.bfmain strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
