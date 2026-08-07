@@ -4,7 +4,28 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 07 Aug 2026 07:51:50 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 07 Aug 2026 09:25:07 GMT</lastBuildDate>
+    <item>
+      <title>dot-drive</title>
+      <link>https://dot-drive.dev-dot.li</link>
+      <description>Big files, encrypted on your device and stored on Bulletin, with the key handed over in a sealed letter. The bytes are unreadable and nothing points at them. Fourteen days, then gone, and the app says so on every row.</description>
+      <guid isPermaLink="false">dot-drive</guid>
+      <pubDate>Fri, 07 Aug 2026 08:44:12 GMT</pubDate>
+    </item>
+    <item>
+      <title>dotparcel</title>
+      <link>https://dotparcel.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">dotparcel</guid>
+      <pubDate>Fri, 07 Aug 2026 08:41:48 GMT</pubDate>
+    </item>
+    <item>
+      <title>Stake Forensics</title>
+      <link>https://stake-forensics.dev-dot.li</link>
+      <description>Pattern detection across Polkadot unbonding activity. Scans a configurable historical window, scores addresses by volume, frequency, timing regularity, round-number amounts, net outflow and clustering, and flags the ones most likely to be generating repeat sell pressure.</description>
+      <guid isPermaLink="false">stake-forensics</guid>
+      <pubDate>Fri, 07 Aug 2026 08:39:12 GMT</pubDate>
+    </item>
     <item>
       <title>micropagos</title>
       <link>https://micropagos.dev-dot.li</link>
@@ -333,27 +354,6 @@
       <description></description>
       <guid isPermaLink="false">launchpad</guid>
       <pubDate>Tue, 04 Aug 2026 14:23:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>paperplane</title>
-      <link>https://paperplane.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">paperplane</guid>
-      <pubDate>Tue, 04 Aug 2026 14:21:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>stargazer</title>
-      <link>https://stargazer.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">stargazer</guid>
-      <pubDate>Tue, 04 Aug 2026 14:19:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>blueprint</title>
-      <link>https://blueprint.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">blueprint</guid>
-      <pubDate>Tue, 04 Aug 2026 14:18:12 GMT</pubDate>
     </item>
   </channel>
 </rss>

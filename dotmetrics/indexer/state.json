@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11921731,
-  "updatedAt": "2026-08-07T07:45:51.110Z",
+  "lastBlock": 11924394,
+  "updatedAt": "2026-08-07T09:19:07.804Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "ad50ba9a1c7f20e39530b106db212c57d656d9775b1f349299e098e65a5d7c74",
-    "cid": "bafybeicmna2tio2klbhnw5dyeoygrimbpt26uxnt57al2wfi6yjle626ua",
-    "uploadedAt": "2026-08-07T07:53:00.866Z"
+    "digest": "f00c1429e0e499d14fd2f615732c80c85487303b0f836c6850d25d73ba66dc01",
+    "cid": "bafybeigrex6p6ohx4qsvt3taj7gbslq5gpcbp33bkglcix4osag4yuff4e",
+    "uploadedAt": "2026-08-07T09:26:16.398Z"
   },
   "sitePublish": {
     "treeHash": "d2ee923141d08a90e5938e273b696927941811f28096fb9d7c76425e5a77409c",
     "publishedAt": "2026-08-07T07:54:54.972Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-07T07:51:49.000Z",
+    "updatedAt": "2026-08-07T09:25:07.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -159,13 +159,15 @@
       "marketplace": "alive",
       "micropagos": "alive",
       "reputacion": "alive",
-      "votaciones": "alive"
+      "votaciones": "alive",
+      "dot-drive": "alive",
+      "stake-forensics": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-07T07:51:50.000Z",
+    "updatedAt": "2026-08-07T09:25:07.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -382,15 +384,20 @@
         "changedAt": 1785437717,
         "live": "alive"
       },
+      "dot-drive": {
+        "contenthash": "bafybeihx6j6zml7cnbjhqftvzut6pjyprvfgt4nhekxkz35k6wfe2blbaa",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "dot-pages": {
         "contenthash": "bafybeicvikt7ej2palbbz35ciiwhtm755t4xja75ef4dfmrdeugtgsbgq4",
         "updateCount": 0,
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeideesrwu4odxrmo43rgbkj5ykh37jbh3bk4weswedycniwv66t45y",
-        "updateCount": 77,
-        "changedAt": 1786089110,
+        "contenthash": "bafybeif6cjvgfzwzcjz3lk5pa4klbhzzvdysjb6p4hfawd7cpsnfjitxoi",
+        "updateCount": 78,
+        "changedAt": 1786094707,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -422,16 +429,21 @@
         "live": "alive"
       },
       "dotmailbox": {
-        "contenthash": "bafybeied7puqong75nd5hxqnjz6gkcr34oqkgnmrcyfwme6pluyuznmaoy",
-        "updateCount": 5,
-        "changedAt": 1786089110,
+        "contenthash": "bafybeifueupmv5asnurjn3ursnwplwlo4r6totrjknru44uhkolzrmks5a",
+        "updateCount": 6,
+        "changedAt": 1786094707,
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeia74t4sah3yufxz5bv5ngzquhibfb6h72rc2aw74qg76ztwesfe3i",
-        "updateCount": 53,
-        "changedAt": 1786082484,
+        "contenthash": "bafybeidmmqqabiainrr5tf7f4itnqppi4crlqxkrzzty7fuku6nmibznha",
+        "updateCount": 54,
+        "changedAt": 1786094707,
         "live": "alive"
+      },
+      "dotparcel": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "doyoulike": {
         "contenthash": "bafybeidwlsaceo4kbvnteyzdn4jxmwieszfb72xs7zwxgzcushwse2pmni",
@@ -985,6 +997,11 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "stake-forensics": {
+        "contenthash": "bafybeie5nidhek3eif77fxsjceml3qtiz33ayetgqyi6l3jye5ogcph26i",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "stargazer": {
         "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
         "updateCount": 0,
@@ -1078,8 +1095,9 @@
         "live": "alive"
       },
       "votaciones": {
-        "contenthash": "bafybeiecn4666fpecabwxyu6b677hdghvyhjljxgci76ar7jweckmi63sy",
-        "updateCount": 0,
+        "contenthash": "bafybeihqg4i2vv7j2r676wl5x7gl35mcavfdlzcnwyj7cctl2efl2fydma",
+        "updateCount": 1,
+        "changedAt": 1786094707,
         "live": "alive"
       },
       "vvvvvvvvv": {

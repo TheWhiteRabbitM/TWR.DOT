@@ -1,7 +1,34 @@
 {
-  "generatedAt": 1786089110,
-  "count": 188,
+  "generatedAt": 1786094707,
+  "count": 191,
   "apps": [
+    {
+      "label": "dot-drive",
+      "domain": "dot-drive.dot",
+      "displayName": "dot-drive",
+      "description": "Big files, encrypted on your device and stored on Bulletin, with the key handed over in a sealed letter. The bytes are unreadable and nothing points at them. Fourteen days, then gone, and the app says so on every row.",
+      "tier": 0,
+      "firstSeenAt": 1786092252,
+      "url": "https://dot-drive.dev-dot.li"
+    },
+    {
+      "label": "dotparcel",
+      "domain": "dotparcel.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1786092108,
+      "url": "https://dotparcel.dev-dot.li"
+    },
+    {
+      "label": "stake-forensics",
+      "domain": "stake-forensics.dot",
+      "displayName": "Stake Forensics",
+      "description": "Pattern detection across Polkadot unbonding activity. Scans a configurable historical window, scores addresses by volume, frequency, timing regularity, round-number amounts, net outflow and clustering, and flags the ones most likely to be generating repeat sell pressure.",
+      "tier": 0,
+      "firstSeenAt": 1786091952,
+      "url": "https://stake-forensics.dev-dot.li"
+    },
     {
       "label": "micropagos",
       "domain": "micropagos.dot",
