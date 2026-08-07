@@ -252,3 +252,12 @@ textarea { resize: vertical; line-height: 1.6; }
   box-shadow: 0 0 0 3px #000 inset;
 }
 .shutter:active { transform: scale(.94); }
+
+/* Who the app thinks you are, and WHICH of the two accounts answered.
+ *
+ * Not decoration. The wallet account and the account the app signs with are
+ * different, the code has disagreed with itself about which one holds the mask,
+ * and this row is how a real device settles it instead of an argument. */
+.card.whoami { display: flex; gap: 12px; align-items: flex-start; }
+.card.whoami svg { width: 19px; height: 19px; color: var(--dim); margin-top: 3px; }
+.card.whoami > div { min-width: 0; display: grid; gap: 2px; }

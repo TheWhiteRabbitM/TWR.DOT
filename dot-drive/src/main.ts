@@ -23,7 +23,8 @@ import {
 import { list, remember, forget, markSent, type Mine } from './mine.ts';
 import { sendFile } from './send.ts';
 import { mailbox } from './keys.ts';
-import { myMask, walletAddress } from './names.ts';
+import { findMe } from './names.ts';
+import { sharedChain } from './conn.ts';
 import { icon, logo } from './icons.ts';
 import { fromFile, fromClipboard, fromPasteEvent, openCamera, type Picked, type Camera } from './pick.ts';
 import './style.css';
@@ -36,6 +37,9 @@ let busy = '';
 let flash: { text: string; bad?: boolean } | null = null;
 /** Who we are, for the `from` line on a letter. A handle if there is one. */
 let me = '';
+/** Which account answered, and how. Shown so the two-accounts question gets
+ *  settled by a real device instead of by argument. */
+let whoVia: { handle: string; mask: number; address: string; via: 'product' | 'wallet' } | null = null;
 /** The file picked but not yet sent, and who it is being sent to. */
 let sending: Mine | null = null;
 let sendTo = '';
@@ -225,6 +229,13 @@ function render() {
   ${busy ? `<div class="busy">${esc(busy)}</div>` : ''}
   ${flash ? `<div class="flash ${flash.bad ? 'bad' : ''}">${esc(flash.text)}</div>` : ''}
   <main>
+    ${whoVia ? `<div class="card whoami">
+      ${icon.lock}
+      <div><strong>${esc(whoVia.handle || 'No handle claimed yet')}</strong>
+      <span class="dim small">${whoVia.mask ? `mask ${whoVia.mask}, ` : ''}held by
+      <code title="${esc(whoVia.address)}">${esc(whoVia.address.slice(0, 8) + '…' + whoVia.address.slice(-4))}</code>,
+      the ${whoVia.via === 'product' ? 'account this app signs with' : 'wallet account'}</span></div>
+    </div>` : ''}
     ${uploader()}
     ${mineView()}
     <section class="card note">
@@ -476,16 +487,15 @@ async function boot() {
   ready = await cloud();
   render();
 
-  // The name on a letter, resolved once. Falls back to the address, and then
-  // to nothing, because a letter signed "undefined" is worse than an unsigned one.
+  // The name on a letter, resolved once, by asking BOTH accounts rather than
+  // picking one. Falls back to the address, because a letter signed with an
+  // address a person can look up beats one signed "unknown".
   try {
     await mailbox();
-    const addr = await walletAddress();
-    if (addr) {
-      const m = await myMask(addr);
-      me = (m && 'handle' in m ? m.handle : '') || addr;
-    }
-  } catch { /* the letter goes out unsigned rather than wrong */ }
+    const conn = await sharedChain();
+    const found = await findMe(conn?.address ?? null);
+    if (found) { me = found.handle || found.address; whoVia = found; }
+  } catch { /* the letter goes out with no name rather than a wrong one */ }
   render();
 }
 

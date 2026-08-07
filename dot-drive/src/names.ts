@@ -488,3 +488,65 @@ export async function accountForHandle(handle: string): Promise<string | null | 
     return null;
   }
 }
+
+/**
+ * Which account are we, and which one holds the mask.
+ *
+ * THERE ARE TWO, AND THE CODE HAS DISAGREED WITH ITSELF ABOUT WHICH
+ *   The WALLET account, from `getLegacyAccounts()`, is the one that has funds
+ *   and buys names. The PRODUCT account, derived by `SignerManager({dappName})`
+ *   from the ecosystem's app name, is the one that signs writes in every app
+ *   here and therefore appears as the payer on every letter.
+ *
+ *   dotmail's `findMask` searches under the wallet, and says in a comment that
+ *   the mask belongs to it. But reading the chain directly this morning, the
+ *   PAYER of a letter is what `maskOf` answers for: `0xC40cb64C…` holds mask 2
+ *   with the handle `watanabe.01`, and that address is the one that signed.
+ *   One of those two statements is wrong and no amount of reasoning from here
+ *   settles which, because the product account only exists inside the container.
+ *
+ * SO IT ASKS BOTH
+ *   Cheap, one read each, and it cannot be wrong in the way a guess can. The
+ *   answer says WHICH account held it, so the next person does not have to run
+ *   this experiment again.
+ */
+export type Me = {
+  handle: string;
+  mask: number;
+  address: string;
+  /** Which of the two answered. Reported so the disagreement above gets settled
+   *  by evidence from a real device rather than by argument. */
+  via: 'product' | 'wallet';
+};
+
+export async function findMe(productAddress: string | null): Promise<Me | null> {
+  const candidates: { address: string; via: Me['via'] }[] = [];
+
+  if (productAddress) {
+    // The SignerManager hands back ss58; `maskOf` is keyed by the H160.
+    try {
+      const papi = await import('polkadot-api');
+      const pk = papi.AccountId().enc(productAddress);
+      candidates.push({ address: h160Of(pk), via: 'product' });
+    } catch { /* not fatal; the wallet is tried below */ }
+  }
+  const w = await walletAddress();
+  if (w) candidates.push({ address: w, via: 'wallet' });
+
+  for (const c of candidates) {
+    const m = await myMask(c.address);
+    if (m && 'mask' in m && m.handle) return { handle: m.handle, mask: m.mask, address: c.address, via: c.via };
+  }
+  // Nobody holds a mask under either. The address is still worth returning:
+  // a letter signed with an address a person can look up beats one signed
+  // "unknown".
+  return candidates[0] ? { handle: '', mask: 0, address: candidates[0].address, via: candidates[0].via } : null;
+}
+
+/** The same H160 rule pallet-revive uses, on a public key we already have. */
+function h160Of(publicKey: Uint8Array): string {
+  let ethDerived = publicKey.length === 32;
+  if (ethDerived) for (let i = 20; i < 32; i++) if (publicKey[i] !== 0xee) { ethDerived = false; break; }
+  const bytes = ethDerived ? publicKey.slice(0, 20) : keccak_256(publicKey).slice(12, 32);
+  return toHex(bytes).toLowerCase();
+}
