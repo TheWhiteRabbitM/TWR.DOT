@@ -1,7 +1,43 @@
 {
-  "generatedAt": 1786030837,
-  "count": 184,
+  "generatedAt": 1786062600,
+  "count": 188,
   "apps": [
+    {
+      "label": "micropagos",
+      "domain": "micropagos.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786037508,
+      "url": "https://micropagos.dev-dot.li"
+    },
+    {
+      "label": "reputacion",
+      "domain": "reputacion.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786037424,
+      "url": "https://reputacion.dev-dot.li"
+    },
+    {
+      "label": "votaciones",
+      "domain": "votaciones.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786037352,
+      "url": "https://votaciones.dev-dot.li"
+    },
+    {
+      "label": "marketplace",
+      "domain": "marketplace.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786037256,
+      "url": "https://marketplace.dev-dot.li"
+    },
     {
       "label": "confidaoapp",
       "domain": "confidaoapp.dot",

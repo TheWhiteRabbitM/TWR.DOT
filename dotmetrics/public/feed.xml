@@ -4,7 +4,35 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 06 Aug 2026 15:40:37 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 07 Aug 2026 00:30:00 GMT</lastBuildDate>
+    <item>
+      <title>micropagos</title>
+      <link>https://micropagos.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">micropagos</guid>
+      <pubDate>Thu, 06 Aug 2026 17:31:48 GMT</pubDate>
+    </item>
+    <item>
+      <title>reputacion</title>
+      <link>https://reputacion.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">reputacion</guid>
+      <pubDate>Thu, 06 Aug 2026 17:30:24 GMT</pubDate>
+    </item>
+    <item>
+      <title>votaciones</title>
+      <link>https://votaciones.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">votaciones</guid>
+      <pubDate>Thu, 06 Aug 2026 17:29:12 GMT</pubDate>
+    </item>
+    <item>
+      <title>marketplace</title>
+      <link>https://marketplace.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">marketplace</guid>
+      <pubDate>Thu, 06 Aug 2026 17:27:36 GMT</pubDate>
+    </item>
     <item>
       <title>confidaoapp</title>
       <link>https://confidaoapp.dev-dot.li</link>
@@ -326,34 +354,6 @@
       <description></description>
       <guid isPermaLink="false">blueprint</guid>
       <pubDate>Tue, 04 Aug 2026 14:18:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>hydration</title>
-      <link>https://hydration.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">hydration</guid>
-      <pubDate>Tue, 04 Aug 2026 14:17:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>wonderland</title>
-      <link>https://wonderland.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">wonderland</guid>
-      <pubDate>Tue, 04 Aug 2026 14:16:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>adventure</title>
-      <link>https://adventure.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">adventure</guid>
-      <pubDate>Tue, 04 Aug 2026 14:14:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>workspace</title>
-      <link>https://workspace.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">workspace</guid>
-      <pubDate>Tue, 04 Aug 2026 14:13:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11893220,
-  "updatedAt": "2026-08-06T15:34:29.190Z",
+  "lastBlock": 11908671,
+  "updatedAt": "2026-08-07T00:25:54.892Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "98866cefc9af1ac9300f92179ce385cdfeefc914a15981604ee201ae3b65fb65",
-    "cid": "bafybeidseh5tpaw2ey4xxrnwjxgnhlvgure2f4kwn5yviprrk3ayjzitay",
-    "uploadedAt": "2026-08-06T15:42:04.414Z"
+    "digest": "0106fe9cd366c981e14a5e84d1642d175bc25c28a5b46284d97f342faae4bdaa",
+    "cid": "bafybeidqjep4nyfvjnm7rif4dxo6lx2uqra7zmukm2hx5vewtaholcn7ti",
+    "uploadedAt": "2026-08-07T00:31:03.853Z"
   },
   "sitePublish": {
-    "treeHash": "1ebd6bb3b12c06a06255ff0aba7270048c927e56f7aed0471f81dda68a57a218",
-    "publishedAt": "2026-08-06T12:34:19.666Z"
+    "treeHash": "5c0fb2db1421572cf6d0cbefb18c4604aa0f070442f923aa5ddb6992afa5fb05",
+    "publishedAt": "2026-08-07T00:33:18.528Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-06T15:40:37.000Z",
+    "updatedAt": "2026-08-07T00:29:59.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -155,13 +155,17 @@
       "dotmailbox": "alive",
       "dforms-app": "alive",
       "confidaoapp": "alive",
-      "gavin-pump": "alive"
+      "gavin-pump": "alive",
+      "marketplace": "alive",
+      "micropagos": "alive",
+      "reputacion": "alive",
+      "votaciones": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-06T15:40:37.000Z",
+    "updatedAt": "2026-08-07T00:29:59.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -207,9 +211,9 @@
         "live": "alive"
       },
       "broadside": {
-        "contenthash": "bafybeie5tw6jk3jdcltg5bzkanep2moinsddkfdelumw3vpzdk6fjpgtlm",
-        "updateCount": 7,
-        "changedAt": 1786030837,
+        "contenthash": "bafybeifl6ppmw7p6frkzzmq6zppycnbikvudqmvnnxkice6xlw6sviuzai",
+        "updateCount": 8,
+        "changedAt": 1786062599,
         "live": "alive"
       },
       "buildboard01": {
@@ -412,15 +416,15 @@
         "live": "alive"
       },
       "dotify-test01": {
-        "contenthash": "bafybeid2u2h6mdc6dnoxtqbz6hjlbt72o6znzgjumxudcpqak23c6zjqwu",
-        "updateCount": 13,
-        "changedAt": 1785988293,
+        "contenthash": "bafybeifsedjjwf4zg3ngmmtivwtx4hgwa7dj4bejr722lrpuppbob5ilhq",
+        "updateCount": 14,
+        "changedAt": 1786062599,
         "live": "alive"
       },
       "dotmailbox": {
-        "contenthash": "bafybeic7u6bzs4acaquphggf2wd74y6pnzg4bdlymmruh7s7h3oiz36ufy",
-        "updateCount": 3,
-        "changedAt": 1786030837,
+        "contenthash": "bafybeict2n5afz7bgz7ohta3mvduhxbmjdldt4nbjxzfjjnlnuu5xhxzpu",
+        "updateCount": 4,
+        "changedAt": 1786062599,
         "live": "alive"
       },
       "dotmetrics": {
@@ -639,6 +643,16 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "marketplace": {
+        "contenthash": "bafybeicu5wtp5bpxwiqqpba5re5dymvztvmdcjpd4ov4udgyhekwfvrbga",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "micropagos": {
+        "contenthash": "bafybeigzner2ywfqhbhvqwl7fbomv5z75wrdnlgs2yrhjhrd6bbwmrwbaa",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "mini-lucky": {
         "contenthash": "",
         "updateCount": 0,
@@ -702,8 +716,9 @@
         "live": "unknown"
       },
       "navalstrike01": {
-        "contenthash": "bafybeigdj6dxqbn4cioxhwvsaykq4xmmk756jss53owz4jaaq5refkgvom",
-        "updateCount": 0,
+        "contenthash": "bafybeigx363ggoozz5mak5nfwwyg3noegvjphqh7shu4fq7ikixderaplm",
+        "updateCount": 1,
+        "changedAt": 1786062599,
         "live": "alive"
       },
       "neo-app-demo": {
@@ -821,9 +836,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeia3lk4n7hkto3qvptxnux72zu4suou5n334uxdudsutw6fx3zv7hm",
-        "updateCount": 9,
-        "changedAt": 1786030837,
+        "contenthash": "bafybeicbpaazol6oqme77j6m6crt5g2qjwqzdxynyumf5dwn5mmstesoau",
+        "updateCount": 10,
+        "changedAt": 1786062599,
         "live": "alive"
       },
       "peoplewiki": {
@@ -930,6 +945,11 @@
       },
       "rainbowprobe": {
         "contenthash": "bafybeicqhw7hb63lhbcuvk24qybdxbag4qhioq7v5mbf5dv65f7sa7pjge",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "reputacion": {
+        "contenthash": "bafybeihgcamr5zti5772uepwvhua7u4mafqvpwaltfaewjimqkbzh65sii",
         "updateCount": 0,
         "live": "alive"
       },
@@ -1052,9 +1072,14 @@
         "live": "unknown"
       },
       "vault-control": {
-        "contenthash": "bafybeig24bolphet25llw2iodgq2tfrkh4mjpdjfiwdhh5alkph43poy4a",
-        "updateCount": 3,
-        "changedAt": 1785988293,
+        "contenthash": "bafybeidsdom3jboi6eyv2qkc6nnq6blx2dhnxynyojhhnpjbyqeg62i6d4",
+        "updateCount": 4,
+        "changedAt": 1786062599,
+        "live": "alive"
+      },
+      "votaciones": {
+        "contenthash": "bafybeiecn4666fpecabwxyu6b677hdghvyhjljxgci76ar7jweckmi63sy",
+        "updateCount": 0,
         "live": "alive"
       },
       "vvvvvvvvv": {

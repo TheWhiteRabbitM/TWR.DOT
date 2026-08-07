@@ -163,6 +163,12 @@
     "confidence": "none",
     "why": []
   },
+  "confidaoapp": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "contribnet01": {
     "category": "social",
     "source": "derived:app-text",
