@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11914145,
-  "updatedAt": "2026-08-07T03:23:59.806Z",
+  "lastBlock": 11918419,
+  "updatedAt": "2026-08-07T05:55:34.314Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "2e5cd8fac449e26b2640d4e7550cf5ce9ef4b726aebdc72458bf7364ce4f807e",
-    "cid": "bafybeifncde636lh5rmqyobvsnndv23caswthlc5qehesmrow725ao3m4e",
-    "uploadedAt": "2026-08-07T03:29:24.789Z"
+    "digest": "51e75e11da321d07566a2fa3796ed9a36a4e90fcb3f384d27e745bcc23e2ba65",
+    "cid": "bafybeibq2gucolna42adv2dcj3ouvgas32xndyievdno24mehbx6znn2zu",
+    "uploadedAt": "2026-08-07T06:02:41.585Z"
   },
   "sitePublish": {
     "treeHash": "d0bae725d7b6cc5866a4604680ce399c703d7ddd931ebd73aa14c883baa9fe1e",
     "publishedAt": "2026-08-07T03:31:06.628Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-07T03:28:05.000Z",
+    "updatedAt": "2026-08-07T06:01:24.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -165,7 +165,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-07T03:28:06.000Z",
+    "updatedAt": "2026-08-07T06:01:24.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -388,9 +388,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeif77frauwoqybx55ohzu4qqqt3pbfrps6exbrlwi3vamunqoqosiq",
-        "updateCount": 75,
-        "changedAt": 1786073286,
+        "contenthash": "bafybeigor4y5h2c22jbu7tljyyxhjf2vczd64trkfr2pfip2wi6uk37ddi",
+        "updateCount": 76,
+        "changedAt": 1786082484,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -428,9 +428,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeidpmfhskuncssdnbibyo2g7i3mtejiivkckokxsbjpaw4c6cyv3ai",
-        "updateCount": 52,
-        "changedAt": 1786073286,
+        "contenthash": "bafybeia74t4sah3yufxz5bv5ngzquhibfb6h72rc2aw74qg76ztwesfe3i",
+        "updateCount": 53,
+        "changedAt": 1786082484,
         "live": "alive"
       },
       "doyoulike": {
@@ -836,9 +836,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeicbpaazol6oqme77j6m6crt5g2qjwqzdxynyumf5dwn5mmstesoau",
-        "updateCount": 10,
-        "changedAt": 1786062599,
+        "contenthash": "bafybeieteuvzd4hr4miipaxupw5c6zsepwsppdpw2o2rm3jxexyycfw4oi",
+        "updateCount": 11,
+        "changedAt": 1786082484,
         "live": "alive"
       },
       "peoplewiki": {
