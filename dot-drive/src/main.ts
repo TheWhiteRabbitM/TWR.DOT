@@ -441,11 +441,11 @@ async function doSend() {
   sendTo = to; sendNote = note;
   busy = `Looking up ${to || 'them'}…`;
   render();
-  const r = await sendFile(to, sending, note, me);
+  const r = await sendFile(to, sending, note, me, whoVia?.mask ?? 0);
   busy = '';
   if (!r.ok) { flash = { text: r.why, bad: true }; return render(); }
   await markSent(sending.cid, to);
-  flash = { text: `Sent to ${to}. They open it in dot-drive from the letter.` };
+  flash = { text: r.note ?? `Sent to ${to}. They open it in dot-drive from the letter.`, bad: !!r.note };
   sending = null; sendTo = ''; sendNote = '';
   await refresh();
 }

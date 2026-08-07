@@ -22,8 +22,7 @@
  */
 import { seal, sealedSize, type Letter } from './seal.ts';
 import { ContractStore } from './chainstore.ts';
-import { mailbox } from './keys.ts';
-import { keyForName, keyForHandle, looksLikeKey, looksLikeName, looksLikeHandle, keyFromHex, accountForHandle } from './names.ts';
+import { keyForName, keyForHandle, looksLikeKey, looksLikeName, looksLikeHandle, keyFromHex, accountForHandle, keyForMask } from './names.ts';
 import { humanSize, type Stored } from './file.ts';
 
 /** A letter that carries a file. The extra field is additive on purpose. */
@@ -31,7 +30,7 @@ export type FileLetter = Letter & { file?: Stored };
 
 const MAX_SEALED = 16_000;
 
-export type SendResult = { ok: true } | { ok: false; why: string };
+export type SendResult = { ok: true; note?: string } | { ok: false; why: string };
 
 /**
  * Resolve a recipient the same three ways dotmail does, in the order that
@@ -87,22 +86,40 @@ function bodyFor(f: Stored, note: string): string {
 }
 
 /**
- * Seal the pointer and the key to the recipient AND to ourselves.
+ * Seal the pointer and the key to the recipient AND to the sender's OWN
+ * published mailbox.
  *
- * The second slot is not an afterthought: a letter sealed only to its
- * recipient is one its sender can never read again, so the sending half of
- * dot-drive would forget which key it gave away the moment it was given.
+ * THE SECOND SLOT HAD THE WRONG KEY IN IT
+ *   It used this app's derived mailbox, which felt right and was not. The host
+ *   derives entropy per PRODUCT, and the product is the domain the bundle came
+ *   from, so `dotmail:x25519:v1` under `dot-drive.dot` is a different key from
+ *   the same label under `dotmailbox.dot`. The copy was sealed to a mailbox
+ *   only dot-drive could open, which is a mailbox nobody reads: the file would
+ *   reach the recipient and vanish from the sender's own Sent, with nothing on
+ *   screen to explain it.
+ *
+ *   The right second reader is the key the sender PUBLISHED against their mask,
+ *   because that is the one dotmail opens. It is read from the chain, not
+ *   derived, for exactly the reason above.
+ *
+ *   When there is no published key the letter still goes, sealed to the
+ *   recipient alone, and the caller is told plainly that the sender will not
+ *   have their own copy. Silently dropping the second slot would be the same
+ *   bug wearing a different coat.
  */
 export async function sendFile(
   to: string,
   f: Stored,
   note: string,
   from: string,
+  /** The sender's own mask, so their copy can be sealed to a key dotmail
+   *  actually holds. `0` when we could not work out who we are. */
+  myMask = 0,
 ): Promise<SendResult> {
   const found = await keyFor(to);
   if ('why' in found) return { ok: false, why: found.why };
 
-  const box = await mailbox();
+  const mine = myMask ? await keyForMask(myMask) : undefined;
   const letter: FileLetter = {
     from,
     to,
@@ -118,7 +135,19 @@ export async function sendFile(
   const store = await ContractStore.open();
   if (!store) return { ok: false, why: 'No connection to the chain that carries the letters.' };
 
-  const env = seal(letter as Letter, [found.key, box.pub]);
+  // Two readers when we can, one when we cannot, and the difference is
+  // reported rather than swallowed.
+  const readers = mine ? [found.key, mine] : [found.key];
+  const env = seal(letter as Letter, readers);
   const r = await store.send(env.tags, env.eph, env.sealed);
-  return r.ok ? { ok: true } : { ok: false, why: r.why ?? 'The letter did not send.' };
+  if (!r.ok) return { ok: false, why: r.why ?? 'The letter did not send.' };
+
+  return {
+    ok: true,
+    note: mine
+      ? undefined
+      : myMask
+        ? 'Sent. You have no published mailbox key, so this one is not in your own dotmail: publish a key there and later sends will be.'
+        : 'Sent. We could not work out which mask is yours, so your own copy was not sealed and this will not appear in your dotmail.',
+  };
 }

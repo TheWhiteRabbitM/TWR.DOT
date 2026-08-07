@@ -577,3 +577,40 @@ async function walletSs58(): Promise<string> {
     return '';
   }
 }
+
+/**
+ * The mailbox key published against a mask. The one dotmail can open.
+ *
+ * WHY dot-drive CANNOT USE ITS OWN DERIVED KEY FOR THIS
+ *   The host derives entropy per PRODUCT, and the product is the domain the
+ *   bundle was served from. Read out of the desktop host itself:
+ *
+ *     identifier = content?.archive.domain ?? identifier
+ *     perProduct = blake2b256Keyed(rootEntropySource, blake2b256(productId))
+ *     entropy    = blake2b256Keyed(perProduct, key)
+ *
+ *   So `dotmail:x25519:v1` under `dot-drive.dot` and the same label under
+ *   `dotmailbox.dot` are DIFFERENT KEYS. Sealing the second slot to this app's
+ *   own mailbox produced a letter only this app could reopen, which is a
+ *   mailbox nobody reads and nobody publishes: the sender would never see the
+ *   file in dotmail, and would have no idea why.
+ *
+ *   The account is shared across our apps because signing takes an account the
+ *   app selects. The MAILBOX is not, because entropy takes a domain the app
+ *   cannot choose. Those two facts look alike and are not.
+ */
+export async function keyForMask(mask: number): Promise<Uint8Array | null | undefined> {
+  try {
+    const c = await withTimeout(sharedChain(), READ_MS);
+    if (c === 'timeout' || !c) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const keys = c.sdk.createContract(c.rt, DOTMAIL_KEYS, KEYS_ABI as never, {}) as any;
+    const k = await withTimeout<{ value?: unknown }>(keys.keyOf.query(BigInt(mask)), READ_MS);
+    if (k === 'timeout' || k?.value === undefined) return null;
+    const hexv = String((k.value as { asHex?: () => string })?.asHex?.() ?? k.value ?? '');
+    if (!hexv || /^0x0+$/.test(hexv)) return undefined;      // has a mask, no mailbox
+    return keyFromHex(hexv);
+  } catch {
+    return null;
+  }
+}
