@@ -43,13 +43,16 @@ async function host(): Promise<any> {
  *  right one for a dev server, and the difference is invisible from here. */
 async function read(): Promise<string> {
   const h = await host();
-  if (h) { try { return (await h.get(KEY)) ?? ''; } catch { /* fall through */ } }
+  // readString, NOT get. The host storage API is readString/writeString and
+  // an absent key answers '', so a wrong method name threw and fell silently
+  // through to the browser store, which a new publish wipes.
+  if (h) { try { return (await h.readString(KEY)) ?? ''; } catch { /* fall through */ } }
   try { return globalThis.localStorage?.getItem(KEY) ?? ''; } catch { return ''; }
 }
 
 async function write(v: string): Promise<void> {
   const h = await host();
-  if (h) { try { await h.set(KEY, v); return; } catch { /* fall through */ } }
+  if (h) { try { await h.writeString(KEY, v); return; } catch { /* fall through */ } }
   try { globalThis.localStorage?.setItem(KEY, v); } catch { /* nowhere to put it */ }
 }
 

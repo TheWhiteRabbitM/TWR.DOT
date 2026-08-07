@@ -118,7 +118,11 @@ async function foreignKey(key: string, what: string): Promise<Finding> {
     return { name: `host storage read "${key}"`, reached: null, detail: 'no host storage here', concern: 'unknown' };
   }
   try {
-    const v = await store.get(key);
+    // readString, NOT get: the host storage API is readString/writeString.
+    // Calling the wrong name threw, and the probe reported that as "refused",
+    // which is the absence-for-denial mistake it was written to avoid. The
+    // control read of our OWN key is what caught it.
+    const v = await store.readString(key);
     if (v === null || v === undefined || v === '') {
       return {
         name: `host storage read "${key}"`,
