@@ -27,6 +27,7 @@ import { findMe } from './names.ts';
 import { sharedChain } from './conn.ts';
 import { icon, logo } from './icons.ts';
 import { fromFile, fromClipboard, fromPasteEvent, openCamera, type Picked, type Camera } from './pick.ts';
+import { runProbe, asText, type Finding } from './probe.ts';
 import './style.css';
 
 /* ------------------------------------------------------------------- state */
@@ -43,6 +44,10 @@ let whoVia: { handle: string; mask: number; address: string; ss58: string; via: 
 /** Set when Bulletin refused a write for InvalidTransaction::Payment, which
  *  on that chain means this account holds no storage authorization. */
 let needsAuth = false;
+/** Sandbox probe results. `null` until it has been run: an empty array is a
+ *  clean bill of health and must not be shown before anything was tested. */
+let probe: Finding[] | null = null;
+let probing = false;
 /** The file picked but not yet sent, and who it is being sent to. */
 let sending: Mine | null = null;
 let sendTo = '';
@@ -146,6 +151,29 @@ function authView(): string {
            to hand over. Reopen the app and try once more.</p>`}
       <p class="dim small">Nothing was uploaded and nothing was spent.</p>
     </div>
+  </section>`;
+}
+/**
+ * What this app can reach that it should not.
+ *
+ * Shipped rather than kept in a branch, because the answer changes when the
+ * host changes and a check nobody can run is a check nobody runs.
+ */
+function probeView(): string {
+  const rows = probe ?? [];
+  const leaks = rows.filter((f) => f.reached === true && f.concern === 'leak').length;
+  return `<section class="card">
+    <h2>What this app can reach</h2>
+    <p class="dim small">Every app here holds something that matters, and all of it sits behind
+    host APIs whose isolation we assumed and never tested. This asks. Nothing secret is printed:
+    the key check reports a <em>public</em> key, and a credential found is reported by length only.</p>
+    <div class="srow">
+      <button class="btn solid" id="runprobe" ${probing ? 'disabled' : ''}>${probing ? 'Running…' : 'Run the probe'}</button>
+      ${probe ? `<button class="btn" id="copyprobe">${icon.copy} Copy the output</button>` : ''}
+    </div>
+    ${probe ? `
+      ${leaks ? `<p class="bad" style="margin-top:14px"><strong>${leaks} thing${leaks === 1 ? '' : 's'} this app had no business reaching.</strong></p>` : ''}
+      <pre class="addr" id="probeout">${esc(asText(rows))}</pre>` : ''}
   </section>`;
 }
 /** The camera, full-bleed, with one control. Anything more on a shutter screen
@@ -264,6 +292,7 @@ function render() {
     ${authView()}
     ${uploader()}
     ${mineView()}
+    ${probeView()}
     <section class="card note">
       ${icon.clock}
       <div><strong>Fourteen days, then gone.</strong> Read off the Bulletin chain, not
@@ -469,6 +498,17 @@ function bind() {
     if (f) void fromFile(f).then(doUpload);
   });
   on(byId('paste'), 'click', () => void doPaste());
+  on(byId('runprobe'), 'click', () => void (async () => {
+    probing = true; render();
+    probe = await runProbe();
+    probing = false; render();
+  })());
+  on(byId('copyprobe'), 'click', async () => {
+    const t = asText(probe ?? []);
+    try { await navigator.clipboard.writeText(t); flash = { text: 'Probe output copied.' }; }
+    catch { flash = { text: 'Could not reach the clipboard. The output is on screen.', bad: true }; }
+    render();
+  });
   on(byId('copyaddr'), 'click', async () => {
     const a = whoVia?.ss58 ?? '';
     try { await navigator.clipboard.writeText(a); flash = { text: 'Address copied.' }; }
