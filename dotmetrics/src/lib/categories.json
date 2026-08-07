@@ -668,6 +668,20 @@
     "confidence": "none",
     "why": []
   },
+  "marketplace": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "marketplace~"
+    ]
+  },
+  "micropagos": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "mini-lucky": {
     "category": "other",
     "source": "unclassified",
@@ -1068,6 +1082,12 @@
       "probe~"
     ]
   },
+  "reputacion": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "rrrrrrrrr": {
     "category": "other",
     "source": "unclassified",
@@ -1218,6 +1238,12 @@
     "why": []
   },
   "vault-control": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "votaciones": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
