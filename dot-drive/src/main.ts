@@ -61,32 +61,27 @@ let sendNote = '';
 let opening = false;
 /** The live camera, when one is open. */
 let camera: Camera | null = null;
+/**
+ * Which slice of the list is on screen.
+ *
+ * Borrowed shape, not borrowed colours: the sidebar-and-canvas layout is the
+ * one Parity's own Web3 Drive uses, because it is the right shape for a thing
+ * with a list and one primary action. The palette stays ours, so the suite
+ * still reads as one hand.
+ */
+type Filter = 'all' | 'sent' | 'soon' | 'gone';
+let filter: Filter = 'all';
+/** The upload sheet, opened from the sidebar the way New Drive opens a dialog. */
+let adding = false;
 let openCid = '';
 let openKey = '';
 
 const esc = (s: string) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+/** A date a person reads, not an ISO string. */
 const dateOf = (ms: number) =>
   new Date(ms).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' });
-
-/* -------------------------------------------------------------------- views */
-
-function banner(): string {
-  if (!ready) return `<div class="where">Looking for the host…</div>`;
-  if (ready.kind === 'ready') {
-    return `<div class="where chain">Files go to Bulletin. <span class="dim">Encrypted here, before they leave.</span></div>`;
-  }
-  if (ready.kind === 'nohost') {
-    return `<div class="where">
-      <strong>No host here.</strong> Bulletin storage is reachable only from inside the
-      Polkadot app, for reads as well as writes. Nothing on this page can upload or fetch
-      from a plain browser, and pretending otherwise would waste your file.
-    </div>`;
-  }
-  return `<div class="where"><strong>The host would not come up.</strong>
-    <span class="dim">${esc(ready.why)}</span></div>`;
-}
 
 /**
  * Three doors, because on a phone the first one does not open.
@@ -102,11 +97,12 @@ function banner(): string {
  * worse: that is a guess, and a wrong guess takes the best path away from
  * somebody on a tablet with a keyboard.
  */
-function uploader(): string {
+function addView(): string {
   const usable = ready?.kind === 'ready';
   const off = usable ? '' : 'off';
-  return `<section class="card up">
-    <h2>Put a file up</h2>
+  return `<div class="sheet"><div class="sheetin">
+    <div class="shead">Put a file up
+      <button class="ib" id="addcancel" title="Close">${icon.close}</button></div>
     <p class="dim small">It is encrypted on this device with a key that never goes to
     Bulletin. What is stored there is ciphertext nobody can read and nothing points at.</p>
 
@@ -133,7 +129,7 @@ function uploader(): string {
 
     <p class="dim small">Up to ${humanSize(MAX_CHUNK)} in one piece. Every file expires
     fourteen days after it goes up, which is how long Bulletin keeps it.</p>
-  </section>`;
+  </div></div>`;
 }
 
 function authView(): string {
@@ -197,6 +193,18 @@ function cameraView(): string {
   </div>`;
 }
 
+
+/** Files under the current filter. `soon` is under two days, which is the point
+ *  at which a person can still do something about it. */
+const SOON_MS = 2 * 86_400_000;
+function inFilter(f: Mine, which: Filter): boolean {
+  if (which === 'gone') return isExpired(f);
+  if (isExpired(f)) return false;
+  if (which === 'sent') return !!f.sentTo;
+  if (which === 'soon') return f.expires - Date.now() < SOON_MS;
+  return true;
+}
+const countOf = (which: Filter) => FILES.filter((f) => inFilter(f, which)).length;
 function row(f: Mine): string {
   const dead = isExpired(f);
   return `<div class="frow ${dead ? 'dead' : ''}">
@@ -217,24 +225,6 @@ function row(f: Mine): string {
   </div>`;
 }
 
-function mineView(): string {
-  if (!FILES.length) {
-    return `<section class="card">
-      <h2>Your files</h2>
-      <p class="dim">Nothing up yet.</p>
-      <p class="dim small">This list lives on this device and nowhere else. Writing
-      "this account owns this CID" anywhere public would hand an observer the one link
-      the design exists to withhold, so a new device starts empty and a key you did not
-      keep is a file you cannot open, even though the bytes are still there.</p>
-    </section>`;
-  }
-  const live = FILES.filter((f) => !isExpired(f)).length;
-  return `<section class="card">
-    <h2>Your files</h2>
-    <p class="dim small">${live} of ${FILES.length} still retrievable.</p>
-    <div class="flist">${FILES.map(row).join('')}</div>
-  </section>`;
-}
 
 function sendView(): string {
   if (!sending) return '';
@@ -274,37 +264,102 @@ function openView(): string {
   </div>`;
 }
 
+/**
+ * The sidebar: brand, the one primary action, the slices of the list, and at
+ * the foot the two facts a person needs constantly and should never hunt for:
+ * where the files actually go, and who this app thinks they are.
+ */
+function sideView(): string {
+  const item = (id: Filter, label: string, ic: string) => `
+    <button class="sidenav ${filter === id ? 'on' : ''}" data-filter="${id}">
+      ${ic}<span>${label}</span><em>${countOf(id)}</em>
+    </button>`;
+
+  const usable = ready?.kind === 'ready';
+  return `<aside class="side">
+    <div class="sidebrand">${logo(28)}
+      <div><strong>dot-drive</strong><span class="dim small">Sealed storage</span></div>
+    </div>
+
+    <button class="sideadd" id="openadd" ${usable ? '' : 'disabled'}>
+      ${icon.upload} Put a file up
+    </button>
+
+    <nav class="sidenav-list">
+      ${item('all', 'All files', icon.file)}
+      ${item('sent', 'Sent', icon.send)}
+      ${item('soon', 'Expiring soon', icon.clock)}
+      ${item('gone', 'Expired', icon.trash)}
+    </nav>
+
+    <div class="sidefoot">
+      <button class="sideflat" id="openbyhand">${icon.lock} Open by hand</button>
+      <div class="sidebox">
+        <span class="k">STORAGE</span>
+        <span class="v ${usable ? 'ok' : ''}">${
+          !ready ? 'looking for the host…'
+            : ready.kind === 'ready' ? 'Bulletin, encrypted here'
+            : ready.kind === 'nohost' ? 'not reachable outside the Polkadot app'
+            : 'the host would not come up'
+        }</span>
+        <span class="k">RETENTION</span>
+        <span class="v">14 days, then gone</span>
+      </div>
+      ${whoVia ? `<div class="sidewho">
+        <span class="av">${esc((whoVia.handle || '?')[0].toUpperCase())}</span>
+        <div><strong>${esc(whoVia.handle || 'No handle yet')}</strong>
+        <span class="dim small" title="${esc(whoVia.address)}">${
+          whoVia.mask ? `mask ` + whoVia.mask : esc(whoVia.address.slice(0, 10) + '…')
+        }</span></div>
+      </div>` : ''}
+    </div>
+  </aside>`;
+}
+
+/** The canvas. Empty states say which slice is empty and why, because "no
+ *  files" under Expiring soon is good news and under All files is not. */
+function mainView(): string {
+  const rows = FILES.filter((f) => inFilter(f, filter));
+  const title = filter === 'all' ? 'All files' : filter === 'sent' ? 'Sent'
+    : filter === 'soon' ? 'Expiring soon' : 'Expired';
+
+  if (!rows.length) {
+    const why = FILES.length === 0
+      ? { head: 'No files yet', sub: 'Everything here is encrypted on this device before it leaves. The key never goes to Bulletin.' }
+      : filter === 'soon' ? { head: 'Nothing expiring soon', sub: 'No file is within two days of the end of its fortnight.' }
+      : filter === 'gone' ? { head: 'Nothing expired', sub: 'Every file you have is still retrievable.' }
+      : filter === 'sent' ? { head: 'Nothing sent yet', sub: 'Send a file and the letter carries the pointer and the key, sealed.' }
+      : { head: 'Nothing here', sub: '' };
+    return `<section class="canvas">
+      <div class="empty">
+        ${icon.file}
+        <h2>${why.head}</h2>
+        <p class="dim">${why.sub}</p>
+        ${ready?.kind === 'ready' ? `<button class="btn solid" id="emptyadd">${icon.upload} Put your first file up</button>` : ''}
+      </div>
+    </section>`;
+  }
+  return `<section class="canvas">
+    <div class="canvashead"><h2>${title}</h2>
+      <span class="dim small">${rows.length} of ${FILES.length}</span></div>
+    <div class="flist">${rows.map(row).join('')}</div>
+  </section>`;
+}
 function render() {
   const app = document.getElementById('app');
   if (!app) return;
   app.innerHTML = `
-  <header class="top">
-    <span class="brand">${logo(26)} dot-drive</span>
-    <span class="grow"></span>
-    <button class="btn" id="openbyhand">${icon.lock} Open by hand</button>
-  </header>
-  ${banner()}
-  ${busy ? `<div class="busy">${esc(busy)}</div>` : ''}
-  ${flash ? `<div class="flash ${flash.bad ? 'bad' : ''}">${esc(flash.text)}</div>` : ''}
-  <main>
-    ${whoVia ? `<div class="card whoami">
-      ${icon.lock}
-      <div><strong>${esc(whoVia.handle || 'No handle claimed yet')}</strong>
-      <span class="dim small">${whoVia.mask ? `mask ${whoVia.mask}, ` : ''}held by
-      <code title="${esc(whoVia.address)}">${esc(whoVia.address.slice(0, 8) + '…' + whoVia.address.slice(-4))}</code>,
-      the ${whoVia.via === 'product' ? 'account this app signs with' : 'wallet account'}</span></div>
-    </div>` : ''}
-    ${authView()}
-    ${uploader()}
-    ${mineView()}
-    ${probeView()}
-    <section class="card note">
-      ${icon.clock}
-      <div><strong>Fourteen days, then gone.</strong> Read off the Bulletin chain, not
-      assumed: <code>RetentionPeriod</code> is 201600 blocks. A file here is a way to hand
-      somebody something, not a place to keep it.</div>
-    </section>
-  </main>
+  <div class="shell">
+    ${sideView()}
+    <div class="work">
+      ${busy ? `<div class="busy">${esc(busy)}</div>` : ''}
+      ${flash ? `<div class="flash ${flash.bad ? 'bad' : ''}">${esc(flash.text)}</div>` : ''}
+      ${authView()}
+      ${mainView()}
+      ${probeView()}
+    </div>
+  </div>
+  ${adding ? addView() : ''}
   ${sendView()}
   ${openView()}
   ${cameraView()}`;
@@ -365,6 +420,7 @@ async function doUpload(picked: Picked) {
     sentAt: Math.floor(Date.now() / 1000),
   };
   await remember(f);
+  adding = false;
   flash = { text: `${f.name} is up. It expires ${dateOf(f.expires)}.` };
   await refresh();
 }
@@ -509,6 +565,10 @@ function bind() {
     const f = (e.target as HTMLInputElement).files?.[0];
     if (f) void fromFile(f).then(doUpload);
   });
+  onAll('[data-filter]', 'click', (b) => { filter = b.dataset.filter as Filter; render(); });
+  on(byId('openadd'), 'click', () => { adding = true; render(); });
+  on(byId('emptyadd'), 'click', () => { adding = true; render(); });
+  on(byId('addcancel'), 'click', () => { adding = false; render(); });
   on(byId('paste'), 'click', () => void doPaste());
   on(byId('runprobe'), 'click', () => void (async () => {
     probing = true; render();

@@ -65,37 +65,6 @@ body {
 svg { display: block; flex: 0 0 auto; width: 1.25em; height: 1.25em; }
 .brand svg { width: 26px; height: 26px; }
 
-/* ------------------------------------------------------------------ chrome */
-
-.top {
-  position: sticky; top: 0; z-index: 10;
-  display: flex; align-items: center; gap: 14px;
-  padding: calc(11px + env(safe-area-inset-top)) 20px 11px;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
-}
-.brand {
-  display: inline-flex; align-items: center; gap: 10px;
-  font-family: var(--serif); font-size: 21px; letter-spacing: -0.02em;
-}
-.top .grow { flex: 1 1 auto; }
-
-.where {
-  padding: 10px 20px; font-size: 13px; color: var(--ink-soft);
-  background: var(--panel); border-bottom: 1px solid var(--line);
-}
-.where.chain { color: var(--proved); }
-
-.busy, .flash {
-  margin: 12px 20px 0; padding: 10px 16px; border-radius: var(--radius);
-  font-size: 13.5px; background: var(--panel); color: var(--ink-soft);
-}
-.flash { background: var(--accent); color: var(--accent-ink); }
-.flash.bad { background: var(--bad); color: #fff; }
-
-main { max-width: 46rem; margin: 0 auto; padding: 20px 20px 90px; }
-
 /* ------------------------------------------------------------------- type */
 
 h2 { font-family: var(--serif); font-weight: 400; font-size: 1.4rem; letter-spacing: -0.015em; margin: 0 0 .4em; }
@@ -276,4 +245,126 @@ textarea { resize: vertical; line-height: 1.6; }
   background: var(--panel); border: 1px solid var(--line); border-radius: 9px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 12.5px; overflow-wrap: anywhere; white-space: pre-wrap;
+}
+
+/* =========================================================== the shell
+ *
+ * Sidebar and canvas, which is the shape Parity's own Web3 Drive uses and the
+ * right one for a thing that is a list plus one primary action. Our column was
+ * a single stack where the expiry warning ended up at the bottom, below the
+ * fold, which is precisely where a warning is worth nothing.
+ *
+ * The SHAPE is borrowed. The palette is not: theirs is slate and indigo, ours
+ * is the warm stone the whole suite shares, so moving between our apps still
+ * feels like one hand rather than four.
+ */
+html, body { height: 100%; }
+#app { height: 100%; }
+.shell { display: flex; height: 100%; min-height: 100vh; }
+
+.side {
+  flex: 0 0 264px;
+  display: flex; flex-direction: column; gap: 6px;
+  padding: calc(16px + env(safe-area-inset-top)) 12px 16px;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+}
+.sidebrand {
+  display: flex; align-items: center; gap: 10px; padding: 4px 8px 14px;
+}
+.sidebrand svg { width: 28px; height: 28px; }
+.sidebrand strong {
+  display: block; font-family: var(--serif); font-weight: 400;
+  font-size: 19px; letter-spacing: -0.02em; line-height: 1.1;
+}
+
+.sideadd {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  width: 100%; min-height: 42px; margin-bottom: 14px;
+  border: none; border-radius: 999px;
+  background: var(--accent); color: var(--accent-ink);
+  font: inherit; font-size: 14.5px; font-weight: 650; cursor: pointer;
+}
+.sideadd:hover { filter: brightness(1.15); }
+.sideadd:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+.sideadd svg { width: 18px; height: 18px; }
+
+.sidenav-list { display: flex; flex-direction: column; gap: 2px; }
+.sidenav {
+  display: flex; align-items: center; gap: 11px;
+  width: 100%; padding: 9px 12px;
+  border: none; border-radius: 9px; background: none; color: var(--ink-soft);
+  font: inherit; font-size: 14px; text-align: left; cursor: pointer;
+}
+.sidenav:hover { background: var(--hover); color: var(--ink); }
+.sidenav.on { background: var(--pane); color: var(--ink); font-weight: 650; box-shadow: 0 1px 2px rgb(0 0 0 / .06); }
+.sidenav svg { width: 17px; height: 17px; color: var(--dim); }
+.sidenav span { flex: 1 1 auto; }
+.sidenav em { font-style: normal; font-size: 12.5px; color: var(--dim); }
+
+.sidefoot { margin-top: auto; padding-top: 16px; display: grid; gap: 10px; }
+.sideflat {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border: none; border-radius: 9px;
+  background: none; color: var(--ink-soft); font: inherit; font-size: 13.5px; cursor: pointer;
+}
+.sideflat:hover { background: var(--hover); color: var(--ink); }
+.sideflat svg { width: 16px; height: 16px; color: var(--dim); }
+
+/* Where the files go and how long they last: two facts that belong in front of
+ * a person permanently, not in a paragraph they scroll past once. */
+.sidebox {
+  display: grid; gap: 2px;
+  padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--pane); font-size: 12px;
+}
+.sidebox .k { color: var(--dim); font-size: 10.5px; letter-spacing: .07em; }
+.sidebox .k:not(:first-child) { margin-top: 7px; }
+.sidebox .v { color: var(--ink-soft); overflow-wrap: anywhere; }
+.sidebox .v.ok { color: var(--proved); }
+
+.sidewho { display: flex; align-items: center; gap: 10px; padding: 4px 4px 0; min-width: 0; }
+.sidewho > div { min-width: 0; display: grid; }
+.sidewho strong { font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sidewho .av {
+  flex: 0 0 auto; width: 30px; height: 30px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink); font-size: 13px; font-weight: 650;
+}
+
+/* ------------------------------------------------------------- the canvas */
+
+.work { flex: 1 1 auto; min-width: 0; overflow-y: auto; padding: 22px 26px 80px; }
+.canvas { max-width: 46rem; }
+.canvashead {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  margin-bottom: 14px;
+}
+.canvashead h2 { margin: 0; }
+
+/* The empty state, centred, one call to action. */
+.empty {
+  display: grid; justify-items: center; gap: 6px; text-align: center;
+  padding: 12vh 20px;
+  max-width: 30rem; margin: 0 auto;
+}
+.empty svg { width: 44px; height: 44px; color: var(--line-strong); margin-bottom: 6px; }
+.empty h2 { margin: 0; }
+.empty p { max-width: 26rem; }
+.empty .btn { margin-top: 8px; }
+
+@media (max-width: 46rem) {
+  .shell { flex-direction: column; }
+  .side {
+    flex: 0 0 auto; flex-direction: row; flex-wrap: wrap; align-items: center;
+    gap: 8px; border-right: none; border-bottom: 1px solid var(--line);
+    padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+  }
+  .sidebrand { padding: 0 6px 0 0; }
+  .sideadd { width: auto; margin: 0; padding: 0 16px; }
+  .sidenav-list { flex-direction: row; flex: 1 1 100%; overflow-x: auto; }
+  .sidenav { width: auto; white-space: nowrap; }
+  .sidefoot { display: none; }
+  .work { padding: 16px 14px 70px; }
 }
