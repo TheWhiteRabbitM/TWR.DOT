@@ -44,6 +44,11 @@ let whoVia: { handle: string; mask: number; address: string; ss58: string; via: 
 /** Set when Bulletin refused a write for InvalidTransaction::Payment, which
  *  on that chain means this account holds no storage authorization. */
 let needsAuth = false;
+/** The account this app signs with, in SS58, straight from the signer.
+ *  Kept apart from the mask lookup: the authorization is granted to THIS
+ *  account, and making it depend on finding a mask meant a card that said
+ *  "the address could not be read" while the app knew it perfectly well. */
+let signerSs58 = '';
 /** Sandbox probe results. `null` until it has been run: an empty array is a
  *  clean bill of health and must not be shown before anything was tested. */
 let probe: Finding[] | null = null;
@@ -133,7 +138,7 @@ function uploader(): string {
 
 function authView(): string {
   if (!needsAuth) return '';
-  const who = whoVia?.ss58 || '';
+  const who = whoVia?.ss58 || signerSs58 || '';
   return `<section class="card authneeded">
     ${icon.warn}
     <div>
@@ -337,7 +342,14 @@ async function doUpload(picked: Picked) {
   if (!up.ok) {
     // `Invalid: Payment` is not a bug to report, it is a missing authorization
     // to grant, and the app is the only thing that knows which account needs it.
-    if (up.why === 'PAYMENT') { needsAuth = true; return render(); }
+    if (up.why === 'PAYMENT') { needsAuth = true; flash = null; return render(); }
+    // Any other failure clears the card: leaving it up beside a fresh, unrelated
+    // error is how somebody ends up chasing a permission that was never missing.
+    needsAuth = false;
+    if (up.why === 'DENIED') {
+      flash = { text: 'The signing request was refused, so nothing was uploaded. Try again and approve it when the wallet asks.', bad: true };
+      return render();
+    }
     flash = { text: up.why, bad: true };
     return render();
   }
@@ -572,6 +584,7 @@ async function boot() {
   try {
     await mailbox();
     const conn = await sharedChain();
+    signerSs58 = conn?.address ?? '';
     const found = await findMe(conn?.address ?? null);
     if (found) { me = found.handle || found.address; whoVia = found; }
   } catch { /* the letter goes out with no name rather than a wrong one */ }
