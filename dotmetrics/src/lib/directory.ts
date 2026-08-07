@@ -27,7 +27,7 @@ import type { AppEntry } from './types';
  * three sources actually won, because "live", "pinned" and "baked" are three
  * different claims about freshness and the reader is owed the real one.
  */
-export const DIRECTORY_CID = 'bafybeib2w7yukr4cl2h6c4g6lplgggjv22upggsx5yhwlezoqgpaolagui';
+export const DIRECTORY_CID = 'bafybeig253yyu7knkhtaaygvtx5slccslerhrtdbb2kieidgbqt2a6hhti';
 
 /** The name and key the mutable pointer lives under. */
 const RECORD_NAME = 'dotmetrics.dot';
