@@ -304,6 +304,12 @@
       "health~"
     ]
   },
+  "dot-drive": {
+    "category": "tools",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
   "dot-pages": {
     "category": "publishing",
     "source": "derived:manifest",
@@ -376,6 +382,12 @@
     "category": "explorers",
     "source": "owner",
     "confidence": "declared",
+    "why": []
+  },
+  "dotparcel": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
     "why": []
   },
   "doyoulike": {
@@ -1125,6 +1137,15 @@
     "source": "unclassified",
     "confidence": "none",
     "why": []
+  },
+  "stake-forensics": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "stake",
+      "sell"
+    ]
   },
   "stargazer": {
     "category": "other",
