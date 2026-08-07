@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11918419,
-  "updatedAt": "2026-08-07T05:55:34.314Z",
+  "lastBlock": 11921731,
+  "updatedAt": "2026-08-07T07:45:51.110Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "51e75e11da321d07566a2fa3796ed9a36a4e90fcb3f384d27e745bcc23e2ba65",
-    "cid": "bafybeibq2gucolna42adv2dcj3ouvgas32xndyievdno24mehbx6znn2zu",
-    "uploadedAt": "2026-08-07T06:02:41.585Z"
+    "digest": "ad50ba9a1c7f20e39530b106db212c57d656d9775b1f349299e098e65a5d7c74",
+    "cid": "bafybeicmna2tio2klbhnw5dyeoygrimbpt26uxnt57al2wfi6yjle626ua",
+    "uploadedAt": "2026-08-07T07:53:00.866Z"
   },
   "sitePublish": {
-    "treeHash": "d0bae725d7b6cc5866a4604680ce399c703d7ddd931ebd73aa14c883baa9fe1e",
-    "publishedAt": "2026-08-07T03:31:06.628Z"
+    "treeHash": "d2ee923141d08a90e5938e273b696927941811f28096fb9d7c76425e5a77409c",
+    "publishedAt": "2026-08-07T07:54:54.972Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-07T06:01:24.000Z",
+    "updatedAt": "2026-08-07T07:51:49.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -165,7 +165,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-07T06:01:24.000Z",
+    "updatedAt": "2026-08-07T07:51:50.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -388,9 +388,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeigor4y5h2c22jbu7tljyyxhjf2vczd64trkfr2pfip2wi6uk37ddi",
-        "updateCount": 76,
-        "changedAt": 1786082484,
+        "contenthash": "bafybeideesrwu4odxrmo43rgbkj5ykh37jbh3bk4weswedycniwv66t45y",
+        "updateCount": 77,
+        "changedAt": 1786089110,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -422,9 +422,9 @@
         "live": "alive"
       },
       "dotmailbox": {
-        "contenthash": "bafybeict2n5afz7bgz7ohta3mvduhxbmjdldt4nbjxzfjjnlnuu5xhxzpu",
-        "updateCount": 4,
-        "changedAt": 1786062599,
+        "contenthash": "bafybeied7puqong75nd5hxqnjz6gkcr34oqkgnmrcyfwme6pluyuznmaoy",
+        "updateCount": 5,
+        "changedAt": 1786089110,
         "live": "alive"
       },
       "dotmetrics": {
@@ -608,9 +608,9 @@
         "live": "alive"
       },
       "italiarovente": {
-        "contenthash": "bafybeihxznfgb4jrsorfwc2yvu3civ6sjcp62vfyipwskqj4nsyrkhu4tu",
-        "updateCount": 4,
-        "changedAt": 1785988293,
+        "contenthash": "bafybeihromzte7fwlwfam2dpheygzfirx4f5odnb4h5nmyt4qja7s4s5ou",
+        "updateCount": 5,
+        "changedAt": 1786089110,
         "live": "alive"
       },
       "jjjjjjjjj": {
