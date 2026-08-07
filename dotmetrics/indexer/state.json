@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11945235,
-  "updatedAt": "2026-08-07T21:01:58.816Z",
+  "lastBlock": 11946928,
+  "updatedAt": "2026-08-07T21:58:29.491Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "4fcfbd74674266c56a2db8eb3cef2c01bcb7993ad2d724ef796c82253597320d",
-    "cid": "bafybeicxjszc2cal4it6rc527dhrwfewcj2osz4cixw3q2uazvcsyf5jre",
-    "uploadedAt": "2026-08-07T21:09:15.513Z"
+    "digest": "9ce783cefd87119d538f65b2e64767e86a6df52285c39ea77a201f00045c63b2",
+    "cid": "bafybeidx42hj6fn3nvyogcikby7oe4nrnkoawqfftrgymvnsjwpbck5tb4",
+    "uploadedAt": "2026-08-07T22:04:25.303Z"
   },
   "sitePublish": {
     "treeHash": "9fd8e30a46fc3f2df5c14bd14c8324e75115f2e043f82b51d56a360a7cbdffb1",
     "publishedAt": "2026-08-07T10:25:38.951Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-07T21:08:00.000Z",
+    "updatedAt": "2026-08-07T22:03:05.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -167,7 +167,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-07T21:08:01.000Z",
+    "updatedAt": "2026-08-07T22:03:06.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -397,9 +397,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibumy53euz2tvea5piinf2lb3mawwcsh6k5ce3753fqkhyyslw75i",
-        "updateCount": 89,
-        "changedAt": 1786136881,
+        "contenthash": "bafybeicozulkmckovgwueqp4vpwkkqqzecs2xs7sd6wvbhzobxdh4cjmve",
+        "updateCount": 90,
+        "changedAt": 1786140186,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -963,8 +963,9 @@
         "live": "alive"
       },
       "reputacion": {
-        "contenthash": "bafybeihgcamr5zti5772uepwvhua7u4mafqvpwaltfaewjimqkbzh65sii",
-        "updateCount": 0,
+        "contenthash": "bafybeidaxvbiujy6p3qm3q2bp6wpd6qpd6u33tvkkhds26d6f7wtqnktwi",
+        "updateCount": 1,
+        "changedAt": 1786140186,
         "live": "alive"
       },
       "rrrrrrrrr": {
@@ -1097,9 +1098,9 @@
         "live": "alive"
       },
       "votaciones": {
-        "contenthash": "bafybeihlwkim6f4emv5q5oyap65sg2lcxep6nzz76grul5kluerej3htbi",
-        "updateCount": 4,
-        "changedAt": 1786110473,
+        "contenthash": "bafybeib3mmtkokut7zgn5k3znffvxxdpykr2wpx2hrrrthjoeivpug2l7i",
+        "updateCount": 5,
+        "changedAt": 1786140186,
         "live": "alive"
       },
       "vvvvvvvvv": {
