@@ -1,11 +1,11 @@
 {
-  "name": "dotmail",
-  "short_name": "dotmail",
-  "description": "Sealed mail with no server and no provider. No envelope names its recipient, so nobody can see who writes to whom.",
+  "name": "dot-drive",
+  "short_name": "dot-drive",
+  "description": "Big files, encrypted here and stored on Bulletin, with the key handed over in a sealed letter. The bytes are unreadable and nothing points at them. Fourteen days, then gone.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0b0e14",
-  "theme_color": "#7aa2ff",
+  "background_color": "#0f0f0f",
+  "theme_color": "#1c1917",
   "icons": [
     { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
