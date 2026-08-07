@@ -110,8 +110,33 @@ export function cloud(): Promise<Ready> {
 }
 
 function reason(e: unknown): string {
-  const m = (e as Error)?.message ?? String(e ?? '');
+  const raw = (e as Error)?.message ?? '';
+  // Some failures arrive as a structured object rather than an Error, and
+  // `String(obj)` on those is "[object Object]", which is worse than nothing.
+  const m = raw || safeJson(e);
+
+  /*
+   * `Chunk 0 processing failed: {"type":"Invalid","value":{"type":"Payment"}}`
+   *
+   * That is substrate's `InvalidTransaction::Payment`: the account cannot pay.
+   * On Bulletin that almost always means it holds no authorization, because
+   * `ByteFee` and `EntryFee` are real and an unauthorized account has neither
+   * an allowance nor a balance there.
+   *
+   * The raw shape tells a person nothing and tells them nothing about what to
+   * DO, which is the part that matters: an authorization is granted per
+   * account, by any account that already holds one, and the app knows which
+   * account of its own needs it. So it says so, and shows the address.
+   */
+  if (/"type"\s*:\s*"Payment"|InvalidTransaction::Payment|Inability to pay/i.test(m)) {
+    return 'PAYMENT';
+  }
   return m.slice(0, 220) || 'no reason given';
+}
+
+function safeJson(e: unknown): string {
+  try { return JSON.stringify(e, (_k, v) => (typeof v === 'bigint' ? String(v) : v)) ?? ''; }
+  catch { return String(e ?? ''); }
 }
 
 /**

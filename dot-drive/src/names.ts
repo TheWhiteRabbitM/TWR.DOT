@@ -514,33 +514,41 @@ export type Me = {
   handle: string;
   mask: number;
   address: string;
+  /** The SS58 form of the same account.
+   *
+   *  Needed because a Bulletin authorization is granted to an AccountId32, and
+   *  the H160 is a one-way keccak of it for anything but an eth-derived
+   *  account. Without this the app can report that it cannot pay and not say
+   *  WHICH account to authorize, which is a dead end dressed as an error.
+   */
+  ss58: string;
   /** Which of the two answered. Reported so the disagreement above gets settled
    *  by evidence from a real device rather than by argument. */
   via: 'product' | 'wallet';
 };
 
 export async function findMe(productAddress: string | null): Promise<Me | null> {
-  const candidates: { address: string; via: Me['via'] }[] = [];
+  const candidates: { address: string; ss58: string; via: Me['via'] }[] = [];
 
   if (productAddress) {
     // The SignerManager hands back ss58; `maskOf` is keyed by the H160.
     try {
       const papi = await import('polkadot-api');
       const pk = papi.AccountId().enc(productAddress);
-      candidates.push({ address: h160Of(pk), via: 'product' });
+      candidates.push({ address: h160Of(pk), ss58: productAddress, via: 'product' });
     } catch { /* not fatal; the wallet is tried below */ }
   }
   const w = await walletAddress();
-  if (w) candidates.push({ address: w, via: 'wallet' });
+  if (w) candidates.push({ address: w, ss58: await walletSs58(), via: 'wallet' });
 
   for (const c of candidates) {
     const m = await myMask(c.address);
-    if (m && 'mask' in m && m.handle) return { handle: m.handle, mask: m.mask, address: c.address, via: c.via };
+    if (m && 'mask' in m && m.handle) return { handle: m.handle, mask: m.mask, address: c.address, ss58: c.ss58, via: c.via };
   }
   // Nobody holds a mask under either. The address is still worth returning:
   // a letter signed with an address a person can look up beats one signed
   // "unknown".
-  return candidates[0] ? { handle: '', mask: 0, address: candidates[0].address, via: candidates[0].via } : null;
+  return candidates[0] ? { handle: '', mask: 0, address: candidates[0].address, ss58: candidates[0].ss58, via: candidates[0].via } : null;
 }
 
 /** The same H160 rule pallet-revive uses, on a public key we already have. */
@@ -549,4 +557,23 @@ function h160Of(publicKey: Uint8Array): string {
   if (ethDerived) for (let i = 20; i < 32; i++) if (publicKey[i] !== 0xee) { ethDerived = false; break; }
   const bytes = ethDerived ? publicKey.slice(0, 20) : keccak_256(publicKey).slice(12, 32);
   return toHex(bytes).toLowerCase();
+}
+
+/** The wallet's own SS58 string, for the same reason `Me.ss58` exists. */
+async function walletSs58(): Promise<string> {
+  try {
+    const host = await import('@parity/product-sdk-host');
+    const accounts = await host.getAccountsProvider();
+    if (!accounts) return '';
+    const a = await accounts.getLegacyAccounts().match(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (as: any[]) => (as ?? []).find((x) => x?.publicKey) ?? null,
+      () => null,
+    );
+    if (!a?.publicKey) return '';
+    const papi = await import('polkadot-api');
+    return papi.AccountId().dec(a.publicKey);
+  } catch {
+    return '';
+  }
 }

@@ -39,7 +39,10 @@ let flash: { text: string; bad?: boolean } | null = null;
 let me = '';
 /** Which account answered, and how. Shown so the two-accounts question gets
  *  settled by a real device instead of by argument. */
-let whoVia: { handle: string; mask: number; address: string; via: 'product' | 'wallet' } | null = null;
+let whoVia: { handle: string; mask: number; address: string; ss58: string; via: 'product' | 'wallet' } | null = null;
+/** Set when Bulletin refused a write for InvalidTransaction::Payment, which
+ *  on that chain means this account holds no storage authorization. */
+let needsAuth = false;
 /** The file picked but not yet sent, and who it is being sent to. */
 let sending: Mine | null = null;
 let sendTo = '';
@@ -123,6 +126,28 @@ function uploader(): string {
   </section>`;
 }
 
+function authView(): string {
+  if (!needsAuth) return '';
+  const who = whoVia?.ss58 || '';
+  return `<section class="card authneeded">
+    ${icon.warn}
+    <div>
+      <strong>Bulletin refused to take the file: this account cannot pay.</strong>
+      <p class="dim small">Storage on Bulletin is not free in the pallet\u2019s own terms: there is a
+      byte fee and an entry fee. An account covers them with an <em>authorization</em>, which any
+      account that already holds one can grant. This app signs with an account the host derives
+      per name, and that account has none yet.</p>
+      ${who
+        ? `<p class="dim small">The account to authorize:</p>
+           <pre class="addr" id="authaddr">${esc(who)}</pre>
+           <div class="srow"><button class="btn" id="copyaddr">${icon.copy} Copy the address</button>
+           <button class="btn" id="authretry">Try the upload again</button></div>`
+        : `<p class="dim small">The address could not be read from the host, so there is nothing
+           to hand over. Reopen the app and try once more.</p>`}
+      <p class="dim small">Nothing was uploaded and nothing was spent.</p>
+    </div>
+  </section>`;
+}
 /** The camera, full-bleed, with one control. Anything more on a shutter screen
  *  is something to get wrong while holding a phone with one hand. */
 function cameraView(): string {
@@ -236,6 +261,7 @@ function render() {
       <code title="${esc(whoVia.address)}">${esc(whoVia.address.slice(0, 8) + '…' + whoVia.address.slice(-4))}</code>,
       the ${whoVia.via === 'product' ? 'account this app signs with' : 'wallet account'}</span></div>
     </div>` : ''}
+    ${authView()}
     ${uploader()}
     ${mineView()}
     <section class="card note">
@@ -279,7 +305,13 @@ async function doUpload(picked: Picked) {
   render();
   const up = await r.cloud.upload(blob);
   busy = '';
-  if (!up.ok) { flash = { text: up.why, bad: true }; return render(); }
+  if (!up.ok) {
+    // `Invalid: Payment` is not a bug to report, it is a missing authorization
+    // to grant, and the app is the only thing that knows which account needs it.
+    if (up.why === 'PAYMENT') { needsAuth = true; return render(); }
+    flash = { text: up.why, bad: true };
+    return render();
+  }
 
   const f: Stored = {
     kind: 'file',
@@ -437,6 +469,13 @@ function bind() {
     if (f) void fromFile(f).then(doUpload);
   });
   on(byId('paste'), 'click', () => void doPaste());
+  on(byId('copyaddr'), 'click', async () => {
+    const a = whoVia?.ss58 ?? '';
+    try { await navigator.clipboard.writeText(a); flash = { text: 'Address copied.' }; }
+    catch { flash = { text: 'Could not reach the clipboard. The address is on screen to copy by hand.', bad: true }; }
+    render();
+  });
+  on(byId('authretry'), 'click', () => { needsAuth = false; flash = null; render(); });
   on(byId('camera'), 'click', () => void doCamera());
   on(byId('camcancel'), 'click', () => { camera?.stop(); camera = null; render(); });
   on(byId('camshoot'), 'click', () => void doShoot());

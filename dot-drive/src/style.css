@@ -261,3 +261,19 @@ textarea { resize: vertical; line-height: 1.6; }
 .card.whoami { display: flex; gap: 12px; align-items: flex-start; }
 .card.whoami svg { width: 19px; height: 19px; color: var(--dim); margin-top: 3px; }
 .card.whoami > div { min-width: 0; display: grid; gap: 2px; }
+
+/* The authorization card.
+ *
+ * Bulletin answering InvalidTransaction::Payment is not a bug to report, it is
+ * a permission to grant, and the app is the only thing that knows which account
+ * needs it. So the refusal is turned into the address and the next step. */
+.card.authneeded { display: flex; gap: 12px; align-items: flex-start; border-color: var(--bad); }
+.card.authneeded > svg { width: 20px; height: 20px; color: var(--bad); margin-top: 2px; }
+.card.authneeded > div { min-width: 0; }
+.card.authneeded p:last-of-type { margin-bottom: 0; }
+.addr {
+  margin: 6px 0 0; padding: 10px 12px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 9px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px; overflow-wrap: anywhere; white-space: pre-wrap;
+}
