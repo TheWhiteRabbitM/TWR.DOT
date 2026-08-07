@@ -25,6 +25,7 @@ import { sendFile } from './send.ts';
 import { mailbox } from './keys.ts';
 import { myMask, walletAddress } from './names.ts';
 import { icon, logo } from './icons.ts';
+import { fromFile, fromClipboard, fromPasteEvent, openCamera, type Picked, type Camera } from './pick.ts';
 import './style.css';
 
 /* ------------------------------------------------------------------- state */
@@ -41,6 +42,8 @@ let sendTo = '';
 let sendNote = '';
 /** The open-by-hand panel, for a key that arrived some other way. */
 let opening = false;
+/** The live camera, when one is open. */
+let camera: Camera | null = null;
 let openCid = '';
 let openKey = '';
 
@@ -68,20 +71,68 @@ function banner(): string {
     <span class="dim">${esc(ready.why)}</span></div>`;
 }
 
+/**
+ * Three doors, because on a phone the first one does not open.
+ *
+ * Inside the Polkadot app `<input type="file">` opens nothing at all: no
+ * chooser, no error, no event. It is not a permission we failed to ask for.
+ * The host grants Notifications, Camera, Microphone, Bluetooth, NFC, Location,
+ * Clipboard, OpenUrl and Biometrics, and there is no Files among them.
+ *
+ * So paste and camera sit beside the chooser as equals rather than as
+ * fallbacks, and the line underneath says which one to reach for when the tap
+ * does nothing. Hiding the chooser on "a phone" was the alternative and it is
+ * worse: that is a guess, and a wrong guess takes the best path away from
+ * somebody on a tablet with a keyboard.
+ */
 function uploader(): string {
   const usable = ready?.kind === 'ready';
+  const off = usable ? '' : 'off';
   return `<section class="card up">
     <h2>Put a file up</h2>
     <p class="dim small">It is encrypted on this device with a key that never goes to
     Bulletin. What is stored there is ciphertext nobody can read and nothing points at.</p>
-    <label class="drop ${usable ? '' : 'off'}">
-      ${icon.upload}
-      <span>${usable ? 'Choose a file' : 'Not available outside the Polkadot app'}</span>
-      <input type="file" id="pick" ${usable ? '' : 'disabled'} hidden>
-    </label>
+
+    <div class="doors">
+      <label class="door ${off}">
+        ${icon.upload}<span>Choose a file</span>
+        <input type="file" id="pick" ${usable ? '' : 'disabled'} hidden>
+      </label>
+      <button class="door ${off}" id="paste" ${usable ? '' : 'disabled'}>
+        ${icon.copy}<span>Paste</span>
+      </button>
+      <button class="door ${off}" id="camera" ${usable ? '' : 'disabled'}>
+        ${icon.camera}<span>Photo</span>
+      </button>
+    </div>
+
+    ${usable ? `
+    <p class="dim small">On a phone inside the Polkadot app the chooser opens nothing,
+    and no permission exists that would fix it. Copy the file first and use <strong>Paste</strong>,
+    or long-press the box below and choose Paste there.</p>
+    <div class="pastebox" id="pastebox" contenteditable="true" role="textbox"
+         aria-label="Long-press and choose Paste" data-hint="Long-press here, then Paste"></div>`
+    : `<p class="dim small">Not available outside the Polkadot app.</p>`}
+
     <p class="dim small">Up to ${humanSize(MAX_CHUNK)} in one piece. Every file expires
     fourteen days after it goes up, which is how long Bulletin keeps it.</p>
   </section>`;
+}
+
+/** The camera, full-bleed, with one control. Anything more on a shutter screen
+ *  is something to get wrong while holding a phone with one hand. */
+function cameraView(): string {
+  if (!camera) return '';
+  return `<div class="sheet cam">
+    <div class="camin">
+      <video id="camvideo" autoplay playsinline muted></video>
+      <div class="camrow">
+        <button class="btn" id="camcancel">${icon.close} Close</button>
+        <button class="shutter" id="camshoot" aria-label="Take the photo"></button>
+        <span class="dim small">Saved as WebP</span>
+      </div>
+    </div>
+  </div>`;
 }
 
 function row(f: Mine): string {
@@ -184,7 +235,8 @@ function render() {
     </section>
   </main>
   ${sendView()}
-  ${openView()}`;
+  ${openView()}
+  ${cameraView()}`;
   bind();
 }
 
@@ -195,20 +247,20 @@ async function refresh() {
   render();
 }
 
-async function doUpload(file: File) {
+async function doUpload(picked: Picked) {
   const r = ready;
   if (r?.kind !== 'ready') return;
 
-  const bytes = new Uint8Array(await file.arrayBuffer());
+  const { bytes, name, type } = picked;
   if (sealedSize(bytes.length) > MAX_CHUNK) {
     flash = {
-      text: `${file.name} is ${humanSize(bytes.length)}, and one piece can hold ${humanSize(MAX_CHUNK)}.`,
+      text: `${name} is ${humanSize(bytes.length)}, and one piece can hold ${humanSize(MAX_CHUNK)}.`,
       bad: true,
     };
     return render();
   }
 
-  busy = `Sealing ${file.name}…`;
+  busy = `Sealing ${name}…`;
   render();
   const { blob, key } = sealBytes(bytes);
 
@@ -222,8 +274,8 @@ async function doUpload(file: File) {
     kind: 'file',
     cid: up.cid,
     key,
-    name: file.name || 'file',
-    type: file.type || 'application/octet-stream',
+    name,
+    type,
     size: bytes.length,
     expires: expiresAt(),
     sentAt: Math.floor(Date.now() / 1000),
@@ -231,6 +283,45 @@ async function doUpload(file: File) {
   await remember(f);
   flash = { text: `${f.name} is up. It expires ${dateOf(f.expires)}.` };
   await refresh();
+}
+
+/** The clipboard, by button. On a phone this is the door that actually opens. */
+async function doPaste() {
+  busy = 'Reading the clipboard…';
+  render();
+  const p = await fromClipboard();
+  busy = '';
+  if ('why' in p) { flash = { text: p.why, bad: true }; return render(); }
+  await doUpload(p);
+}
+
+async function doCamera() {
+  busy = 'Opening the camera…';
+  render();
+  const c = await openCamera();
+  busy = '';
+  if ('why' in c) { flash = { text: c.why, bad: true }; return render(); }
+  camera = c;
+  render();
+  // The element only exists after that render, and a stream attached to a node
+  // that has since been replaced shows a black rectangle for ever.
+  const v = byId('camvideo') as HTMLVideoElement | null;
+  if (v) { v.srcObject = c.stream; void v.play().catch(() => { /* autoplay is best-effort */ }); }
+}
+
+async function doShoot() {
+  const c = camera;
+  const v = byId('camvideo') as HTMLVideoElement | null;
+  if (!c || !v) return;
+  try {
+    const shot = await c.shoot(v);
+    c.stop(); camera = null;
+    await doUpload(shot);
+  } catch (e) {
+    flash = { text: (e as Error)?.message ?? 'the frame could not be taken', bad: true };
+    c.stop(); camera = null;
+    render();
+  }
 }
 
 /** Fetch, decrypt, and hand the bytes to the browser as a download. */
@@ -332,7 +423,20 @@ const byId = (id: string) => document.getElementById(id);
 function bind() {
   on(byId('pick'), 'change', (e) => {
     const f = (e.target as HTMLInputElement).files?.[0];
-    if (f) void doUpload(f);
+    if (f) void fromFile(f).then(doUpload);
+  });
+  on(byId('paste'), 'click', () => void doPaste());
+  on(byId('camera'), 'click', () => void doCamera());
+  on(byId('camcancel'), 'click', () => { camera?.stop(); camera = null; render(); });
+  on(byId('camshoot'), 'click', () => void doShoot());
+  // A real paste event needs no permission at all, which is why it is the
+  // one path that still works when everything else is refused.
+  on(byId('pastebox'), 'paste', (e) => {
+    void fromPasteEvent(e as ClipboardEvent).then((ps) => {
+      if (!ps.length) return;
+      e.preventDefault();
+      void doUpload(ps[0]);
+    });
   });
   on(byId('openbyhand'), 'click', () => { opening = true; render(); });
   on(byId('ocancel'), 'click', () => { opening = false; render(); });

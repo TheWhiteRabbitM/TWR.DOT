@@ -20,6 +20,7 @@ export const icon = {
   lock: svg('<rect x="5" y="10.5" width="14" height="9" rx="1.6"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>'),
   close: svg('<path d="M6 6l12 12M18 6L6 18"/>'),
   copy: svg('<rect x="9" y="9" width="11" height="11" rx="1.6"/><path d="M15 6.5A1.5 1.5 0 0 0 13.5 5h-8A1.5 1.5 0 0 0 4 6.5v8A1.5 1.5 0 0 0 5.5 16"/>'),
+  camera: svg('<path d="M4.5 8.5h3l1.5-2h6l1.5 2h3a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18v-8a1.5 1.5 0 0 1 1.5-1.5z"/><circle cx="12" cy="13.5" r="3.5"/>'),
   warn: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.8v4.4"/><path d="M12 15.7v.1"/>'),
 };
 

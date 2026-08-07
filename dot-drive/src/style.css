@@ -204,3 +204,51 @@ textarea { resize: vertical; line-height: 1.6; }
 .srow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 16px; }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* --------------------------------------------------------------- the doors
+ *
+ * Three ways in, side by side, because inside the Polkadot app on a phone the
+ * file chooser opens nothing and there is no permission that would fix it.
+ * They are equals rather than a primary and two fallbacks: on a phone the
+ * second is the one that works.
+ */
+.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0 12px; }
+.door {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  min-height: 78px; padding: 10px;
+  border: 1.5px dashed var(--line-strong); border-radius: var(--radius);
+  background: var(--panel); color: var(--ink); font: inherit; font-size: 13.5px; cursor: pointer;
+}
+.door:hover { border-color: var(--ink); background: var(--hover); }
+.door svg { width: 20px; height: 20px; }
+.door.off, .door:disabled { opacity: .45; cursor: not-allowed; }
+.door.off:hover, .door:disabled:hover { border-color: var(--line-strong); background: var(--panel); }
+
+/* The paste target. Needs no permission, which is the whole point of it. */
+.pastebox {
+  min-height: 56px; margin: 4px 0 12px; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--panel); color: var(--ink); font-size: 13.5px;
+  -webkit-user-select: text; user-select: text;
+}
+.pastebox:empty::before { content: attr(data-hint); color: var(--dim); }
+.pastebox:focus { outline: none; border-color: var(--ink); }
+
+/* ------------------------------------------------------------------ camera */
+
+.sheet.cam { padding: 0; background: #000; }
+.camin { width: 100%; height: 100%; display: grid; grid-template-rows: 1fr auto; }
+.camin video { width: 100%; height: 100%; object-fit: contain; background: #000; min-height: 0; }
+.camrow {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+  background: #000; color: #fafaf9;
+}
+.camrow .btn { color: #fafaf9; border-color: #52504e; }
+.camrow .dim { color: #a8a29e; }
+.shutter {
+  width: 64px; height: 64px; border-radius: 999px;
+  border: 4px solid #fafaf9; background: #fafaf9; cursor: pointer;
+  box-shadow: 0 0 0 3px #000 inset;
+}
+.shutter:active { transform: scale(.94); }
