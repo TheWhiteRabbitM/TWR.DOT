@@ -27,6 +27,7 @@ import {
 import { whoIs, checkSender, nameNow, shortAddr, type Verdict } from './who.ts';
 import { openBytes, timeLeft, isExpired as fileExpired, humanSize as fileSize } from './file.ts';
 import { cloud } from './cloud.ts';
+import { runProbe, asText, type Finding } from './probe.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
@@ -629,6 +630,10 @@ let handleTry = '';
 let maskSaid: { text: string; bad?: boolean } | null = null;
 /** Only after the host has actually refused, never as a first offer. */
 let nameFallback = false;
+/** Sandbox probe results. `null` until run: an empty array means a clean
+ *  result and must not be shown before anything was actually tested. */
+let probe: Finding[] | null = null;
+let probing = false;
 
 function mailboxView(): string {
   if (!BOX) return '<div class="reader"><p class="dim">Deriving…</p></div>';
@@ -700,6 +705,17 @@ function mailboxView(): string {
       record belongs to whoever owns the name. From a desktop, this is the line:</p>
       <pre class="key" id="pubcmd">${esc(publishCommand(myName || 'yourname.dot', hex(BOX.pub)))}</pre>
       <div class="rfoot"><button class="btn" id="copycmd">Copy the command</button></div>` : ''}
+
+    <h2>What this app can reach</h2>
+    <p class="dim small">This mailbox holds the private key to your correspondence, and the panel
+    above holds a real mail server password. Both sit behind host APIs whose isolation we assumed
+    and never tested. Nothing secret is printed: the key check reports a <em>public</em> key, and a
+    credential found is reported by length only.</p>
+    <div class="rfoot">
+      <button class="btn solid" id="runprobe" ${probing ? 'disabled' : ''}>${probing ? 'Running…' : 'Run the probe'}</button>
+      ${probe ? `<button class="btn" id="copyprobe">Copy the output</button>` : ''}
+    </div>
+    ${probe ? `<pre class="key" id="probeout">${esc(asText(probe))}</pre>` : ''}
 
     <h2>People you know</h2>
     <p class="dim small">Kept in this browser and sent nowhere. An address book is a list of
@@ -1145,6 +1161,18 @@ function bind() {
   on(body, 'input', sync);
   on(byId('subject'), 'input', sync);
   on(byId('to'), 'input', sync);
+
+  on(byId('runprobe'), 'click', () => void (async () => {
+    probing = true; render();
+    probe = await runProbe();
+    probing = false; render();
+  })());
+  on(byId('copyprobe'), 'click', async () => {
+    const t = asText(probe ?? []);
+    try { await navigator.clipboard.writeText(t); flash = { text: 'Probe output copied.' }; }
+    catch { flash = { text: 'Could not reach the clipboard. The output is on screen.', bad: true }; }
+    render();
+  });
 
   on(byId('copykey'), 'click', async () => {
     if (!BOX) return;
