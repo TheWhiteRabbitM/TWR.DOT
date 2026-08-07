@@ -101,6 +101,12 @@
     "h": 970,
     "capturedAt": 1786007769
   },
+  "confidaoapp": {
+    "file": "shots/confidaoapp.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786085611
+  },
   "contribnet01": {
     "file": "shots/contribnet01.webp",
     "w": 480,
@@ -142,6 +148,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786008293
+  },
+  "dforms-app": {
+    "file": "shots/dforms-app.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786085621
   },
   "discovery": {
     "file": "shots/discovery.webp",
@@ -214,6 +226,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786008750
+  },
+  "dotmailbox": {
+    "file": "shots/dotmailbox.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786085632
   },
   "dotmetrics": {
     "file": "shots/dotmetrics.webp",
@@ -293,6 +311,12 @@
     "h": 970,
     "capturedAt": 1786007840
   },
+  "gavin-pump": {
+    "file": "shots/gavin-pump.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786085642
+  },
   "guestbook": {
     "file": "shots/guestbook.webp",
     "w": 480,
@@ -370,6 +394,18 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786007779
+  },
+  "marketplace": {
+    "file": "shots/marketplace.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786085601
+  },
+  "micropagos": {
+    "file": "shots/micropagos.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786085570
   },
   "mini-lucky-dev": {
     "file": "shots/mini-lucky-dev.webp",
@@ -611,6 +647,12 @@
     "h": 970,
     "capturedAt": 1786008441
   },
+  "reputacion": {
+    "file": "shots/reputacion.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786085581
+  },
   "scytaledeploy": {
     "file": "shots/scytaledeploy.webp",
     "w": 480,
@@ -706,6 +748,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786007810
+  },
+  "votaciones": {
+    "file": "shots/votaciones.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786085591
   },
   "waldgeist": {
     "file": "shots/waldgeist.webp",
