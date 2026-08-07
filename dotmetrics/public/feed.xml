@@ -4,7 +4,7 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 07 Aug 2026 18:08:43 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 07 Aug 2026 19:25:13 GMT</lastBuildDate>
     <item>
       <title>dot-drive</title>
       <link>https://dot-drive.dev-dot.li</link>
@@ -55,9 +55,9 @@
       <pubDate>Thu, 06 Aug 2026 17:27:36 GMT</pubDate>
     </item>
     <item>
-      <title>confidaoapp</title>
+      <title>ConfiDAO</title>
       <link>https://confidaoapp.dev-dot.li</link>
-      <description></description>
+      <description>A 20-seat DAO where proposals are readable only by members, and ballots are secret from everyone including the app operator.</description>
       <guid isPermaLink="false">confidaoapp</guid>
       <pubDate>Thu, 06 Aug 2026 15:10:24 GMT</pubDate>
     </item>

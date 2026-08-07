@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1786126123,
+  "generatedAt": 1786130713,
   "count": 191,
   "apps": [
     {
@@ -68,9 +68,9 @@
     {
       "label": "confidaoapp",
       "domain": "confidaoapp.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "ConfiDAO",
+      "description": "A 20-seat DAO where proposals are readable only by members, and ballots are secret from everyone including the app operator.",
+      "tier": 0,
       "firstSeenAt": 1786029024,
       "url": "https://confidaoapp.dev-dot.li"
     },

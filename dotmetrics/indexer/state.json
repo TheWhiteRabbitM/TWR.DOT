@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11939962,
-  "updatedAt": "2026-08-07T18:04:39.312Z",
+  "lastBlock": 11942154,
+  "updatedAt": "2026-08-07T19:19:06.836Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "50792692395a062a46a6dfeb8c8ca4fd09d5b39d214484491e30adeb5de8ff71",
-    "cid": "bafybeieauhqyfrsh3of4eimhxqi3mhsfmdv3jcnnet2jwsdr3f5qsl47ae",
-    "uploadedAt": "2026-08-07T18:09:46.630Z"
+    "digest": "da40712973fb7c2080e0fe2c03b7de597ac588b19af0119f1f195bac76dd3cfe",
+    "cid": "bafybeicli3pif5i2nk2dtfsknmoezdexxv4pl7xtwvow734h6r3t2lwuie",
+    "uploadedAt": "2026-08-07T19:26:31.044Z"
   },
   "sitePublish": {
     "treeHash": "9fd8e30a46fc3f2df5c14bd14c8324e75115f2e043f82b51d56a360a7cbdffb1",
     "publishedAt": "2026-08-07T10:25:38.951Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-07T18:08:43.000Z",
+    "updatedAt": "2026-08-07T19:25:13.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -167,7 +167,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-07T18:08:43.000Z",
+    "updatedAt": "2026-08-07T19:25:13.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -213,9 +213,9 @@
         "live": "alive"
       },
       "broadside": {
-        "contenthash": "bafybeigudntqy7hl4tmge2uu2gnyszlpkvmydedvcniev7dwton4h3ypje",
-        "updateCount": 14,
-        "changedAt": 1786122962,
+        "contenthash": "bafybeierhm75oplprlabljj2qq5v2uzonvh6mvkesvuaklt42elykrrire",
+        "updateCount": 15,
+        "changedAt": 1786130713,
         "live": "alive"
       },
       "buildboard01": {
@@ -292,9 +292,9 @@
         "live": "alive"
       },
       "confidaoapp": {
-        "contenthash": "bafybeibm5g7ofnyxbbzezynijbl3tbq2fh2fmhsmxo2caisaqg6c7wcapm",
-        "updateCount": 1,
-        "changedAt": 1786126123,
+        "contenthash": "bafybeiaozzkuxxjjkgrecdvr52mqalspdnimbx7dh2i5igtmvbmyy3gijm",
+        "updateCount": 2,
+        "changedAt": 1786130713,
         "live": "alive"
       },
       "contribnet01": {
@@ -397,9 +397,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeib52e5xr62li2duuufsydqt7q4bnfskfy3uirueata66cfemqwbaq",
-        "updateCount": 86,
-        "changedAt": 1786126123,
+        "contenthash": "bafybeih43d7rfknb6xekw2m2hejiiw4dvpy7qbripva7lp62syh4r2dfay",
+        "updateCount": 87,
+        "changedAt": 1786130713,
         "live": "alive"
       },
       "dotcheckapp": {
