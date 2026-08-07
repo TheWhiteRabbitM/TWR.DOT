@@ -33,13 +33,26 @@ import { HANDLES, MASKS, accountForHandle } from './names.ts';
 /** A bare H160, with or without the prefix. */
 export const looksLikeAddress = (s: string) => /^0x[0-9a-f]{40}$/i.test(s.trim());
 
+/** A 32-byte mailbox key written out, which is what you type when you write to
+ *  somebody who has no handle and no name. */
+export const looksLikeKeyHex = (s: string) => /^(0x)?[0-9a-f]{64}$/i.test(s.trim());
+
 /**
  * `0xc40cb64c…05305`. Long enough to compare two of them by eye, short enough
  * to sit in a table cell next to a subject line.
+ *
+ * Keys get the same treatment and say so, because a raw key is even longer
+ * than an address: sixty four characters of it were being printed as the
+ * recipient's name on every letter addressed by key.
  */
 export function shortAddr(s: string): string {
   const a = s.trim();
-  return looksLikeAddress(a) ? `${a.slice(0, 8)}…${a.slice(-4)}` : a;
+  if (looksLikeAddress(a)) return `${a.slice(0, 8)}…${a.slice(-4)}`;
+  if (looksLikeKeyHex(a)) {
+    const h = a.replace(/^0x/i, '');
+    return `key ${h.slice(0, 6)}…${h.slice(-4)}`;
+  }
+  return a;
 }
 
 /* ------------------------------------------------------------ address → name */

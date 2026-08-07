@@ -33,6 +33,12 @@ ok('shortened to head and tail', shortAddr(ADDR) === '0xc40cb6…5305', shortAdd
 ok('fits a table cell', shortAddr(ADDR).length < 16, `${shortAddr(ADDR).length} chars`);
 ok('a name is left alone', shortAddr('watanabe.01') === 'watanabe.01');
 
+// A raw mailbox key is longer still, and was printed whole as the recipient.
+const KEY = 'e87f49703d18c26c56db9e60b78691cb9de22c0f7dd67ef8e002b9bb09cbf22f';
+ok('a 64-char key is shortened too', shortAddr(KEY) === 'key e87f49…f22f', shortAddr(KEY));
+ok('a prefixed key too', shortAddr('0x' + KEY) === 'key e87f49…f22f');
+ok('a shortened key still fits', shortAddr(KEY).length < 20, `${shortAddr(KEY).length} chars`);
+
 /* ----------------------------------------------------------------------- nameNow
  *
  * Nothing is resolved in this process, so every case here is the FALLBACK path:

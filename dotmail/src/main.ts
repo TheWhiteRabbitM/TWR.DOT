@@ -24,7 +24,7 @@ import {
   publishCommand, publishKeyToName, publishKeyToMask, accountForHandle, myMask,
   walletAddress, maskForHandle,
 } from './names.ts';
-import { whoIs, checkSender, nameNow, shortAddr, looksLikeAddress, type Verdict } from './who.ts';
+import { whoIs, checkSender, nameNow, shortAddr, type Verdict } from './who.ts';
 import './style.css';
 
 const MAX_SEALED = 16_000;
@@ -145,10 +145,10 @@ async function resolveSenders() {
   }
 }
 
-/** What to print where a sender's name goes. Never forty-two characters. */
+/** What to print where a name goes. Never forty-two characters, and never
+ *  sixty-four: `shortAddr` shortens keys as well as addresses. */
 const senderName = (l: Received) =>
-  l.outgoing ? (looksLikeAddress(l.to) ? shortAddr(l.to) : l.to || 'unknown')
-             : nameNow(l.from, l.payer);
+  l.outgoing ? (shortAddr(l.to) || 'unknown') : nameNow(l.from, l.payer);
 
 /**
  * The line under the name, which is where the actual FACT goes.
@@ -337,15 +337,57 @@ function classicReader(): string {
   </div>`;
 }
 
+/**
+ * Why this folder is empty, said accurately.
+ *
+ * It used to print "3,477 envelopes scanned" under every empty folder, which
+ * reads as the REASON the folder is empty and almost never was. Starred is
+ * empty because you have not starred anything. Trash is empty because you have
+ * not binned anything. Neither has the faintest connection to how many
+ * envelopes were opened, and putting the number there invited the reader to
+ * conclude that a mailbox full of letters had come up with nothing.
+ *
+ * The scan is a real explanation in exactly two cases: no letters were found
+ * at all, or the scan stopped early. So it is said in those two cases and
+ * nowhere else.
+ */
+function whyEmpty(): string {
+  const found = LETTERS.length;
+  const q = query.trim();
+
+  if (q) return `<p class="dim">Nothing here matches “${esc(q)}”.</p>`;
+
+  if (found > 0) {
+    // Letters exist; this particular folder just has none of them.
+    const said: Partial<Record<Folder, string>> = {
+      starred: 'Nothing starred yet. The star on a row puts it here.',
+      archive: 'Nothing archived yet.',
+      trash: 'Nothing in the bin.',
+      sent: 'You have not sent anything from this mailbox yet.',
+      inbox: 'Nothing waiting. Everything you can read is filed elsewhere.',
+    };
+    return `<p class="dim">${said[folder] ?? 'Nothing here.'}</p>`;
+  }
+
+  // Genuinely nothing found. NOW the scan is the explanation.
+  if (!complete) {
+    return `<p class="dim">The store stopped answering after ${scannedTo.toLocaleString('en')}
+      envelope${scannedTo === 1 ? '' : 's'}, so this is not a finished search.</p>
+      <p class="dim small">There may be letters for you further along that were never reached.</p>`;
+  }
+  return `<p class="dim">${scannedTo.toLocaleString('en')} envelope${scannedTo === 1 ? '' : 's'}
+    tried, and none of them were for you.</p>
+    <p class="dim small">No envelope names its recipient, so finding yours means trying each
+    one. That is the cost of nobody being able to see who writes to you.</p>`;
+}
+
 function listPane(): string {
   const groups = visible();
   if (!groups.length) {
     const label = FOLDERS.find((f) => f.id === folder)?.label ?? '';
     return `<div class="list empty">
       <h2>Nothing in ${label}</h2>
-      <p class="dim">${scannedTo.toLocaleString('en')} envelope${scannedTo === 1 ? '' : 's'} scanned.</p>
-      <p class="dim small">No envelope names its recipient, so finding yours means trying each
-      one. That is the cost of nobody being able to see who writes to you.</p>
+      ${whyEmpty()}
     </div>`;
   }
   return `<div class="list">
@@ -392,6 +434,23 @@ function attachmentsView(l: Received): string {
   }).join('')}</div>`;
 }
 
+/**
+ * The whole conversation the open letter belongs to, across folders.
+ *
+ * Grouped from ALL letters, not from the current folder, so opening a received
+ * letter still shows the replies you sent. It was written as a filter that
+ * called `threads(LETTERS)` again for every letter in the mailbox, which is the
+ * same grouping recomputed n times to produce the one answer it already had.
+ */
+function openThread(): Received[] {
+  if (openId === null) return [];
+  return threads(LETTERS).find((g) => g.some((x) => x.id === openId)) ?? [];
+}
+const openThreadIds = () => {
+  const ids = openThread().map((l) => l.id);
+  return ids.length ? ids : openId === null ? [] : [openId];
+};
+
 function readerPane(): string {
   if (openId === null) {
     return `<div class="reader blank"><div class="blankinner">
@@ -400,8 +459,7 @@ function readerPane(): string {
       <p class="small">Nothing on this chain records that any of them were for you.</p>
     </div></div>`;
   }
-  const all = LETTERS.filter((l) => l.id === openId || threads(LETTERS).some((g) => g.some((x) => x.id === openId) && g.some((x) => x.id === l.id)));
-  const thread = threads(all).find((g) => g.some((x) => x.id === openId)) ?? [];
+  const thread = openThread();
   const head = thread[0] ?? LETTERS.find((l) => l.id === openId);
   if (!head) return `<div class="reader empty"><p class="dim">Gone.</p></div>`;
 
@@ -434,6 +492,9 @@ function readerPane(): string {
     }).join('')}
     <div class="rfoot">
       <button class="btn solid" id="reply">${icon.reply} Reply</button>
+      ${folder === 'trash' || folder === 'archive'
+        ? `<button class="btn" id="restore">${icon.inbox} Move back to Inbox</button>`
+        : ''}
       ${folder === 'trash'
         ? `<span class="dim small">Trash hides it here. The envelope stays on the chain, because a chain does not forget.</span>`
         : ''}
@@ -447,8 +508,44 @@ function envelopeCount(): number {
   return 1 + pending.reduce((n, p) => n + Math.ceil(p.bytes.length / 9000), 0);
 }
 
+/**
+ * The size of the letter AS IT WILL BE SENT.
+ *
+ * The counter used to measure a different letter from the one `doSend` builds:
+ * no `from`, no `replyTo`, no attachment list. All three are real bytes inside
+ * the seal, so the number under the composer read comfortably under the limit
+ * while the send refused with "Too long to seal" and no explanation of the
+ * discrepancy. A budget you are shown has to be the budget you are charged.
+ */
+function draftSize(): number {
+  return sealedSize({
+    from: myHandleOrAddress(),
+    to: draft.to,
+    subject: draft.subject,
+    body: draft.body,
+    replyTo: draft.replyTo,
+    attachments: pending.map((p) => ({
+      name: p.name, type: p.type, size: p.bytes.length,
+      group: 'g0000000', parts: Math.ceil(p.bytes.length / 9000),
+    })),
+    sentAt: Math.floor(Date.now() / 1000),
+  });
+}
+
+/** Update the counter in place, without redrawing the field being typed in. */
+function showSize() {
+  const size = draftSize();
+  const el = byId('size');
+  if (el) {
+    el.textContent = `${size.toLocaleString('en')} of ${MAX_SEALED.toLocaleString('en')} bytes`;
+    el.classList.toggle('bad', size > MAX_SEALED);
+  }
+  const btn = byId('send') as HTMLButtonElement | null;
+  if (btn) btn.disabled = size > MAX_SEALED;
+}
+
 function composeView(): string {
-  const size = sealedSize({ from: '', to: draft.to, subject: draft.subject, body: draft.body, sentAt: 0 });
+  const size = draftSize();
   const over = size > MAX_SEALED;
   return `<div class="composer">
     <div class="chead">${draft.replyTo !== undefined ? 'Reply' : 'New letter'}
@@ -769,19 +866,47 @@ async function doSend() {
   } else render();
 }
 
+/**
+ * Attach a listener at most once per element per event type.
+ *
+ * WHY THIS IS NOT PARANOIA
+ *   `bind()` runs after every render, and the search box re-renders only the
+ *   list and then calls `bind()` again. The header is not part of the list, so
+ *   the search input itself was never replaced and collected another `input`
+ *   listener each time. Each listener calls `bind()`, so each keystroke DOUBLED
+ *   the count: measured 1, 2, 4, 8, 16, 32, 64 new listeners for the first
+ *   seven characters. A fifteen character query would attach about thirty two
+ *   thousand of them, each redrawing the whole list.
+ *
+ *   A full render replaces every node, so a fresh node has never been marked
+ *   and binds normally. A node that SURVIVED a partial redraw carries its mark
+ *   and is skipped. No bookkeeping to keep in step, and no way to forget.
+ */
+type Marked = Element & { _bound?: Set<string> };
+function on(el: Element | null | undefined, type: string, fn: (e: Event) => void) {
+  if (!el) return;
+  const m = el as Marked;
+  const seen = (m._bound ??= new Set<string>());
+  if (seen.has(type)) return;
+  seen.add(type);
+  el.addEventListener(type, fn);
+}
+const onAll = (sel: string, type: string, fn: (el: HTMLElement, e: Event) => void) =>
+  document.querySelectorAll<HTMLElement>(sel).forEach((el) => on(el, type, (e) => fn(el, e)));
+
+const byId = (id: string) => document.getElementById(id);
+
 function bind() {
-  document.querySelectorAll<HTMLElement>('[data-folder]').forEach((b) =>
-    b.addEventListener('click', () => {
-      folder = b.dataset.folder as Folder;
-      openId = null; classicOpen = null; showMailbox = false; flash = null;
-      render();
-      if (folder === 'classic' && classicCfg && !CLASSIC.length && !classicErr) void fetchClassic();
-    }));
+  onAll('[data-folder]', 'click', (b) => {
+    folder = b.dataset.folder as Folder;
+    openId = null; classicOpen = null; showMailbox = false; flash = null;
+    render();
+    if (folder === 'classic' && classicCfg && !CLASSIC.length && !classicErr) void fetchClassic();
+  });
 
-  document.querySelectorAll<HTMLElement>('[data-classic]').forEach((r) =>
-    r.addEventListener('click', () => { classicOpen = r.dataset.classic ?? null; render(); }));
+  onAll('[data-classic]', 'click', (r) => { classicOpen = r.dataset.classic ?? null; render(); });
 
-  document.getElementById('jsave')?.addEventListener('click', async () => {
+  on(byId('jsave'), 'click', async () => {
     const host = (document.getElementById('jhost') as HTMLInputElement)?.value.trim() ?? '';
     const email = (document.getElementById('jmail') as HTMLInputElement)?.value.trim() ?? '';
     const token = (document.getElementById('jtok') as HTMLInputElement)?.value ?? '';
@@ -791,62 +916,81 @@ function bind() {
     await fetchClassic();
   });
 
-  document.getElementById('jretry')?.addEventListener('click', () => void fetchClassic());
+  on(byId('jretry'), 'click', () => void fetchClassic());
 
-  document.getElementById('jforget')?.addEventListener('click', async () => {
+  on(byId('jforget'), 'click', async () => {
     classicCfg = null; CLASSIC = []; classicErr = null; classicOpen = null;
     await (await storeForClassic()).set('');
     flash = { text: 'Forgotten on this device. Nothing was ever sent anywhere else.' };
     render();
   });
 
-  document.getElementById('mailboxbtn')?.addEventListener('click', () => {
+  on(byId('mailboxbtn'), 'click', () => {
     showMailbox = true; openId = null; render(); void showContacts(); void findMask();
   });
 
-  document.querySelectorAll<HTMLElement>('[data-open]').forEach((r) =>
-    r.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).dataset.star) return;   // the star is its own control
-      openId = Number(r.dataset.open);
-      setFlag(openId, 'read', true);
-      render();
-    }));
-
-  document.querySelectorAll<HTMLElement>('[data-star]').forEach((b) =>
-    b.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const id = Number(b.dataset.star);
-      setFlag(id, 'star', !hasFlag(id, 'star'));
-      render();
-    }));
-
-  document.getElementById('closer')?.addEventListener('click', () => {
-    openId = null; classicOpen = null; render();
+  onAll('[data-open]', 'click', (r, e) => {
+    if ((e.target as HTMLElement).dataset.star) return;   // the star is its own control
+    openId = Number(r.dataset.open);
+    setFlag(openId, 'read', true);
+    render();
   });
 
-  document.getElementById('archive')?.addEventListener('click', () => {
-    if (openId === null) return;
-    setFlag(openId, 'archive', !hasFlag(openId, 'archive'));
-    flash = { text: 'Archived here. The envelope is untouched on the chain.' };
+  onAll('[data-star]', 'click', (b, e) => {
+    e.stopPropagation();
+    const id = Number(b.dataset.star);
+    setFlag(id, 'star', !hasFlag(id, 'star'));
+    render();
+  });
+
+  on(byId('closer'), 'click', () => { openId = null; classicOpen = null; render(); });
+
+  /*
+   * Archive and Trash move the WHOLE CONVERSATION, not the one letter that
+   * happened to be open. Flagging a single letter left its thread in Inbox
+   * minus one message, so archiving a three letter exchange made it come back
+   * looking like a two letter one. No mail client has ever worked that way.
+   */
+  on(byId('archive'), 'click', () => {
+    const ids = openThreadIds();
+    if (!ids.length) return;
+    const turningOn = !hasFlag(ids[0], 'archive');
+    for (const id of ids) setFlag(id, 'archive', turningOn);
+    flash = { text: turningOn ? 'Archived here. The envelopes are untouched on the chain.' : 'Back in Inbox.' };
     openId = null; render();
   });
 
-  document.getElementById('trash')?.addEventListener('click', () => {
-    if (openId === null) return;
-    setFlag(openId, 'trash', true);
-    flash = { text: 'Moved to Trash in this app. The envelope stays on the chain, which does not forget.' };
+  on(byId('trash'), 'click', () => {
+    const ids = openThreadIds();
+    if (!ids.length) return;
+    for (const id of ids) setFlag(id, 'trash', true);
+    flash = { text: 'Moved to Trash in this app. The envelopes stay on the chain, which does not forget.' };
     openId = null; render();
   });
 
-  document.getElementById('compose')?.addEventListener('click', () => {
+  /* Trash was one way: the button set the flag and nothing anywhere cleared
+   * it, so a letter binned by mistake was gone from the app for good. */
+  on(byId('restore'), 'click', () => {
+    const ids = openThreadIds();
+    if (!ids.length) return;
+    for (const id of ids) { setFlag(id, 'trash', false); setFlag(id, 'archive', false); }
+    flash = { text: 'Back where it was.' };
+    openId = null; render();
+  });
+
+  on(byId('compose'), 'click', () => {
     draft = { to: '', subject: '', body: '', replyTo: undefined };
     composing = true; render();
   });
-  document.getElementById('ccancel')?.addEventListener('click', () => { composing = false; render(); });
-  document.getElementById('send')?.addEventListener('click', () => void doSend());
+  on(byId('ccancel'), 'click', () => { composing = false; render(); });
+  on(byId('send'), 'click', () => void doSend());
 
-  document.getElementById('reply')?.addEventListener('click', () => {
-    const l = LETTERS.find((x) => x.id === openId);
+  on(byId('reply'), 'click', () => {
+    // The LAST letter in the conversation, not the one that happened to be
+    // clicked. Replying to the opening message of a long thread addressed the
+    // answer to whoever started it rather than whoever last spoke.
+    const thread = openThread();
+    const l = thread[thread.length - 1] ?? LETTERS.find((x) => x.id === openId);
     if (!l) return;
     draft = {
       to: l.outgoing ? l.to : l.from,
@@ -857,9 +1001,9 @@ function bind() {
     composing = true; render();
   });
 
-  const q = document.getElementById('q') as HTMLInputElement | null;
-  q?.addEventListener('input', () => {
-    query = q.value;
+  const q = byId('q') as HTMLInputElement | null;
+  on(q, 'input', () => {
+    query = q!.value;
     const mid = document.querySelector('.mid');
     if (mid) mid.innerHTML = listPane();
     bind();
@@ -885,56 +1029,61 @@ function bind() {
     render();
   };
 
-  (document.getElementById('attach') as HTMLInputElement | null)
-    ?.addEventListener('change', (e) => void takeFiles([...((e.target as HTMLInputElement).files ?? [])]));
+  on(byId('attach'), 'change', (e) =>
+    void takeFiles([...((e.target as HTMLInputElement).files ?? [])]));
 
-  document.querySelectorAll<HTMLElement>('[data-unpend]').forEach((b) =>
-    b.addEventListener('click', () => {
-      pending.splice(Number(b.dataset.unpend), 1);
-      render();
-    }));
+  onAll('[data-unpend]', 'click', (b) => {
+    pending.splice(Number(b.dataset.unpend), 1);
+    render();
+  });
 
-  const body = document.getElementById('body') as HTMLTextAreaElement | null;
-  body?.addEventListener('paste', (e) => {
-    const files = [...(e.clipboardData?.items ?? [])]
+  const body = byId('body') as HTMLTextAreaElement | null;
+  on(body, 'paste', (e) => {
+    const files = [...((e as ClipboardEvent).clipboardData?.items ?? [])]
       .filter((i) => i.type.startsWith('image/'))
       .map((i) => i.getAsFile())
       .filter(Boolean) as File[];
     if (files.length) { e.preventDefault(); void takeFiles(files); }
   });
-  body?.addEventListener('input', () => {
-    draft.body = body.value;
-    draft.subject = (document.getElementById('subject') as HTMLInputElement)?.value ?? '';
-    draft.to = (document.getElementById('to') as HTMLInputElement)?.value ?? '';
-    const size = sealedSize({ from: '', to: draft.to, subject: draft.subject, body: draft.body, sentAt: 0 });
-    const el = document.getElementById('size');
-    if (el) {
-      el.textContent = `${size.toLocaleString('en')} of ${MAX_SEALED.toLocaleString('en')} bytes`;
-      el.classList.toggle('bad', size > MAX_SEALED);
-    }
-    const btn = document.getElementById('send') as HTMLButtonElement | null;
-    if (btn) btn.disabled = size > MAX_SEALED;
-  });
 
-  document.getElementById('copykey')?.addEventListener('click', async () => {
+  /*
+   * EVERY field syncs the draft, not just the body.
+   *
+   * `render()` rebuilds the composer from `draft`, and only the body input
+   * wrote to it. So any redraw while writing reset To and Subject to empty:
+   * measured, with a folder click standing in for the redraw. It got worse
+   * when the sender lookup started re-rendering on its own, which it does a
+   * second or two after a scan, exactly while somebody is typing a subject.
+   */
+  const sync = () => {
+    draft.body = (byId('body') as HTMLTextAreaElement | null)?.value ?? draft.body;
+    draft.subject = (byId('subject') as HTMLInputElement | null)?.value ?? draft.subject;
+    draft.to = (byId('to') as HTMLInputElement | null)?.value ?? draft.to;
+    showSize();
+  };
+  on(body, 'input', sync);
+  on(byId('subject'), 'input', sync);
+  on(byId('to'), 'input', sync);
+
+  on(byId('copykey'), 'click', async () => {
     if (!BOX) return;
     try { await navigator.clipboard.writeText(hex(BOX.pub)); flash = { text: 'Key copied.' }; }
     catch { flash = { text: 'Could not reach the clipboard. The key is on screen to copy by hand.', bad: true }; }
     render();
   });
 
-  document.getElementById('retrymask')?.addEventListener('click', () => void findMask(true));
+  on(byId('retrymask'), 'click', () => void findMask(true));
 
   const ht = document.getElementById('handletry') as HTMLInputElement | null;
-  ht?.addEventListener('input', () => { handleTry = ht.value; });
-  ht?.addEventListener('keydown', (e) => {
-    if ((e as KeyboardEvent).key === 'Enter') void findByHandle(ht.value.trim());
+  on(ht, 'input', () => { handleTry = ht!.value; });
+  on(ht, 'keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') void findByHandle(ht!.value.trim());
   });
-  document.getElementById('findbyhandle')?.addEventListener('click', () => {
+  on(byId('findbyhandle'), 'click', () => {
     void findByHandle((document.getElementById('handletry') as HTMLInputElement)?.value.trim() ?? '');
   });
 
-  document.getElementById('publishmask')?.addEventListener('click', async () => {
+  on(byId('publishmask'), 'click', async () => {
     if (!BOX || maskState.kind !== 'found') return;
     const { mask, handle } = maskState;
     busy = `Publishing your key against mask ${mask}…`;
@@ -952,7 +1101,7 @@ function bind() {
     render();
   });
 
-  document.getElementById('publishname')?.addEventListener('click', async () => {
+  on(byId('publishname'), 'click', async () => {
     if (!BOX) return;
     const name = (document.getElementById('myname') as HTMLInputElement)?.value.trim() ?? '';
     myName = name;
@@ -978,16 +1127,16 @@ function bind() {
   });
 
   const nameInput = document.getElementById('myname') as HTMLInputElement | null;
-  nameInput?.addEventListener('input', () => { myName = nameInput.value; });
+  on(nameInput, 'input', () => { myName = nameInput!.value; });
 
-  document.getElementById('copycmd')?.addEventListener('click', async () => {
+  on(byId('copycmd'), 'click', async () => {
     const cmd = document.getElementById('pubcmd')?.textContent ?? '';
     try { await navigator.clipboard.writeText(cmd); flash = { text: 'Command copied.' }; }
     catch { flash = { text: 'Could not reach the clipboard. The command is on screen.', bad: true }; }
     render();
   });
 
-  document.getElementById('publish')?.addEventListener('click', async () => {
+  on(byId('publish'), 'click', async () => {
     if (!BOX) return;
     busy = 'Publishing…'; render();
     const r = await STORE.setKey(BOX.pub);
@@ -996,7 +1145,7 @@ function bind() {
     render();
   });
 
-  document.getElementById('addc')?.addEventListener('click', async () => {
+  on(byId('addc'), 'click', async () => {
     const name = (document.getElementById('cname') as HTMLInputElement)?.value.trim() ?? '';
     const key = (document.getElementById('ckey') as HTMLInputElement)?.value.trim() ?? '';
     if (!name || !looksLikeKey(key)) {
