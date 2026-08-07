@@ -1,0 +1,206 @@
+/*
+ * dot-drive — the same stone palette and serif display face as dotmail and
+ * peoplebook, because they are one suite and a person moving between them
+ * should not feel handed to a different company.
+ *
+ * The one colour with a meaning here is the expiry. Nothing else is allowed
+ * to be red, so red always says the same thing: this is gone, or about to be.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --bg: #fafaf9;
+  --pane: #ffffff;
+  --panel: #f5f5f4;
+  --hover: #f0efee;
+  --line: #e7e5e4;
+  --line-strong: #d6d3d1;
+
+  --ink: #1c1917;
+  --ink-soft: #57534e;
+  --dim: #78716c;
+
+  --accent: #1c1917;
+  --accent-ink: #fafaf9;
+  --bad: #9f1239;
+  --proved: #15803d;
+
+  --radius: 12px;
+  --sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f0f0f;
+    --pane: #171716;
+    --panel: #1c1c1b;
+    --hover: #262625;
+    --line: #292928;
+    --line-strong: #3a3a38;
+
+    --ink: #fafaf9;
+    --ink-soft: #d6d3d1;
+    --dim: #a8a29e;
+
+    --accent: #fafaf9;
+    --accent-ink: #0f0f0f;
+    --bad: #fb7185;
+    --proved: #4ade80;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* An inline SVG with a viewBox and no width fills whatever box it is given.
+ * The default is text-sized; anything that wants to be bigger says so. */
+svg { display: block; flex: 0 0 auto; width: 1.25em; height: 1.25em; }
+.brand svg { width: 26px; height: 26px; }
+
+/* ------------------------------------------------------------------ chrome */
+
+.top {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 14px;
+  padding: calc(11px + env(safe-area-inset-top)) 20px 11px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--serif); font-size: 21px; letter-spacing: -0.02em;
+}
+.top .grow { flex: 1 1 auto; }
+
+.where {
+  padding: 10px 20px; font-size: 13px; color: var(--ink-soft);
+  background: var(--panel); border-bottom: 1px solid var(--line);
+}
+.where.chain { color: var(--proved); }
+
+.busy, .flash {
+  margin: 12px 20px 0; padding: 10px 16px; border-radius: var(--radius);
+  font-size: 13.5px; background: var(--panel); color: var(--ink-soft);
+}
+.flash { background: var(--accent); color: var(--accent-ink); }
+.flash.bad { background: var(--bad); color: #fff; }
+
+main { max-width: 46rem; margin: 0 auto; padding: 20px 20px 90px; }
+
+/* ------------------------------------------------------------------- type */
+
+h2 { font-family: var(--serif); font-weight: 400; font-size: 1.4rem; letter-spacing: -0.015em; margin: 0 0 .4em; }
+p { margin: 0 0 .9em; }
+.dim { color: var(--dim); }
+.small { font-size: 13px; }
+.bad { color: var(--bad); }
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .86em; overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------------- cards */
+
+.card {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--pane); padding: 18px 20px; margin: 0 0 16px;
+}
+.card.note {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--panel); font-size: 13.5px; color: var(--ink-soft);
+}
+.card.note svg { width: 19px; height: 19px; color: var(--dim); margin-top: 2px; }
+.card.note > div { min-width: 0; }
+
+/* ------------------------------------------------------------------ upload */
+
+.drop {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 84px; margin: 4px 0 12px;
+  border: 1.5px dashed var(--line-strong); border-radius: var(--radius);
+  background: var(--panel); color: var(--ink); cursor: pointer;
+  font-size: 15px;
+}
+.drop:hover { border-color: var(--ink); background: var(--hover); }
+.drop svg { width: 20px; height: 20px; }
+.drop.off { opacity: .5; cursor: not-allowed; }
+.drop.off:hover { border-color: var(--line-strong); background: var(--panel); }
+
+/* ------------------------------------------------------------------- files */
+
+.flist { display: grid; gap: 8px; margin-top: 10px; }
+.frow {
+  display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center;
+  padding: 11px 14px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--pane);
+}
+.frow.dead { opacity: .55; }
+.fic {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: grid; place-items: center; background: var(--panel); color: var(--dim);
+}
+.fic svg { width: 18px; height: 18px; }
+.fmain { min-width: 0; }
+.fname { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fmeta { font-size: 12.5px; }
+.facts { display: flex; gap: 4px; }
+
+/* ---------------------------------------------------------------- controls */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 40px; padding: 9px 18px;
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  background: none; color: var(--ink); font: inherit; font-size: 14.5px; cursor: pointer;
+}
+.btn svg { width: 17px; height: 17px; }
+.btn:hover { border-color: var(--ink); }
+.btn.solid { background: var(--accent); border-color: transparent; color: var(--accent-ink); font-weight: 600; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.ib {
+  display: grid; place-items: center;
+  width: 36px; height: 36px; border-radius: 9px;
+  border: none; background: none; color: var(--dim); cursor: pointer;
+}
+.ib:hover { background: var(--hover); color: var(--ink); }
+.ib svg { width: 18px; height: 18px; }
+
+label.lbl { display: block; font-size: 12.5px; color: var(--dim); margin: 14px 0 5px; }
+input, textarea {
+  width: 100%; padding: 10px 13px; font: inherit;
+  background: var(--panel); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 9px;
+}
+input:focus, textarea:focus { outline: none; border-color: var(--ink); }
+textarea { resize: vertical; line-height: 1.6; }
+
+/* ------------------------------------------------------------------ sheets */
+
+.sheet {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, #000 45%, transparent);
+  padding: 20px;
+}
+.sheetin {
+  width: min(34rem, 100%); max-height: 86vh; overflow: auto;
+  background: var(--pane); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px 20px;
+}
+.shead {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-family: var(--serif); font-size: 1.25rem; margin-bottom: 8px;
+}
+.srow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="A sealed envelope">
+  <rect width="32" height="32" rx="7" fill="#0f0f0f"/>
+  <g stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="8.5" width="22" height="15" rx="2.5"/>
+    <path d="M5.5 10.4L16 18.1 26.5 10.4"/>
+  </g>
+  <circle cx="16" cy="17.4" r="3.8" fill="#0f0f0f" stroke="#e11d48" stroke-width="2"/>
+  <circle cx="16" cy="17.4" r="1.2" fill="#e11d48"/>
+</svg>

@@ -1,0 +1,12 @@
+{
+  "name": "dotmail",
+  "short_name": "dotmail",
+  "description": "Sealed mail with no server and no provider. No envelope names its recipient, so nobody can see who writes to whom.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#7aa2ff",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
