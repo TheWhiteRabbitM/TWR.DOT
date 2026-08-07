@@ -156,10 +156,8 @@ function reachSection(): string {
     <p class="lede">One identity, read live from each app's own registry. Nothing here is
     remembered from a previous visit.</p>
     <div class="reach">
-      ${(rows.length ? rows : [
-        { app: 'chirp', as: '', on: null, note: 'reading…' },
-        { app: 'dotmail', as: '', on: null, note: 'reading…' },
-      ] as Where[]).map((w) => `
+      ${(rows.length ? rows : (['chirp', 'dotmail', 'dot-drive'].map((app) =>
+        ({ app, as: '', on: null, note: 'reading…' })) as Where[])).map((w) => `
         <div class="reachrow ${w.on === true ? 'on' : ''}">
           <span class="mark">${w.on === true ? icon.check : icon.claimed}</span>
           <span>

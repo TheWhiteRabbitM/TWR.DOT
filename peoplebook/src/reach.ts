@@ -112,10 +112,11 @@ export async function eachClaimed(
 export async function reachOf(mask: number): Promise<Where[]> {
   const rt = await contractRuntime();
   if (!rt) {
-    return [
-      { app: 'chirp', as: '', on: null, note: 'the chain could not be reached just now' },
-      { app: 'dotmail', as: '', on: null, note: 'the chain could not be reached just now' },
-    ];
+    // `null`, not false. "Could not ask" reported as "not reachable" would tell
+    // somebody their correspondents cannot write to them because a node blinked.
+    return ['chirp', 'dotmail', 'dot-drive'].map((app) => ({
+      app, as: '', on: null, note: 'the chain could not be reached just now',
+    }));
   }
 
   const read = async <T>(addr: string, abi: unknown, fn: string): Promise<T | null> => {
@@ -154,6 +155,31 @@ export async function reachOf(mask: number): Promise<Where[]> {
         : hasKey
           ? 'sealed letters addressed to your name will reach you'
           : 'publish a mailbox key in dotmail and letters can be sealed to you',
+    },
+    /*
+     * dot-drive, and the reason its row is the mailbox key again.
+     *
+     * There is NO dot-drive signal to read, and that is deliberate rather than
+     * unfinished. A file's bytes sit on Bulletin as ciphertext and its key
+     * travels inside a sealed letter; nothing anywhere records that an account
+     * put a file up. Writing such a record would hand an observer the one link
+     * the whole design exists to withhold.
+     *
+     * So the honest question is not "does this person use dot-drive", which
+     * cannot be known and should not be. It is "can a file reach them", and
+     * that has an answer: a file is delivered as a letter, so it reaches
+     * exactly the people a letter reaches. Same fact, different consequence,
+     * and the note says which.
+     */
+    {
+      app: 'dot-drive',
+      as: handle ? `@${handle}` : '',
+      on: hasKey,
+      note: hasKey === null
+        ? 'the mailbox registry did not answer'
+        : hasKey
+          ? 'big files can be sent to you: the bytes go to Bulletin, the key arrives as a letter'
+          : 'a file is handed over as a sealed letter, so it needs the same mailbox key',
     },
   ];
 }
