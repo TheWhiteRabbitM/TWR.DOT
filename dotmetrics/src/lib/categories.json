@@ -1302,6 +1302,12 @@
       "fortune~"
     ]
   },
+  "whoisaperson": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "wonderland": {
     "category": "other",
     "source": "unclassified",
