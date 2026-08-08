@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sat, 08 Aug 2026 02:30:37 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 08 Aug 2026 04:38:53 GMT</lastBuildDate>
+    <item>
+      <title>whoisaperson</title>
+      <link>https://whoisaperson.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">whoisaperson</guid>
+      <pubDate>Sat, 08 Aug 2026 03:09:48 GMT</pubDate>
+    </item>
     <item>
       <title>dot-drive</title>
       <link>https://dot-drive.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">zhuzhiliao</guid>
       <pubDate>Tue, 04 Aug 2026 14:31:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>launchpad</title>
-      <link>https://launchpad.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">launchpad</guid>
-      <pubDate>Tue, 04 Aug 2026 14:23:00 GMT</pubDate>
     </item>
   </channel>
 </rss>
