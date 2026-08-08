@@ -1132,6 +1132,14 @@
     "confidence": "none",
     "why": []
   },
+  "site-forge": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "site~"
+    ]
+  },
   "squadbuilder": {
     "category": "other",
     "source": "unclassified",
