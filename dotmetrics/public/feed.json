@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1786201030,
+  "generatedAt": 1786204371,
   "count": 195,
   "apps": [
     {
@@ -7,7 +7,7 @@
       "domain": "worldblog.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1786200648,
       "url": "https://worldblog.dev-dot.li"
     },

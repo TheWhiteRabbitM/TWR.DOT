@@ -1334,6 +1334,14 @@
     "confidence": "none",
     "why": []
   },
+  "worldblog": {
+    "category": "publishing",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "blog~"
+    ]
+  },
   "wudcommunity": {
     "category": "finance",
     "source": "owner",
