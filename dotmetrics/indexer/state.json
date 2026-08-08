@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11986854,
-  "updatedAt": "2026-08-08T21:48:57.773Z",
+  "lastBlock": 11988669,
+  "updatedAt": "2026-08-08T22:49:48.517Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "7c0753da7bbba0dc3b4dc5c7fe5702580914a17437a947e37cad81388e1eb92d",
-    "cid": "bafybeic4fybcbqpt3tajfhamsvbzuyhzvd2idqyf2kodjjaqriwkghn4qy",
-    "uploadedAt": "2026-08-08T21:54:59.125Z"
+    "digest": "788db9772bbb760f6a1f6fbc141cd8ab7c062e92b9346650c0ad4260bd2f1ccd",
+    "cid": "bafybeia2tc2gbywxkoxon25of4zuiucyh7hyfpscxvyutjitiupoadqdf4",
+    "uploadedAt": "2026-08-08T22:55:23.699Z"
   },
   "sitePublish": {
-    "treeHash": "d9b1c6b8dbb7f4a8ea6edc2d8f6b2ada53e84541818fb100c697a332a08bed15",
-    "publishedAt": "2026-08-08T21:56:53.080Z"
+    "treeHash": "b8553e55b5589690420d3ca2a1c64271a82a46bca5fb3888aa89fd6d63d5c8f9",
+    "publishedAt": "2026-08-08T22:57:21.697Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-08T21:53:15.000Z",
+    "updatedAt": "2026-08-08T22:54:10.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -168,13 +168,14 @@
       "worldblog": "alive",
       "batoutofhell": "alive",
       "bobman-dev": "alive",
-      "comicpirate": "alive"
+      "comicpirate": "alive",
+      "off-the-hook": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-08T21:53:15.000Z",
+    "updatedAt": "2026-08-08T22:54:10.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -419,9 +420,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidg6dmenhr25uqmklzarticzqh52da4g7rp7stot5fvq24ssn4wkq",
-        "updateCount": 111,
-        "changedAt": 1786225995,
+        "contenthash": "bafybeigkwbehp6sxgvx7zwqyal7sz3mvxiyubi7m3sbhlbskdcczcp345a",
+        "updateCount": 112,
+        "changedAt": 1786229650,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -459,9 +460,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeie4fsjej2q66w7pbwmccms7zbgosgk2ggmybbhyc4nzqj5l2keucy",
-        "updateCount": 62,
-        "changedAt": 1786225995,
+        "contenthash": "bafybeiewrayv4lbezvqz6xgnpunzse357xtw56p2bjs7ryrdt47jcskune",
+        "updateCount": 63,
+        "changedAt": 1786229650,
         "live": "alive"
       },
       "dotparcel": {
@@ -837,6 +838,11 @@
       },
       "oblv-widgets": {
         "contenthash": "bafybeiee3h227jpjenz3vgm3j62hg7bx6jjdnrzs6o3iyzvuighyak4egu",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "off-the-hook": {
+        "contenthash": "bafybeieieh2nr2qyoohzg5jhqgufxsiwzvbkg5ewywsgrqql6qozjrx4p4",
         "updateCount": 0,
         "live": "alive"
       },

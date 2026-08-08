@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786225995,
-  "count": 199,
+  "generatedAt": 1786229650,
+  "count": 200,
   "apps": [
+    {
+      "label": "off-the-hook",
+      "domain": "off-the-hook.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786227948,
+      "url": "https://off-the-hook.dev-dot.li"
+    },
     {
       "label": "comicpirate",
       "domain": "comicpirate.dot",

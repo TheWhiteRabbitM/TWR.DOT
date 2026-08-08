@@ -39,6 +39,12 @@
       "roguelike"
     ]
   },
+  "batoutofhell": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "bbbbbbbbb": {
     "category": "other",
     "source": "unclassified",
@@ -154,6 +160,12 @@
     "why": [
       "payments"
     ]
+  },
+  "comicpirate": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "community": {
     "category": "other",

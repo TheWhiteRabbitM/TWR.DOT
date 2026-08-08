@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sat, 08 Aug 2026 21:53:15 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 08 Aug 2026 22:54:10 GMT</lastBuildDate>
+    <item>
+      <title>off-the-hook</title>
+      <link>https://off-the-hook.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">off-the-hook</guid>
+      <pubDate>Sat, 08 Aug 2026 22:25:48 GMT</pubDate>
+    </item>
     <item>
       <title>comicpirate</title>
       <link>https://comicpirate.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">ddddddddd</guid>
       <pubDate>Tue, 04 Aug 2026 14:54:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>ccccccccc</title>
-      <link>https://ccccccccc.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">ccccccccc</guid>
-      <pubDate>Tue, 04 Aug 2026 14:53:12 GMT</pubDate>
     </item>
   </channel>
 </rss>
