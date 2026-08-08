@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786197832,
-  "count": 194,
+  "generatedAt": 1786201030,
+  "count": 195,
   "apps": [
+    {
+      "label": "worldblog",
+      "domain": "worldblog.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1786200648,
+      "url": "https://worldblog.dev-dot.li"
+    },
     {
       "label": "site-forge",
       "domain": "site-forge.dot",
