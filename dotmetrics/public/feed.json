@@ -1,13 +1,31 @@
 {
-  "generatedAt": 1786222512,
-  "count": 197,
+  "generatedAt": 1786225995,
+  "count": 199,
   "apps": [
+    {
+      "label": "comicpirate",
+      "domain": "comicpirate.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786224144,
+      "url": "https://comicpirate.dev-dot.li"
+    },
+    {
+      "label": "batoutofhell",
+      "domain": "batoutofhell.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786223100,
+      "url": "https://batoutofhell.dev-dot.li"
+    },
     {
       "label": "bobman-dev",
       "domain": "bobman-dev.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1786220676,
       "url": "https://bobman-dev.dev-dot.li"
     },

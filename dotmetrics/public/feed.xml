@@ -4,7 +4,21 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sat, 08 Aug 2026 20:55:12 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 08 Aug 2026 21:53:15 GMT</lastBuildDate>
+    <item>
+      <title>comicpirate</title>
+      <link>https://comicpirate.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">comicpirate</guid>
+      <pubDate>Sat, 08 Aug 2026 21:22:24 GMT</pubDate>
+    </item>
+    <item>
+      <title>batoutofhell</title>
+      <link>https://batoutofhell.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">batoutofhell</guid>
+      <pubDate>Sat, 08 Aug 2026 21:05:00 GMT</pubDate>
+    </item>
     <item>
       <title>bobman-dev</title>
       <link>https://bobman-dev.dev-dot.li</link>
@@ -340,20 +354,6 @@
       <description></description>
       <guid isPermaLink="false">ccccccccc</guid>
       <pubDate>Tue, 04 Aug 2026 14:53:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>bbbbbbbbb</title>
-      <link>https://bbbbbbbbb.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">bbbbbbbbb</guid>
-      <pubDate>Tue, 04 Aug 2026 14:51:36 GMT</pubDate>
-    </item>
-    <item>
-      <title>xxxxxxxxx</title>
-      <link>https://xxxxxxxxx.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">xxxxxxxxx</guid>
-      <pubDate>Tue, 04 Aug 2026 14:46:24 GMT</pubDate>
     </item>
   </channel>
 </rss>
