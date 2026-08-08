@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786169020,
-  "count": 192,
+  "generatedAt": 1786173829,
+  "count": 193,
   "apps": [
+    {
+      "label": "exit-radar",
+      "domain": "exit-radar.dot",
+      "displayName": "Exit Radar",
+      "description": "Finds addresses that repeatedly move DOT toward fiat exposure — transfers to tagged centralized-exchange addresses, plus on-chain DOT to USDC/USDT swaps on Asset Hub. Scores and ranks by volume, frequency, timing regularity, round-number amounts, net outflow and clustering.",
+      "tier": 0,
+      "firstSeenAt": 1786171584,
+      "url": "https://exit-radar.dev-dot.li"
+    },
     {
       "label": "whoisaperson",
       "domain": "whoisaperson.dot",
