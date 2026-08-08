@@ -191,6 +191,12 @@
     "h": 970,
     "capturedAt": 1785747930
   },
+  "dot-drive": {
+    "file": "shots/dot-drive.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786170331
+  },
   "dot-pages": {
     "file": "shots/dot-pages.webp",
     "w": 480,
@@ -671,6 +677,12 @@
     "h": 970,
     "capturedAt": 1786008397
   },
+  "stake-forensics": {
+    "file": "shots/stake-forensics.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786170342
+  },
   "stargazer": {
     "file": "shots/stargazer.webp",
     "w": 480,
@@ -772,6 +784,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786008111
+  },
+  "whoisaperson": {
+    "file": "shots/whoisaperson.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786170320
   },
   "wonderland": {
     "file": "shots/wonderland.webp",
