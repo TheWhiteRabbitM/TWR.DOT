@@ -810,6 +810,12 @@
     "confidence": "none",
     "why": []
   },
+  "northvane": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "oblv-vault": {
     "category": "other",
     "source": "unclassified",

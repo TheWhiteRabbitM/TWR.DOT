@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1786216081,
+  "generatedAt": 1786218734,
   "count": 196,
   "apps": [
     {
@@ -942,7 +942,7 @@
       "label": "chopdotproof01",
       "domain": "chopdotproof01.dot",
       "displayName": "ChopDot",
-      "description": "Group money coordination for expenses, savings circles, emergency pots, and community funds.",
+      "description": "Split shared spending, collect payments, and keep one clear group record.",
       "tier": 0,
       "firstSeenAt": 1785508176,
       "url": "https://chopdotproof01.dev-dot.li"
