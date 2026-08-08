@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11966267,
-  "updatedAt": "2026-08-08T09:04:00.196Z",
+  "lastBlock": 11967373,
+  "updatedAt": "2026-08-08T09:56:46.829Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "ced83f1958205aa906932d32944a8a53812feedec77c41d673d6e022f9bc2003",
-    "cid": "bafybeibrsnqnptvbkaoz2g67ea4fuqpqohyf5j2t35xc7ob344aje4ly3m",
-    "uploadedAt": "2026-08-08T09:11:29.118Z"
+    "digest": "d84e0219ef931b3bf4dc656cc129a914297dbbbb3bc49bdab8455b17778dc665",
+    "cid": "bafybeibrpye4d6lyvmowchartjx4lrgbqpev45ydbpktlfw6m6wlxlfveu",
+    "uploadedAt": "2026-08-08T10:03:54.308Z"
   },
   "sitePublish": {
     "treeHash": "e5a02fcdc7fc5a3be1795f6222c1e9a6c11c830da6443cebae51de9b37e3af6a",
     "publishedAt": "2026-08-08T08:14:41.775Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-08T09:10:07.000Z",
+    "updatedAt": "2026-08-08T10:00:51.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -163,13 +163,14 @@
       "dot-drive": "alive",
       "stake-forensics": "alive",
       "whoisaperson": "alive",
-      "exit-radar": "alive"
+      "exit-radar": "alive",
+      "site-forge": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-08T09:10:08.000Z",
+    "updatedAt": "2026-08-08T10:00:52.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -399,9 +400,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiabsfba2zmabnpztvjkovmrcgpxjvjrkrjnrubhm4pp6dhltj3eke",
-        "updateCount": 98,
-        "changedAt": 1786180208,
+        "contenthash": "bafybeicnwfm44sano5zpi4p3dbm5kj2cn46mhvjxwcp4dwpn7rgcovkzme",
+        "updateCount": 99,
+        "changedAt": 1786183252,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -960,9 +961,9 @@
         "live": "alive"
       },
       "rainbow-dev": {
-        "contenthash": "bafybeibizho7w4syxgfbexvmksl4ffd2yeuwxgozdw67ux5cl4tk4eor6q",
-        "updateCount": 5,
-        "changedAt": 1786180208,
+        "contenthash": "bafybeie77brimlis5rrwhc2n7k54j2kleft67bkpntrp4eh4wr5qj7fs2y",
+        "updateCount": 6,
+        "changedAt": 1786183252,
         "live": "alive"
       },
       "rainbowprobe": {
@@ -996,6 +997,11 @@
         "contenthash": "",
         "updateCount": 0,
         "live": "unknown"
+      },
+      "site-forge": {
+        "contenthash": "bafybeicanec6i2dt7rf4tiugihqphxludkyngc4omxow2kflub6gsl24tq",
+        "updateCount": 0,
+        "live": "alive"
       },
       "squadbuilder": {
         "contenthash": "bafybeigmkeakxneo7douy73pjokpxhhsog7caukt5zrz4mdagvd3i5lq54",

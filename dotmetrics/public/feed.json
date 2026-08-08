@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786180208,
-  "count": 193,
+  "generatedAt": 1786183252,
+  "count": 194,
   "apps": [
+    {
+      "label": "site-forge",
+      "domain": "site-forge.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786180068,
+      "url": "https://site-forge.dev-dot.li"
+    },
     {
       "label": "exit-radar",
       "domain": "exit-radar.dot",
