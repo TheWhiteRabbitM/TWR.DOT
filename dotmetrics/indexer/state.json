@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11970043,
-  "updatedAt": "2026-08-08T11:46:00.648Z",
+  "lastBlock": 11972686,
+  "updatedAt": "2026-08-08T13:15:16.352Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "4c52f7fb37ca9f903b6a0a918704021295af05cb85307a066ba4884b52841a3c",
-    "cid": "bafybeiewa6rv3cmjgex5blioqkxmvbbplyeshn5ampz6ipxcj6owcsmjdm",
-    "uploadedAt": "2026-08-08T11:53:27.758Z"
+    "digest": "cf96c3a289fd09784f8fcf47982939cebd4b79274c3344e875721f0adc792754",
+    "cid": "bafybeif7e4wfd7dkammndiscswrldkru4hv3m7f6kji76ys56i46uqotqm",
+    "uploadedAt": "2026-08-08T13:20:24.007Z"
   },
   "sitePublish": {
     "treeHash": "3686c19b1e122a12922711048829f8f450de2d10464ef4cf68647a2775cba3c8",
     "publishedAt": "2026-08-08T11:04:04.424Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-08T11:52:08.000Z",
+    "updatedAt": "2026-08-08T13:19:20.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -170,7 +170,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-08T11:52:08.000Z",
+    "updatedAt": "2026-08-08T13:19:20.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -400,9 +400,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifckmb2l7q62j233h2beryau7bishkrnqjaqsvogrigk3jl2z5ugq",
-        "updateCount": 101,
-        "changedAt": 1786189928,
+        "contenthash": "bafybeiduvdymhdpio4klfbiypmhmt5myjqz2b7rvfvmm3oiqm6a3jnjqp4",
+        "updateCount": 102,
+        "changedAt": 1786195160,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -666,14 +666,15 @@
         "live": "unknown"
       },
       "marketplace": {
-        "contenthash": "bafybeicu5wtp5bpxwiqqpba5re5dymvztvmdcjpd4ov4udgyhekwfvrbga",
-        "updateCount": 0,
+        "contenthash": "bafybeifusjfqusshlfyb3xhogirghdeat2wtoybxghssmeymp55meucsqu",
+        "updateCount": 1,
+        "changedAt": 1786195160,
         "live": "alive"
       },
       "micropagos": {
-        "contenthash": "bafybeif2pel436a3wfo5gvnnfcc6wsgos3k3wtshbolbhetjbind25mb3i",
-        "updateCount": 1,
-        "changedAt": 1786143817,
+        "contenthash": "bafybeihrx6xjpt7pamt46idjrqdrx6637lpd6lqi7nz2vcji5loho6xxze",
+        "updateCount": 2,
+        "changedAt": 1786195160,
         "live": "alive"
       },
       "mini-lucky": {
