@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11972686,
-  "updatedAt": "2026-08-08T13:15:16.352Z",
+  "lastBlock": 11973664,
+  "updatedAt": "2026-08-08T13:59:40.646Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "cf96c3a289fd09784f8fcf47982939cebd4b79274c3344e875721f0adc792754",
-    "cid": "bafybeif7e4wfd7dkammndiscswrldkru4hv3m7f6kji76ys56i46uqotqm",
-    "uploadedAt": "2026-08-08T13:20:24.007Z"
+    "digest": "539600c14d42609ad94ba32d497df6defa0b6b9aed4631e836cfcd3a9e51d96c",
+    "cid": "bafybeicgxwmguyiixibnk5bkxzbmhdzwrdie4dqsoxbkies4mhloimxude",
+    "uploadedAt": "2026-08-08T14:06:01.303Z"
   },
   "sitePublish": {
     "treeHash": "3686c19b1e122a12922711048829f8f450de2d10464ef4cf68647a2775cba3c8",
     "publishedAt": "2026-08-08T11:04:04.424Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-08T13:19:20.000Z",
+    "updatedAt": "2026-08-08T14:03:52.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -170,7 +170,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-08T13:19:20.000Z",
+    "updatedAt": "2026-08-08T14:03:52.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -400,9 +400,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiduvdymhdpio4klfbiypmhmt5myjqz2b7rvfvmm3oiqm6a3jnjqp4",
-        "updateCount": 102,
-        "changedAt": 1786195160,
+        "contenthash": "bafybeiak5snka45cwvww6mch4txvh6cryq3zhxssxxmye7yix2e42wdtxa",
+        "updateCount": 103,
+        "changedAt": 1786197832,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -860,9 +860,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeig7oszsu6ioocywothofj5wi2utcfxxx3cq6snej2lrpa7u42z6za",
-        "updateCount": 13,
-        "changedAt": 1786133302,
+        "contenthash": "bafybeicy7z3bnz72lqjkhbckvvan4mg46po4gefg3lmgcyyunumrngzpxq",
+        "updateCount": 14,
+        "changedAt": 1786197832,
         "live": "alive"
       },
       "peoplewiki": {
