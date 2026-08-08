@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786211572,
-  "count": 195,
+  "generatedAt": 1786216081,
+  "count": 196,
   "apps": [
+    {
+      "label": "northvane",
+      "domain": "northvane.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1786213764,
+      "url": "https://northvane.dev-dot.li"
+    },
     {
       "label": "worldblog",
       "domain": "worldblog.dot",

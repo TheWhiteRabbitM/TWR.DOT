@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11980066,
-  "updatedAt": "2026-08-08T17:48:40.731Z",
+  "lastBlock": 11982035,
+  "updatedAt": "2026-08-08T19:02:29.498Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "153ca0c804a0633e835f6d433f11b362765aa510d5ec4362d4e3ac59468d0caa",
-    "cid": "bafybeicufpuvyrj2eiop4dslawo6r4d355hvlkqc67rhpsdx6op6evqmgy",
-    "uploadedAt": "2026-08-08T17:53:55.387Z"
+    "digest": "5c7c0755709e7dbd2b4be99e12ea2aef29217c5686ac3c9210c830968869d040",
+    "cid": "bafybeih44n45hx6grpkbp3l2snhmemwcbpsh5q6ok3ufom5wvazgvwuyby",
+    "uploadedAt": "2026-08-08T19:09:18.124Z"
   },
   "sitePublish": {
     "treeHash": "27551df6560293986dd5268d10b19e0d895b51e1c08e09ad74d1e4cfa9141ddf",
     "publishedAt": "2026-08-08T15:56:00.241Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-08T17:52:51.000Z",
+    "updatedAt": "2026-08-08T19:08:01.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -171,7 +171,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-08T17:52:52.000Z",
+    "updatedAt": "2026-08-08T19:08:01.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -401,9 +401,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeia4ecectjusliu3uwgnxfnxofm3omi3kkboxc5bhipcawv5w5zuea",
-        "updateCount": 107,
-        "changedAt": 1786211572,
+        "contenthash": "bafybeiba2eeajgyppzxvhcotnuwaf6ahs3mmrawrtrhvhbzzvkjxsqfptq",
+        "updateCount": 108,
+        "changedAt": 1786216081,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -766,6 +766,11 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "northvane": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "oblv-vault": {
         "contenthash": "",
         "updateCount": 0,
@@ -1114,9 +1119,9 @@
         "live": "alive"
       },
       "votaciones": {
-        "contenthash": "bafybeib3mmtkokut7zgn5k3znffvxxdpykr2wpx2hrrrthjoeivpug2l7i",
-        "updateCount": 5,
-        "changedAt": 1786140186,
+        "contenthash": "bafybeibytcmxeckrycqwt25hy5cwof6e66e4vah5vp7p5cflwytbrnabb4",
+        "updateCount": 6,
+        "changedAt": 1786216081,
         "live": "alive"
       },
       "vvvvvvvvv": {
@@ -1148,8 +1153,9 @@
         "live": "unknown"
       },
       "whoisaperson": {
-        "contenthash": "bafybeif2n5ttunfuceyxeyddpplr4yg2bjmuc5oq4k6pdwhcyv3vo5d4rm",
-        "updateCount": 0,
+        "contenthash": "bafybeihtte3dy2uznf4g3zpgm2k7anuk6gp723hkrqn24w4atuwfaho4iu",
+        "updateCount": 1,
+        "changedAt": 1786216081,
         "live": "alive"
       },
       "wonderland": {
