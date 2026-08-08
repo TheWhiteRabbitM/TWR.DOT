@@ -461,6 +461,12 @@
     "confidence": "declared",
     "why": []
   },
+  "exit-radar": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "fffffffff": {
     "category": "other",
     "source": "unclassified",
