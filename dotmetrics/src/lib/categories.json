@@ -142,11 +142,11 @@
     "why": []
   },
   "chopdotproof01": {
-    "category": "social",
+    "category": "finance",
     "source": "derived:manifest",
     "confidence": "medium",
     "why": [
-      "community"
+      "payments"
     ]
   },
   "community": {

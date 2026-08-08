@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786218734,
-  "count": 196,
+  "generatedAt": 1786222512,
+  "count": 197,
   "apps": [
+    {
+      "label": "bobman-dev",
+      "domain": "bobman-dev.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1786220676,
+      "url": "https://bobman-dev.dev-dot.li"
+    },
     {
       "label": "northvane",
       "domain": "northvane.dot",
