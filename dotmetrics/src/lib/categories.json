@@ -1361,10 +1361,13 @@
     ]
   },
   "whoisaperson": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "personhood",
+      "proof"
+    ]
   },
   "wonderland": {
     "category": "other",

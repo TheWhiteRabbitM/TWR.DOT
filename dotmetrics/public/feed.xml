@@ -4,7 +4,7 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 09 Aug 2026 17:55:25 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 09 Aug 2026 19:08:31 GMT</lastBuildDate>
     <item>
       <title>dot-muncher</title>
       <link>https://dot-muncher.dev-dot.li</link>
@@ -134,7 +134,7 @@
     <item>
       <title>ConfiDAO</title>
       <link>https://confidaoapp.dev-dot.li</link>
-      <description>A 20-seat DAO where proposals are readable only by members, and ballots are secret from everyone including the app operator.</description>
+      <description>A 20-seat devnet DAO with encrypted proposals, public voter accounts, encrypted ballot choices, and reproducible tallies.</description>
       <guid isPermaLink="false">confidaoapp</guid>
       <pubDate>Thu, 06 Aug 2026 15:10:24 GMT</pubDate>
     </item>
