@@ -161,6 +161,14 @@
       "payments"
     ]
   },
+  "chopdotproof02": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "payments"
+    ]
+  },
   "comicpirate": {
     "category": "other",
     "source": "unclassified",
