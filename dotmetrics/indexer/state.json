@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12014942,
-  "updatedAt": "2026-08-09T14:04:28.376Z",
+  "lastBlock": 12016253,
+  "updatedAt": "2026-08-09T14:55:31.416Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "3d66719f3e8b77c32dc7523da5701b9a4ebd78b4195768e8b808fabb67be1162",
-    "cid": "bafybeie247ecyeu25zaqcvamt4c2wlrgwnqjgwhdwg6bjiyb2nzftss52u",
-    "uploadedAt": "2026-08-09T14:12:00.244Z"
+    "digest": "f6cf76ee9a50ee9eb81cf0092d22e328acef859fafea952f7eda7252d47bfa2a",
+    "cid": "bafybeibtrdvupssimyx2dejg5j3athw7vsihnakwgrse5kpgeyrtwxj7xm",
+    "uploadedAt": "2026-08-09T15:01:37.489Z"
   },
   "sitePublish": {
     "treeHash": "2cab85aab0d38ea4f9fdf1caa77153e8c2c80f28b6aa1bc92da091282824c41e",
     "publishedAt": "2026-08-09T07:29:21.126Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T14:10:37.000Z",
+    "updatedAt": "2026-08-09T15:00:08.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -169,13 +169,14 @@
       "batoutofhell": "alive",
       "bobman-dev": "alive",
       "comicpirate": "alive",
-      "off-the-hook": "alive"
+      "off-the-hook": "alive",
+      "chopdotproof02": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T14:10:37.000Z",
+    "updatedAt": "2026-08-09T15:00:08.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -296,6 +297,11 @@
         "contenthash": "bafybeibukvs2p43vvknoe57h4bpy5tdvmgilsvqoqaaitlmdgfskcstblu",
         "updateCount": 2,
         "changedAt": 1786218734,
+        "live": "alive"
+      },
+      "chopdotproof02": {
+        "contenthash": "bafybeic3kinedlwy7nrzd6iioxq5j6oibihbck3ryhjigm5lqq5ialzosu",
+        "updateCount": 0,
         "live": "alive"
       },
       "comicpirate": {
@@ -420,9 +426,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidvty3twvkobj2sge3wnplujqa6bs6bw3cffi7ahlp33gbmmk3jru",
-        "updateCount": 124,
-        "changedAt": 1786284637,
+        "contenthash": "bafybeidhl6if4pv6trtth4roaejzjdb4kobqi7nlavfdbgxo657inrmr6q",
+        "updateCount": 125,
+        "changedAt": 1786287608,
         "live": "alive"
       },
       "dotcheckapp": {

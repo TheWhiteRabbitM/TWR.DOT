@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786284637,
-  "count": 200,
+  "generatedAt": 1786287608,
+  "count": 201,
   "apps": [
+    {
+      "label": "chopdotproof02",
+      "domain": "chopdotproof02.dot",
+      "displayName": "ChopDot",
+      "description": "Split shared spending, collect payments, and keep one clear group record.",
+      "tier": 0,
+      "firstSeenAt": 1786284660,
+      "url": "https://chopdotproof02.dev-dot.li"
+    },
     {
       "label": "off-the-hook",
       "domain": "off-the-hook.dot",
