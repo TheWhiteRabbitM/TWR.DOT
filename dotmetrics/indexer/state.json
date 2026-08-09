@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12011029,
-  "updatedAt": "2026-08-09T11:47:50.657Z",
+  "lastBlock": 12013713,
+  "updatedAt": "2026-08-09T13:18:32.489Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "d3feece4cb43bff3b376453f6a35de87ed421578b080e4590d692aae12c63e47",
-    "cid": "bafybeido5dunjjn3o2snztuurpp246ivymmz7bqfczbtvjdzfy7gvgkloy",
-    "uploadedAt": "2026-08-09T11:53:23.784Z"
+    "digest": "5bbb726b4d60b30427211dfb417f93484ba9dea1c0185c38d1c6657cd6f24b39",
+    "cid": "bafybeihimcnlxprvomvmtuj6ofpevtcpyfvyqjtlu4d2b3r45dqso5oexi",
+    "uploadedAt": "2026-08-09T13:23:49.066Z"
   },
   "sitePublish": {
     "treeHash": "2cab85aab0d38ea4f9fdf1caa77153e8c2c80f28b6aa1bc92da091282824c41e",
     "publishedAt": "2026-08-09T07:29:21.126Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T11:52:06.000Z",
+    "updatedAt": "2026-08-09T13:22:46.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -175,7 +175,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T11:52:06.000Z",
+    "updatedAt": "2026-08-09T13:22:46.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -315,9 +315,9 @@
         "live": "alive"
       },
       "confidaoapp": {
-        "contenthash": "bafybeicdjsbu4pddm4rm4az7gt345qr6mb4qtmnwibt6xeqzpfmqlns7yq",
-        "updateCount": 10,
-        "changedAt": 1786276326,
+        "contenthash": "bafybeieuesbkyie3ulplim4saeb4vfjqk6gyv2kbgpz3hlyxymzmadhtm4",
+        "updateCount": 11,
+        "changedAt": 1786281766,
         "live": "alive"
       },
       "contribnet01": {
@@ -420,9 +420,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeieitr7htlbt5xwf7jpehls7grf6u3zesrqykb4gjqgba2izn7n6pu",
-        "updateCount": 122,
-        "changedAt": 1786276326,
+        "contenthash": "bafybeig5vhmn57e64csb5qjxhipjqa6u74iyy76lwp6ohvh6zlhhm7qqlu",
+        "updateCount": 123,
+        "changedAt": 1786281766,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1194,9 +1194,9 @@
         "live": "alive"
       },
       "worldblog": {
-        "contenthash": "bafybeiflymf3orvwsvv3nhjtmzwb7mzuw5mzm6bfbqesc4nquhie7c2ux4",
-        "updateCount": 1,
-        "changedAt": 1786266698,
+        "contenthash": "bafybeidys6lzfthj6yq6geu4pmpj74prwjb3hc2qiwoy45qw3ypwrmkt6m",
+        "updateCount": 2,
+        "changedAt": 1786281766,
         "live": "alive"
       },
       "wudcommunity": {
