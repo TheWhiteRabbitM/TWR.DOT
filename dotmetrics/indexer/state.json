@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12017769,
-  "updatedAt": "2026-08-09T15:49:31.850Z",
+  "lastBlock": 12019800,
+  "updatedAt": "2026-08-09T16:57:43.437Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "1beb4007c777b6240e4ab1d574aa95ded827f67ade310bd74306db71572d0466",
-    "cid": "bafybeifaozi5lngmshki4nkzud7tjzsrl4ojlel4bt6ic4mexkddehux7q",
-    "uploadedAt": "2026-08-09T15:57:31.075Z"
+    "digest": "39ab5e3200c60d1c8759973e1e206707dfff2452974ea40cbf42764d91550a55",
+    "cid": "bafybeihxoeo45fvafnafpsujxatzcrtzxk7eufmvcrojzu3dafoalnmkzy",
+    "uploadedAt": "2026-08-09T17:04:27.875Z"
   },
   "sitePublish": {
     "treeHash": "0c48c4486260244baa9a2bdc35c5ca67541d9d07f608a212bfde81949850ff6b",
     "publishedAt": "2026-08-09T15:59:41.541Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T15:55:55.000Z",
+    "updatedAt": "2026-08-09T17:03:22.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -170,13 +170,14 @@
       "bobman-dev": "alive",
       "comicpirate": "alive",
       "off-the-hook": "alive",
-      "chopdotproof02": "alive"
+      "chopdotproof02": "alive",
+      "dot-muncher": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T15:55:56.000Z",
+    "updatedAt": "2026-08-09T17:03:22.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -300,8 +301,9 @@
         "live": "alive"
       },
       "chopdotproof02": {
-        "contenthash": "bafybeic3kinedlwy7nrzd6iioxq5j6oibihbck3ryhjigm5lqq5ialzosu",
-        "updateCount": 0,
+        "contenthash": "bafybeictzjr6xbrlwxgakewozfr6umwyhapvege5qbkxquoodjns6g4nvm",
+        "updateCount": 1,
+        "changedAt": 1786295002,
         "live": "alive"
       },
       "comicpirate": {
@@ -420,15 +422,20 @@
         "changedAt": 1786147018,
         "live": "alive"
       },
+      "dot-muncher": {
+        "contenthash": "bafybeih6y2tg5r75opcru6p4nlosceakxznunn6uv5eqqivhnirhale4au",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "dot-pages": {
         "contenthash": "bafybeicvikt7ej2palbbz35ciiwhtm755t4xja75ef4dfmrdeugtgsbgq4",
         "updateCount": 0,
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeif4fomrh4mwlzlwlf47en4sqzcgngo2yvssmhk7tywsozusbdbm4e",
-        "updateCount": 126,
-        "changedAt": 1786290956,
+        "contenthash": "bafybeicabncnb3e2kxp4rjvxfmekkvnio3zd7zl3ymkkpn4fxp3iuschme",
+        "updateCount": 127,
+        "changedAt": 1786295002,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -466,9 +473,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeihmxkl7t4hi7tdnejpkxatzvmpp7ia7edty2zp2x5ghf6fxsbq2n4",
-        "updateCount": 66,
-        "changedAt": 1786263187,
+        "contenthash": "bafybeifzjy47h5ec5r7q7duim2xlcl7zvh4xnzvgrlb4did65eh7kgwm5e",
+        "updateCount": 67,
+        "changedAt": 1786295002,
         "live": "alive"
       },
       "dotparcel": {
@@ -1184,9 +1191,9 @@
         "live": "unknown"
       },
       "whoisaperson": {
-        "contenthash": "bafybeiahw7v4avayl4prglbjr7fot2ipyibmkiuhevgwjdrbslvjznfb6m",
-        "updateCount": 2,
-        "changedAt": 1786222512,
+        "contenthash": "bafybeidwyrpcygtjjlg74kz7mppq4lvkjrftwthwoeojan5umb63tm4cyq",
+        "updateCount": 3,
+        "changedAt": 1786295002,
         "live": "alive"
       },
       "wonderland": {

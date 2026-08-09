@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 09 Aug 2026 15:55:56 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 09 Aug 2026 17:03:22 GMT</lastBuildDate>
+    <item>
+      <title>dot-muncher</title>
+      <link>https://dot-muncher.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">dot-muncher</guid>
+      <pubDate>Sun, 09 Aug 2026 15:59:48 GMT</pubDate>
+    </item>
     <item>
       <title>ChopDot</title>
       <link>https://chopdotproof02.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">fffffffff</guid>
       <pubDate>Tue, 04 Aug 2026 14:58:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>eeeeeeeee</title>
-      <link>https://eeeeeeeee.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">eeeeeeeee</guid>
-      <pubDate>Tue, 04 Aug 2026 14:56:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

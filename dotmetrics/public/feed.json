@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786290956,
-  "count": 201,
+  "generatedAt": 1786295002,
+  "count": 202,
   "apps": [
+    {
+      "label": "dot-muncher",
+      "domain": "dot-muncher.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786291188,
+      "url": "https://dot-muncher.dev-dot.li"
+    },
     {
       "label": "chopdotproof02",
       "domain": "chopdotproof02.dot",
