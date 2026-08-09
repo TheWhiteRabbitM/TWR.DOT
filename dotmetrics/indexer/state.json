@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12029743,
-  "updatedAt": "2026-08-09T22:53:31.059Z",
+  "lastBlock": 12031234,
+  "updatedAt": "2026-08-09T23:50:06.994Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "065c8795e0c10ec2d6d739fb3995934b3ac81b79d6ded5c8c04c660e2670cfd2",
-    "cid": "bafybeiegput32zdejvthlgrhc2b4xtl32evdvthbvdpcbj2alwtfugm7o4",
-    "uploadedAt": "2026-08-09T23:01:33.532Z"
+    "digest": "dc67ce9feb715d4fd384d2be559ba1c8799e3c8a30721abe2429a09c1c947a9b",
+    "cid": "bafybeicyfqo63erlyamqyctl44v46cnctdmkcklmgpmdt5ht6n2k4n67ki",
+    "uploadedAt": "2026-08-09T23:57:51.860Z"
   },
   "sitePublish": {
     "treeHash": "16b6ead197c8d0ffb26aa90a618c13c6e8a6517ac7ada0e614c3a5f736c01b56",
     "publishedAt": "2026-08-09T23:03:52.338Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T22:59:54.000Z",
+    "updatedAt": "2026-08-09T23:56:32.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -180,7 +180,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T22:59:54.000Z",
+    "updatedAt": "2026-08-09T23:56:32.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -437,9 +437,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifymm6yxm36ttwlmmmnsfanihzqdmmusiuoftnwvqpuiikhy2ffu4",
-        "updateCount": 133,
-        "changedAt": 1786316394,
+        "contenthash": "bafybeidyldlh6qvny6tp6kaz3diwe3ldhhpqkte6xq2qkg64nfhwvs4oxe",
+        "updateCount": 134,
+        "changedAt": 1786319792,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -477,9 +477,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeibl32ogrpc2rxgt7mxg2hzyp4hu2rh6qigwmmbpcnnk52lcxwdjdi",
-        "updateCount": 70,
-        "changedAt": 1786312508,
+        "contenthash": "bafybeiarvxri6n3haga3j3likcma3352tu5cb3ch63glwfq6ppo2tgqmj4",
+        "updateCount": 71,
+        "changedAt": 1786319792,
         "live": "alive"
       },
       "dotparcel": {
