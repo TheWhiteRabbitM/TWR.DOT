@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12003855,
-  "updatedAt": "2026-08-09T07:20:15.806Z",
+  "lastBlock": 12005028,
+  "updatedAt": "2026-08-09T08:06:58.879Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "52cd389b6701cd23bb525332b316c74f02ac2b49b6407093399e78d031d8fdc4",
-    "cid": "bafybeif2pa3nyhxqpp26gnwjwlp34nqyoc5mrfmrqxwetthmw46vnpcfqy",
-    "uploadedAt": "2026-08-09T07:27:22.854Z"
+    "digest": "9a7287be9da745dad614fc68e67d63102c455fee74e58fe27e0f6d22046139d3",
+    "cid": "bafybeid4jcnmq23t7jdyn5nu3ty2rbhoxice2lxnjxl57gbopfelbfn6vm",
+    "uploadedAt": "2026-08-09T08:14:24.041Z"
   },
   "sitePublish": {
     "treeHash": "2cab85aab0d38ea4f9fdf1caa77153e8c2c80f28b6aa1bc92da091282824c41e",
     "publishedAt": "2026-08-09T07:29:21.126Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T07:26:14.000Z",
+    "updatedAt": "2026-08-09T08:13:06.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -175,7 +175,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T07:26:14.000Z",
+    "updatedAt": "2026-08-09T08:13:07.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -315,9 +315,9 @@
         "live": "alive"
       },
       "confidaoapp": {
-        "contenthash": "bafybeich4gzkfsdaj7xmphwszddw4vampex7qo75prhfbeoz5vw6hoo5be",
-        "updateCount": 5,
-        "changedAt": 1786260374,
+        "contenthash": "bafybeibjdtwljwtufe3siyh5gx2skpjp5ulxteppjanfq6lw2noppmeph4",
+        "updateCount": 6,
+        "changedAt": 1786263187,
         "live": "alive"
       },
       "contribnet01": {
@@ -420,9 +420,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidxlbkhulhme3c3ej4lcvxa7g2llngbqeek5fmi42ygzdfuejnkqy",
-        "updateCount": 117,
-        "changedAt": 1786260374,
+        "contenthash": "bafybeicuetzd2vyn5xn4mbrbtewbb7uxswttjtkhomjgycomkf2x7n2e7i",
+        "updateCount": 118,
+        "changedAt": 1786263187,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -460,9 +460,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeic75ctkkyoocekonvsnasouinrr44grscydy4x76om6vkvuqihydq",
-        "updateCount": 65,
-        "changedAt": 1786243101,
+        "contenthash": "bafybeihmxkl7t4hi7tdnejpkxatzvmpp7ia7edty2zp2x5ghf6fxsbq2n4",
+        "updateCount": 66,
+        "changedAt": 1786263187,
         "live": "alive"
       },
       "dotparcel": {
@@ -890,9 +890,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeifsuz6qf64qjicayapxk2u7mxntpvuycge672f7b3pxxlmgj6k6tu",
-        "updateCount": 15,
-        "changedAt": 1786250741,
+        "contenthash": "bafybeihlb5joonl6chc76oxz3ghrp5darzkymxskgqwdngarvvrku3pco4",
+        "updateCount": 16,
+        "changedAt": 1786263187,
         "live": "alive"
       },
       "peoplewiki": {
