@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12019800,
-  "updatedAt": "2026-08-09T16:57:43.437Z",
+  "lastBlock": 12021366,
+  "updatedAt": "2026-08-09T17:49:59.845Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "39ab5e3200c60d1c8759973e1e206707dfff2452974ea40cbf42764d91550a55",
-    "cid": "bafybeihxoeo45fvafnafpsujxatzcrtzxk7eufmvcrojzu3dafoalnmkzy",
-    "uploadedAt": "2026-08-09T17:04:27.875Z"
+    "digest": "8fc7434c2610bc5b284f7003ca66fa32a448b325d121b03d2403e1b76a44b0a9",
+    "cid": "bafybeifuxbhcficnn3rgiptftxqihjgnj3x7zhlz7bmpw53md6a6qwpl2q",
+    "uploadedAt": "2026-08-09T17:56:28.217Z"
   },
   "sitePublish": {
-    "treeHash": "0c48c4486260244baa9a2bdc35c5ca67541d9d07f608a212bfde81949850ff6b",
-    "publishedAt": "2026-08-09T15:59:41.541Z"
+    "treeHash": "4d95de30693aac622768ff377d87b56c11e1f3eae89d8ef2c7a9f9a83503e966",
+    "publishedAt": "2026-08-09T17:58:09.773Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T17:03:22.000Z",
+    "updatedAt": "2026-08-09T17:55:25.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -177,7 +177,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T17:03:22.000Z",
+    "updatedAt": "2026-08-09T17:55:25.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -433,9 +433,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeicabncnb3e2kxp4rjvxfmekkvnio3zd7zl3ymkkpn4fxp3iuschme",
-        "updateCount": 127,
-        "changedAt": 1786295002,
+        "contenthash": "bafybeie7twen4tukc5hp7jbnga27632o5d2njs4sxqapqjv7bp3o5dqabq",
+        "updateCount": 128,
+        "changedAt": 1786298125,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1191,9 +1191,9 @@
         "live": "unknown"
       },
       "whoisaperson": {
-        "contenthash": "bafybeidwyrpcygtjjlg74kz7mppq4lvkjrftwthwoeojan5umb63tm4cyq",
-        "updateCount": 3,
-        "changedAt": 1786295002,
+        "contenthash": "bafybeialw732dits5vzjo2oomgwgkictqpwti3u7vyj2zkx7our5xh5xle",
+        "updateCount": 4,
+        "changedAt": 1786298125,
         "live": "alive"
       },
       "wonderland": {

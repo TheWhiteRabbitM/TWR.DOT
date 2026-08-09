@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1786295002,
+  "generatedAt": 1786298125,
   "count": 202,
   "apps": [
     {
@@ -95,9 +95,9 @@
     {
       "label": "whoisaperson",
       "domain": "whoisaperson.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "Personhood Explorer",
+      "description": "Look up proof-of-personhood state for any account. Shows registration on the People chain, the contextual alias, and whether a .dot name is claimable. Read-only.",
+      "tier": 0,
       "firstSeenAt": 1786158588,
       "url": "https://whoisaperson.dev-dot.li"
     },

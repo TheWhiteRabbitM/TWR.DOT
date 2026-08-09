@@ -4,7 +4,7 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 09 Aug 2026 17:03:22 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 09 Aug 2026 17:55:25 GMT</lastBuildDate>
     <item>
       <title>dot-muncher</title>
       <link>https://dot-muncher.dev-dot.li</link>
@@ -76,9 +76,9 @@
       <pubDate>Sat, 08 Aug 2026 06:46:24 GMT</pubDate>
     </item>
     <item>
-      <title>whoisaperson</title>
+      <title>Personhood Explorer</title>
       <link>https://whoisaperson.dev-dot.li</link>
-      <description></description>
+      <description>Look up proof-of-personhood state for any account. Shows registration on the People chain, the contextual alias, and whether a .dot name is claimable. Read-only.</description>
       <guid isPermaLink="false">whoisaperson</guid>
       <pubDate>Sat, 08 Aug 2026 03:09:48 GMT</pubDate>
     </item>

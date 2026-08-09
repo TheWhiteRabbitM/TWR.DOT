@@ -336,6 +336,12 @@
     "confidence": "declared",
     "why": []
   },
+  "dot-muncher": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "dot-pages": {
     "category": "publishing",
     "source": "derived:manifest",
