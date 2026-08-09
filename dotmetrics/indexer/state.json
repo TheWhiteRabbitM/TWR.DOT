@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12026538,
-  "updatedAt": "2026-08-09T20:54:28.640Z",
+  "lastBlock": 12028061,
+  "updatedAt": "2026-08-09T21:50:49.388Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "12ff5f76e174fe2e470e0a2c16b897926b778149f013d04b52f8b6a5bb1a6a94",
-    "cid": "bafybeidghos22cwm5iyblr7w6et7sps56du7seazzvuk5kfyuw3mygkwg4",
-    "uploadedAt": "2026-08-09T21:02:06.375Z"
+    "digest": "76f7cd78cc808a387505739be9b4af1f0d47f8bb46593750297ce7545c5d8b5e",
+    "cid": "bafybeiap7o4tggmz4naall5xto3uxgjc7grrnivqmofsv6bhklwfltuo7y",
+    "uploadedAt": "2026-08-09T21:56:09.355Z"
   },
   "sitePublish": {
     "treeHash": "97f0f4ac7df6bfbf92e306b88e912d09eba0bc4f3fba02e6e7ad63ee766ea99f",
     "publishedAt": "2026-08-09T21:04:21.051Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T21:00:51.000Z",
+    "updatedAt": "2026-08-09T21:55:07.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -179,7 +179,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T21:00:51.000Z",
+    "updatedAt": "2026-08-09T21:55:08.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -425,8 +425,9 @@
         "live": "alive"
       },
       "dot-muncher": {
-        "contenthash": "bafybeih6y2tg5r75opcru6p4nlosceakxznunn6uv5eqqivhnirhale4au",
-        "updateCount": 0,
+        "contenthash": "bafybeid3zgspr3tlxv7cuufgojkm4oetnzjyhr2sq2sf7lnsseat7jmiii",
+        "updateCount": 1,
+        "changedAt": 1786312508,
         "live": "alive"
       },
       "dot-pages": {
@@ -435,9 +436,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidck7eerhf5slinutzxnruixncjvgjq444gzhratqkav344wv6txy",
-        "updateCount": 131,
-        "changedAt": 1786309251,
+        "contenthash": "bafybeienf7u3iqn63afkcb2v4stwadq56yt46zxen7jkth4la7pq6q7t7a",
+        "updateCount": 132,
+        "changedAt": 1786312508,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -475,9 +476,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeiel4sefbecpkmho4t6hqi6wysiz7f5nts2scc5twjo3duo5dri3gy",
-        "updateCount": 69,
-        "changedAt": 1786305284,
+        "contenthash": "bafybeibl32ogrpc2rxgt7mxg2hzyp4hu2rh6qigwmmbpcnnk52lcxwdjdi",
+        "updateCount": 70,
+        "changedAt": 1786312508,
         "live": "alive"
       },
       "dotparcel": {
@@ -571,6 +572,11 @@
         "contenthash": "bafybeicmmrpil56yh333rlpipf6arzzfvtqo4olywv6tbl6kof6xqoasj4",
         "updateCount": 0,
         "live": "alive"
+      },
+      "gdztestdomain": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "ggggggggg": {
         "contenthash": "",
@@ -944,9 +950,9 @@
         "live": "alive"
       },
       "podcasting": {
-        "contenthash": "bafybeiajhdrkjpwwoglfkvivixsikqr6td5rvp3gikx7ttcujszwsm5rtm",
-        "updateCount": 1,
-        "changedAt": 1786309251,
+        "contenthash": "bafybeic4uajginrw3gtgllcpwkza7gohnsc5vjmzyhgye7qcosatczq3pm",
+        "updateCount": 2,
+        "changedAt": 1786312508,
         "live": "alive"
       },
       "polkadevs": {

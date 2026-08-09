@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 09 Aug 2026 21:00:51 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 09 Aug 2026 21:55:08 GMT</lastBuildDate>
+    <item>
+      <title>gdztestdomain</title>
+      <link>https://gdztestdomain.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">gdztestdomain</guid>
+      <pubDate>Sun, 09 Aug 2026 21:11:00 GMT</pubDate>
+    </item>
     <item>
       <title>ledgerdemo42</title>
       <link>https://ledgerdemo42.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">iiiiiiiii</guid>
       <pubDate>Tue, 04 Aug 2026 15:02:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>hhhhhhhhh</title>
-      <link>https://hhhhhhhhh.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">hhhhhhhhh</guid>
-      <pubDate>Tue, 04 Aug 2026 15:01:12 GMT</pubDate>
     </item>
   </channel>
 </rss>

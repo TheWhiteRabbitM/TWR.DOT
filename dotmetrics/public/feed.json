@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1786309251,
-  "count": 204,
+  "generatedAt": 1786312508,
+  "count": 205,
   "apps": [
+    {
+      "label": "gdztestdomain",
+      "domain": "gdztestdomain.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1786309860,
+      "url": "https://gdztestdomain.dev-dot.li"
+    },
     {
       "label": "ledgerdemo42",
       "domain": "ledgerdemo42.dot",
