@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12024859,
-  "updatedAt": "2026-08-09T19:50:25.048Z",
+  "lastBlock": 12026538,
+  "updatedAt": "2026-08-09T20:54:28.640Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "f9856e8829f3049ee9dfd7db4c1e8e44b14391d76fef89e8a7306afd46c31b60",
-    "cid": "bafybeiayqrl2nbssbxyg4ejryvpdikecmdgx76dqjdsa2zkbdiiowknagm",
-    "uploadedAt": "2026-08-09T19:55:53.184Z"
+    "digest": "12ff5f76e174fe2e470e0a2c16b897926b778149f013d04b52f8b6a5bb1a6a94",
+    "cid": "bafybeidghos22cwm5iyblr7w6et7sps56du7seazzvuk5kfyuw3mygkwg4",
+    "uploadedAt": "2026-08-09T21:02:06.375Z"
   },
   "sitePublish": {
-    "treeHash": "71474b321b7963db99bddbabb17e985a3906dfa74b1f91657c10051b003d03ac",
-    "publishedAt": "2026-08-09T19:11:51.878Z"
+    "treeHash": "97f0f4ac7df6bfbf92e306b88e912d09eba0bc4f3fba02e6e7ad63ee766ea99f",
+    "publishedAt": "2026-08-09T21:04:21.051Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T19:54:44.000Z",
+    "updatedAt": "2026-08-09T21:00:51.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -179,7 +179,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T19:54:44.000Z",
+    "updatedAt": "2026-08-09T21:00:51.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -435,9 +435,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiggd4kk5qj32w35kh3adm2ygsgriy4qejtfyi5e644hb43tv7uhsq",
-        "updateCount": 130,
-        "changedAt": 1786305284,
+        "contenthash": "bafybeidck7eerhf5slinutzxnruixncjvgjq444gzhratqkav344wv6txy",
+        "updateCount": 131,
+        "changedAt": 1786309251,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -691,8 +691,9 @@
         "live": "alive"
       },
       "ledgerdemo42": {
-        "contenthash": "bafybeihj4vq63y4xpacqrpgl2ffhhlsgv6chouv5k2v3sjfuklyfezm4e4",
-        "updateCount": 0,
+        "contenthash": "bafybeiadhhah7tqohigor45aoealxlpmq7s4qdafgsp4pwu4c3xepswudm",
+        "updateCount": 1,
+        "changedAt": 1786309251,
         "live": "alive"
       },
       "lighthouse": {
@@ -943,8 +944,9 @@
         "live": "alive"
       },
       "podcasting": {
-        "contenthash": "bafybeif4pvpanxy5nux3ppe7s4ep5me322gy76icei6jo76i4psbv2yqbm",
-        "updateCount": 0,
+        "contenthash": "bafybeiajhdrkjpwwoglfkvivixsikqr6td5rvp3gikx7ttcujszwsm5rtm",
+        "updateCount": 1,
+        "changedAt": 1786309251,
         "live": "alive"
       },
       "polkadevs": {

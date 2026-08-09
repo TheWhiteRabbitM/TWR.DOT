@@ -706,6 +706,12 @@
     "confidence": "none",
     "why": []
   },
+  "ledgerdemo42": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "lighthouse": {
     "category": "other",
     "source": "unclassified",
@@ -1035,6 +1041,12 @@
       "forum~",
       "plaza~"
     ]
+  },
+  "podcasting": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "polkadevs": {
     "category": "other",
