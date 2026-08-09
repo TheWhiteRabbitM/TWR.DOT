@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1786312508,
+  "generatedAt": 1786316394,
   "count": 205,
   "apps": [
     {
@@ -7,7 +7,7 @@
       "domain": "gdztestdomain.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1786309860,
       "url": "https://gdztestdomain.dev-dot.li"
     },
