@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12023577,
-  "updatedAt": "2026-08-09T19:04:07.839Z",
+  "lastBlock": 12024859,
+  "updatedAt": "2026-08-09T19:50:25.048Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "a34627be9c77457822cc58c603ee5dd16fd814a49331df4f0a281f45e59a002e",
-    "cid": "bafybeifmuqera2jo3jwbglbkngvyna5h57dui5j4mupfn7ppjv45ogheqa",
-    "uploadedAt": "2026-08-09T19:09:58.094Z"
+    "digest": "f9856e8829f3049ee9dfd7db4c1e8e44b14391d76fef89e8a7306afd46c31b60",
+    "cid": "bafybeiayqrl2nbssbxyg4ejryvpdikecmdgx76dqjdsa2zkbdiiowknagm",
+    "uploadedAt": "2026-08-09T19:55:53.184Z"
   },
   "sitePublish": {
     "treeHash": "71474b321b7963db99bddbabb17e985a3906dfa74b1f91657c10051b003d03ac",
     "publishedAt": "2026-08-09T19:11:51.878Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T19:08:31.000Z",
+    "updatedAt": "2026-08-09T19:54:44.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -171,13 +171,15 @@
       "comicpirate": "alive",
       "off-the-hook": "alive",
       "chopdotproof02": "alive",
-      "dot-muncher": "alive"
+      "dot-muncher": "alive",
+      "ledgerdemo42": "alive",
+      "podcasting": "alive"
     },
     "pendingDown": {},
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T19:08:31.000Z",
+    "updatedAt": "2026-08-09T19:54:44.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -323,9 +325,9 @@
         "live": "alive"
       },
       "confidaoapp": {
-        "contenthash": "bafybeifxctu3ioq33zc7kyfbfx7l7ocawvsdzf6qqwh6v3sa37if5yuabm",
-        "updateCount": 12,
-        "changedAt": 1786302511,
+        "contenthash": "bafybeihcqsmethvtwaa3mhunnpauiysfyxsmdoon6jp3fobt5dypflbcnq",
+        "updateCount": 13,
+        "changedAt": 1786305284,
         "live": "alive"
       },
       "contribnet01": {
@@ -433,9 +435,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiafr4j7y4vsa4ydhgqjs7gbjjbcfc2bmayddpp2gfsrl47htfhani",
-        "updateCount": 129,
-        "changedAt": 1786302511,
+        "contenthash": "bafybeiggd4kk5qj32w35kh3adm2ygsgriy4qejtfyi5e644hb43tv7uhsq",
+        "updateCount": 130,
+        "changedAt": 1786305284,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -473,9 +475,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeia2zsquyebp4p2hglbq7luq4nrjrzj6rqntizkxt2po2v4j62lb4q",
-        "updateCount": 68,
-        "changedAt": 1786302511,
+        "contenthash": "bafybeiel4sefbecpkmho4t6hqi6wysiz7f5nts2scc5twjo3duo5dri3gy",
+        "updateCount": 69,
+        "changedAt": 1786305284,
         "live": "alive"
       },
       "dotparcel": {
@@ -685,6 +687,11 @@
       },
       "launchpad": {
         "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "ledgerdemo42": {
+        "contenthash": "bafybeihj4vq63y4xpacqrpgl2ffhhlsgv6chouv5k2v3sjfuklyfezm4e4",
         "updateCount": 0,
         "live": "alive"
       },
@@ -903,9 +910,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeihlb5joonl6chc76oxz3ghrp5darzkymxskgqwdngarvvrku3pco4",
-        "updateCount": 16,
-        "changedAt": 1786263187,
+        "contenthash": "bafybeie5xwc4tudcofwicyengk7akaybxqcupzlddjhdhszvcz6qehldra",
+        "updateCount": 17,
+        "changedAt": 1786305284,
         "live": "alive"
       },
       "peoplewiki": {
@@ -933,6 +940,11 @@
         "contenthash": "bafybeidgw72blregcl22olsjj2x44xc7ztyvtab5ynymewapgvpqo5sqim",
         "updateCount": 9,
         "changedAt": 1785592949,
+        "live": "alive"
+      },
+      "podcasting": {
+        "contenthash": "bafybeif4pvpanxy5nux3ppe7s4ep5me322gy76icei6jo76i4psbv2yqbm",
+        "updateCount": 0,
         "live": "alive"
       },
       "polkadevs": {

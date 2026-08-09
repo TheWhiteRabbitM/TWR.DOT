@@ -4,7 +4,21 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 09 Aug 2026 19:08:31 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 09 Aug 2026 19:54:44 GMT</lastBuildDate>
+    <item>
+      <title>ledgerdemo42</title>
+      <link>https://ledgerdemo42.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">ledgerdemo42</guid>
+      <pubDate>Sun, 09 Aug 2026 19:42:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>podcasting</title>
+      <link>https://podcasting.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">podcasting</guid>
+      <pubDate>Sun, 09 Aug 2026 19:37:36 GMT</pubDate>
+    </item>
     <item>
       <title>dot-muncher</title>
       <link>https://dot-muncher.dev-dot.li</link>
@@ -340,20 +354,6 @@
       <description></description>
       <guid isPermaLink="false">hhhhhhhhh</guid>
       <pubDate>Tue, 04 Aug 2026 15:01:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>ggggggggg</title>
-      <link>https://ggggggggg.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">ggggggggg</guid>
-      <pubDate>Tue, 04 Aug 2026 14:59:36 GMT</pubDate>
-    </item>
-    <item>
-      <title>fffffffff</title>
-      <link>https://fffffffff.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">fffffffff</guid>
-      <pubDate>Tue, 04 Aug 2026 14:58:00 GMT</pubDate>
     </item>
   </channel>
 </rss>

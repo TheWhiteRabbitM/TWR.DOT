@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1786302511,
-  "count": 202,
+  "generatedAt": 1786305284,
+  "count": 204,
   "apps": [
+    {
+      "label": "ledgerdemo42",
+      "domain": "ledgerdemo42.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786304520,
+      "url": "https://ledgerdemo42.dev-dot.li"
+    },
+    {
+      "label": "podcasting",
+      "domain": "podcasting.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786304256,
+      "url": "https://podcasting.dev-dot.li"
+    },
     {
       "label": "dot-muncher",
       "domain": "dot-muncher.dot",
