@@ -1,20 +1,20 @@
 {
-  "lastBlock": 11995277,
-  "updatedAt": "2026-08-09T02:33:25.007Z",
+  "lastBlock": 11999091,
+  "updatedAt": "2026-08-09T04:40:42.651Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "3399edd4ab7b9656829987c0e18021c11fe8ff7d726199c660ca274068660f86",
-    "cid": "bafybeidra3eapcrkdkqrbxai7sokfpmgv5eooj6a3mkerh77chq7qdz22m",
-    "uploadedAt": "2026-08-09T02:39:41.060Z"
+    "digest": "c33323d5f20e86288bfe3daf65bc78a200d790f0b15589c7032a3c29bc5b4488",
+    "cid": "bafybeigvtgvclwqe4ipdvsykvaqcc22jb5ou55kdrimq5bn7lyshd7lqzq",
+    "uploadedAt": "2026-08-09T04:46:58.703Z"
   },
   "sitePublish": {
     "treeHash": "adb08a361580b0baaa65f72314548588cfb49be9fb12b27bfdc51cebf96fb803",
     "publishedAt": "2026-08-08T23:54:08.848Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T02:38:21.000Z",
+    "updatedAt": "2026-08-09T04:45:41.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -175,7 +175,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T02:38:21.000Z",
+    "updatedAt": "2026-08-09T04:45:41.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -420,9 +420,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibfwklxsdqfwo2ejtjrgk6kaub4xsl5bvvftlghl4v5xljfxxsvny",
-        "updateCount": 114,
-        "changedAt": 1786243101,
+        "contenthash": "bafybeigr2qlyg2joblkfztwpfhbehzjyl5x5xkomvdelqf6ytftnbcrk5i",
+        "updateCount": 115,
+        "changedAt": 1786250741,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -650,9 +650,9 @@
         "live": "alive"
       },
       "italiarovente": {
-        "contenthash": "bafybeiaopgfyicjeqliej7t372vec7d6pc3mo3vqs26ot4xujigkfpwhwi",
-        "updateCount": 6,
-        "changedAt": 1786163933,
+        "contenthash": "bafybeibyioiqytaffytrrg5au67v32gqgbp4gsjsyeqq2hdti7vi3isrye",
+        "updateCount": 7,
+        "changedAt": 1786250741,
         "live": "alive"
       },
       "jjjjjjjjj": {
@@ -890,9 +890,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeicy7z3bnz72lqjkhbckvvan4mg46po4gefg3lmgcyyunumrngzpxq",
-        "updateCount": 14,
-        "changedAt": 1786197832,
+        "contenthash": "bafybeifsuz6qf64qjicayapxk2u7mxntpvuycge672f7b3pxxlmgj6k6tu",
+        "updateCount": 15,
+        "changedAt": 1786250741,
         "live": "alive"
       },
       "peoplewiki": {
@@ -1030,8 +1030,9 @@
         "live": "unknown"
       },
       "site-forge": {
-        "contenthash": "bafybeicanec6i2dt7rf4tiugihqphxludkyngc4omxow2kflub6gsl24tq",
-        "updateCount": 0,
+        "contenthash": "bafybeihwvcfquaa4azeukcyp2m7pmalazqril3nnqt4s2eaxst2jbke6mq",
+        "updateCount": 1,
+        "changedAt": 1786250741,
         "live": "alive"
       },
       "squadbuilder": {
