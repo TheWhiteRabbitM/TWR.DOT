@@ -23,11 +23,23 @@
     "h": 970,
     "capturedAt": 1786008407
   },
+  "batoutofhell": {
+    "file": "shots/batoutofhell.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786256895
+  },
   "blueprint": {
     "file": "shots/blueprint.webp",
     "w": 480,
     "h": 970,
     "capturedAt": 1786007676
+  },
+  "bobman-dev": {
+    "file": "shots/bobman-dev.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786256906
   },
   "broadside": {
     "file": "shots/broadside.webp",
@@ -94,6 +106,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786008196
+  },
+  "comicpirate": {
+    "file": "shots/comicpirate.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786256884
   },
   "community": {
     "file": "shots/community.webp",
@@ -292,6 +310,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786007554
+  },
+  "exit-radar": {
+    "file": "shots/exit-radar.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786256939
   },
   "flowfarm-staking": {
     "file": "shots/flowfarm-staking.webp",
@@ -539,6 +563,12 @@
     "h": 970,
     "capturedAt": 1785959786
   },
+  "off-the-hook": {
+    "file": "shots/off-the-hook.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786256873
+  },
   "open-docs": {
     "file": "shots/open-docs.webp",
     "w": 480,
@@ -671,6 +701,12 @@
     "h": 970,
     "capturedAt": 1786008242
   },
+  "site-forge": {
+    "file": "shots/site-forge.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786256928
+  },
   "squadbuilder": {
     "file": "shots/squadbuilder.webp",
     "w": 480,
@@ -802,6 +838,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786007749
+  },
+  "worldblog": {
+    "file": "shots/worldblog.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1786256917
   },
   "wudcommunity": {
     "file": "shots/wudcommunity.webp",
