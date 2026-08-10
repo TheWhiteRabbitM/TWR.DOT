@@ -63,7 +63,7 @@ const EN = {
 
   /* --- headline pair ------------------------------------------------- */
   'hero.line':
-    'apps indexed · {published} published · {deployed} deployed · {declared} declaring a contract · {updated}',
+    'apps indexed · {withBundle} of them have a bundle · {published} of those also describe themselves · {nameOnly} are a name and nothing else · {declared} declare a contract · {updated}',
   'hero.updated': 'updated {ago}',
   'hero.rpcDown': 'rpc unreachable',
   /**
@@ -441,7 +441,7 @@ const IT: Record<MsgKey, string> = {
 
   /* --- headline pair ------------------------------------------------- */
   'hero.line':
-    'app indicizzate · {published} pubblicate · {deployed} distribuite · {declared} che dichiarano un contratto · {updated}',
+    'app indicizzate · {withBundle} di queste hanno un bundle · {published} di quelle si descrivono anche · {nameOnly} sono solo un nome · {declared} dichiarano un contratto · {updated}',
   'hero.updated': 'aggiornato {ago}',
   'hero.rpcDown': 'rpc irraggiungibile',
   'hero.rpcFallback': 'primo rpc non risponde · lettura tramite {host}, endpoint {using} di {total}',
@@ -792,7 +792,7 @@ const ES: Record<MsgKey, string> = {
      rather than in the sentence. The French gets this free — "déclarant" is an
      invariable participle — and the English never had the problem. */
   'hero.line':
-    'apps indexadas · {published} publicadas · {deployed} desplegadas · {declared} con contrato declarado · {updated}',
+    'apps indexed · {withBundle} of them have a bundle · {published} of those also describe themselves · {nameOnly} are a name and nothing else · {declared} declare a contract · {updated}',
   'hero.updated': 'actualizado {ago}',
   'hero.rpcDown': 'rpc inaccesible',
   'hero.rpcFallback':
@@ -1135,7 +1135,7 @@ const FR: Record<MsgKey, string> = {
 
   /* --- headline pair ------------------------------------------------- */
   'hero.line':
-    'apps indexées · {published} publiées · {deployed} déployées · {declared} déclarant un contrat · {updated}',
+    'apps indexed · {withBundle} of them have a bundle · {published} of those also describe themselves · {nameOnly} are a name and nothing else · {declared} declare a contract · {updated}',
   'hero.updated': 'mis à jour {ago}',
   'hero.rpcDown': 'rpc injoignable',
   'hero.rpcFallback':

@@ -1861,7 +1861,11 @@ export function App() {
               to put "distribuite" after its number instead of before it. */}
           <p className="hero-t">
             {tSplit('hero.line', {
+              withBundle: (
+                <b key="w">{fmt(counts.published + counts.deployed, lang)}</b>
+              ),
               published: <b key="p">{fmt(counts.published, lang)}</b>,
+              nameOnly: <b key="n">{fmt(counts.nameOnly, lang)}</b>,
               deployed: <b key="d">{fmt(counts.deployed, lang)}</b>,
               declared: <b key="c">{fmt(counts.declared, lang)}</b>,
               updated: (
@@ -2059,7 +2063,10 @@ export function App() {
           series={liveness.series}
           deaths={liveness.deaths}
           medianLifespanDays={liveness.medianLifespanDays}
-          registered={Object.keys(discoveredData).length}
+          // The SAME population the header counts. Two sources for one number is how
+          // a reader ends up seeing 205 in one place and 207 in another and
+          // trusting neither.
+          registered={apps.length}
         />
       </div>
 

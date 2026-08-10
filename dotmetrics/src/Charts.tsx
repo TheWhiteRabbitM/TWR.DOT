@@ -774,8 +774,13 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
           </i>
         </span>
         <span className="vitals-read">
-          <b className={`mono${rateWorthQuoting ? ' is-warn' : ''}`}>
-            {rateWorthQuoting
+          <b className={`mono${rateWorthQuoting && !oneCaller ? ' is-warn' : ''}`}>
+            {oneCaller
+              ? t('vitals.reverts.few', {
+                  reverts: fmt(eco.reverts, lang),
+                  calls: fmt(calls as number, lang),
+                })
+              : rateWorthQuoting
               ? t('vitals.reverts', { pct: Math.round(revertPct) })
               : haveCalls
                 ? t('vitals.reverts.few', {
