@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12031234,
-  "updatedAt": "2026-08-09T23:50:06.994Z",
+  "lastBlock": 12035677,
+  "updatedAt": "2026-08-10T02:39:53.984Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "dc67ce9feb715d4fd384d2be559ba1c8799e3c8a30721abe2429a09c1c947a9b",
-    "cid": "bafybeicyfqo63erlyamqyctl44v46cnctdmkcklmgpmdt5ht6n2k4n67ki",
-    "uploadedAt": "2026-08-09T23:57:51.860Z"
+    "digest": "d2045307c357939d50a88f62fb6b74aa877821ec2a6825a9a51184cf983e0df3",
+    "cid": "bafybeif73soxvudpcy7cewle6r7g3qdeyxkw5coul3kfodevrxzo3jfddq",
+    "uploadedAt": "2026-08-10T02:47:34.936Z"
   },
   "sitePublish": {
     "treeHash": "16b6ead197c8d0ffb26aa90a618c13c6e8a6517ac7ada0e614c3a5f736c01b56",
     "publishedAt": "2026-08-09T23:03:52.338Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-09T23:56:32.000Z",
+    "updatedAt": "2026-08-10T02:46:16.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -180,7 +180,7 @@
     "transitions": []
   },
   "changes": {
-    "updatedAt": "2026-08-09T23:56:32.000Z",
+    "updatedAt": "2026-08-10T02:46:16.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -437,9 +437,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidyldlh6qvny6tp6kaz3diwe3ldhhpqkte6xq2qkg64nfhwvs4oxe",
-        "updateCount": 134,
-        "changedAt": 1786319792,
+        "contenthash": "bafybeiadf4wcvsd5lswtx2pzszc6x6kfl6wggqnjgow5ugx6hczaxawqfa",
+        "updateCount": 135,
+        "changedAt": 1786329976,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -951,9 +951,9 @@
         "live": "alive"
       },
       "podcasting": {
-        "contenthash": "bafybeicfe35hutmtq43wvuewtzrkkbvof5k3qc6japls7y5rv5e7xnaaha",
-        "updateCount": 3,
-        "changedAt": 1786316394,
+        "contenthash": "bafybeiar63pdbbylwolcdzvfl6mmvwj2vl3cy7il4d3b4dktloewtrwsje",
+        "updateCount": 4,
+        "changedAt": 1786329976,
         "live": "alive"
       },
       "polkadevs": {
@@ -1172,9 +1172,9 @@
         "live": "unknown"
       },
       "vault-control": {
-        "contenthash": "bafybeidsdom3jboi6eyv2qkc6nnq6blx2dhnxynyojhhnpjbyqeg62i6d4",
-        "updateCount": 4,
-        "changedAt": 1786062599,
+        "contenthash": "bafybeigvd5idzbownlyqxlqf3c24pdubjak6gitbifusobmvjvynx7qw5y",
+        "updateCount": 5,
+        "changedAt": 1786329976,
         "live": "alive"
       },
       "votaciones": {
