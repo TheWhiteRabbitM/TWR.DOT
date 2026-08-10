@@ -285,6 +285,8 @@ const EN = {
   'vitals.reverts.few': '{reverts} of {calls} reverted',
   'vitals.reverts.few.sub':
     'too few calls in {blocks} blocks (~{minutes} min) for a rate to mean anything',
+  'vitals.reverts.oneCaller':
+    '{reverts} of {calls} reverted, but {share}% of the calls came from {addr} alone · last {blocks} blocks (~{minutes} min)',
   'vitals.tip.calls': '{calls} contract calls in {blocks} blocks',
   'vitals.tip.split': '{reverts} reverted · {events} emitted',
   'vitals.tip.busiest': 'busiest {address} · {events} of {total} events',
@@ -632,6 +634,8 @@ const IT: Record<MsgKey, string> = {
   'vitals.reverts.few': '{reverts} su {calls} annullate',
   'vitals.reverts.few.sub':
     'troppe poche chiamate in {blocks} blocchi (~{minutes} min) perché una percentuale significhi qualcosa',
+  'vitals.reverts.oneCaller':
+    '{reverts} su {calls} annullate, ma il {share}% delle chiamate viene da {addr} soltanto · ultimi {blocks} blocchi (~{minutes} min)',
   'vitals.tip.calls': '{calls} chiamate ai contratti in {blocks} blocchi',
   'vitals.tip.split': '{reverts} annullate · {events} emessi',
   'vitals.tip.busiest': 'più attivo {address} · {events} eventi su {total}',
@@ -978,6 +982,8 @@ const ES: Record<MsgKey, string> = {
   'vitals.reverts.few': '{reverts} de {calls} revertidas',
   'vitals.reverts.few.sub':
     'muy pocas llamadas en {blocks} bloques (~{minutes} min) para que un porcentaje signifique algo',
+  'vitals.reverts.oneCaller':
+    '{reverts} de {calls} revertidas, pero el {share}% de las llamadas viene solo de {addr} · últimos {blocks} bloques (~{minutes} min)',
   'vitals.tip.calls': '{calls} llamadas a contratos en {blocks} bloques',
   'vitals.tip.split': '{reverts} revertidas · {events} emitidos',
   'vitals.tip.busiest': 'más activa {address} · {events} eventos de {total}',
@@ -1319,6 +1325,8 @@ const FR: Record<MsgKey, string> = {
   'vitals.reverts.few': '{reverts} sur {calls} annulés',
   'vitals.reverts.few.sub':
     'trop peu d’appels en {blocks} blocs (~{minutes} min) pour qu’un pourcentage veuille dire quelque chose',
+  'vitals.reverts.oneCaller':
+    '{reverts} sur {calls} annulés, mais {share}% des appels viennent de {addr} seul · derniers {blocks} blocs (~{minutes} min)',
   'vitals.tip.calls': '{calls} appels aux contrats sur {blocks} blocs',
   'vitals.tip.split': '{reverts} annulés · {events} émis',
   'vitals.tip.busiest': 'la plus active {address} · {events} événements sur {total}',

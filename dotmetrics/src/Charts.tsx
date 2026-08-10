@@ -614,6 +614,15 @@ export interface EcoSnapshot {
    * rather than falling back to the wrong one.
    */
   contractCalls?: number;
+  /**
+   * The busiest caller in the window and how many of its calls reverted.
+   *
+   * A revert rate without this is a trap. Measured over 201 blocks: 34
+   * calls, 34 reverts, and 33 of them one address retrying one failing
+   * call. "The ecosystem is 100% broken" and "one bot is in a loop" are the
+   * same numbers, and only this field separates them.
+   */
+  topCaller?: { address: string; calls: number; reverts: number } | null;
   reverts: number;
   topContracts: { address: string; events: number }[];
   /**
@@ -676,6 +685,13 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
   const calls = eco.contractCalls;
   const haveCalls = typeof calls === 'number' && calls > 0;
   const rateWorthQuoting = haveCalls && (calls as number) >= MIN_FOR_RATE;
+
+  /* When one address is most of the window, the rate is about that address
+   * and not about the chain, and the readout has to say so. */
+  const oneCaller =
+    haveCalls && eco.topCaller && eco.topCaller.calls / (calls as number) >= 0.6
+      ? eco.topCaller
+      : null;
   const blockSec = measured ? eco.windowSeconds / eco.windowBlocks : 0;
   const perK = measured ? (eco.contractEvents / eco.windowBlocks) * 1000 : 0;
   const revertPct = haveCalls ? (eco.reverts / (calls as number)) * 100 : 0;
@@ -769,19 +785,28 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
                 : t('vitals.measuring')}
           </b>
           <i>
-            {rateWorthQuoting
-              ? t('vitals.reverts.sub', {
+            {oneCaller
+              ? t('vitals.reverts.oneCaller', {
                   reverts: fmt(eco.reverts, lang),
                   calls: fmt(calls as number, lang),
+                  share: Math.round((oneCaller.calls / (calls as number)) * 100),
+                  addr: oneCaller.address.slice(0, 8) + '…' + oneCaller.address.slice(-4),
                   blocks: fmt(eco.windowBlocks, lang),
                   minutes: windowMin,
                 })
-              : haveCalls
-                ? t('vitals.reverts.few.sub', {
+              : rateWorthQuoting
+                ? t('vitals.reverts.sub', {
+                    reverts: fmt(eco.reverts, lang),
+                    calls: fmt(calls as number, lang),
                     blocks: fmt(eco.windowBlocks, lang),
                     minutes: windowMin,
                   })
-                : t('vitals.reverts.none')}
+                : haveCalls
+                  ? t('vitals.reverts.few.sub', {
+                      blocks: fmt(eco.windowBlocks, lang),
+                      minutes: windowMin,
+                    })
+                  : t('vitals.reverts.none')}
           </i>
         </span>
       </div>

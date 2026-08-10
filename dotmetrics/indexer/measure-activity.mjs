@@ -10,6 +10,12 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+
+// ethers only to recover the eth sender out of the RLP payload; the chain work
+// is all @polkadot/api.
+const require = createRequire('C:/Users/miche/Downloads/DOT APP/contract/');
+const { ethers } = require('C:/Users/miche/Downloads/DOT APP/contract/node_modules/ethers');
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(HERE, 'ecosystem.json');
@@ -51,14 +57,56 @@ let lastTs = null;
  */
 let contractCalls = 0;
 
+/**
+ * Calls and reverts per SENDER, which is the number that stops a revert rate
+ * from lying.
+ *
+ * Measured 2026-08-10 over 120 blocks: twenty calls, twenty reverts, one
+ * sender, one target, one selector, the same 650-byte payload every six blocks,
+ * failing every time with `Revive.ContractReverted` ("the contract ran to
+ * completion but decided to revert its storage changes"). That is one bot in a
+ * retry loop, and on a chain this quiet it IS the whole window.
+ *
+ * "100% of calls reverted" and "one address retried the same failing call
+ * twenty times, and nobody else called anything" are the same measurement and
+ * opposite claims. So the share of the busiest caller is recorded, and the
+ * dashboard can say which of the two it is looking at.
+ *
+ * The sender is inside the RLP: at the substrate level `revive.ethTransact` is
+ * unsigned, and the eth signature it carries is what names the caller.
+ */
+const callerCalls = new Map();
+const callerReverts = new Map();
+
 for (let n = from; n <= head; n += 1) {
   const hash = await api.rpc.chain.getBlockHash(n);
 
   try {
     const signed = await api.rpc.chain.getBlock(hash);
-    for (const ex of signed.block.extrinsics) {
-      if (ex.method.section === 'revive') contractCalls += 1;
-    }
+    const evs = await api.query.system.events.at(hash);
+    signed.block.extrinsics.forEach((ex, i) => {
+      if (ex.method.section !== 'revive') return;
+      contractCalls += 1;
+
+      let who = '(undecodable)';
+      try {
+        const tx = ethers.Transaction.from(ex.method.args[0].toHex());
+        who = (tx.from ?? '(unrecovered)').toLowerCase();
+      } catch {
+        // A payload we cannot decode still counts as a call. Dropping it would
+        // shrink the denominator, which is the bug this whole counter exists for.
+      }
+      callerCalls.set(who, (callerCalls.get(who) ?? 0) + 1);
+
+      const reverted = evs.some(
+        (e) =>
+          e.phase.isApplyExtrinsic &&
+          e.phase.asApplyExtrinsic.toNumber() === i &&
+          e.event.section === 'revive' &&
+          e.event.method === 'EthExtrinsicRevert',
+      );
+      if (reverted) callerReverts.set(who, (callerReverts.get(who) ?? 0) + 1);
+    });
   } catch {
     // A block whose body will not decode is not a block with no calls. It is
     // left out of both sides rather than counted as zero.
@@ -89,6 +137,11 @@ for (let n = from; n <= head; n += 1) {
 const spanSec = firstTs != null && lastTs != null ? Math.round((lastTs - firstTs) / 1000) : 0;
 const byAddress = [...contracts.entries()].sort((a, b) => b[1] - a[1]);
 
+const busiest = [...callerCalls.entries()].sort((a, b) => b[1] - a[1])[0];
+const topCaller = busiest
+  ? { address: busiest[0], calls: busiest[1], reverts: callerReverts.get(busiest[0]) ?? 0 }
+  : null;
+
 const out = {
   measuredAt: Math.floor((lastTs ?? Date.now()) / 1000),
   headBlock: head,
@@ -100,6 +153,14 @@ const out = {
    *  actually has. Absent from data written before this counter existed, and
    *  the dashboard says "not measured" rather than inventing one. */
   contractCalls,
+  /**
+   * The busiest caller in the window, and how many of its calls reverted.
+   *
+   * Without this, a devnet where one bot retries a failing call looks exactly
+   * like an ecosystem where everything is broken. Same numbers, opposite
+   * claims, and only this field tells them apart.
+   */
+  topCaller,
   reverts,
   topContracts: byAddress.slice(0, 8).map(([address, events]) => ({ address, events })),
 
