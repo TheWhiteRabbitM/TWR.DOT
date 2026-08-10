@@ -2059,6 +2059,7 @@ export function App() {
           series={liveness.series}
           deaths={liveness.deaths}
           medianLifespanDays={liveness.medianLifespanDays}
+          registered={Object.keys(discoveredData).length}
         />
       </div>
 

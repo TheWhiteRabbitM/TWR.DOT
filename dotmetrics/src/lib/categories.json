@@ -1,4 +1,16 @@
 {
+  "aaaaaaaaa": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "adventure": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "ajedreztest01": {
     "category": "other",
     "source": "unclassified",
@@ -13,6 +25,12 @@
     "confidence": "declared",
     "why": []
   },
+  "archelabs": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "ascendyendor00": {
     "category": "games",
     "source": "derived:manifest",
@@ -20,6 +38,36 @@
     "why": [
       "roguelike"
     ]
+  },
+  "batoutofhell": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "bbbbbbbbb": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "blueprint": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "bobman-dev": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "broadside": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "buildboard01": {
     "category": "social",
@@ -70,6 +118,12 @@
     "confidence": "none",
     "why": []
   },
+  "ccccccccc": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "chainpulse": {
     "category": "explorers",
     "source": "derived:manifest",
@@ -88,20 +142,54 @@
     ]
   },
   "chirponchain": {
+    "category": "social",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
+  "chirpwatch": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
     "why": []
   },
   "chopdotproof01": {
-    "category": "social",
+    "category": "finance",
     "source": "derived:manifest",
     "confidence": "medium",
     "why": [
-      "community"
+      "payments"
+    ]
+  },
+  "chopdotproof02": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "payments"
+    ]
+  },
+  "comicpirate": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "community": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "community~"
     ]
   },
   "compute-flux": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "confidaoapp": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -147,6 +235,26 @@
       "improbable~"
     ]
   },
+  "countersign": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "dashboard": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "dashboard~"
+    ]
+  },
+  "ddddddddd": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "devnet-atlas": {
     "category": "explorers",
     "source": "derived:manifest",
@@ -164,6 +272,18 @@
       "probe",
       "clock"
     ]
+  },
+  "dforms-app": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "discovery": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "discreetly": {
     "category": "identity",
@@ -186,6 +306,18 @@
       "docs~"
     ]
   },
+  "domain-app": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "domainservice": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "doomarcade00": {
     "category": "games",
     "source": "derived:app-text",
@@ -197,6 +329,18 @@
       "ammo~",
       "health~"
     ]
+  },
+  "dot-drive": {
+    "category": "tools",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
+  "dot-muncher": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "dot-pages": {
     "category": "publishing",
@@ -211,9 +355,9 @@
     ]
   },
   "dot-store": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "explorers",
+    "source": "owner",
+    "confidence": "declared",
     "why": []
   },
   "dotcheckapp": {
@@ -244,6 +388,12 @@
       "explorer~"
     ]
   },
+  "dotfinder": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "dotify-test01": {
     "category": "media",
     "source": "derived:manifest",
@@ -254,13 +404,30 @@
       "listen~"
     ]
   },
+  "dotmailbox": {
+    "category": "social",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
   "dotmetrics": {
     "category": "explorers",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
+  "dotparcel": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "doyoulike": {
+    "category": "social",
     "source": "derived:manifest",
-    "confidence": "high",
+    "confidence": "medium",
     "why": [
-      "analytics",
-      "metrics~"
+      "vote"
     ]
   },
   "dragon-realm": {
@@ -298,6 +465,12 @@
       "lives~"
     ]
   },
+  "eeeeeeeee": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "eternalise-notary": {
     "category": "identity",
     "source": "derived:app-text",
@@ -313,6 +486,24 @@
     "why": [
       "notary~"
     ]
+  },
+  "ethonchain": {
+    "category": "publishing",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
+  "exit-radar": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "fffffffff": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "flowfarm-staking": {
     "category": "finance",
@@ -333,6 +524,32 @@
     "category": "games",
     "source": "owner",
     "confidence": "declared",
+    "why": []
+  },
+  "gametheory": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "game~"
+    ]
+  },
+  "gavin-pump": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "gdztestdomain": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "ggggggggg": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
     "why": []
   },
   "giganetwork": {
@@ -423,6 +640,30 @@
       "bulletin~"
     ]
   },
+  "hhhhhhhhh": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "hydration": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "iiiiiiiii": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "imthebest": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "ip-assets": {
     "category": "explorers",
     "source": "derived:app-text",
@@ -442,14 +683,62 @@
     ]
   },
   "italiarovente": {
+    "category": "publishing",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
+  "jjjjjjjjj": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
-    "why": [
-      "map~"
-    ]
+    "why": []
+  },
+  "kkkkkkkkk": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "lanzadera": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "launchpad": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "ledgerdemo42": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "lighthouse": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "lllllllll": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "marketplace": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "marketplace~"
+    ]
+  },
+  "micropagos": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -481,6 +770,12 @@
       "chat~",
       "message~"
     ]
+  },
+  "mmmmmmmmm": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "my-cool-app": {
     "category": "other",
@@ -529,6 +824,18 @@
     "confidence": "none",
     "why": []
   },
+  "navalstrike01": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "neo-app-demo": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "nesonchain": {
     "category": "games",
     "source": "owner",
@@ -536,6 +843,18 @@
     "why": []
   },
   "neversettled": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "nnnnnnnnn": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "northvane": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -623,6 +942,18 @@
       "widgets"
     ]
   },
+  "off-the-hook": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "ooooooooo": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "open-docs": {
     "category": "other",
     "source": "unclassified",
@@ -633,11 +964,9 @@
   },
   "openpetition": {
     "category": "social",
-    "source": "derived:manifest",
-    "confidence": "medium",
-    "why": [
-      "petition~"
-    ]
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "pactprotocol": {
     "category": "finance",
@@ -648,6 +977,12 @@
       "escrow~",
       "marketplace~"
     ]
+  },
+  "paperplane": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "parlement-populaire": {
     "category": "other",
@@ -676,9 +1011,9 @@
     "why": []
   },
   "peoplewiki": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "identity",
+    "source": "owner",
+    "confidence": "declared",
     "why": []
   },
   "petitions": {
@@ -713,6 +1048,12 @@
       "plaza~"
     ]
   },
+  "podcasting": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "polkadevs": {
     "category": "other",
     "source": "unclassified",
@@ -720,6 +1061,12 @@
     "why": []
   },
   "polkadot-builders-hackademy": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "polkanote": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -753,6 +1100,12 @@
     "confidence": "none",
     "why": []
   },
+  "ppppppppp": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "proofoftake": {
     "category": "social",
     "source": "derived:manifest",
@@ -763,6 +1116,12 @@
     ]
   },
   "provenveil": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "qqqqqqqqq": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -803,6 +1162,18 @@
       "probe~"
     ]
   },
+  "reputacion": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "rrrrrrrrr": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "scytaledeploy": {
     "category": "other",
     "source": "unclassified",
@@ -823,7 +1194,36 @@
     "confidence": "none",
     "why": []
   },
+  "site-forge": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": [
+      "site~"
+    ]
+  },
   "squadbuilder": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "sssssssss": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "stake-forensics": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "stake",
+      "sell"
+    ]
+  },
+  "stargazer": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -836,6 +1236,12 @@
     "why": [
       "wallet"
     ]
+  },
+  "substrade-hub": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "sybildrop": {
     "category": "identity",
@@ -862,14 +1268,10 @@
     "why": []
   },
   "thebutton": {
-    "category": "identity",
-    "source": "derived:manifest",
-    "confidence": "high",
-    "why": [
-      "personhood",
-      "human",
-      "proof"
-    ]
+    "category": "curiosities",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "thepipersguild": {
     "category": "other",
@@ -890,14 +1292,10 @@
     "why": []
   },
   "truereviews": {
-    "category": "identity",
-    "source": "derived:manifest",
-    "confidence": "high",
-    "why": [
-      "human",
-      "humans~",
-      "verified"
-    ]
+    "category": "tools",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
   },
   "trustgraph": {
     "category": "identity",
@@ -907,6 +1305,12 @@
       "verified"
     ]
   },
+  "ttttttttt": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "tutorial-deploy": {
     "category": "other",
     "source": "unclassified",
@@ -915,7 +1319,46 @@
       "deploy~"
     ]
   },
+  "unstake-radar": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "staking",
+      "sell"
+    ]
+  },
+  "uuuuuuuuu": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "vault-control": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "votaciones": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "vvvvvvvvv": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "waldgeist": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "waldmonster": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -935,14 +1378,52 @@
       "fortune~"
     ]
   },
-  "wudcommunity": {
-    "category": "social",
+  "whoisaperson": {
+    "category": "identity",
     "source": "derived:manifest",
     "confidence": "high",
     "why": [
-      "chat~",
-      "community"
+      "personhood",
+      "proof"
     ]
+  },
+  "wonderland": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "workspace": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "worldblog": {
+    "category": "publishing",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "blog~"
+    ]
+  },
+  "wudcommunity": {
+    "category": "finance",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
+  "wwwwwwwww": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "xxxxxxxxx": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "yechops-preview": {
     "category": "identity",
@@ -962,7 +1443,25 @@
       "guestbook~"
     ]
   },
+  "yyyyyyyyy": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "zhuzhiliao": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "zkdot-devnet": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "zzzzzzzzz": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",

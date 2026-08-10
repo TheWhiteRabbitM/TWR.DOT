@@ -374,6 +374,8 @@ const EN = {
     'one UTC day observed so far — the line extends as each day is probed',
   'survival.deaths.none':
     'No app has gone dark yet — all {deployed} deployed bundles answered the last probe.',
+  'survival.deaths.none.full':
+    '{registered} names registered · {deployed} have published a bundle · {alive} answered the last probe, none gone dark. The other {never} never published one.',
   'survival.median': 'median lifespan {days} days',
   'survival.median.one': 'median lifespan 1 day',
   'survival.median.unknown': 'lifespan not yet measurable',
@@ -716,6 +718,8 @@ const IT: Record<MsgKey, string> = {
     'un solo giorno UTC finora osservato — la linea si estende a mano a mano che ogni giorno viene sondato',
   'survival.deaths.none':
     'Nessuna app è ancora sparita — tutti i {deployed} bundle distribuiti hanno risposto all’ultimo sondaggio.',
+  'survival.deaths.none.full':
+    '{registered} nomi registrati · {deployed} hanno pubblicato un bundle · {alive} hanno risposto all\u2019ultima sonda, nessuno sparito. Gli altri {never} non ne hanno mai pubblicato uno.',
   'survival.median': 'vita mediana {days} giorni',
   'survival.median.one': 'vita mediana 1 giorno',
   'survival.median.unknown': 'vita non ancora misurabile',
@@ -1064,6 +1068,8 @@ const ES: Record<MsgKey, string> = {
     'un solo día UTC observado hasta ahora — la línea se extiende a medida que se sondea cada día',
   'survival.deaths.none':
     'Ninguna app se ha apagado todavía — los {deployed} bundles desplegados respondieron al último sondeo.',
+  'survival.deaths.none.full':
+    '{registered} names registered · {deployed} have published a bundle · {alive} answered the last probe, none gone dark. The other {never} never published one.',
   'survival.median': 'vida mediana {days} días',
   'survival.median.one': 'vida mediana 1 día',
   'survival.median.unknown': 'vida todavía no medible',
@@ -1407,6 +1413,8 @@ const FR: Record<MsgKey, string> = {
     'un seul jour UTC observé jusqu’ici — la ligne s’étend à mesure que chaque jour est sondé',
   'survival.deaths.none':
     'Aucune app n’a encore disparu — les {deployed} bundles déployés ont répondu au dernier sondage.',
+  'survival.deaths.none.full':
+    '{registered} names registered · {deployed} have published a bundle · {alive} answered the last probe, none gone dark. The other {never} never published one.',
   'survival.median': 'durée de vie médiane {days} jours',
   'survival.median.one': 'durée de vie médiane 1 jour',
   'survival.median.unknown': 'durée de vie pas encore mesurable',

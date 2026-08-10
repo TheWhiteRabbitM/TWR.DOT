@@ -892,10 +892,22 @@ export function SurvivalChart({
   series,
   deaths,
   medianLifespanDays,
+  registered,
 }: {
   series: SurvivalPoint[];
   deaths: Death[];
   medianLifespanDays: number | null;
+  /**
+   * Names in the registry, which is a bigger number than deployed bundles
+   * and means something else.
+   *
+   * A reader who counts 207 apps in the directory and then reads 158 here
+   * concludes that 49 died. They did not: they never published a bundle at
+   * all. Registered, deployed and answering are three populations, and the
+   * footer states all three rather than leaving the subtraction to somebody
+   * with no way of knowing which of the two it is.
+   */
+  registered?: number;
 }) {
   const lang = useLang();
 
@@ -995,7 +1007,14 @@ export function SurvivalChart({
       {/* The headline. Zero deaths is stated with its denominator, not hidden. */}
       {deadCount === 0 ? (
         <p className="surv-median">
-          {t('survival.deaths.none', { deployed: last ? fmt(last.deployed, lang) : '0' })}
+          {typeof registered === 'number' && last
+            ? t('survival.deaths.none.full', {
+                registered: fmt(registered, lang),
+                deployed: fmt(last.deployed, lang),
+                alive: fmt(last.alive, lang),
+                never: fmt(Math.max(0, registered - last.deployed), lang),
+              })
+            : t('survival.deaths.none', { deployed: last ? fmt(last.deployed, lang) : '0' })}
         </p>
       ) : (
         <p className="surv-median">
