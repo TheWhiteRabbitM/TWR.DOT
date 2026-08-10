@@ -1,13 +1,715 @@
 {
-  "generatedAt": 1785838158,
-  "count": 127,
+  "generatedAt": 1786344621,
+  "count": 205,
   "apps": [
+    {
+      "label": "gdztestdomain",
+      "domain": "gdztestdomain.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786309860,
+      "url": "https://gdztestdomain.dev-dot.li"
+    },
+    {
+      "label": "ledgerdemo42",
+      "domain": "ledgerdemo42.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786304520,
+      "url": "https://ledgerdemo42.dev-dot.li"
+    },
+    {
+      "label": "podcasting",
+      "domain": "podcasting.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786304256,
+      "url": "https://podcasting.dev-dot.li"
+    },
+    {
+      "label": "dot-muncher",
+      "domain": "dot-muncher.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786291188,
+      "url": "https://dot-muncher.dev-dot.li"
+    },
+    {
+      "label": "chopdotproof02",
+      "domain": "chopdotproof02.dot",
+      "displayName": "ChopDot",
+      "description": "Split shared spending, collect payments, and keep one clear group record.",
+      "tier": 0,
+      "firstSeenAt": 1786284660,
+      "url": "https://chopdotproof02.dev-dot.li"
+    },
+    {
+      "label": "off-the-hook",
+      "domain": "off-the-hook.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786227948,
+      "url": "https://off-the-hook.dev-dot.li"
+    },
+    {
+      "label": "comicpirate",
+      "domain": "comicpirate.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786224144,
+      "url": "https://comicpirate.dev-dot.li"
+    },
+    {
+      "label": "batoutofhell",
+      "domain": "batoutofhell.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786223100,
+      "url": "https://batoutofhell.dev-dot.li"
+    },
+    {
+      "label": "bobman-dev",
+      "domain": "bobman-dev.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786220676,
+      "url": "https://bobman-dev.dev-dot.li"
+    },
+    {
+      "label": "northvane",
+      "domain": "northvane.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1786213764,
+      "url": "https://northvane.dev-dot.li"
+    },
+    {
+      "label": "worldblog",
+      "domain": "worldblog.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786200648,
+      "url": "https://worldblog.dev-dot.li"
+    },
+    {
+      "label": "site-forge",
+      "domain": "site-forge.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786180068,
+      "url": "https://site-forge.dev-dot.li"
+    },
+    {
+      "label": "exit-radar",
+      "domain": "exit-radar.dot",
+      "displayName": "Exit Radar",
+      "description": "Finds addresses that repeatedly move DOT toward fiat exposure — transfers to tagged centralized-exchange addresses, plus on-chain DOT to USDC/USDT swaps on Asset Hub. Scores and ranks by volume, frequency, timing regularity, round-number amounts, net outflow and clustering.",
+      "tier": 0,
+      "firstSeenAt": 1786171584,
+      "url": "https://exit-radar.dev-dot.li"
+    },
+    {
+      "label": "whoisaperson",
+      "domain": "whoisaperson.dot",
+      "displayName": "Personhood Explorer",
+      "description": "Look up proof-of-personhood state for any account. Shows registration on the People chain, the contextual alias, and whether a .dot name is claimable. Read-only.",
+      "tier": 0,
+      "firstSeenAt": 1786158588,
+      "url": "https://whoisaperson.dev-dot.li"
+    },
+    {
+      "label": "dot-drive",
+      "domain": "dot-drive.dot",
+      "displayName": "dot-drive",
+      "description": "Big files, encrypted on your device and stored on Bulletin, with the key handed over in a sealed letter. The bytes are unreadable and nothing points at them. Fourteen days, then gone, and the app says so on every row.",
+      "tier": 0,
+      "firstSeenAt": 1786092252,
+      "url": "https://dot-drive.dev-dot.li"
+    },
+    {
+      "label": "dotparcel",
+      "domain": "dotparcel.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1786092108,
+      "url": "https://dotparcel.dev-dot.li"
+    },
+    {
+      "label": "stake-forensics",
+      "domain": "stake-forensics.dot",
+      "displayName": "Stake Forensics",
+      "description": "Pattern detection across Polkadot unbonding activity. Scans a configurable historical window, scores addresses by volume, frequency, timing regularity, round-number amounts, net outflow and clustering, and flags the ones most likely to be generating repeat sell pressure.",
+      "tier": 0,
+      "firstSeenAt": 1786091952,
+      "url": "https://stake-forensics.dev-dot.li"
+    },
+    {
+      "label": "micropagos",
+      "domain": "micropagos.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786037508,
+      "url": "https://micropagos.dev-dot.li"
+    },
+    {
+      "label": "reputacion",
+      "domain": "reputacion.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786037424,
+      "url": "https://reputacion.dev-dot.li"
+    },
+    {
+      "label": "votaciones",
+      "domain": "votaciones.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786037352,
+      "url": "https://votaciones.dev-dot.li"
+    },
+    {
+      "label": "marketplace",
+      "domain": "marketplace.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786037256,
+      "url": "https://marketplace.dev-dot.li"
+    },
+    {
+      "label": "confidaoapp",
+      "domain": "confidaoapp.dot",
+      "displayName": "ConfiDAO",
+      "description": "A 20-seat devnet DAO with encrypted proposals, public voter accounts, encrypted ballot choices, and reproducible tallies.",
+      "tier": 0,
+      "firstSeenAt": 1786029024,
+      "url": "https://confidaoapp.dev-dot.li"
+    },
+    {
+      "label": "dforms-app",
+      "domain": "dforms-app.dot",
+      "displayName": "dforms",
+      "description": "Encrypted forms on Polkadot. Responses are readable only by their creator.",
+      "tier": 0,
+      "firstSeenAt": 1786009620,
+      "url": "https://dforms-app.dev-dot.li"
+    },
+    {
+      "label": "dotmailbox",
+      "domain": "dotmailbox.dot",
+      "displayName": "dotmail",
+      "description": "Sealed mail on Asset Hub. No envelope names its recipient, so nobody can see who writes to whom. Reads an ordinary mailbox too, kept visibly apart.",
+      "tier": 0,
+      "firstSeenAt": 1786001304,
+      "url": "https://dotmailbox.dev-dot.li"
+    },
+    {
+      "label": "navalstrike01",
+      "domain": "navalstrike01.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785960000,
+      "url": "https://navalstrike01.dev-dot.li"
+    },
+    {
+      "label": "polkanote",
+      "domain": "polkanote.dot",
+      "displayName": "polkanote",
+      "description": "Collaborative documents with verifiable save points.",
+      "tier": 0,
+      "firstSeenAt": 1785939516,
+      "url": "https://polkanote.dev-dot.li"
+    },
+    {
+      "label": "ethonchain",
+      "domain": "ethonchain.dot",
+      "displayName": "eth on chain",
+      "description": "Six real pages from ethereum.org served from a content hash, with no server behind them. Unofficial demonstration; provenance measured in your browser.",
+      "tier": 0,
+      "firstSeenAt": 1785933168,
+      "url": "https://ethonchain.dev-dot.li"
+    },
+    {
+      "label": "unstake-radar",
+      "domain": "unstake-radar.dot",
+      "displayName": "Unstake Radar",
+      "description": "Live radar for Polkadot staking & unstaking. Ranks unstakes by volume, flags potential sell pressure with a red alarm beacon, and tracks the current 2-day unbonding countdown.",
+      "tier": 0,
+      "firstSeenAt": 1785927168,
+      "url": "https://unstake-radar.dev-dot.li"
+    },
+    {
+      "label": "gavin-pump",
+      "domain": "gavin-pump.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785921408,
+      "url": "https://gavin-pump.dev-dot.li"
+    },
+    {
+      "label": "substrade-hub",
+      "domain": "substrade-hub.dot",
+      "displayName": "SubsTrade Hub",
+      "description": "Fully on-chain order-book DEX on Asset Hub.",
+      "tier": 0,
+      "firstSeenAt": 1785919896,
+      "url": "https://substrade-hub.dev-dot.li"
+    },
+    {
+      "label": "waldmonster",
+      "domain": "waldmonster.dot",
+      "displayName": "WALDMONSTER",
+      "description": "9-oscillator drone workstation & groovebox for spherical soundscapes.",
+      "tier": 0,
+      "firstSeenAt": 1785867516,
+      "url": "https://waldmonster.dev-dot.li"
+    },
+    {
+      "label": "dashboard",
+      "domain": "dashboard.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785858420,
+      "url": "https://dashboard.dev-dot.li"
+    },
+    {
+      "label": "zzzzzzzzz",
+      "domain": "zzzzzzzzz.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857964,
+      "url": "https://zzzzzzzzz.dev-dot.li"
+    },
+    {
+      "label": "yyyyyyyyy",
+      "domain": "yyyyyyyyy.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857808,
+      "url": "https://yyyyyyyyy.dev-dot.li"
+    },
+    {
+      "label": "wwwwwwwww",
+      "domain": "wwwwwwwww.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857652,
+      "url": "https://wwwwwwwww.dev-dot.li"
+    },
+    {
+      "label": "vvvvvvvvv",
+      "domain": "vvvvvvvvv.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857484,
+      "url": "https://vvvvvvvvv.dev-dot.li"
+    },
+    {
+      "label": "uuuuuuuuu",
+      "domain": "uuuuuuuuu.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785857340,
+      "url": "https://uuuuuuuuu.dev-dot.li"
+    },
+    {
+      "label": "ttttttttt",
+      "domain": "ttttttttt.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856992,
+      "url": "https://ttttttttt.dev-dot.li"
+    },
+    {
+      "label": "sssssssss",
+      "domain": "sssssssss.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856884,
+      "url": "https://sssssssss.dev-dot.li"
+    },
+    {
+      "label": "dotfinder",
+      "domain": "dotfinder.dot",
+      "displayName": "Dotfinder",
+      "description": "Check DotNS name availability directly on Products Devnet.",
+      "tier": 0,
+      "firstSeenAt": 1785856740,
+      "url": "https://dotfinder.dev-dot.li"
+    },
+    {
+      "label": "rrrrrrrrr",
+      "domain": "rrrrrrrrr.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856692,
+      "url": "https://rrrrrrrrr.dev-dot.li"
+    },
+    {
+      "label": "domain-app",
+      "domain": "domain-app.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785856524,
+      "url": "https://domain-app.dev-dot.li"
+    },
+    {
+      "label": "domainservice",
+      "domain": "domainservice.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785856428,
+      "url": "https://domainservice.dev-dot.li"
+    },
+    {
+      "label": "qqqqqqqqq",
+      "domain": "qqqqqqqqq.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856344,
+      "url": "https://qqqqqqqqq.dev-dot.li"
+    },
+    {
+      "label": "ppppppppp",
+      "domain": "ppppppppp.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856248,
+      "url": "https://ppppppppp.dev-dot.li"
+    },
+    {
+      "label": "nnnnnnnnn",
+      "domain": "nnnnnnnnn.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856164,
+      "url": "https://nnnnnnnnn.dev-dot.li"
+    },
+    {
+      "label": "mmmmmmmmm",
+      "domain": "mmmmmmmmm.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785856068,
+      "url": "https://mmmmmmmmm.dev-dot.li"
+    },
+    {
+      "label": "lllllllll",
+      "domain": "lllllllll.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855960,
+      "url": "https://lllllllll.dev-dot.li"
+    },
+    {
+      "label": "jjjjjjjjj",
+      "domain": "jjjjjjjjj.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855864,
+      "url": "https://jjjjjjjjj.dev-dot.li"
+    },
+    {
+      "label": "iiiiiiiii",
+      "domain": "iiiiiiiii.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855768,
+      "url": "https://iiiiiiiii.dev-dot.li"
+    },
+    {
+      "label": "hhhhhhhhh",
+      "domain": "hhhhhhhhh.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855672,
+      "url": "https://hhhhhhhhh.dev-dot.li"
+    },
+    {
+      "label": "ggggggggg",
+      "domain": "ggggggggg.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855576,
+      "url": "https://ggggggggg.dev-dot.li"
+    },
+    {
+      "label": "fffffffff",
+      "domain": "fffffffff.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855480,
+      "url": "https://fffffffff.dev-dot.li"
+    },
+    {
+      "label": "eeeeeeeee",
+      "domain": "eeeeeeeee.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855384,
+      "url": "https://eeeeeeeee.dev-dot.li"
+    },
+    {
+      "label": "ddddddddd",
+      "domain": "ddddddddd.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855288,
+      "url": "https://ddddddddd.dev-dot.li"
+    },
+    {
+      "label": "ccccccccc",
+      "domain": "ccccccccc.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855192,
+      "url": "https://ccccccccc.dev-dot.li"
+    },
+    {
+      "label": "bbbbbbbbb",
+      "domain": "bbbbbbbbb.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785855096,
+      "url": "https://bbbbbbbbb.dev-dot.li"
+    },
+    {
+      "label": "xxxxxxxxx",
+      "domain": "xxxxxxxxx.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785854784,
+      "url": "https://xxxxxxxxx.dev-dot.li"
+    },
+    {
+      "label": "kkkkkkkkk",
+      "domain": "kkkkkkkkk.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785854688,
+      "url": "https://kkkkkkkkk.dev-dot.li"
+    },
+    {
+      "label": "aaaaaaaaa",
+      "domain": "aaaaaaaaa.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785854592,
+      "url": "https://aaaaaaaaa.dev-dot.li"
+    },
+    {
+      "label": "ooooooooo",
+      "domain": "ooooooooo.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785854496,
+      "url": "https://ooooooooo.dev-dot.li"
+    },
+    {
+      "label": "broadside",
+      "domain": "broadside.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785854424,
+      "url": "https://broadside.dev-dot.li"
+    },
+    {
+      "label": "zhuzhiliao",
+      "domain": "zhuzhiliao.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853860,
+      "url": "https://zhuzhiliao.dev-dot.li"
+    },
+    {
+      "label": "launchpad",
+      "domain": "launchpad.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853380,
+      "url": "https://launchpad.dev-dot.li"
+    },
+    {
+      "label": "paperplane",
+      "domain": "paperplane.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853284,
+      "url": "https://paperplane.dev-dot.li"
+    },
+    {
+      "label": "stargazer",
+      "domain": "stargazer.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853188,
+      "url": "https://stargazer.dev-dot.li"
+    },
+    {
+      "label": "blueprint",
+      "domain": "blueprint.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853092,
+      "url": "https://blueprint.dev-dot.li"
+    },
+    {
+      "label": "hydration",
+      "domain": "hydration.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853020,
+      "url": "https://hydration.dev-dot.li"
+    },
+    {
+      "label": "wonderland",
+      "domain": "wonderland.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785853008,
+      "url": "https://wonderland.dev-dot.li"
+    },
+    {
+      "label": "adventure",
+      "domain": "adventure.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852888,
+      "url": "https://adventure.dev-dot.li"
+    },
+    {
+      "label": "workspace",
+      "domain": "workspace.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852804,
+      "url": "https://workspace.dev-dot.li"
+    },
+    {
+      "label": "discovery",
+      "domain": "discovery.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852708,
+      "url": "https://discovery.dev-dot.li"
+    },
+    {
+      "label": "community",
+      "domain": "community.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852600,
+      "url": "https://community.dev-dot.li"
+    },
+    {
+      "label": "lighthouse",
+      "domain": "lighthouse.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785852504,
+      "url": "https://lighthouse.dev-dot.li"
+    },
+    {
+      "label": "neo-app-demo",
+      "domain": "neo-app-demo.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1785851964,
+      "url": "https://neo-app-demo.dev-dot.li"
+    },
+    {
+      "label": "archelabs",
+      "domain": "archelabs.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1785851244,
+      "url": "https://archelabs.dev-dot.li"
+    },
+    {
+      "label": "countersign",
+      "domain": "countersign.dot",
+      "displayName": "countersign",
+      "description": "Record a document sign-off on chain. The document never leaves your browser.",
+      "tier": 0,
+      "firstSeenAt": 1785842160,
+      "url": "https://countersign.dev-dot.li"
+    },
+    {
+      "label": "vault-control",
+      "domain": "vault-control.dot",
+      "displayName": "vault-control",
+      "description": "A security-first control center for your Polkadot accounts: multisigs, keyless cold vaults, delegations - every action approved on your phone.",
+      "tier": 0,
+      "firstSeenAt": 1785840480,
+      "url": "https://vault-control.dev-dot.li"
+    },
     {
       "label": "imthebest",
       "domain": "imthebest.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785836604,
       "url": "https://imthebest.dev-dot.li"
     },
@@ -32,9 +734,9 @@
     {
       "label": "chirpwatch",
       "domain": "chirpwatch.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "chirpwatch",
+      "description": "Are the chirp contracts answering, and are their numbers moving? Read live from Asset Hub, with no indexer in between.",
+      "tier": 0,
       "firstSeenAt": 1785830064,
       "url": "https://chirpwatch.dev-dot.li"
     },
@@ -149,9 +851,9 @@
     {
       "label": "peoplewiki",
       "domain": "peoplewiki.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "PeopleWiki",
+      "description": "What the Polkadot products devnet actually does — written down by the people using it, kept on chain, open to anyone with a mask.",
+      "tier": 0,
       "firstSeenAt": 1785759444,
       "url": "https://peoplewiki.dev-dot.li"
     },
@@ -169,7 +871,7 @@
       "domain": "mini-lucky-dev.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785743688,
       "url": "https://mini-lucky-dev.dev-dot.li"
     },
@@ -203,9 +905,9 @@
     {
       "label": "chirponchain",
       "domain": "chirponchain.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "chirp",
+      "description": "X, on chain. Every post, like, follow and reply is a contract call on Asset Hub — no server holds any of it, and reading needs no wallet. You post as a mask bound to your account, so a chirp cannot be forged.",
+      "tier": 0,
       "firstSeenAt": 1785674160,
       "url": "https://chirponchain.dev-dot.li"
     },
@@ -250,7 +952,7 @@
       "domain": "hello-world-pricey-app.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1785611052,
       "url": "https://hello-world-pricey-app.dev-dot.li"
     },
@@ -321,7 +1023,7 @@
       "label": "chopdotproof01",
       "domain": "chopdotproof01.dot",
       "displayName": "ChopDot",
-      "description": "Group money coordination for expenses, savings circles, emergency pots, and community funds.",
+      "description": "Split shared spending, collect payments, and keep one clear group record.",
       "tier": 0,
       "firstSeenAt": 1785508176,
       "url": "https://chopdotproof01.dev-dot.li"
@@ -491,9 +1193,9 @@
     {
       "label": "dot-store",
       "domain": "dot-store.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "dot-store",
+      "description": "Every app registered on the Polkadot Products devnet, with real screenshots and on-chain reviews. Read from the chain on every load.",
+      "tier": 0,
       "firstSeenAt": 1785317484,
       "url": "https://dot-store.dev-dot.li"
     },
