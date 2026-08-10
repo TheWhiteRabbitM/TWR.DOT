@@ -28,8 +28,42 @@ let scanned = 0;
 let firstTs = null;
 let lastTs = null;
 
+/**
+ * Contract calls actually submitted in the window.
+ *
+ * WHY THIS COUNTER HAD TO EXIST
+ *   The revert rate used to divide by `contractEvents + reverts`, which is an
+ *   EVENT count added to an EXTRINSIC count. They are different units. A single
+ *   successful call emits nought, one or ten events, and a call that writes
+ *   state without emitting is invisible to it entirely. On a quiet chain that
+ *   put three events beside twenty-five reverts and announced "89% reverted",
+ *   a number that was never measured.
+ *
+ *   The right denominator is the number of calls: every `revive` extrinsic in
+ *   the block. `EthExtrinsicRevert` is then the numerator, and both sides are
+ *   counted in the same thing.
+ *
+ * WHY THE EXTRINSIC IS THE UNIT AND NOT ExtrinsicFailed
+ *   On revive an EVM call that reverts still leaves a SUCCESSFUL extrinsic:
+ *   the transaction was included and paid for, the call inside it undid itself.
+ *   That is exactly why `EthExtrinsicRevert` exists as its own event. Counting
+ *   `system.ExtrinsicFailed` instead would report almost nothing.
+ */
+let contractCalls = 0;
+
 for (let n = from; n <= head; n += 1) {
   const hash = await api.rpc.chain.getBlockHash(n);
+
+  try {
+    const signed = await api.rpc.chain.getBlock(hash);
+    for (const ex of signed.block.extrinsics) {
+      if (ex.method.section === 'revive') contractCalls += 1;
+    }
+  } catch {
+    // A block whose body will not decode is not a block with no calls. It is
+    // left out of both sides rather than counted as zero.
+  }
+
   let events;
   try {
     events = await api.query.system.events.at(hash);
@@ -62,6 +96,10 @@ const out = {
   windowSeconds: spanSec,
   contractEvents,
   activeContracts: contracts.size,
+  /** Every `revive` extrinsic in the window: the denominator a revert rate
+   *  actually has. Absent from data written before this counter existed, and
+   *  the dashboard says "not measured" rather than inventing one. */
+  contractCalls,
   reverts,
   topContracts: byAddress.slice(0, 8).map(([address, events]) => ({ address, events })),
 

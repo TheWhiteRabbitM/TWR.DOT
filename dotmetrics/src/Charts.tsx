@@ -606,6 +606,14 @@ export interface EcoSnapshot {
   windowSeconds: number;
   contractEvents: number;
   activeContracts: number;
+  /**
+   * Contract calls submitted in the window: every revive extrinsic.
+   *
+   * Optional because snapshots written before this counter existed do not
+   * carry it, and a reader that finds it missing shows no rate at all
+   * rather than falling back to the wrong one.
+   */
+  contractCalls?: number;
   reverts: number;
   topContracts: { address: string; events: number }[];
   /**
@@ -648,10 +656,29 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
   const [tipXY, setTipXY] = useState<{ left: number; top: number; wrap: number; wrapH: number } | null>(null);
 
   const measured = eco.windowBlocks > 0;
-  const calls = eco.contractEvents + eco.reverts;
+
+  /*
+   * Calls, counted in calls.
+   *
+   * This used to divide by contractEvents + reverts, which adds an EVENT
+   * count to an EXTRINSIC count. One call emits nought, one or ten events,
+   * and a call that only writes state emits none at all, so the denominator
+   * was never the number of calls and the percentage was never a rate. It
+   * read 89% off three events beside twenty-five reverts.
+   *
+   * A percentage off a handful is an anecdote anyway: this window is five
+   * minutes of a devnet and has been seen holding ten calls, every one an
+   * unsigned revive.ethTransact from the same sender. Below the floor the
+   * counts are shown and the percentage is not, because "100% reverted" out
+   * of ten reads as a broken chain and means nothing of the kind.
+   */
+  const MIN_FOR_RATE = 30;
+  const calls = eco.contractCalls;
+  const haveCalls = typeof calls === 'number' && calls > 0;
+  const rateWorthQuoting = haveCalls && (calls as number) >= MIN_FOR_RATE;
   const blockSec = measured ? eco.windowSeconds / eco.windowBlocks : 0;
   const perK = measured ? (eco.contractEvents / eco.windowBlocks) * 1000 : 0;
-  const revertPct = calls > 0 ? (eco.reverts / calls) * 100 : 0;
+  const revertPct = haveCalls ? (eco.reverts / (calls as number)) * 100 : 0;
   const windowMin = Math.max(1, Math.round(eco.windowSeconds / 60));
   const top = eco.topContracts[0];
 
@@ -675,20 +702,20 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
                 blocks: eco.windowBlocks,
                 reverts: eco.reverts,
                 events: eco.contractEvents,
-                calls,
+                calls: calls ?? 0,
               })
             : t('vitals.aria.none')
         }
       >
-        {measured && calls > 0 && (
+        {measured && haveCalls && (
           <>
             <span
               className="vitals-seg is-revert"
-              style={{ width: `${(eco.reverts / calls) * 100}%` }}
+              style={{ width: `${(eco.reverts / (calls as number)) * 100}%` }}
             />
             <span
               className="vitals-seg is-event"
-              style={{ width: `${(eco.contractEvents / calls) * 100}%` }}
+              style={{ width: `${(Math.max(0, (calls as number) - eco.reverts) / (calls as number)) * 100}%` }}
             />
           </>
         )}
@@ -731,20 +758,30 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
           </i>
         </span>
         <span className="vitals-read">
-          <b className={`mono${calls > 0 ? ' is-warn' : ''}`}>
-            {calls > 0
+          <b className={`mono${rateWorthQuoting ? ' is-warn' : ''}`}>
+            {rateWorthQuoting
               ? t('vitals.reverts', { pct: Math.round(revertPct) })
-              : t('vitals.measuring')}
+              : haveCalls
+                ? t('vitals.reverts.few', {
+                    reverts: fmt(eco.reverts, lang),
+                    calls: fmt(calls as number, lang),
+                  })
+                : t('vitals.measuring')}
           </b>
           <i>
-            {calls > 0
+            {rateWorthQuoting
               ? t('vitals.reverts.sub', {
                   reverts: fmt(eco.reverts, lang),
-                  calls: fmt(calls, lang),
+                  calls: fmt(calls as number, lang),
                   blocks: fmt(eco.windowBlocks, lang),
                   minutes: windowMin,
                 })
-              : t('vitals.reverts.none')}
+              : haveCalls
+                ? t('vitals.reverts.few.sub', {
+                    blocks: fmt(eco.windowBlocks, lang),
+                    minutes: windowMin,
+                  })
+                : t('vitals.reverts.none')}
           </i>
         </span>
       </div>
@@ -756,7 +793,7 @@ export function ChainVitals({ eco }: { eco: EcoSnapshot }) {
         >
           <strong>
             {t('vitals.tip.calls', {
-              calls: fmt(calls, lang),
+              calls: fmt(calls ?? 0, lang),
               blocks: fmt(eco.windowBlocks, lang),
             })}
           </strong>
