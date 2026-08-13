@@ -25,8 +25,13 @@
  *
  *   node index-apps.mjs [--from N] [--to N] [--window N] [--reset]
  *
- * Resumable: the last scanned block is checkpointed, so a periodic run keeps
- * the directory fresh without rescanning history.
+ * Resumable and bounded: the scan checkpoints every CHECKPOINT_EVERY blocks, and
+ * one run advances at most MAX_SPAN blocks unless --to says otherwise. Both
+ * matter together — a run that is killed partway now keeps what it walked, so
+ * the backlog shrinks even when the job does not finish. Before that, a kill
+ * discarded the whole run and the next one restarted from the same block with
+ * more chain to cover, which is how the indexer stalled for three days in
+ * August 2026 behind a workflow timeout that GitHub reports as "cancelled".
  */
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import fs from 'node:fs';
@@ -41,6 +46,19 @@ const STATE = path.join(HERE, 'state.json');
 const RPC = process.env.RPC ?? 'wss://asset-hub-paseo-rpc.n.dwellir.com';
 const REGISTRY = '0x527b08a640b527a3dae0c4be04d7344e430b6e50';
 const CONCURRENCY = Number(process.env.CONCURRENCY ?? 20);
+
+/**
+ * Most blocks one run will scan by default. Without a ceiling the range is
+ * `lastBlock+1 … head`, which is fine while the job keeps up and fatal once it
+ * does not: a run killed by the workflow timeout wrote no checkpoint, so the
+ * next run inherited the same backlog plus another hour of chain, and each
+ * failure made the next failure more certain. 20k is ~12 hours of chain at the
+ * observed ~1,700 blocks/hour, so a stalled indexer closes a day of backlog per
+ * run while a healthy one never comes near the cap. An explicit --to overrides.
+ */
+const MAX_SPAN = Number(process.env.MAX_SPAN ?? 20_000);
+/** Blocks between checkpoints — the work a timeout kill can cost us. */
+const CHECKPOINT_EVERY = Number(process.env.CHECKPOINT_EVERY ?? 2_000);
 
 /** A .dot label: starts with a letter, 4–63 chars, lowercase alnum + hyphen. */
 const LABEL_RE = /^[a-z][a-z0-9-]{3,62}$/;
@@ -61,6 +79,16 @@ const readJson = (file, fallback) => {
     return fallback;
   }
 };
+
+/**
+ * Merge a patch into state.json, spread over the CURRENT file re-read at write
+ * time: state.json also carries the directory-upload and site-publish
+ * bookkeeping written by directory-digest.mjs and app-tree-hash.mjs, and
+ * neither an ordinary run nor --reset (which resets the SCAN, not the publish
+ * history) may drop it.
+ */
+const saveState = (patch) =>
+  fs.writeFileSync(STATE, JSON.stringify({ ...readJson(STATE, {}), ...patch }, null, 2) + '\n');
 
 /** Printable-ascii runs inside a hex blob. */
 function asciiRuns(hex, min = 4) {
@@ -89,10 +117,17 @@ async function main() {
   const api = await ApiPromise.create({ provider: new WsProvider(RPC), noInitWarn: true });
   const head = (await api.rpc.chain.getHeader()).number.toNumber();
 
-  const to = flag('to', head);
-  const from = flag('from', state.lastBlock ? state.lastBlock + 1 : to - flag('window', 8000));
+  const from = flag('from', state.lastBlock ? state.lastBlock + 1 : head - flag('window', 8000));
+  // Cap the default span. `from` no longer derives from `to` — it is where the
+  // last run actually got to, and `to` is however far we can responsibly reach
+  // from there this run.
+  const explicitTo = flag('to', null);
+  const to = explicitTo ?? Math.min(head, from + MAX_SPAN - 1);
+  const backlog = head - to;
 
-  console.log(`indexing ${from} … ${to}  (head ${head})`);
+  console.log(
+    `indexing ${from} … ${to}  (head ${head}${backlog > 0 ? `, ${backlog} still behind` : ''})`,
+  );
 
   let scanned = 0;
   let registryBlocks = 0;
@@ -143,9 +178,27 @@ async function main() {
     }
   }
 
-  const queue = [];
-  for (let n = from; n <= to; n += 1) queue.push(n);
-  while (queue.length) await Promise.all(queue.splice(0, CONCURRENCY).map(scanBlock));
+  // Scan in chunks and checkpoint after each one. The verification pass below
+  // is what admits a candidate, and it runs only once the whole range is walked
+  // — so a checkpoint advances `lastBlock` past blocks whose candidates are not
+  // yet verified. Those go into `pending`, which exists for exactly this case
+  // and is re-verified next run, so nothing found is lost if we are killed.
+  const carried = Array.isArray(state.pending) ? state.pending : [];
+  for (let start = from; start <= to; start += CHECKPOINT_EVERY) {
+    const end = Math.min(start + CHECKPOINT_EVERY - 1, to);
+    const queue = [];
+    for (let n = start; n <= end; n += 1) queue.push(n);
+    while (queue.length) await Promise.all(queue.splice(0, CONCURRENCY).map(scanBlock));
+
+    saveState({
+      lastBlock: end,
+      updatedAt: new Date().toISOString(),
+      registry: REGISTRY,
+      rpc: RPC,
+      pending: [...new Set([...carried, ...candidates.keys()])],
+    });
+    if (end < to) console.log(`  checkpoint @ ${end}`);
+  }
 
   // ---- verification: the registry decides what is real -------------------
   // Everything is re-checked every run, not just this window's finds: an app
@@ -204,25 +257,24 @@ async function main() {
   out.excluded = [...new Set([...ghosts, ...unresolvedGhosts])].sort();
 
   fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + '\n');
-  // Spread over the CURRENT file, re-read at write time: state.json also
-  // carries the directory-upload and site-publish bookkeeping written by
-  // directory-digest.mjs and app-tree-hash.mjs, and neither an ordinary run
-  // nor --reset (which resets the SCAN, not the publish history) may drop it.
-  fs.writeFileSync(
-    STATE,
-    JSON.stringify(
-      {
-        ...readJson(STATE, {}),
-        lastBlock: to,
-        updatedAt: new Date().toISOString(),
-        registry: REGISTRY,
-        rpc: RPC,
-        pending: failed,
-      },
-      null,
-      2,
-    ),
-  );
+  // Every candidate in the scanned range has now been verified, so `pending`
+  // drops back to just the owner reads that failed.
+  saveState({
+    lastBlock: to,
+    updatedAt: new Date().toISOString(),
+    registry: REGISTRY,
+    rpc: RPC,
+    pending: failed,
+  });
+
+  // A timeout kill is reported by GitHub as "cancelled", not "failure", so a
+  // stalled indexer raises no alarm on its own. Say it out loud instead.
+  if (backlog > 0) {
+    console.log(
+      `::warning title=dotmetrics indexer behind::${backlog} blocks behind head ` +
+        `(at ${to}, head ${head}) — closing up to ${MAX_SPAN} per run`,
+    );
+  }
 
   console.log(`\nscanned ${scanned} blocks · ${registryBlocks} with registry activity`);
   console.log(
