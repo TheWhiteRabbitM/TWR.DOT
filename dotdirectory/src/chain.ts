@@ -205,6 +205,27 @@ export interface Records {
   deployed: boolean;
   /** True when a manifest record exists. */
   described: boolean;
+  /** The owner-written title, when the manifest carries one. */
+  displayName: string | null;
+  /** The owner-written description. The most useful thing a name publishes. */
+  description: string | null;
+}
+
+/**
+ * Manifests are JSON written by the name's owner, shaped
+ * `{ $v, displayName, description, icon: { cid, format } }`. Anything else — a
+ * truncated record, a hand-edited string, a future version — must not take the
+ * row down with it, so a parse failure only means "no title, no description"
+ * while `described` stays true: the manifest exists either way.
+ */
+function parseManifest(raw: string): { displayName: string | null; description: string | null } {
+  try {
+    const m = JSON.parse(raw) as Record<string, unknown>;
+    const str = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim() : null);
+    return { displayName: str(m.displayName), description: str(m.description) };
+  } catch {
+    return { displayName: null, description: null };
+  }
 }
 
 export type Tier = 'described' | 'deployed' | 'registered';
@@ -238,10 +259,16 @@ export async function readRecords(labels: string[]): Promise<Map<string, Records
       const clean = String(category ?? '')
         .trim()
         .toLowerCase();
+      const raw = String(manifest ?? '').trim();
+      const { displayName, description } = raw
+        ? parseManifest(raw)
+        : { displayName: null, description: null };
       out.set(label, {
         category: clean || null,
         deployed: Boolean(hash) && hash !== '0x' && hash !== '0x00',
-        described: Boolean(String(manifest ?? '').trim()),
+        described: Boolean(raw),
+        displayName,
+        description,
       });
     }),
   );

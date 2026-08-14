@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CompositionChart, GrowthChart } from './Charts';
 import {
   DIRECTORY,
   readDirectory,
@@ -46,6 +47,8 @@ export default function App() {
   const [records, setRecords] = useState<Map<string, Records>>(new Map());
   const [query, setQuery] = useState('');
   const [tierFilter, setTierFilter] = useState<Tier | 'all'>('all');
+  /** A category name, 'all', or '__none' for names that declared none. */
+  const [catFilter, setCatFilter] = useState<string>('all');
   const [sort, setSort] = useState<SortKey>('arrived');
   const [asc, setAsc] = useState(false);
   const [detailError, setDetailError] = useState<string | null>(null);
@@ -87,15 +90,36 @@ export default function App() {
     return t;
   }, [records]);
 
+  /** Categories are owner-declared, so the list is whatever they actually used. */
+  const categories = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const r of records.values()) {
+      if (r.category) counts.set(r.category, (counts.get(r.category) ?? 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  }, [records]);
+
+  const uncategorised = useMemo(
+    () => [...records.values()].filter((r) => !r.category).length,
+    [records],
+  );
+
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     const out = rows.filter((r) => {
       if (tierFilter !== 'all' && (!r.rec || tierOf(r.rec) !== tierFilter)) return false;
+      if (catFilter === '__none') {
+        if (r.rec?.category) return false;
+      } else if (catFilter !== 'all' && r.rec?.category !== catFilter) {
+        return false;
+      }
       if (!q) return true;
       return (
         r.label.includes(q) ||
         (r.owner ?? '').toLowerCase().includes(q) ||
-        (r.rec?.category ?? '').includes(q)
+        (r.rec?.category ?? '').includes(q) ||
+        (r.rec?.displayName ?? '').toLowerCase().includes(q) ||
+        (r.rec?.description ?? '').toLowerCase().includes(q)
       );
     });
     const dir = asc ? 1 : -1;
@@ -106,7 +130,7 @@ export default function App() {
       const rb = b.rec ? TIER_RANK[tierOf(b.rec)] : 9;
       return (ra - rb) * dir || a.label.localeCompare(b.label);
     });
-  }, [rows, query, tierFilter, sort, asc]);
+  }, [rows, query, tierFilter, catFilter, sort, asc]);
 
   const head = (key: SortKey, text: string) => (
     <button
@@ -181,12 +205,52 @@ export default function App() {
             </button>
           </div>
 
+          <div className="charts">
+            <GrowthChart labels={state.snapshot.labels} />
+            <CompositionChart records={records} total={state.snapshot.labels.length} />
+          </div>
+
+          {/* Categories are declared by the owners, so this row is whatever they
+              actually chose — not a taxonomy we imposed. "unclassified" is shown
+              with the rest because how much of the ecosystem says nothing about
+              itself is a fact worth seeing, not one worth hiding. */}
+          {categories.length > 0 ? (
+            <div className="cats">
+              <button
+                type="button"
+                className={`catchip${catFilter === 'all' ? ' on' : ''}`}
+                onClick={() => setCatFilter('all')}
+              >
+                all <span>{records.size}</span>
+              </button>
+              {categories.map(([name, n]) => (
+                <button
+                  type="button"
+                  key={name}
+                  className={`catchip${catFilter === name ? ' on' : ''}`}
+                  onClick={() => setCatFilter((v) => (v === name ? 'all' : name))}
+                >
+                  {name} <span>{n}</span>
+                </button>
+              ))}
+              {uncategorised > 0 ? (
+                <button
+                  type="button"
+                  className={`catchip muted${catFilter === '__none' ? ' on' : ''}`}
+                  onClick={() => setCatFilter((v) => (v === '__none' ? 'all' : '__none'))}
+                >
+                  unclassified <span>{uncategorised}</span>
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+
           <div className="controls">
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="filter by name, owner or category…"
+              placeholder="filter by name, title, description or owner…"
               aria-label="Filter the directory"
             />
             {tierFilter !== 'all' ? (
@@ -206,7 +270,6 @@ export default function App() {
             <div className="tr th-row" role="row">
               {head('name', 'Name')}
               {head('state', 'State')}
-              <span className="th static">Category</span>
               <span className="th static">Owner</span>
               {head('arrived', 'Arrived')}
             </div>
@@ -226,6 +289,9 @@ export default function App() {
                   <span className="td name">
                     {r.label}
                     <em>.dot</em>
+                    {r.rec?.displayName && r.rec.displayName.toLowerCase() !== r.label ? (
+                      <span className="alias">{r.rec.displayName}</span>
+                    ) : null}
                   </span>
                   <span className="td" data-label="State">
                     {r.rec ? (
@@ -233,9 +299,7 @@ export default function App() {
                     ) : (
                       <span className="pending">reading…</span>
                     )}
-                  </span>
-                  <span className="td cat" data-label="Category">
-                    {r.rec?.category ?? ''}
+                    {r.rec?.category ? <span className="cat">{r.rec.category}</span> : null}
                   </span>
                   <span className="td owner" data-label="Owner">
                     {r.owner ? short(r.owner) : '—'}
@@ -243,6 +307,12 @@ export default function App() {
                   <span className="td arrived" data-label="Arrived">
                     {r.firstSeenAt ? DATE_FMT.format(r.firstSeenAt) : '—'}
                   </span>
+                  {/* The description gets its own line rather than a column: it
+                      is free text of unpredictable length, and squeezing it into
+                      a fifth column is what pushed the table off the screen. */}
+                  {r.rec?.description ? (
+                    <span className="td desc">{r.rec.description}</span>
+                  ) : null}
                 </a>
               ))
             )}
