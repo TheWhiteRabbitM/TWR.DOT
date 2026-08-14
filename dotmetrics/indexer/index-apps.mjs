@@ -52,11 +52,18 @@ const CONCURRENCY = Number(process.env.CONCURRENCY ?? 20);
  * `lastBlock+1 … head`, which is fine while the job keeps up and fatal once it
  * does not: a run killed by the workflow timeout wrote no checkpoint, so the
  * next run inherited the same backlog plus another hour of chain, and each
- * failure made the next failure more certain. 20k is ~12 hours of chain at the
- * observed ~1,700 blocks/hour, so a stalled indexer closes a day of backlog per
- * run while a healthy one never comes near the cap. An explicit --to overrides.
+ * failure made the next failure more certain. An explicit --to overrides.
+ *
+ * The size is measured, not guessed. The scan runs at ~18 blocks/second against
+ * a public RPC, so 20,000 blocks is ~18.5 minutes of scanning; add the seven
+ * other scripts in the same workflow step (~12 minutes) and the job landed at
+ * ~30.5 against a 30-minute timeout — which is why the first attempt at this fix
+ * died at 30.3 minutes with clockwork regularity. 6,000 blocks is ~5.5 minutes
+ * of scanning and leaves the step comfortably inside the ceiling, so it FINISHES
+ * and its state gets committed. At 24 runs a day that is ~144k blocks against
+ * ~41k of accrual: a backlog shrinks by ~100k a day instead of growing.
  */
-const MAX_SPAN = Number(process.env.MAX_SPAN ?? 20_000);
+const MAX_SPAN = Number(process.env.MAX_SPAN ?? 6_000);
 /** Blocks between checkpoints — the work a timeout kill can cost us. */
 const CHECKPOINT_EVERY = Number(process.env.CHECKPOINT_EVERY ?? 2_000);
 

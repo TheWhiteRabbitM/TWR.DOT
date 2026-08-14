@@ -160,7 +160,13 @@ jobs:
           bash ../.github/scripts/pad-publish.sh ./dist dotmetrics.dot
           node indexer/app-tree-hash.mjs commit
 
+      # always(): a runner's disk is thrown away, so the indexer's own
+      # checkpointing buys nothing unless what it wrote gets committed. Without
+      # this the commit is skipped whenever an earlier step is killed, and a run
+      # that scanned 19,000 blocks before the timeout persists none of them —
+      # which is exactly how the August 2026 stall survived its first fix.
       - name: Commit the grown history back to the repo
+        if: always()
         working-directory: .
         run: |
           set -euo pipefail
