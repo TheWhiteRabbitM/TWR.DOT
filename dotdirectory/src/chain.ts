@@ -103,6 +103,11 @@ function connect() {
   return cached;
 }
 
+/** The same connection everything else reads through — exported so the sweep
+ *  cannot open a second one. A racing third connection that failed silently is
+ *  exactly how the hourly heatmap came out uniformly empty. */
+export const sharedProvider = connect;
+
 async function openConnection(): Promise<{
   provider: JsonRpcProvider;
   endpoint: string;

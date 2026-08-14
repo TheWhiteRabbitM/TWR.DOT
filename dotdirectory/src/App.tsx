@@ -11,6 +11,8 @@ import { HeroPanel, RegistrationGrid } from './Charts';
  * served from Bulletin. It arrives only when there is a host to sign with.
  */
 const RegisterPanel = lazy(() => import('./RegisterPanel'));
+import { Discoveries } from './Discoveries';
+import { Retention } from './Retention';
 import {
   DIRECTORY,
   readDirectory,
@@ -100,6 +102,14 @@ export default function App({ app }: { app: App | null }) {
     for (const r of records.values()) t[tierOf(r)] += 1;
     return t;
   }, [records]);
+
+  /** Rebuilt only when the snapshot is, so the sweep's effect does not restart
+   *  on every keystroke in the filter box. */
+  const known = useMemo(
+    () =>
+      new Set(state.phase === 'ready' ? state.snapshot.labels.map((l) => l.label) : []),
+    [state],
+  );
 
   /** Categories are owner-declared, so the list is whatever they actually used. */
   const categories = useMemo(() => {
@@ -322,6 +332,10 @@ export default function App({ app }: { app: App | null }) {
             )}
           </div>
 
+          {state.phase === 'ready' ? (
+            <Discoveries known={known} seed={state.snapshot.blockNumber} onAnnounce={null} />
+          ) : null}
+
           {detailError ? (
             <p className="detail-error">
               Records could not be read in full: {detailError}. The list above is still what the
@@ -330,6 +344,7 @@ export default function App({ app }: { app: App | null }) {
           ) : null}
 
           <footer>
+            <Retention />
             <div className="prov">
               <span>
                 block <strong>{state.snapshot.blockNumber.toLocaleString('en-GB')}</strong>

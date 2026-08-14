@@ -34,6 +34,21 @@ function inlineCss(): Plugin {
 export default defineConfig({
   plugins: [react(), inlineCss()],
   base: './',
+  /**
+   * When this bundle was built — which is within minutes of when it was
+   * published, because the workflow does both in one job.
+   *
+   * The page needs it to report its own age. Bulletin retention is a window of
+   * roughly fourteen days and renewal means republishing, so a bundle that has
+   * not been rebuilt in a fortnight is a bundle about to fall off the network.
+   * The visitor cannot be warned AFTER that happens — an expired page cannot
+   * serve a warning — so the only useful moment is while it is still merely
+   * overdue, and age is the one fact the bundle can know about itself for
+   * certain without asking anything.
+   */
+  define: {
+    __BUILT_AT__: JSON.stringify(new Date().toISOString()),
+  },
   build: {
     outDir: 'dist',
     target: 'es2022',
