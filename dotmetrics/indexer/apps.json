@@ -3300,6 +3300,17 @@
     "tier": 0,
     "firstSeenAt": 1786459044
   },
+  "p2p-lending": {
+    "label": "p2p-lending",
+    "domain": "p2p-lending.dot",
+    "url": "https://p2p-lending.dev-dot.li",
+    "firstSeenBlock": 12107382,
+    "owner": "0x65109534F24535EF49d755C4b67472Dc21237dc3",
+    "contenthash": "bafybeihkfozavuxwcyzv64ztpcn5cfdmio75ow3bujj6g6wufexvg3i6r4",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786481124
+  },
   "excluded": [
     "a5wz",
     "adddd",
