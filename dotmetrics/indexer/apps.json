@@ -3311,6 +3311,17 @@
     "tier": 1,
     "firstSeenAt": 1786481124
   },
+  "openraonchain": {
+    "label": "openraonchain",
+    "domain": "openraonchain.dot",
+    "url": "https://openraonchain.dev-dot.li",
+    "firstSeenBlock": 12116950,
+    "owner": "0xFF54A5a1FDAc91bb4F2b4fBf4bfFf37CdbEA333f",
+    "contenthash": "bafybeido2bf7z7qbf6dxdu7wcchrinqluisxigzi2qsn73iet7qztpxh7y",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786500804
+  },
   "excluded": [
     "a5wz",
     "adddd",
@@ -3468,6 +3479,7 @@
     "w3mx",
     "wfkj",
     "widget",
+    "wryz",
     "wsxal",
     "wtnd",
     "xe0g",
