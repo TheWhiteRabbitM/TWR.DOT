@@ -9,17 +9,30 @@ import {
   type Tier,
 } from './chain';
 
-const DATE_FMT = new Intl.DateTimeFormat('en-GB', {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-});
-
 const TIER_LABEL: Record<Tier, string> = {
   described: 'described',
   deployed: 'deployed',
   registered: 'name only',
 };
+
+/** Best first, so sorting by state puts the most complete apps on top. */
+const TIER_RANK: Record<Tier, number> = { described: 0, deployed: 1, registered: 2 };
+
+const DATE_FMT = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+});
+
+type SortKey = 'name' | 'state' | 'arrived';
+
+interface Row {
+  label: string;
+  owner: string | null;
+  firstSeenBlock: number;
+  firstSeenAt: Date | null;
+  rec: Records | null;
+}
 
 type State =
   | { phase: 'loading' }
@@ -32,9 +45,9 @@ export default function App() {
   const [state, setState] = useState<State>({ phase: 'loading' });
   const [records, setRecords] = useState<Map<string, Records>>(new Map());
   const [query, setQuery] = useState('');
-  const [groupByOwner, setGroupByOwner] = useState(false);
   const [tierFilter, setTierFilter] = useState<Tier | 'all'>('all');
-  /** A secondary read that failed. Shown rather than swallowed. */
+  const [sort, setSort] = useState<SortKey>('arrived');
+  const [asc, setAsc] = useState(false);
   const [detailError, setDetailError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -45,9 +58,6 @@ export default function App() {
       const snapshot = await readDirectory();
       setState({ phase: 'ready', snapshot });
       const names = snapshot.labels.map((l) => l.label);
-
-      // Owners and arrival blocks now come with the list itself, so the only
-      // remaining pass is the resolver records.
       void (async () => {
         try {
           setRecords(await readRecords(names));
@@ -66,15 +76,20 @@ export default function App() {
 
   const labels = state.phase === 'ready' ? state.snapshot.labels : [];
 
-  const filtered = useMemo(() => {
+  const rows: Row[] = useMemo(
+    () => labels.map((l) => ({ ...l, rec: records.get(l.label) ?? null })),
+    [labels, records],
+  );
+
+  const tally = useMemo(() => {
+    const t: Record<Tier, number> = { described: 0, deployed: 0, registered: 0 };
+    for (const r of records.values()) t[tierOf(r)] += 1;
+    return t;
+  }, [records]);
+
+  const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const rows = labels.map((l) => ({
-      label: l.label,
-      owner: l.owner,
-      firstSeenAt: l.firstSeenAt,
-      rec: records.get(l.label) ?? null,
-    }));
-    return rows.filter((r) => {
+    const out = rows.filter((r) => {
       if (tierFilter !== 'all' && (!r.rec || tierOf(r.rec) !== tierFilter)) return false;
       if (!q) return true;
       return (
@@ -83,59 +98,42 @@ export default function App() {
         (r.rec?.category ?? '').includes(q)
       );
     });
-  }, [labels, records, query, tierFilter]);
+    const dir = asc ? 1 : -1;
+    return out.sort((a, b) => {
+      if (sort === 'name') return a.label.localeCompare(b.label) * dir;
+      if (sort === 'arrived') return (a.firstSeenBlock - b.firstSeenBlock) * dir;
+      const ra = a.rec ? TIER_RANK[tierOf(a.rec)] : 9;
+      const rb = b.rec ? TIER_RANK[tierOf(b.rec)] : 9;
+      return (ra - rb) * dir || a.label.localeCompare(b.label);
+    });
+  }, [rows, query, tierFilter, sort, asc]);
 
-  /** How many names sit at each tier, once their records have landed. */
-  const tally = useMemo(() => {
-    const t: Record<Tier, number> = { described: 0, deployed: 0, registered: 0 };
-    for (const r of records.values()) t[tierOf(r)] += 1;
-    return t;
-  }, [records]);
-
-  const byOwner = useMemo(() => {
-    const map = new Map<string, string[]>();
-    for (const r of filtered) {
-      if (!r.owner) continue;
-      const list = map.get(r.owner) ?? [];
-      list.push(r.label);
-      map.set(r.owner, list);
-    }
-    return [...map.entries()].sort((a, b) => b[1].length - a[1].length);
-  }, [filtered]);
+  const head = (key: SortKey, text: string) => (
+    <button
+      type="button"
+      className={`th${sort === key ? ' sorted' : ''}`}
+      aria-sort={sort === key ? (asc ? 'ascending' : 'descending') : 'none'}
+      onClick={() => (sort === key ? setAsc((v) => !v) : (setSort(key), setAsc(key === 'name')))}
+    >
+      {text}
+      <span className="caret">{sort === key ? (asc ? '▲' : '▼') : ''}</span>
+    </button>
+  );
 
   return (
     <div className="wrap">
       <header>
-        <p className="eyebrow">Read live from Asset Hub · no indexer · no snapshot</p>
+        <p className="eyebrow">
+          <span className="dot" aria-hidden="true" /> read live from Asset Hub · no indexer
+        </p>
         <h1>DotDirectory</h1>
         <p className="standfirst">
-          Every <code>.dot</code> name registered on the devnet, kept as plaintext on-chain. This
-          page ships with no data in it at all: the list you are reading was fetched from the
-          contract when you opened it.
+          Every <code>.dot</code> name, kept as plaintext on-chain. Nothing on this page was baked
+          at build time.
         </p>
       </header>
 
-      <section className="why">
-        <h2>Why this exists</h2>
-        <p>
-          DotNS is ENS-style — names are keys in a namehash-mapped store, and the registry's events
-          carry the hash of a name, never its text. So there is no way to ask the chain what names
-          exist, only who owns <code>namehash(x)</code> for an <code>x</code> you already have.
-        </p>
-        <p>
-          Discovering them therefore meant walking every block and scraping plaintext out of raw
-          extrinsic bytes — a job needing a machine, thirty minutes and a schedule, which in August
-          2026 fell three days behind the chain and stayed there. This contract keeps the plaintext
-          on-chain instead, so the same discovery is two calls and a browser can do it alone.
-        </p>
-        <p className="addr">
-          Contract <code>{DIRECTORY}</code>
-        </p>
-      </section>
-
-      {state.phase === 'loading' ? (
-        <div className="panel loading">reading the contract…</div>
-      ) : null}
+      {state.phase === 'loading' ? <div className="panel">reading the contract…</div> : null}
 
       {state.phase === 'error' ? (
         <div className="panel error">
@@ -149,154 +147,156 @@ export default function App() {
 
       {state.phase === 'ready' ? (
         <>
+          {/* Four figures, and every one of them is a count. Block height, block
+              time and last-change are provenance, not metrics — they live in the
+              footer with the endpoint, where provenance belongs. */}
           <div className="stats">
             <div className="stat">
               <span className="figure">{state.snapshot.labels.length}</span>
               <span className="label">names on-chain</span>
             </div>
-            <div className="stat">
+            <button
+              type="button"
+              className={`stat clickable${tierFilter === 'described' ? ' on' : ''}`}
+              onClick={() => setTierFilter((v) => (v === 'described' ? 'all' : 'described'))}
+            >
               <span className="figure">{tally.described || '—'}</span>
               <span className="label">described</span>
-            </div>
-            <div className="stat">
+            </button>
+            <button
+              type="button"
+              className={`stat clickable${tierFilter === 'deployed' ? ' on' : ''}`}
+              onClick={() => setTierFilter((v) => (v === 'deployed' ? 'all' : 'deployed'))}
+            >
               <span className="figure">{tally.deployed || '—'}</span>
               <span className="label">deployed only</span>
-            </div>
-            <div className="stat">
+            </button>
+            <button
+              type="button"
+              className={`stat clickable${tierFilter === 'registered' ? ' on' : ''}`}
+              onClick={() => setTierFilter((v) => (v === 'registered' ? 'all' : 'registered'))}
+            >
               <span className="figure">{tally.registered || '—'}</span>
               <span className="label">name only</span>
-            </div>
-            <div className="stat">
-              <span className="figure">{state.snapshot.blockNumber.toLocaleString('en-GB')}</span>
-              <span className="label">block read at</span>
-            </div>
-            <div className="stat">
-              <span className="figure">{state.snapshot.blockSeconds.toFixed(1)}s</span>
-              <span className="label">measured block time</span>
-            </div>
-            <div className="stat">
-              <span className="figure">
-                {state.snapshot.lastChangedAt.toLocaleString('en-GB')}
-              </span>
-              <span className="label">last change</span>
-            </div>
+            </button>
           </div>
 
           <div className="controls">
-            <label className="field">
-              <span>Search</span>
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="name or owner address…"
-              />
-            </label>
-            <label className="field">
-              <span>State</span>
-              <select
-                value={tierFilter}
-                onChange={(e) => setTierFilter(e.target.value as Tier | 'all')}
-              >
-                <option value="all">Any state</option>
-                <option value="described">Described (has a manifest)</option>
-                <option value="deployed">Deployed only (bundle, no manifest)</option>
-                <option value="registered">Name only (nothing published)</option>
-              </select>
-            </label>
-            <button
-              type="button"
-              className={groupByOwner ? 'toggle on' : 'toggle'}
-              aria-pressed={groupByOwner}
-              onClick={() => setGroupByOwner((v) => !v)}
-            >
-              Group by owner
-            </button>
-            <button type="button" className="toggle" onClick={() => void load()}>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="filter by name, owner or category…"
+              aria-label="Filter the directory"
+            />
+            {tierFilter !== 'all' ? (
+              <button type="button" className="clear" onClick={() => setTierFilter('all')}>
+                {TIER_LABEL[tierFilter]} ✕
+              </button>
+            ) : null}
+            <button type="button" className="clear" onClick={() => void load()}>
               Re-read
             </button>
             <span className="count">
-              {filtered.length} of {state.snapshot.labels.length}
+              {visible.length} of {state.snapshot.labels.length}
             </span>
           </div>
 
-          {groupByOwner ? (
-            <div className="owners">
-              {byOwner.length === 0 ? (
-                <p className="empty">Owners still loading, or none match.</p>
-              ) : (
-                byOwner.map(([owner, names]) => (
-                  <div className="owner" key={owner}>
-                    <div className="owner-head">
-                      <code>{short(owner)}</code>
-                      <span>{names.length} names</span>
-                    </div>
-                    <div className="chips">
-                      {names.sort().map((n) => (
-                        <span className="chip" key={n}>
-                          {n}
-                          <em>.dot</em>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              )}
+          <div className="table" role="table">
+            <div className="tr th-row" role="row">
+              {head('name', 'Name')}
+              {head('state', 'State')}
+              <span className="th static">Category</span>
+              <span className="th static">Owner</span>
+              {head('arrived', 'Arrived')}
             </div>
-          ) : (
-            <div className="grid">
-              {filtered.map((r) => (
+
+            {visible.length === 0 ? (
+              <p className="empty">Nothing matches that.</p>
+            ) : (
+              visible.map((r) => (
                 <a
-                  className="card"
+                  className="tr"
+                  role="row"
                   key={r.label}
                   href={`https://${r.label}.dot.li`}
                   target="_blank"
                   rel="noreferrer noopener"
                 >
-                  <span className="name">
+                  <span className="td name">
                     {r.label}
                     <em>.dot</em>
                   </span>
-                  {r.rec ? (
-                    <span className="tags">
+                  <span className="td" data-label="State">
+                    {r.rec ? (
                       <span className={`tier ${tierOf(r.rec)}`}>{TIER_LABEL[tierOf(r.rec)]}</span>
-                      {r.rec.category ? <span className="cat">{r.rec.category}</span> : null}
-                    </span>
-                  ) : (
-                    <span className="tags">
-                      <span className="pending">reading records…</span>
-                    </span>
-                  )}
-                  <span className="owner-line">
-                    {r.owner ? short(r.owner) : <span className="pending">unowned</span>}
-                    {r.firstSeenAt ? (
-                      <span className="since">{DATE_FMT.format(r.firstSeenAt)}</span>
-                    ) : null}
+                    ) : (
+                      <span className="pending">reading…</span>
+                    )}
+                  </span>
+                  <span className="td cat" data-label="Category">
+                    {r.rec?.category ?? ''}
+                  </span>
+                  <span className="td owner" data-label="Owner">
+                    {r.owner ? short(r.owner) : '—'}
+                  </span>
+                  <span className="td arrived" data-label="Arrived">
+                    {r.firstSeenAt ? DATE_FMT.format(r.firstSeenAt) : '—'}
                   </span>
                 </a>
-              ))}
-              {filtered.length === 0 ? <p className="empty">Nothing matches that.</p> : null}
-            </div>
-          )}
+              ))
+            )}
+          </div>
 
           {detailError ? (
             <p className="detail-error">
-              Owners or records could not be read in full: {detailError}. The list above is still
-              what the contract holds.
+              Records could not be read in full: {detailError}. The list above is still what the
+              contract holds.
             </p>
           ) : null}
 
           <footer>
-            <span>
-              Read from <code>{state.snapshot.endpoint}</code>
-              {state.snapshot.failedOver.length
-                ? ` after ${state.snapshot.failedOver.join(', ')} refused`
-                : ''}
-              .
-            </span>
-            <span>
-              Nothing on this page was baked at build time. Reload it and it asks the chain again.
-            </span>
+            <div className="prov">
+              <span>
+                block <strong>{state.snapshot.blockNumber.toLocaleString('en-GB')}</strong>
+              </span>
+              <span>
+                block time <strong>{state.snapshot.blockSeconds.toFixed(1)}s</strong>
+              </span>
+              <span>
+                last change <strong>{state.snapshot.lastChangedAt.toLocaleString('en-GB')}</strong>
+              </span>
+              <span>
+                via <strong>{state.snapshot.endpoint}</strong>
+                {state.snapshot.failedOver.length
+                  ? ` after ${state.snapshot.failedOver.join(', ')} refused`
+                  : ''}
+              </span>
+            </div>
+
+            <details className="why">
+              <summary>Why this contract exists</summary>
+              <p>
+                DotNS is ENS-style: names are keys in a namehash-mapped store, and the registry's
+                events carry the <em>hash</em> of a name, never its text. The chain cannot be asked
+                what names exist — only who owns <code>namehash(x)</code> for an <code>x</code> you
+                already have, and a hash does not run backwards.
+              </p>
+              <p>
+                Discovery therefore meant walking every block and scraping ascii out of raw
+                extrinsic bytes: a machine, thirty minutes, and a schedule that in August 2026 fell
+                three days behind the chain. This contract keeps the plaintext on-chain instead, so
+                the same discovery is a handful of calls and a browser can do it alone.
+              </p>
+              <p>
+                Announcing is open to anyone and stores a label only if the registry gives it an
+                owner. Pruning is open to anyone and removes one only if the registry says it is
+                gone. No admin, no owner, no pause.
+              </p>
+              <p className="addr">
+                <code>{DIRECTORY}</code>
+              </p>
+            </details>
           </footer>
         </>
       ) : null}

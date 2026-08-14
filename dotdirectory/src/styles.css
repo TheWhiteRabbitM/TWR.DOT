@@ -1,68 +1,56 @@
 /*
  * dotdirectory — dotmetrics' one-accent dark system, on Polkadot's palette.
  *
- * This deliberately follows the rules dotmetrics wrote down for itself, because
- * they are right and because two apps in one ecosystem should not argue:
+ * Follows the rules dotmetrics wrote for itself, because they are right and two
+ * apps in one ecosystem should not argue:
  *
- *   1. ONE accent. --pink marks the single most important thing in a view and
- *      nothing else. Everything structural is neutral. That is the only way
- *      pink-on-black stops screaming. The extended Polkadot palette (lime,
- *      cyan, violet) is deliberately NOT used: three more saturated hues that
- *      encode nothing is the exact mistake dotmetrics removed.
+ *   1. ONE accent. --pink marks the single most important thing and nothing
+ *      else. The rest of the brand palette (lime, cyan, violet) is deliberately
+ *      unused: three more saturated hues encoding nothing is the exact mistake
+ *      dotmetrics removed from its own sheet.
  *   2. No gradients on data. Ever.
- *   3. Numbers are tabular-nums globally so they stop jittering as they tick.
- *   4. Three radii — 6 / 10 / 14, nothing else. Seven type steps. 4px grid.
+ *   3. Tabular figures globally, so numbers stop jittering as they tick.
+ *   4. Three radii — 6 / 10 / 14. Seven type steps. 4px grid.
  *
- * Palette is the official brand set: Polkadot Pink #FF2670, black, white, and
- * the Storm greys. dotmetrics' --pink is already exactly the brand pink, so the
- * two look like siblings rather than cousins.
+ * LAYOUT, rewritten. The first version put 879px of header, prose and tiles
+ * above the first row of data, on a 694px viewport — so the page opened showing
+ * no directory at all. And 205 rows of structured data laid out as identical
+ * cards is a wall, not a reading. Now: a compact header, four figures that are
+ * all counts, and a dense sortable table. Provenance moved to the footer, the
+ * explanation to a <details> at the bottom. Data starts within the first screen.
  *
- * Type: Unbounded is the official face, but it is not loaded from a CDN — a
- * .dot app is served from Bulletin and has to carry itself, and a webfont that
- * fails leaves the page in an unannounced fallback. It is declared first in case
- * the host has it, followed by a geometric stack that keeps the proportions.
- *
- * Contrast (computed, do not substitute):
- *   --tx-hi  17.9:1 on --bg-0 · --tx-mid 8.1:1 · --tx-low 5.4:1
- *   --pink   5.39:1 on --bg-0 — AA for text
- *   --pink-fill 4.12:1 on --bg-1 — non-text fills only, never behind text
+ * Palette is the official brand set — Polkadot Pink #FF2670, black, and the
+ * Storm greys. dotmetrics' --pink is already the brand pink, so the two read as
+ * siblings.
  */
 
 :root {
   color-scheme: dark;
 
-  /* ---------------------------------------------------- surface ramp */
-  --bg-0: #000000; /* page — brand black, not a near-black */
-  --bg-1: #0e0e13; /* card / row */
-  --bg-2: #16161d; /* hover, thead */
-  --bg-3: #1d1d26; /* input, chip */
-  --bg-4: #2a2a35; /* neutral data ink — bars, tracks */
+  --bg-0: #000000;
+  --bg-1: #0e0e13;
+  --bg-2: #16161d;
+  --bg-3: #1d1d26;
 
-  /* ---------------------------------------------------------- lines */
   --line: #22222c;
-  --line-strong: #6e7391; /* Storm 700 — control borders */
+  --line-strong: #6e7391;
 
-  /* ----------------------------------------------------------- text */
   --tx-hi: #ffffff;
-  --tx-mid: #aeb7cb; /* Storm 400 */
-  --tx-low: #6e7391; /* Storm 700 */
+  --tx-mid: #aeb7cb;
+  --tx-low: #6e7391;
 
-  /* ----------------------------------------------------- the accent */
   --pink: #ff2670;
   --pink-fill: #e6007a;
   --on-pink: #000000;
   --warn: #e8a13a;
 
-  /* ------------------------------------------- type scale (7 steps) */
   --fs-0: 12px;
   --fs-1: 13px;
   --fs-2: 14px;
   --fs-3: 15px;
-  --fs-4: 17px;
   --fs-5: 21px;
-  --fs-6: 32px;
+  --fs-6: 30px;
 
-  /* ------------------------------------------------------- shape */
   --r-sm: 6px;
   --r-md: 10px;
   --r-lg: 14px;
@@ -83,7 +71,7 @@ body {
   color: var(--tx-hi);
   font-family: var(--sans);
   font-size: var(--fs-3);
-  line-height: 1.55;
+  line-height: 1.5;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
@@ -96,74 +84,55 @@ code {
 .wrap {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 32px 20px 64px;
+  padding: 24px 20px 48px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 16px;
 }
 
 /* ---------------------------------------------------------------- header -- */
+/* Compact on purpose: the directory is the page, not the preamble. */
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
 .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--mono);
   font-size: var(--fs-0);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--pink);
-  margin: 0 0 8px;
+  color: var(--tx-low);
+  margin: 0;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pink);
+  flex: none;
 }
 
 h1 {
   font-family: var(--display);
   font-size: var(--fs-6);
-  line-height: 1.05;
+  line-height: 1.1;
   letter-spacing: -0.01em;
   font-weight: 600;
-  margin: 0 0 12px;
+  margin: 0;
 }
 
 .standfirst {
-  max-width: 64ch;
+  max-width: 66ch;
   margin: 0;
   color: var(--tx-mid);
-  font-size: var(--fs-3);
-}
-
-/* ------------------------------------------------------------------ why --- */
-
-.why {
-  background: var(--bg-1);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  padding: 20px;
-}
-
-.why h2 {
-  font-family: var(--mono);
-  font-size: var(--fs-0);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--tx-low);
-  margin: 0 0 12px;
-  font-weight: 400;
-}
-
-.why p {
-  margin: 0 0 12px;
-  max-width: 68ch;
   font-size: var(--fs-2);
-  color: var(--tx-mid);
-}
-
-.why .addr {
-  margin: 0;
-  font-size: var(--fs-1);
-  color: var(--tx-low);
-  overflow-wrap: anywhere;
-}
-
-.why .addr code {
-  color: var(--tx-mid);
 }
 
 /* ---------------------------------------------------------------- panels -- */
@@ -172,7 +141,7 @@ h1 {
   background: var(--bg-1);
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
-  padding: 40px 20px;
+  padding: 32px 20px;
   text-align: center;
   color: var(--tx-low);
   font-family: var(--mono);
@@ -205,10 +174,12 @@ h1 {
 }
 
 /* ----------------------------------------------------------------- stats -- */
+/* Four tiles, four counts. Three of them filter the table when clicked, which
+   is why they are buttons — a number you can act on beats a number you read. */
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
   gap: 8px;
 }
 
@@ -216,13 +187,33 @@ h1 {
   background: var(--bg-1);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
-  padding: 14px 16px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
 }
 
-/* The first tile is the headline number — the one thing pink marks here. */
+.stat.clickable {
+  cursor: pointer;
+}
+
+.stat.clickable:hover {
+  border-color: var(--line-strong);
+  background: var(--bg-2);
+}
+
+.stat.on {
+  border-color: var(--pink);
+}
+
+.stat:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
 .stat:first-child .figure {
   color: var(--pink);
 }
@@ -230,14 +221,14 @@ h1 {
 .stat .figure {
   font-family: var(--display);
   font-size: var(--fs-5);
-  line-height: 1.1;
+  line-height: 1.15;
   font-weight: 600;
 }
 
 .stat .label {
   font-family: var(--mono);
   font-size: var(--fs-0);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--tx-low);
 }
@@ -247,27 +238,12 @@ h1 {
 .controls {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.field > span {
-  font-family: var(--mono);
-  font-size: var(--fs-0);
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: var(--tx-low);
-}
-
-.field input,
-.field select,
-.toggle {
+.controls input {
+  flex: 1 1 18rem;
   font-family: var(--sans);
   font-size: var(--fs-2);
   color: var(--tx-hi);
@@ -277,37 +253,31 @@ h1 {
   padding: 8px 12px;
 }
 
-.field input {
-  min-width: 16rem;
+.controls input::placeholder {
+  color: var(--tx-low);
 }
 
-.field select,
-.toggle {
-  cursor: pointer;
-}
-
-.field input:focus-visible,
-.field select:focus-visible,
-.toggle:focus-visible {
+.controls input:focus-visible,
+.clear:focus-visible {
   outline: 2px solid var(--pink);
   outline-offset: 1px;
 }
 
-.toggle {
+.clear {
   font-family: var(--mono);
   font-size: var(--fs-1);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
   color: var(--tx-mid);
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-.toggle:hover {
+.clear:hover {
   border-color: var(--line-strong);
   color: var(--tx-hi);
-}
-
-.toggle.on {
-  background: var(--pink-fill);
-  border-color: var(--pink-fill);
-  color: var(--on-pink);
 }
 
 .count {
@@ -315,91 +285,117 @@ h1 {
   font-size: var(--fs-1);
   color: var(--tx-low);
   margin-left: auto;
-  padding-bottom: 10px;
+  white-space: nowrap;
 }
 
-/* ------------------------------------------------------------------ grid -- */
+/* ----------------------------------------------------------------- table -- */
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
-  gap: 8px;
-}
-
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  background: var(--bg-1);
+.table {
   border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  padding: 12px 14px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.tr {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) 7rem minmax(0, 1fr) 7rem 7.5rem;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--line);
   text-decoration: none;
   color: inherit;
-  transition: background 120ms ease, border-color 120ms ease;
 }
 
-.card:hover {
+.th-row {
+  border-top: 0;
   background: var(--bg-2);
-  border-color: var(--line-strong);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0 14px;
 }
 
-.card:focus-visible {
-  outline: 2px solid var(--pink);
-  outline-offset: 1px;
-}
-
-.name {
+.th {
   font-family: var(--mono);
-  font-size: var(--fs-2);
-  color: var(--tx-hi);
-  overflow-wrap: anywhere;
+  font-size: var(--fs-0);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+  background: none;
+  border: 0;
+  padding: 9px 0;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.name em {
+.th:not(.static) {
+  cursor: pointer;
+}
+
+.th:not(.static):hover {
+  color: var(--tx-hi);
+}
+
+.th.sorted {
+  color: var(--pink);
+}
+
+.th:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: -2px;
+}
+
+.caret {
+  font-size: 8px;
+}
+
+a.tr:hover {
+  background: var(--bg-2);
+}
+
+a.tr:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: -2px;
+}
+
+.td {
+  font-size: var(--fs-2);
+  color: var(--tx-mid);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.td.name {
+  font-family: var(--mono);
+  color: var(--tx-hi);
+}
+
+.td.name em {
   font-style: normal;
   color: var(--tx-low);
 }
 
-.owner-line {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
+.td.owner,
+.td.arrived {
   font-family: var(--mono);
-  font-size: var(--fs-0);
+  font-size: var(--fs-1);
   color: var(--tx-low);
-  margin-top: auto;
 }
 
-.since {
-  white-space: nowrap;
-}
-
-.pending {
-  opacity: 0.55;
-}
-
-.empty {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: var(--tx-low);
+.td.cat {
   font-family: var(--mono);
-  font-size: var(--fs-2);
-  padding: 40px 0;
+  font-size: var(--fs-1);
+  color: var(--tx-low);
 }
 
-/* State is a word first. Pink marks only the top tier — a name someone actually
-   described — and the two lesser states stay neutral, so the accent still means
-   something when you scan the grid. */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  align-items: center;
-}
-
-.tier,
-.cat {
+/* State is a word first; pink marks only the top tier, so the accent still
+   means something when you scan a long column. */
+.tier {
   font-family: var(--mono);
   font-size: var(--fs-0);
   letter-spacing: 0.04em;
@@ -408,6 +404,7 @@ h1 {
   border: 1px solid var(--line);
   background: var(--bg-3);
   color: var(--tx-low);
+  white-space: nowrap;
 }
 
 .tier.described {
@@ -421,89 +418,143 @@ h1 {
   border-color: var(--line-strong);
 }
 
-.cat {
-  text-transform: lowercase;
-}
-
-/* ---------------------------------------------------------------- owners -- */
-
-.owners {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.owner {
-  background: var(--bg-1);
-  border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  padding: 14px 16px;
-}
-
-.owner-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-  margin-bottom: 10px;
+.pending {
   font-family: var(--mono);
-  font-size: var(--fs-1);
-  color: var(--tx-hi);
-}
-
-.owner-head span {
-  color: var(--tx-low);
   font-size: var(--fs-0);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.chip {
-  font-family: var(--mono);
-  font-size: var(--fs-1);
-  background: var(--bg-3);
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  padding: 2px 8px;
-  color: var(--tx-mid);
-}
-
-.chip em {
-  font-style: normal;
   color: var(--tx-low);
+  opacity: 0.6;
+}
+
+.empty {
+  text-align: center;
+  color: var(--tx-low);
+  font-family: var(--mono);
+  font-size: var(--fs-2);
+  padding: 40px 0;
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+/* Below the table's natural width, each row becomes a labelled block rather
+   than a squeeze — five columns in 380px is unreadable at any type size. */
+@media (max-width: 860px) {
+  .th-row {
+    display: none;
+  }
+
+  .tr {
+    grid-template-columns: 1fr auto;
+    gap: 4px 12px;
+    padding: 12px 14px;
+  }
+
+  .td.name {
+    font-size: var(--fs-3);
+  }
+
+  .td[data-label='State'] {
+    justify-self: end;
+  }
+
+  .td.cat,
+  .td.owner,
+  .td.arrived {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 6px;
+  }
+
+  .td.cat::before,
+  .td.owner::before,
+  .td.arrived::before {
+    content: attr(data-label);
+    color: var(--tx-low);
+    opacity: 0.7;
+    min-width: 5rem;
+  }
+
+  .td.cat:empty {
+    display: none;
+  }
 }
 
 /* ---------------------------------------------------------------- errors -- */
 
 .detail-error {
   margin: 0;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border: 1px solid var(--warn);
   border-radius: var(--r-md);
   color: var(--warn);
   font-family: var(--mono);
   font-size: var(--fs-1);
-  line-height: 1.5;
 }
 
 /* ---------------------------------------------------------------- footer -- */
 
 footer {
   border-top: 1px solid var(--line);
-  padding-top: 16px;
+  padding-top: 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 12px;
+}
+
+.prov {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
   font-family: var(--mono);
   font-size: var(--fs-0);
-  line-height: 1.6;
   color: var(--tx-low);
+}
+
+.prov strong {
+  color: var(--tx-mid);
+  font-weight: 400;
+}
+
+.why {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  padding: 10px 14px;
+}
+
+.why summary {
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
+  cursor: pointer;
+  list-style: none;
+}
+
+.why summary::before {
+  content: '▸ ';
+  color: var(--tx-low);
+}
+
+.why[open] summary::before {
+  content: '▾ ';
+}
+
+.why summary:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.why p {
+  margin: 12px 0 0;
+  max-width: 72ch;
+  font-size: var(--fs-2);
+  color: var(--tx-mid);
+}
+
+.why .addr {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  overflow-wrap: anywhere;
 }
 
 @media (prefers-reduced-motion: reduce) {
