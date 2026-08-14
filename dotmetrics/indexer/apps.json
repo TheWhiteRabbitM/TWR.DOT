@@ -3286,6 +3286,20 @@
     "tier": 1,
     "firstSeenAt": 1786457568
   },
+  "hello": {
+    "label": "hello",
+    "domain": "hello.dot",
+    "url": "https://hello.dev-dot.li",
+    "firstSeenBlock": 12097115,
+    "owner": "0xF8d186c352e2ea0B9C02c211525A20DdcB8CD2dD",
+    "displayName": "Hello Dot",
+    "description": "A one-page introduction to the decentralized web on Polkadot. No server delivered it — the page is a static bundle on Bulletin, bound to a .dot name by its content hash.",
+    "iconCid": "bafk2bzacederugkk5q7we7te3zo3refclzs5ibxsvkkjuwvk6leo6norzpvys",
+    "contenthash": "bafybeienblwb3p24mv2jsnsjgkit2a6nhghfovwwykkmp4nzrtnrrtd34i",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786459044
+  },
   "excluded": [
     "a5wz",
     "adddd",
@@ -3385,6 +3399,7 @@
     "mnmd",
     "mplj",
     "mrkd",
+    "mvku",
     "ndar",
     "ndkz",
     "o3d4",
@@ -3440,6 +3455,7 @@
     "vf5sy",
     "vpfn",
     "w3mx",
+    "wfkj",
     "widget",
     "wsxal",
     "wtnd",
