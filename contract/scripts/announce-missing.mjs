@@ -1,20 +1,23 @@
-// Announce every registered name the directory does not yet hold.
+// Announce registered names the directory does not yet hold.
 //
-// Two sources of absence, both real and both seen in practice:
+// NAMES COME FROM THE ARGUMENTS, NOT FROM dotmetrics.
 //
-//   1. Names in dotmetrics' apps.json that an earlier migration run skipped.
-//      They are still owned; the run that dropped them was pointed at a bad
-//      address and its splitter took every batch down to "does not fit".
-//   2. Names registered AFTER that snapshot was taken. dotmetrics' indexer has
-//      been stalled since 10 August, so its apps.json cannot contain anything
-//      newer — including the three names published while building this app.
-//      The directory does not discover; it holds what is announced, and nothing
-//      had announced them.
+// The whole point of DotDirectory is to stop depending on an indexer that can
+// stall — and one did, on 10 August, which is why three names published while
+// building this app were missing from a directory seeded from its snapshot.
+// Reading apps.json on every run would have quietly rebuilt that dependency, so
+// it is now behind --bootstrap and is meant to be used once, ever: it was the
+// only existing corpus of plaintext labels and seeding from it was a genuine
+// one-off, not a data source.
+//
+// Ongoing, names reach the directory by being announced — by whoever registers
+// one, or by anyone doing them the favour. Nothing here discovers.
 //
 // Idempotent: announceMany skips whatever is already listed, so re-running is
-// always safe and is the intended way to top the directory up.
+// always safe.
 //
-//   MNEMONIC=... node scripts/announce-missing.mjs [extra names…]
+//   MNEMONIC=... node scripts/announce-missing.mjs alice bob
+//   MNEMONIC=... node scripts/announce-missing.mjs --bootstrap   # once, ever
 import { readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { resolve } from 'node:path';
@@ -64,13 +67,24 @@ const pages = [];
 for (let i = 0; i < total; i += 20) pages.push(dir.pageDetailed(i, 20));
 const listed = new Set((await Promise.all(pages)).flat().map((e) => e.label));
 
-const apps = JSON.parse(readFileSync(`${REPO}/dotmetrics/indexer/apps.json`, 'utf8'));
-const wanted = [
-  ...Object.keys(apps).filter((k) => k !== 'excluded'),
-  ...process.argv.slice(2),
-];
+const args = process.argv.slice(2);
+const bootstrap = args.includes('--bootstrap');
+const named = args.filter((a) => !a.startsWith('--'));
 
-const missing = [...new Set(wanted)].filter((l) => !listed.has(l));
+if (!bootstrap && named.length === 0) {
+  console.error('nothing to announce. Pass labels, or --bootstrap for the one-off seed.');
+  process.exit(1);
+}
+
+// Only behind the flag, and only ever meant to run once: see the header.
+const seed = bootstrap
+  ? Object.keys(JSON.parse(readFileSync(`${REPO}/dotmetrics/indexer/apps.json`, 'utf8'))).filter(
+      (k) => k !== 'excluded',
+    )
+  : [];
+if (bootstrap) console.log(`--bootstrap: seeding from a ${seed.length}-name snapshot, one-off`);
+
+const missing = [...new Set([...named, ...seed])].filter((l) => !listed.has(l));
 console.log(`directory holds ${listed.size}; ${missing.length} to announce`);
 if (missing.length === 0) {
   console.log('nothing to do');
