@@ -2191,7 +2191,7 @@
     "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
     "displayName": "peoplebook",
     "description": "The devnet identity directory, where every handle has a claimable on-chain avatar NFT. Read live from the People chain: every person who registered a .dot-style handle gets a generated mask. Claim yours for 1 PAS and the PeoplebookAvatars contract (deployed on the devnet Asset Hub) mints an ERC-721 to you and rolls its rarity on chain, gacha-style: Legendary 3%, Epic 10%, Rare 20%, Uncommon 30%, Common 37%. The image is generated inside the contract, so the NFT shows in any wallet with nothing hosted anywhere. Own a .dot? Add it at claim and the contract verifies it against the registry for better odds. Searchable, self-updating as people claim.",
-    "contenthash": "bafybeigaxf6m45s42gwtrbcwonmikqziqiftzhnb5ihuxkfmnhi547b32u",
+    "contenthash": "bafybeibbtwktumnuyicvlaqsn6apjq6yywudjrvfplcf6sy7sg6yk5e5ei",
     "category": "social",
     "screenshots": [
       "bafybeifw5eq2qesyncadkhn3xtpsp6xvp5emyhk7c3lqpe5xpi5bw2ueuy",
@@ -3263,6 +3263,28 @@
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786359504
+  },
+  "dotnote-demo": {
+    "label": "dotnote-demo",
+    "domain": "dotnote-demo.dot",
+    "url": "https://dotnote-demo.dev-dot.li",
+    "firstSeenBlock": 12091136,
+    "owner": "0x569CA372c88e6B7918a3cf81BF3e3f666ACeeD51",
+    "contenthash": "bafybeihjnz4hbu5puf35eacqs5m2fjm4jcd5ob2bpq4yqy55gwptlzsd7e",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786446492
+  },
+  "witnessledger": {
+    "label": "witnessledger",
+    "domain": "witnessledger.dot",
+    "url": "https://witnessledger.dev-dot.li",
+    "firstSeenBlock": 12096396,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeidvtx4cuwywprii4wmv5lajfis4dvjfbwuqhezqg25lw2bxjafjny",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786457568
   },
   "excluded": [
     "a5wz",
