@@ -40,13 +40,26 @@ import { REGISTRY, nodeOf, sharedProvider } from './chain';
 /** Words this ecosystem plausibly names things after. Deliberately short — it
  *  ships to every visitor, and the variant generator below multiplies it. */
 const WORDS =
-  'wallet swap stake nft dao vote chat mail news blog shop game play music video photo map chain block token coin bank pay send file drive note todo list wiki forum poll quiz art gallery market trade bet dice bridge oracle index search find explore browse docs help guide learn school course book read write draw paint code dev build test lab studio works forge craft make create tools box hub port link tree seed root leaf node net web site page home base camp zone world globe earth moon star sun sky cloud rain fire water wind wave river lake sea ocean mountain forest garden park city town street road path door key lock safe vault chest card deck hand eye face head heart mind soul ghost angel king queen knight wizard hunter ranger monk bard pixel byte bit hash salt honey milk bread cake soup rice corn apple orange lemon grape cherry berry peach melon mango dot polkadot para relay xcm sub substrate kusama paseo westend alice bob charlie treasury council gov governance referenda bounty tip crowdloan auction collator validator nominator staking parachain assets identity people proxy multisig recovery vesting utility batch feed stream live watch listen speak talk say tell ask answer reply post share like follow friend group team crew club guild party squad band show film movie story tale poem song beat tune note echo signal wire cable link mesh grid array stack queue heap loop jump step walk run fly swim dive climb ride drive sail fish hunt farm grow plant harvest cook bake brew pour drink eat feed sleep wake dream think know learn teach lead follow serve help save keep hold give take buy sell rent lend borrow owe pay earn spend save invest bet win lose draw tie score point rank level tier grade class order sort filter group merge split join cut paste copy move drop pick choose select mark tag label name title head foot side edge center core shell skin bone blood nerve brain gut'.split(
-    ' ',
-  );
+  'wallet swap stake nft dao vote chat mail news blog shop game play music video photo map chain block token coin bank pay send file drive note todo list wiki forum poll quiz art gallery market trade bet dice bridge oracle index search find explore browse docs help guide learn school course book read write draw paint code dev build test lab studio works forge craft make create tools box hub port link tree seed root leaf node net web site page home base camp zone world globe earth moon star sun sky cloud rain fire water wind wave river lake sea ocean mountain forest garden park city town street road path door key lock safe vault chest card deck hand eye face head heart mind soul ghost angel king queen knight wizard hunter ranger monk bard pixel byte bit hash salt honey milk bread cake soup rice corn apple orange lemon grape cherry berry peach melon mango dot polkadot para relay xcm sub substrate kusama paseo westend alice bob charlie treasury council gov governance referenda bounty tip crowdloan auction collator validator nominator staking parachain assets identity people proxy multisig recovery vesting utility batch feed stream live watch listen speak talk say tell ask answer reply post share like follow friend group team crew club guild party squad band show film movie story tale poem song beat tune note echo signal wire cable link mesh grid array stack queue heap loop jump step walk run fly swim dive climb ride drive sail fish hunt farm grow plant harvest cook bake brew pour drink eat feed sleep wake dream think know learn teach lead follow serve help save keep hold give take buy sell rent lend borrow owe pay earn spend save invest bet win lose draw tie score point rank level tier grade class order sort filter group merge split join cut paste copy move drop pick choose select mark tag label name title head foot side edge center core shell skin bone blood nerve brain gut \
+shoot aim hit strike blast crash smash break fix patch guard shield sword arrow \
+bow shot spark flash bolt storm thunder shadow light dark void space time clock \
+hour day night week month year age era moon sky dawn dusk noon'.split(/\s+/);
 
 /** Affixes that turn a known label into a plausible neighbour. */
 const SUFFIXES = ['app', 'hub', 'dao', 'io', 'x', 'lab', 'net', 'chain'];
 const PREFIXES = ['my', 'the', 'go', 'get', 'on'];
+
+/**
+ * Stems this ecosystem compounds with, tried against the whole word list.
+ *
+ * Added after `polkashoot` — registered, deployed, self-described, and invisible
+ * to both the block-scanning indexer and the first version of this sweep, which
+ * only ever affixed short particles onto names it already knew. It could not
+ * reach `polka` + `shoot` because `shoot` was in the dictionary and `polka` was
+ * not a base. The names already listed said this pattern was productive
+ * (dotmail, dotmetrics, dot-store, dotdirectory) and the generator ignored them.
+ */
+const STEMS = ['dot', 'polka', 'sub'];
 
 const LABEL_OK = /^[a-z0-9-]{3,32}$/;
 
@@ -63,10 +76,27 @@ export function candidates(known: Set<string>, seed: number, budget = 700): stri
     if (LABEL_OK.test(c) && !known.has(c) && out.length < budget) out.push(c);
   };
 
-  // Dictionary first, rotated.
+  // Bare dictionary words get the SMALLEST share, which is the opposite of the
+  // first cut. A plain common word in a small ecosystem is usually owned by
+  // nobody, while a stem compound is how these names are actually built.
+  //
+  // Measured over 40 seeds, not guessed: moving the compound share from 30% to
+  // 50% of the budget took `polkashoot`'s reach from 20% of visits to 28%, and
+  // `polkadao`/`dotswap`/`subwallet` land around 30%. So roughly one visit in
+  // three reaches any given compound, and three or four visitors between them
+  // reach it reliably — which is the whole bet: coverage by attrition rather
+  // than by one machine trying to do it all.
   const start = Math.abs(seed) % WORDS.length;
-  for (let i = 0; i < WORDS.length && out.length < budget * 0.5; i++) {
+  for (let i = 0; i < WORDS.length && out.length < budget * 0.3; i++) {
     push(WORDS[(start + i) % WORDS.length]);
+  }
+
+  // Compounds on this ecosystem's own stems. Cheap and productive: three stems
+  // across the dictionary is where `polkashoot` lives, and where the affix-only
+  // generator could never have reached.
+  for (let i = 0; i < WORDS.length && out.length < budget * 0.8; i++) {
+    const w = WORDS[(start + i) % WORDS.length];
+    for (const stem of STEMS) if (w !== stem) push(stem + w);
   }
 
   // Then neighbours of what is already here — the highest-yield source, because
