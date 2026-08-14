@@ -1,152 +1,233 @@
-import { useMemo } from 'react';
-import { tierOf, type Listing, type Records, type Tier } from './chain';
+import { useEffect, useMemo, useState } from 'react';
+import { readBlockTimes, tierOf, type Listing, type Records } from './chain';
 
 /*
- * Two charts, both derived at view time from what the contract already returned.
- * No extra reads and no stored history: arrival blocks make the growth curve
- * computable from a single snapshot, which is the whole reason firstSeenBlock
- * went into the contract.
+ * Two panels, both in dotmetrics' idiom, because that idiom is better than what
+ * was here before:
  *
- * dotmetrics' chart rules, followed: at most two hues — pink for the measured
- * series, a neutral for the track or remainder — and no gradients on data. One
- * series needs no legend, so the growth chart has none; the composition bar has
- * three segments and is labelled directly rather than by a colour key.
+ *   - A hero figure with a sparkline beside it and a prose breakdown under it.
+ *     One sentence carries the composition that a stacked bar was spending a
+ *     whole rectangle on, and reads instead of needing to be decoded.
+ *   - A registration grid: one cell per UTC hour, one row per UTC day, the day's
+ *     total in the right gutter. Hour granularity says something a monthly
+ *     cumulative curve cannot — when people actually register.
+ *
+ * Both are computed from the snapshot already in hand. The grid additionally
+ * fetches real header timestamps for the blocks inside its window: the derived
+ * time on a Listing is head-minus-block times an average, which is fine for a
+ * curve and would smear an hourly cell into the wrong day.
  */
 
-const MONTH = new Intl.DateTimeFormat('en-GB', { month: 'short', year: '2-digit' });
+const DAY_LABEL = new Intl.DateTimeFormat('en-GB', {
+  month: 'short',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
 
-/** Cumulative names over time, bucketed by month of arrival. */
-export function GrowthChart({ labels }: { labels: Listing[] }) {
-  const points = useMemo(() => {
-    const dated = labels
-      .filter((l) => l.firstSeenAt)
-      .sort((a, b) => a.firstSeenBlock - b.firstSeenBlock);
-    if (dated.length === 0) return [];
+const RELATIVE = new Intl.RelativeTimeFormat('en-GB', { numeric: 'auto' });
 
-    const buckets = new Map<string, { at: Date; n: number }>();
-    for (const l of dated) {
-      const d = l.firstSeenAt as Date;
-      const key = `${d.getFullYear()}-${d.getMonth()}`;
-      const b = buckets.get(key);
-      if (b) b.n += 1;
-      else buckets.set(key, { at: new Date(d.getFullYear(), d.getMonth(), 1), n: 1 });
-    }
-    let running = 0;
-    return [...buckets.values()]
-      .sort((a, b) => a.at.getTime() - b.at.getTime())
-      .map((b) => ({ at: b.at, added: b.n, total: (running += b.n) }));
-  }, [labels]);
-
-  if (points.length < 2) return null;
-
-  const W = 640;
-  const H = 150;
-  const PAD = { l: 34, r: 8, t: 10, b: 20 };
-  const max = points[points.length - 1].total;
-  const x = (i: number) => PAD.l + (i / (points.length - 1)) * (W - PAD.l - PAD.r);
-  const y = (v: number) => H - PAD.b - (v / max) * (H - PAD.t - PAD.b);
-
-  // Stepped, because a name arrives at a moment rather than easing in.
-  const line = points
-    .map((p, i) => (i === 0 ? `M${x(i)} ${y(p.total)}` : `H${x(i)}V${y(p.total)}`))
-    .join(' ');
-  const area = `${line} V${H - PAD.b} H${x(0)} Z`;
-
-  const ticks = [0, Math.round(max / 2), max];
-
-  return (
-    <figure className="chart">
-      <figcaption>
-        Names on-chain over time
-        <span>cumulative, by month of first announcement</span>
-      </figcaption>
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Cumulative names, ending at ${max}`}>
-        {ticks.map((t) => (
-          <g key={t}>
-            <line className="grid" x1={PAD.l} x2={W - PAD.r} y1={y(t)} y2={y(t)} />
-            <text className="tick" x={PAD.l - 6} y={y(t) + 3} textAnchor="end">
-              {t}
-            </text>
-          </g>
-        ))}
-        <path className="area" d={area} />
-        <path className="line" d={line} />
-        <circle className="end" cx={x(points.length - 1)} cy={y(max)} r="3.5" />
-        {points.map((p, i) =>
-          i === 0 || i === points.length - 1 ? (
-            <text
-              key={p.at.getTime()}
-              className="tick"
-              x={x(i)}
-              y={H - 6}
-              textAnchor={i === 0 ? 'start' : 'end'}
-            >
-              {MONTH.format(p.at)}
-            </text>
-          ) : null,
-        )}
-      </svg>
-    </figure>
-  );
+function ago(then: Date): string {
+  const mins = Math.round((Date.now() - then.getTime()) / 60000);
+  if (mins < 60) return RELATIVE.format(-mins, 'minute');
+  const hours = Math.round(mins / 60);
+  if (hours < 48) return RELATIVE.format(-hours, 'hour');
+  return RELATIVE.format(-Math.round(hours / 24), 'day');
 }
 
-const TIER_TEXT: Record<Tier, string> = {
-  described: 'described',
-  deployed: 'deployed only',
-  registered: 'name only',
-};
+/* ------------------------------------------------------------------ hero -- */
 
-/** What the ecosystem has actually published, as one stacked bar. */
-export function CompositionChart({
+export function HeroPanel({
+  labels,
   records,
-  total,
 }: {
+  labels: Listing[];
   records: Map<string, Records>;
-  total: number;
 }) {
   const tally = useMemo(() => {
-    const t: Record<Tier, number> = { described: 0, deployed: 0, registered: 0 };
+    const t = { described: 0, deployed: 0, registered: 0 };
     for (const r of records.values()) t[tierOf(r)] += 1;
     return t;
   }, [records]);
 
-  const read = tally.described + tally.deployed + tally.registered;
-  if (read === 0) return null;
+  /** Cumulative arrivals, one point per name, for the sparkline. */
+  const spark = useMemo(() => {
+    const dated = labels
+      .filter((l) => l.firstSeenBlock > 0)
+      .sort((a, b) => a.firstSeenBlock - b.firstSeenBlock);
+    if (dated.length < 2) return null;
 
-  const order: Tier[] = ['described', 'deployed', 'registered'];
-  let offset = 0;
+    const W = 200;
+    const H = 46;
+    const first = dated[0].firstSeenBlock;
+    const span = dated[dated.length - 1].firstSeenBlock - first || 1;
+    const pts = dated.map((l, i) => {
+      const x = ((l.firstSeenBlock - first) / span) * W;
+      const y = H - ((i + 1) / dated.length) * H;
+      return `${x.toFixed(1)} ${y.toFixed(1)}`;
+    });
+    return { d: `M${pts.join(' L')}`, W, H };
+  }, [labels]);
+
+  const withBundle = tally.described + tally.deployed;
+  const newest = useMemo(() => {
+    const dated = labels.filter((l) => l.firstSeenAt);
+    if (dated.length === 0) return null;
+    return dated.reduce((a, b) => (a.firstSeenBlock > b.firstSeenBlock ? a : b)).firstSeenAt;
+  }, [labels]);
 
   return (
-    <figure className="chart">
-      <figcaption>
-        What those names have published
-        <span>
-          {read} of {total} read
+    <section className="hero">
+      <div className="hero-top">
+        <span className="hero-figure">{labels.length}</span>
+        {spark ? (
+          <svg
+            className="spark"
+            viewBox={`0 0 ${spark.W} ${spark.H}`}
+            preserveAspectRatio="none"
+            role="img"
+            aria-label="Cumulative registrations over time"
+          >
+            <path d={spark.d} />
+          </svg>
+        ) : null}
+      </div>
+      {/* The composition as a sentence. It is the same four numbers a stacked bar
+          would carry, and it states how they nest — which a bar cannot. */}
+      <p className="hero-note">
+        names indexed
+        {records.size > 0 ? (
+          <>
+            {' · '}
+            <strong>{withBundle}</strong> of them have a bundle {' · '}
+            <strong>{tally.described}</strong> of those also describe themselves {' · '}
+            <strong>{tally.registered}</strong> are a name and nothing else
+          </>
+        ) : (
+          <> · reading records…</>
+        )}
+        {newest ? (
+          <>
+            {' · '}
+            <span className="stale">newest {ago(newest)}</span>
+          </>
+        ) : null}
+      </p>
+    </section>
+  );
+}
+
+/* --------------------------------------------------------------- heatmap -- */
+
+const DAYS = 7;
+
+export function RegistrationGrid({ labels }: { labels: Listing[] }) {
+  const [times, setTimes] = useState<Map<number, Date>>(new Map());
+  const [failed, setFailed] = useState<string | null>(null);
+
+  /** Blocks whose derived time already puts them near the window. A few days of
+   *  slack on either side covers the derivation's own error. */
+  const candidates = useMemo(() => {
+    const cutoff = Date.now() - (DAYS + 3) * 86_400_000;
+    return labels
+      .filter((l) => l.firstSeenBlock > 0 && l.firstSeenAt && l.firstSeenAt.getTime() >= cutoff)
+      .map((l) => l.firstSeenBlock);
+  }, [labels]);
+
+  useEffect(() => {
+    if (candidates.length === 0) return;
+    let alive = true;
+    // Catch, rather than a bare `void`: an unhandled rejection here left the
+    // grid uniformly empty and indistinguishable from a quiet week.
+    readBlockTimes(candidates)
+      .then((m) => {
+        if (alive) setTimes(m);
+      })
+      .catch((err: unknown) => {
+        if (alive) setFailed(err instanceof Error ? err.message : String(err));
+      });
+    return () => {
+      alive = false;
+    };
+  }, [candidates]);
+
+  const { rows, max, total } = useMemo(() => {
+    // Rows are UTC days, newest last, ending today.
+    const today = new Date();
+    const start = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())
+      - (DAYS - 1) * 86_400_000;
+
+    const grid: { day: Date; hours: number[]; total: number }[] = [];
+    for (let d = 0; d < DAYS; d += 1) {
+      grid.push({ day: new Date(start + d * 86_400_000), hours: new Array(24).fill(0), total: 0 });
+    }
+
+    let hottest = 0;
+    let counted = 0;
+    for (const at of times.values()) {
+      const dayIndex = Math.floor((at.getTime() - start) / 86_400_000);
+      if (dayIndex < 0 || dayIndex >= DAYS) continue;
+      const h = at.getUTCHours();
+      const row = grid[dayIndex];
+      row.hours[h] += 1;
+      row.total += 1;
+      counted += 1;
+      if (row.hours[h] > hottest) hottest = row.hours[h];
+    }
+    return { rows: grid, max: hottest, total: counted };
+  }, [times]);
+
+  return (
+    <section className="heat">
+      <div className="heat-head">
+        <div>
+          <h2>Registrations</h2>
+          <p>one cell per UTC hour · one row per UTC day · day total in the right gutter</p>
+        </div>
+        <span className="legend">
+          <svg width="18" height="8" aria-hidden="true">
+            <line x1="0" y1="4" x2="18" y2="4" />
+          </svg>
+          names registered
         </span>
-      </figcaption>
-      <svg viewBox="0 0 640 46" role="img" aria-label="Composition by what each name publishes">
-        {order.map((t) => {
-          const w = (tally[t] / read) * 640;
-          const seg = (
-            <rect key={t} className={`seg ${t}`} x={offset} y="0" width={Math.max(0, w - 2)} height="16" rx="3" />
-          );
-          offset += w;
-          return seg;
-        })}
-        {(() => {
-          let at = 0;
-          return order.map((t) => {
-            const w = (tally[t] / read) * 640;
-            const label = (
-              <text key={`l-${t}`} className="seglabel" x={at} y="34">
-                {tally[t]} {TIER_TEXT[t]}
-              </text>
-            );
-            at += w;
-            return tally[t] > 0 ? label : null;
-          });
-        })()}
-      </svg>
-    </figure>
+      </div>
+
+      <div className="heat-grid">
+        {rows.map((row) => (
+          <div className="heat-row" key={row.day.toISOString()}>
+            <span className="heat-day">{DAY_LABEL.format(row.day)}</span>
+            <div className="heat-cells">
+              {row.hours.map((n, h) => (
+                <span
+                  key={h}
+                  className={`cell${n > 0 ? ' hit' : ''}`}
+                  // One hue, opacity carries magnitude — no rainbow, and an
+                  // empty hour is visibly a cell rather than a gap.
+                  style={n > 0 ? { opacity: 0.35 + 0.65 * (n / (max || 1)) } : undefined}
+                  title={`${DAY_LABEL.format(row.day)} ${String(h).padStart(2, '0')}:00 UTC — ${n}`}
+                />
+              ))}
+            </div>
+            <span className={`heat-total${row.total > 0 ? ' on' : ''}`}>{row.total}</span>
+          </div>
+        ))}
+        <div className="heat-axis">
+          <span>00</span>
+          <span>06</span>
+          <span>12</span>
+          <span>18</span>
+          <span>UTC</span>
+        </div>
+      </div>
+
+      {failed ? (
+        <p className="heat-empty warn">Could not read block times: {failed}</p>
+      ) : total === 0 && candidates.length > 0 ? (
+        <p className="heat-empty">reading block times for {candidates.length} recent names…</p>
+      ) : total === 0 ? (
+        <p className="heat-empty">
+          Nothing registered in the last {DAYS} days. Every name in the directory arrived earlier.
+        </p>
+      ) : null}
+    </section>
   );
 }

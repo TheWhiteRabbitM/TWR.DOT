@@ -247,6 +247,221 @@ h1 {
   color: var(--tx-low);
 }
 
+/* ------------------------------------------------------- hero + heatmap -- */
+
+.charts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 980px) {
+  .charts {
+    grid-template-columns: minmax(300px, 0.85fr) 1.6fr;
+    align-items: stretch;
+  }
+}
+
+.hero,
+.heat {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.hero-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hero-figure {
+  font-family: var(--display);
+  font-size: 64px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--tx-hi);
+}
+
+.spark {
+  flex: 1;
+  height: 46px;
+  min-width: 0;
+}
+
+.spark path {
+  fill: none;
+  stroke: var(--pink);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+}
+
+.hero-note {
+  margin: 0;
+  font-size: var(--fs-1);
+  line-height: 1.55;
+  color: var(--tx-mid);
+}
+
+.hero-note strong {
+  color: var(--tx-hi);
+  font-weight: 700;
+}
+
+.stale {
+  color: var(--warn);
+}
+
+/* ---- the registration grid ---- */
+
+.heat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.heat h2 {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 2px;
+  color: var(--tx-hi);
+}
+
+.heat-head p {
+  margin: 0;
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-0);
+  color: var(--tx-mid);
+  white-space: nowrap;
+}
+
+.legend line {
+  stroke: var(--pink);
+  stroke-width: 2;
+}
+
+.heat-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heat-row {
+  display: grid;
+  grid-template-columns: 3.6rem 1fr 1.6rem;
+  align-items: center;
+  gap: 10px;
+}
+
+.heat-day {
+  font-size: var(--fs-0);
+  color: var(--tx-mid);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.heat-cells {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 3px;
+}
+
+/* An empty hour is a cell, not a gap: the grid should read as a full day even
+   when nothing happened in it. */
+.cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--bg-3);
+}
+
+.cell.hit {
+  background: var(--pink);
+}
+
+.heat-total {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  text-align: right;
+  font-weight: 700;
+}
+
+.heat-total.on {
+  color: var(--tx-hi);
+}
+
+.heat-axis {
+  display: grid;
+  grid-template-columns: 3.6rem 1fr 1.6rem;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.heat-axis span {
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.heat-axis span:first-child {
+  grid-column: 2;
+}
+
+.heat-axis {
+  grid-template-columns: 3.6rem repeat(4, 1fr) 1.6rem;
+}
+
+.heat-axis span:nth-child(1) {
+  grid-column: 2;
+}
+
+.heat-axis span:nth-child(5) {
+  text-align: right;
+  grid-column: 6;
+}
+
+.heat-empty {
+  margin: 12px 0 0;
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.heat-empty.warn {
+  color: var(--warn);
+}
+
+.catsep {
+  width: 1px;
+  align-self: stretch;
+  background: var(--line);
+  margin: 0 2px;
+}
+
+.catchip.state.on {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
 /* ---------------------------------------------------------------- charts -- */
 /* Two hues at most: pink is the measured series, --bg-3 the remainder. No
    gradients on data. One series carries no legend; the stacked bar labels its

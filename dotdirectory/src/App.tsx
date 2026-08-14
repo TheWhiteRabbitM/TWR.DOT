@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { CompositionChart, GrowthChart } from './Charts';
+import { HeroPanel, RegistrationGrid } from './Charts';
 import {
   DIRECTORY,
   readDirectory,
@@ -171,43 +171,9 @@ export default function App() {
 
       {state.phase === 'ready' ? (
         <>
-          {/* Four figures, and every one of them is a count. Block height, block
-              time and last-change are provenance, not metrics — they live in the
-              footer with the endpoint, where provenance belongs. */}
-          <div className="stats">
-            <div className="stat">
-              <span className="figure">{state.snapshot.labels.length}</span>
-              <span className="label">names on-chain</span>
-            </div>
-            <button
-              type="button"
-              className={`stat clickable${tierFilter === 'described' ? ' on' : ''}`}
-              onClick={() => setTierFilter((v) => (v === 'described' ? 'all' : 'described'))}
-            >
-              <span className="figure">{tally.described || '—'}</span>
-              <span className="label">described</span>
-            </button>
-            <button
-              type="button"
-              className={`stat clickable${tierFilter === 'deployed' ? ' on' : ''}`}
-              onClick={() => setTierFilter((v) => (v === 'deployed' ? 'all' : 'deployed'))}
-            >
-              <span className="figure">{tally.deployed || '—'}</span>
-              <span className="label">deployed only</span>
-            </button>
-            <button
-              type="button"
-              className={`stat clickable${tierFilter === 'registered' ? ' on' : ''}`}
-              onClick={() => setTierFilter((v) => (v === 'registered' ? 'all' : 'registered'))}
-            >
-              <span className="figure">{tally.registered || '—'}</span>
-              <span className="label">name only</span>
-            </button>
-          </div>
-
           <div className="charts">
-            <GrowthChart labels={state.snapshot.labels} />
-            <CompositionChart records={records} total={state.snapshot.labels.length} />
+            <HeroPanel labels={state.snapshot.labels} records={records} />
+            <RegistrationGrid labels={state.snapshot.labels} />
           </div>
 
           {/* Categories are declared by the owners, so this row is whatever they
@@ -218,11 +184,28 @@ export default function App() {
             <div className="cats">
               <button
                 type="button"
-                className={`catchip${catFilter === 'all' ? ' on' : ''}`}
-                onClick={() => setCatFilter('all')}
+                className={`catchip${catFilter === 'all' && tierFilter === 'all' ? ' on' : ''}`}
+                onClick={() => {
+                  setCatFilter('all');
+                  setTierFilter('all');
+                }}
               >
                 all <span>{records.size}</span>
               </button>
+              {/* State sits beside category rather than in its own row of tiles:
+                  both are ways of narrowing the same list, and the hero sentence
+                  above already carries the counts. */}
+              {(['described', 'deployed', 'registered'] as Tier[]).map((t) => (
+                <button
+                  type="button"
+                  key={t}
+                  className={`catchip state${tierFilter === t ? ' on' : ''}`}
+                  onClick={() => setTierFilter((v) => (v === t ? 'all' : t))}
+                >
+                  {TIER_LABEL[t]} <span>{tally[t]}</span>
+                </button>
+              ))}
+              <span className="catsep" aria-hidden="true" />
               {categories.map(([name, n]) => (
                 <button
                   type="button"
