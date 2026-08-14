@@ -49,8 +49,17 @@ const DIRECTORY_ABI = [
   'function pageDetailed(uint256 start, uint256 size) view returns (tuple(string label, address owner, uint64 firstSeenBlock)[])',
 ];
 
-/** How many labels to ask for per call. One page is one round trip. */
-const PAGE = 50;
+/**
+ * Entries per `pageDetailed` call.
+ *
+ * Not a constant to be picked: every entry costs an external call into the
+ * registry, all inside one eth_call, and eth_call has a gas ceiling. Measured
+ * against this contract, 25 entries answer and 30 revert — but that boundary
+ * moves with the RPC's limits and with anything the contract later does per
+ * entry, so `readPage` halves on refusal instead of trusting this number. It is
+ * a starting point, deliberately under the measured ceiling.
+ */
+const PAGE = 20;
 
 export interface Listing {
   label: string;
@@ -128,12 +137,34 @@ export async function readDirectory(): Promise<Snapshot> {
   const total = Number(rawCount);
   const blockSeconds = await measureBlockTime(provider, blockNumber);
 
+  type Row = { label: string; owner: string; firstSeenBlock: bigint };
+
+  /**
+   * Read a span, halving it whenever the node refuses. A revert here is not a
+   * contract error — it is the eth_call gas ceiling being hit by the external
+   * calls `pageDetailed` makes per entry — so the response is a smaller ask,
+   * exactly as it is for a transaction that will not fit in a block.
+   */
+  async function readPage(start: number, size: number): Promise<Row[]> {
+    try {
+      return (await directory.pageDetailed(start, size)) as Row[];
+    } catch (err) {
+      if (size <= 1) throw err;
+      const half = Math.ceil(size / 2);
+      const [a, b] = await Promise.all([
+        readPage(start, half),
+        readPage(start + half, size - half),
+      ]);
+      return [...a, ...b];
+    }
+  }
+
   // Paged rather than one call: the list grows without bound, and a single read
   // of an unbounded array is the thing that eventually stops working. Each page
   // brings its owners and arrival blocks with it — resolved inside the contract
   // view — so this is the only pass needed for all three.
-  const pages: Promise<{ label: string; owner: string; firstSeenBlock: bigint }[]>[] = [];
-  for (let start = 0; start < total; start += PAGE) pages.push(directory.pageDetailed(start, PAGE));
+  const pages: Promise<Row[]>[] = [];
+  for (let start = 0; start < total; start += PAGE) pages.push(readPage(start, PAGE));
   const entries = (await Promise.all(pages)).flat();
 
   const now = Date.now();
