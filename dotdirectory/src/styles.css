@@ -27,38 +27,49 @@
 :root {
   color-scheme: dark;
 
-  --bg-0: #000000;
-  --bg-1: #0e0e13;
-  --bg-2: #16161d;
-  --bg-3: #1d1d26;
+  /* Warm, not neutral. Read off polkadot.com: the ground is rgb(15,15,15) and
+     the surfaces are rgb(28,25,23) / rgb(41,37,36) — the warm "stone" ramp, not
+     the cool blue-greys an earlier version of this sheet used. Pure black and a
+     blue-grey card read as a different product on the same page. */
+  --bg-0: #0f0f0f;
+  --bg-1: #1c1917;
+  --bg-2: #231f1d;
+  --bg-3: #292524;
 
-  --line: #22222c;
-  --line-strong: #6e7391;
+  --line: #2c2725;
+  --line-strong: #57534e;
 
-  --tx-hi: #ffffff;
-  --tx-mid: #aeb7cb;
-  --tx-low: #6e7391;
+  --tx-hi: #fafaf9;
+  --tx-mid: #a8a29e;
+  --tx-low: #78716c;
 
+  /* Pink appears nowhere in polkadot.com's own chrome — measured, zero uses on
+     the homepage. It is held in reserve, so here it marks one thing: the single
+     most important figure and the top tier. Everything structural is warm
+     neutral, and the light button below is how the site draws a call to action. */
   --pink: #ff2670;
-  --pink-fill: #e6007a;
-  --on-pink: #000000;
+  --on-pink: #0f0f0f;
+  --btn: #f5f5f4;
+  --btn-tx: #44403c;
   --warn: #e8a13a;
 
+  /* The site's own steps: DM Sans 16/400 as base, with 12, 14 and 20 around it;
+     DM Serif Display at 20/24/30 and larger, always weight 400. */
   --fs-0: 12px;
-  --fs-1: 13px;
+  --fs-1: 14px;
   --fs-2: 14px;
-  --fs-3: 15px;
-  --fs-5: 21px;
-  --fs-6: 30px;
+  --fs-3: 16px;
+  --fs-5: 24px;
+  --fs-6: 44px;
 
-  --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 14px;
+  /* 12px dominates on polkadot.com, with 8 and 16 either side. */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
 
-  --display: Unbounded, 'Segoe UI Variable Display', 'Century Gothic', 'Avenir Next',
-    system-ui, sans-serif;
-  --sans: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
-  --mono: 'Cascadia Mono', Consolas, 'SF Mono', ui-monospace, monospace;
+  --display: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  --sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace;
 }
 
 * {
@@ -119,12 +130,14 @@ header {
   flex: none;
 }
 
+/* Sentence case, weight 400, tight negative tracking — the site's headings are
+   a serif at size, never uppercase and never bold. */
 h1 {
   font-family: var(--display);
   font-size: var(--fs-6);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 400;
   margin: 0;
 }
 
@@ -222,7 +235,8 @@ h1 {
   font-family: var(--display);
   font-size: var(--fs-5);
   line-height: 1.15;
-  font-weight: 600;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 .stat .label {
@@ -412,21 +426,25 @@ h1 {
   outline-offset: 1px;
 }
 
+/* polkadot.com's call to action is a LIGHT button on the dark ground — stone-100
+   with stone-700 text — not an outlined dark one. Re-read is the only action
+   here, so it is the only element that takes it. */
 .clear {
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: var(--fs-1);
-  background: var(--bg-3);
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  color: var(--tx-mid);
-  padding: 8px 12px;
+  font-weight: 500;
+  background: var(--btn);
+  border: 1px solid var(--btn);
+  border-radius: var(--r-md);
+  color: var(--btn-tx);
+  padding: 8px 14px;
   cursor: pointer;
   white-space: nowrap;
 }
 
 .clear:hover {
-  border-color: var(--line-strong);
-  color: var(--tx-hi);
+  background: #ffffff;
+  border-color: #ffffff;
 }
 
 .count {
