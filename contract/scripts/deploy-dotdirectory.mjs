@@ -109,28 +109,100 @@ const iface = new Interface(
   JSON.parse(readFileSync(resolve(ARTIFACT), 'utf8')).abi,
 );
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Submit one chunk, retrying a stale nonce.
+ *
+ * Consecutive transactions from one account race the nonce: each submission
+ * reads the account's nonce before the previous one is in a block, signs the
+ * same number, and the chain answers {"type":"Invalid","value":{"type":"Stale"}}
+ * for the loser. The same thing bites `dotns text set` right after a bulletin
+ * upload in dotmetrics-refresh.yml, and the remedy there is the remedy here:
+ * wait for the block and sign again against the nonce the previous one left.
+ *
+ * It has to be a try/catch and not a check on `res.ok`, because papi THROWS
+ * InvalidTxError rather than returning it — which is why the first run of this
+ * script died on chunk 1 instead of carrying on.
+ */
+/** Returns 'ok' | 'stale' | 'gas' | 'other', so the caller can react per case. */
+async function trySubmit(data) {
+  try {
+    const res = await api.tx.Revive.call({
+      dest: Binary.fromHex(address),
+      value: 0n,
+      // Left exactly as the working deploys in this repo declare it. Raising it
+      // to "close to a full block" made every batch fail ExhaustsResources
+      // instead — a declared weight larger than a block can hold is refused
+      // before it runs. The batch size is the variable to move here, not this.
+      weight_limit: { ref_time: 900_000_000_000n, proof_size: 3_000_000n },
+      storage_deposit_limit: 5n * 10n ** 12n,
+      data: Binary.fromHex(data),
+    }).signAndSubmit(signer);
+    if (res.ok) return 'ok';
+    const why = JSON.stringify(res.dispatchError ?? {});
+    return why.includes('OutOfGas') ? 'gas' : 'other';
+  } catch (err) {
+    const why = JSON.stringify(err?.error ?? err?.message ?? '');
+    if (why.includes('Stale')) return 'stale';
+    // Both mean "this batch does not fit": OutOfGas is the contract running out
+    // mid-execution, ExhaustsResources is the block refusing it up front. The
+    // response to either is a smaller batch.
+    if (why.includes('OutOfGas') || why.includes('ExhaustsResources')) return 'gas';
+    console.error('  submit threw:', err?.message ?? err);
+    return 'other';
+  }
+}
+
+/**
+ * Send a batch, halving it whenever the chain says OutOfGas.
+ *
+ * The batch size is not a constant to be guessed. Each announce inside the loop
+ * makes an external call to the registry and writes two storage slots, so what
+ * fits depends on weights this script cannot see — and guessing it wrong is what
+ * lost 200 of the first 205 labels. Halving on OutOfGas finds the real ceiling
+ * in a few attempts, whatever it happens to be, and needs no tuning if it moves.
+ *
+ * Stale nonces are retried in place: consecutive transactions from one account
+ * race to read the nonce before the previous one is in a block, the same way
+ * `dotns text set` races a bulletin upload in dotmetrics-refresh.yml.
+ */
+async function announceBatch(batch, depth = 0) {
+  const pad = '  '.repeat(depth);
+  const data = iface.encodeFunctionData('announceMany', [batch]);
+
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    const outcome = await trySubmit(data);
+    if (outcome === 'ok') {
+      console.log(`${pad}sent ${batch.length}: ${batch[0]} … ${batch[batch.length - 1]}`);
+      return batch.length;
+    }
+    if (outcome === 'stale') {
+      console.log(`${pad}stale nonce, waiting for the block (attempt ${attempt})`);
+      await sleep(12_000);
+      continue;
+    }
+    if (outcome === 'gas') {
+      if (batch.length === 1) {
+        console.error(`${pad}${batch[0]}: OutOfGas even alone — skipped`);
+        return 0;
+      }
+      const half = Math.ceil(batch.length / 2);
+      console.log(`${pad}${batch.length} too big, splitting into ${half} + ${batch.length - half}`);
+      return (
+        (await announceBatch(batch.slice(0, half), depth + 1)) +
+        (await announceBatch(batch.slice(half), depth + 1))
+      );
+    }
+    return 0;
+  }
+  return 0;
+}
+
 let added = 0;
 for (let i = 0; i < labels.length; i += CHUNK) {
-  const chunk = labels.slice(i, i + CHUNK);
-  const data = iface.encodeFunctionData('announceMany', [chunk]);
-  const n = i / CHUNK + 1;
-
-  const res = await api.tx.Revive.call({
-    dest: Binary.fromHex(address),
-    value: 0n,
-    weight_limit: { ref_time: 900_000_000_000n, proof_size: 3_000_000n },
-    storage_deposit_limit: 5n * 10n ** 12n,
-    data: Binary.fromHex(data),
-  }).signAndSubmit(signer);
-
-  if (!res.ok) {
-    // One bad chunk must not cost the rest their turn — announceMany is
-    // idempotent, so the whole run can simply be repeated afterwards.
-    console.error(`chunk ${n}: failed —`, JSON.stringify(res.dispatchError ?? {}, null, 2));
-    continue;
-  }
-  added += chunk.length;
-  console.log(`chunk ${n}: submitted ${chunk.length} labels (${added}/${labels.length})`);
+  added += await announceBatch(labels.slice(i, i + CHUNK));
+  console.log(`progress: ${added}/${labels.length}`);
 }
 
 console.log(`\ncontract: ${address}`);
