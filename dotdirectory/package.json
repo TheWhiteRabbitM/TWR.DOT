@@ -9,7 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@parity/product-sdk": "^0.19.1",
+    "@parity/product-sdk-descriptors": "^0.8.0",
     "ethers": "^6.13.0",
+    "polkadot-api": "^2.2.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

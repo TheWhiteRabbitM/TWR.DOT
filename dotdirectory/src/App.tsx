@@ -1,5 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense } from 'react';
+import type { App } from '@parity/product-sdk/core';
 import { HeroPanel, RegistrationGrid } from './Charts';
+
+/**
+ * Lazy on purpose. The panel's module pulls in the product SDK and its chain
+ * descriptors, which carry SCALE metadata for every supported chain — eight
+ * chunks between 250 kB and 880 kB. Loading that for a reader who will never
+ * sign would double the page for a feature they cannot use, and this page is
+ * served from Bulletin. It arrives only when there is a host to sign with.
+ */
+const AnnouncePanel = lazy(() => import('./AnnouncePanel'));
 import {
   DIRECTORY,
   readDirectory,
@@ -42,7 +53,7 @@ type State =
 
 const short = (addr: string) => `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 
-export default function App() {
+export default function App({ app }: { app: App | null }) {
   const [state, setState] = useState<State>({ phase: 'loading' });
   const [records, setRecords] = useState<Map<string, Records>>(new Map());
   const [query, setQuery] = useState('');
@@ -175,6 +186,12 @@ export default function App() {
             <HeroPanel labels={state.snapshot.labels} records={records} />
             <RegistrationGrid labels={state.snapshot.labels} />
           </div>
+
+          {app ? (
+            <Suspense fallback={null}>
+              <AnnouncePanel app={app} onAdded={() => void load()} />
+            </Suspense>
+          ) : null}
 
           {/* Categories are declared by the owners, so this row is whatever they
               actually chose — not a taxonomy we imposed. "unclassified" is shown

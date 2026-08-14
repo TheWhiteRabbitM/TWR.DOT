@@ -561,6 +561,85 @@ h1 {
   font-size: 10px;
 }
 
+/* -------------------------------------------------------------- announce -- */
+
+.announce {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.announce-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.announce h2 {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 2px;
+  color: var(--tx-hi);
+}
+
+.announce-copy p {
+  margin: 0;
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
+  max-width: 56ch;
+}
+
+.announce-form {
+  display: flex;
+  gap: 8px;
+  flex: 0 1 auto;
+}
+
+.announce-form input {
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  color: var(--tx-hi);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+  min-width: 12rem;
+}
+
+.announce-form input:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
+.announce-form button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.announce-status {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.announce-status.failed {
+  color: var(--warn);
+}
+
+.announce-status.done {
+  color: var(--pink);
+}
+
 /* ------------------------------------------------------------ categories -- */
 
 .cats {
