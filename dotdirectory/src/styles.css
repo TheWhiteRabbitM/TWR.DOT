@@ -1,5 +1,5 @@
-/*
- * dotdirectory — dotmetrics' one-accent dark system, on Polkadot's palette.
+﻿/*
+ * dotdirectory â€” dotmetrics' one-accent dark system, on Polkadot's palette.
  *
  * Follows the rules dotmetrics wrote for itself, because they are right and two
  * apps in one ecosystem should not argue:
@@ -10,16 +10,16 @@
  *      dotmetrics removed from its own sheet.
  *   2. No gradients on data. Ever.
  *   3. Tabular figures globally, so numbers stop jittering as they tick.
- *   4. Three radii — 6 / 10 / 14. Seven type steps. 4px grid.
+ *   4. Three radii â€” 6 / 10 / 14. Seven type steps. 4px grid.
  *
  * LAYOUT, rewritten. The first version put 879px of header, prose and tiles
- * above the first row of data, on a 694px viewport — so the page opened showing
+ * above the first row of data, on a 694px viewport â€” so the page opened showing
  * no directory at all. And 205 rows of structured data laid out as identical
  * cards is a wall, not a reading. Now: a compact header, four figures that are
  * all counts, and a dense sortable table. Provenance moved to the footer, the
  * explanation to a <details> at the bottom. Data starts within the first screen.
  *
- * Palette is the official brand set — Polkadot Pink #FF2670, black, and the
+ * Palette is the official brand set â€” Polkadot Pink #FF2670, black, and the
  * Storm greys. dotmetrics' --pink is already the brand pink, so the two read as
  * siblings.
  */
@@ -28,7 +28,7 @@
   color-scheme: dark;
 
   /* Warm, not neutral. Read off polkadot.com: the ground is rgb(15,15,15) and
-     the surfaces are rgb(28,25,23) / rgb(41,37,36) — the warm "stone" ramp, not
+     the surfaces are rgb(28,25,23) / rgb(41,37,36) â€” the warm "stone" ramp, not
      the cool blue-greys an earlier version of this sheet used. Pure black and a
      blue-grey card read as a different product on the same page. */
   --bg-0: #0f0f0f;
@@ -43,7 +43,7 @@
   --tx-mid: #a8a29e;
   --tx-low: #78716c;
 
-  /* Pink appears nowhere in polkadot.com's own chrome — measured, zero uses on
+  /* Pink appears nowhere in polkadot.com's own chrome â€” measured, zero uses on
      the homepage. It is held in reserve, so here it marks one thing: the single
      most important figure and the top tier. Everything structural is warm
      neutral, and the light button below is how the site draws a call to action. */
@@ -130,7 +130,7 @@ header {
   flex: none;
 }
 
-/* Sentence case, weight 400, tight negative tracking — the site's headings are
+/* Sentence case, weight 400, tight negative tracking â€” the site's headings are
    a serif at size, never uppercase and never bold. */
 h1 {
   font-family: var(--display);
@@ -188,7 +188,7 @@ h1 {
 
 /* ----------------------------------------------------------------- stats -- */
 /* Four tiles, four counts. Three of them filter the table when clicked, which
-   is why they are buttons — a number you can act on beats a number you read. */
+   is why they are buttons â€” a number you can act on beats a number you read. */
 
 .stats {
   display: grid;
@@ -563,25 +563,17 @@ h1 {
 
 /* -------------------------------------------------------------- announce -- */
 
-.announce {
+.register {
   background: var(--bg-1);
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
-.announce-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.announce h2 {
+.register h2 {
   font-family: var(--sans);
   font-size: var(--fs-1);
   font-weight: 700;
@@ -591,20 +583,40 @@ h1 {
   color: var(--tx-hi);
 }
 
-.announce-copy p {
+.register-head p {
   margin: 0;
   font-size: var(--fs-1);
   color: var(--tx-mid);
-  max-width: 56ch;
+  max-width: 62ch;
 }
 
-.announce-form {
+/* The fields wrap into a single column on a narrow screen without a media
+   query: each one has a floor and the row is allowed to break. */
+.register-form {
   display: flex;
-  gap: 8px;
-  flex: 0 1 auto;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 12px;
 }
 
-.announce-form input {
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.field > span {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.field input,
+.field textarea {
   font-family: var(--mono);
   font-size: var(--fs-1);
   color: var(--tx-hi);
@@ -612,31 +624,76 @@ h1 {
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   padding: 8px 12px;
-  min-width: 12rem;
+  width: 100%;
+  min-width: 0;
+  resize: vertical;
 }
 
-.announce-form input:focus-visible {
+.field input:focus-visible,
+.field textarea:focus-visible {
   outline: 2px solid var(--pink);
   outline-offset: 1px;
 }
 
-.announce-form button:disabled {
+/* The `.dot` is part of every name here, so it is printed rather than typed —
+   and the input keeps it inside its own border so it reads as one field. */
+.with-suffix {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.with-suffix input {
+  padding-right: 3.4rem;
+}
+
+.suffix {
+  position: absolute;
+  right: 12px;
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  color: var(--tx-low);
+  pointer-events: none;
+}
+
+.lookup {
+  flex: 1 1 100%;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  min-height: 1.2em;
+}
+
+.lookup .yes {
+  color: var(--tx-mid);
+}
+
+.lookup .no {
+  color: var(--warn);
+}
+
+.register-form button {
+  flex: 0 0 auto;
+}
+
+.register-form button:disabled {
   opacity: 0.45;
   cursor: default;
 }
 
-.announce-status {
+.register-status {
   margin: 0;
   font-family: var(--mono);
   font-size: var(--fs-0);
   color: var(--tx-low);
 }
 
-.announce-status.failed {
+.register-status.failed {
   color: var(--warn);
 }
 
-.announce-status.done {
+.register-status.done {
   color: var(--pink);
 }
 
@@ -720,8 +777,8 @@ h1 {
   outline-offset: 1px;
 }
 
-/* polkadot.com's call to action is a LIGHT button on the dark ground — stone-100
-   with stone-700 text — not an outlined dark one. Re-read is the only action
+/* polkadot.com's call to action is a LIGHT button on the dark ground â€” stone-100
+   with stone-700 text â€” not an outlined dark one. Re-read is the only action
    here, so it is the only element that takes it. */
 .clear {
   font-family: var(--sans);
@@ -763,8 +820,8 @@ h1 {
 
 /* Two rows per record: the structured fields on the first, the description
    spanning the whole width on the second. Free text of unpredictable length
-   does not belong in a column — that is what pushed the earlier layout off the
-   right edge — and giving it its own line costs nothing when it is absent. */
+   does not belong in a column â€” that is what pushed the earlier layout off the
+   right edge â€” and giving it its own line costs nothing when it is absent. */
 .tr {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(9rem, auto) 7rem 7.5rem;
@@ -937,7 +994,7 @@ a.tr:focus-visible {
 }
 
 /* Below the table's natural width, each row becomes a labelled block rather
-   than a squeeze — five columns in 380px is unreadable at any type size. */
+   than a squeeze â€” five columns in 380px is unreadable at any type size. */
 @media (max-width: 860px) {
   .th-row {
     display: none;
@@ -1031,12 +1088,12 @@ footer {
 }
 
 .why summary::before {
-  content: '▸ ';
+  content: 'â–¸ ';
   color: var(--tx-low);
 }
 
 .why[open] summary::before {
-  content: '▾ ';
+  content: 'â–¾ ';
 }
 
 .why summary:focus-visible {

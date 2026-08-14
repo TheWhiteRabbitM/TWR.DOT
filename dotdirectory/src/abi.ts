@@ -31,3 +31,37 @@ export const DIRECTORY_ABI: AbiEntry[] = [
     outputs: [{ name: '', type: 'address' }],
   },
 ];
+
+/**
+ * The DotNS content resolver, write side.
+ *
+ * A name enters the directory through `announce`, but what it SAYS about itself
+ * lives here: the page reads `manifest` and `category` off this resolver for
+ * every row, and those records are the difference between a list of names and a
+ * directory. Announce is open to anyone; these are not — the resolver only
+ * accepts writes from the name's owner, which is why the form checks first
+ * rather than letting the chain deliver the refusal.
+ */
+export const RESOLVER_ABI: AbiEntry[] = [
+  {
+    type: 'function',
+    name: 'setText',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'node', type: 'bytes32' },
+      { name: 'key', type: 'string' },
+      { name: 'value', type: 'string' },
+    ],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'text',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'node', type: 'bytes32' },
+      { name: 'key', type: 'string' },
+    ],
+    outputs: [{ name: '', type: 'string' }],
+  },
+];

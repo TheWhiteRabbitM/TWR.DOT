@@ -10,7 +10,7 @@ import { HeroPanel, RegistrationGrid } from './Charts';
  * sign would double the page for a feature they cannot use, and this page is
  * served from Bulletin. It arrives only when there is a host to sign with.
  */
-const AnnouncePanel = lazy(() => import('./AnnouncePanel'));
+const RegisterPanel = lazy(() => import('./RegisterPanel'));
 import {
   DIRECTORY,
   readDirectory,
@@ -189,7 +189,11 @@ export default function App({ app }: { app: App | null }) {
 
           {app ? (
             <Suspense fallback={null}>
-              <AnnouncePanel app={app} onAdded={() => void load()} />
+              <RegisterPanel
+                app={app}
+                categories={categories.map(([name]) => name)}
+                onChanged={() => void load()}
+              />
             </Suspense>
           ) : null}
 

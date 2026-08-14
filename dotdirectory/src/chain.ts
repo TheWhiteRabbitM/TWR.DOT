@@ -45,6 +45,7 @@ const RPCS = [
 const DIRECTORY_ABI = [
   'function count() view returns (uint256)',
   'function lastChangedAt() view returns (uint256)',
+  'function isListed(string label) view returns (bool)',
   'function ownerOfLabel(string label) view returns (address)',
   'function pageDetailed(uint256 start, uint256 size) view returns (tuple(string label, address owner, uint64 firstSeenBlock)[])',
 ];
@@ -322,6 +323,55 @@ export async function readRecords(labels: string[]): Promise<Map<string, Records
     }),
   );
   return out;
+}
+
+/**
+ * Everything the registration form needs to know about one name, in one read.
+ *
+ * Deliberately on the ethers path rather than the SDK's: this runs while the
+ * visitor is still typing, before any wallet exists and possibly instead of one.
+ * A form that could not tell you `yours.dot` is unregistered until you connected
+ * a wallet would be asking for a signature to deliver a "no".
+ *
+ * `owner` is the H160 the registry holds. A wallet's public key derives to an
+ * H160 through a hash rather than a truncation, so the comparison belongs to
+ * deriveH160 in the write path — not to a string prefix here.
+ */
+export interface NameState {
+  label: string;
+  /** Whether DotNS has an owner for it. Nothing else matters if this is false. */
+  registered: boolean;
+  owner: string | null;
+  /** Whether the directory already carries it. */
+  listed: boolean;
+  records: Records;
+}
+
+export async function readName(rawLabel: string): Promise<NameState> {
+  const label = rawLabel.trim().toLowerCase().replace(/\.dot$/, '');
+  const { provider } = await connect();
+  const directory = new Contract(DIRECTORY, DIRECTORY_ABI, provider);
+
+  const [owner, listed, records] = await Promise.all([
+    directory.ownerOfLabel(label).catch(() => null),
+    directory.isListed(label).catch(() => false),
+    readRecords([label]),
+  ]);
+
+  const held = owner && !/^0x0+$/i.test(String(owner)) ? String(owner) : null;
+  return {
+    label,
+    registered: Boolean(held),
+    owner: held,
+    listed: Boolean(listed),
+    records: records.get(label) ?? {
+      category: null,
+      deployed: false,
+      described: false,
+      displayName: null,
+      description: null,
+    },
+  };
 }
 
 /* readOwners is gone on purpose. Owners now arrive with the page from
