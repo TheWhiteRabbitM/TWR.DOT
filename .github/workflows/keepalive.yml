@@ -64,14 +64,22 @@ jobs:
           # is committed, so a plain build renews with the last-known directory.
           - dir: peoplebook
             name: peoplebook.dot
-          # These two have no refresh job of their own at all: they are
-          # published only when we change them, so nothing renews them. Both
+          # These three have no refresh job of their own at all: they are
+          # published only when we change them, so nothing renews them. All
           # read their content from contracts rather than from a data file, so
           # a plain build renews the bundle without any prestep.
           - dir: chirp
             name: chirponchain.dot
           - dir: peoplewiki
             name: peoplewiki.dot
+          # dotdirectory has no refresh job BY DESIGN — its list is read from
+          # the DotDirectory contract in the visitor's browser, so no runner
+          # ever touches its data and there is nothing to re-index. That makes
+          # this line the only thing standing between it and the fourteen-day
+          # retention cliff: the contract would survive the page expiring, and
+          # the page is how anyone sees the contract.
+          - dir: dotdirectory
+            name: dotdirectory.dot
           # One static file, no build — so `npm ci` and `npm run build` would
           # both fail on it. The staging step below handles it instead.
           - dir: chirpwatch
