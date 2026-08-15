@@ -3322,6 +3322,20 @@
     "tier": 1,
     "firstSeenAt": 1786500804
   },
+  "public-research": {
+    "label": "public-research",
+    "domain": "public-research.dot",
+    "url": "https://public-research.dev-dot.li",
+    "firstSeenBlock": 12148890,
+    "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
+    "displayName": "PublicResearch",
+    "description": "Fund the research you want to exist. Proposals are stored on the Bulletin Chain, indexed through the Statement Store, and funded directly in CASH.",
+    "iconCid": "bafk2bzacec3ymxtr3apd7go35zoqu2ylrey5zqjiat6h5o5oilmsaqs5byhq4",
+    "contenthash": "bafybeihovjdxpby4qk5g6tgqeurcqfrqnzt6riy2azoudlykushe7s6ubu",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786566924
+  },
   "excluded": [
     "a5wz",
     "adddd",
