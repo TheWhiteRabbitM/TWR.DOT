@@ -3428,6 +3428,17 @@
     "tier": 0,
     "firstSeenAt": 1786728528
   },
+  "worldblog-app": {
+    "label": "worldblog-app",
+    "domain": "worldblog-app.dot",
+    "url": "https://worldblog-app.dev-dot.li",
+    "firstSeenBlock": 12250569,
+    "owner": "0xdACA60632d5A821057781c9F65CAe90956a5B3db",
+    "contenthash": "bafybeignzsopkbodox6rz4galfqevpnmfcqhqhjsd7opuz5zjqdiuvvwxe",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786784436
+  },
   "excluded": [
     "a5wz",
     "adddd",
