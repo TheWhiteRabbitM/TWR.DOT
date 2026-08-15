@@ -3336,6 +3336,20 @@
     "tier": 0,
     "firstSeenAt": 1786566924
   },
+  "common-ground": {
+    "label": "common-ground",
+    "domain": "common-ground.dot",
+    "url": "https://common-ground.dev-dot.li",
+    "firstSeenBlock": 12172367,
+    "owner": "0xC4c7cD497ca9A0FBC3d11f50827091969540D6Ad",
+    "displayName": "Common Ground",
+    "description": "A decentralized forum for thoughtful Polkadot discussions, with private-by-default masks, on-chain moderation and optional Proof of Personhood.",
+    "iconCid": "bafk2bzaceddtivcuaxlwyiw7cijk4bfjhkzvvjeuuloaumlg5tjtvjx46a4ng",
+    "contenthash": "bafybeidv2aeoejhc5tcybbodzhdnivqk3mzizrrytroj42v6j4whsrbvjm",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786616508
+  },
   "excluded": [
     "a5wz",
     "adddd",
