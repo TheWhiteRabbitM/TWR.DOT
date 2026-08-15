@@ -3371,6 +3371,38 @@
     "tier": 2,
     "firstSeenAt": 1786643532
   },
+  "awakenedgazette": {
+    "label": "awakenedgazette",
+    "domain": "awakenedgazette.dot",
+    "url": "https://awakenedgazette.dev-dot.li",
+    "firstSeenBlock": 12192400,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeif5zgwzoqydfmnpjlruymgub4q2csvaily52ellbhhszj5p2kldyq",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786660308
+  },
+  "detourvzw": {
+    "label": "detourvzw",
+    "domain": "detourvzw.dot",
+    "url": "https://detourvzw.dev-dot.li",
+    "firstSeenBlock": 12186663,
+    "owner": "0x3A1735bf10c4ebCa3D17fD8C9b6436E80D41BBeC",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1786648188
+  },
+  "postespresso": {
+    "label": "postespresso",
+    "domain": "postespresso.dot",
+    "url": "https://postespresso.dev-dot.li",
+    "firstSeenBlock": 12187678,
+    "owner": "0x7D257ACc9fBb1d7548f31FE137120aFa7dF71dc6",
+    "contenthash": "bafybeibqjqkpn4numrp4oshbbtgfqg4nemc6rszourpn3onzko7xofsfky",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786650672
+  },
   "excluded": [
     "a5wz",
     "adddd",
