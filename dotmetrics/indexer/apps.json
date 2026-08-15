@@ -3317,7 +3317,7 @@
     "url": "https://openraonchain.dev-dot.li",
     "firstSeenBlock": 12116950,
     "owner": "0xFF54A5a1FDAc91bb4F2b4fBf4bfFf37CdbEA333f",
-    "contenthash": "bafybeifnvnstqxlt6b3l3jk6mx3sjr3cqjofq7hiuvvzqvzfmalrwak3si",
+    "contenthash": "bafybeigeha5euiq2bqmz77nt4cdwvz4bib6ltsqyxmg4rv4p6mje7kz3hy",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786500804
@@ -3414,6 +3414,20 @@
     "tier": 1,
     "firstSeenAt": 1786693344
   },
+  "polkashoot": {
+    "label": "polkashoot",
+    "domain": "polkashoot.dot",
+    "url": "https://polkashoot.dev-dot.li",
+    "firstSeenBlock": 12224080,
+    "owner": "0x65109534F24535EF49d755C4b67472Dc21237dc3",
+    "displayName": "Polkashoot",
+    "description": "Shoot grifters down—decentralized",
+    "iconCid": "bafk2bzacecuip45o3ayqynzokk6qbd53blp2ru46ut7xsabuedxkxj224al4e",
+    "contenthash": "bafybeia56cukpmm7ikth3ex6q3p6vqh5jxwq6uulj67hm7l5rvjjxz4hym",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786728528
+  },
   "excluded": [
     "a5wz",
     "adddd",
@@ -3445,6 +3459,7 @@
     "dotusd",
     "dqrwx",
     "drddd",
+    "dxn7",
     "e9cz",
     "e9fwf",
     "ecuoo",
