@@ -3403,6 +3403,17 @@
     "tier": 1,
     "firstSeenAt": 1786650672
   },
+  "dotdirectory": {
+    "label": "dotdirectory",
+    "domain": "dotdirectory.dot",
+    "url": "https://dotdirectory.dev-dot.li",
+    "firstSeenBlock": 12207966,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeicxhb4e3elnzfvmaxagjuot3hvdntqbi3tvfl6soosyfn6p5qhpny",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786693344
+  },
   "excluded": [
     "a5wz",
     "adddd",
@@ -3448,6 +3459,7 @@
     "fbhoro",
     "fddjj",
     "fikbx",
+    "flno",
     "fstu",
     "fvsm",
     "fwqb",
