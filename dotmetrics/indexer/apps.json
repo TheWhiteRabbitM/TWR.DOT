@@ -3350,6 +3350,27 @@
     "tier": 0,
     "firstSeenAt": 1786616508
   },
+  "rampatlas": {
+    "label": "rampatlas",
+    "domain": "rampatlas.dot",
+    "url": "https://rampatlas.dev-dot.li",
+    "firstSeenBlock": 12183382,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeihbyuwnbbpyvl3qvtq4mj4mdzjof3niba3kaqoyz7lkbgf6gcqvbm",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786640160
+  },
+  "throwdown": {
+    "label": "throwdown",
+    "domain": "throwdown.dot",
+    "url": "https://throwdown.dev-dot.li",
+    "firstSeenBlock": 12184912,
+    "owner": "0x8F49CAe7d0d0B4F381C8A5E8df8020A3a61D2849",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1786643532
+  },
   "excluded": [
     "a5wz",
     "adddd",
