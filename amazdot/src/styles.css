@@ -991,16 +991,40 @@ h1 {
 
 /* --------------------------------------------------------------- detail -- */
 
+/* A CONTAINER query, not a viewport one.
+ *
+ * The first version collapsed at `max-width: 700px` of viewport while the thing
+ * actually constraining it was the sheet — 34rem wide, holding 25rem of fixed
+ * columns. On a 1280px screen the media query never fired, so the middle column
+ * got about 90px and the title wrapped one word per line while the buy box hung
+ * off the edge. The viewport was never the constraint; the panel was.
+ *
+ * `min-width: 0` on the children is the other half: a grid item's default
+ * min-content floor is what pushes a long address or a wide word past the track
+ * and produces the horizontal scrollbar. */
 .detail {
+  container-type: inline-size;
   display: grid;
-  grid-template-columns: 12rem 1fr 13rem;
-  gap: 18px;
+  grid-template-columns: 17rem minmax(0, 1fr) 14rem;
+  gap: 22px;
   align-items: start;
 }
 
-@media (max-width: 700px) {
+.detail > * {
+  min-width: 0;
+}
+
+@container (max-width: 46rem) {
   .detail {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Belt and braces for browsers without container queries: the sheet is sized
+   so the three-column form fits, and a small viewport collapses it anyway. */
+@media (max-width: 760px) {
+  .detail {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1341,23 +1365,30 @@ h1 {
   z-index: 10;
 }
 
+/* Wide enough for the three-column detail it actually contains. 34rem was sized
+   for the one-column version this replaced and never revisited. */
 .sheet-body {
   background: var(--bg-1);
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   padding: 22px;
-  max-width: 34rem;
+  max-width: min(58rem, 94vw);
   width: 100%;
   max-height: 88vh;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
+/* 44px display type needs a column to live in. In the detail's middle track it
+   is a title, not a headline, so it steps down to the size the layout affords. */
 .sheet-body h2 {
   font-family: var(--display);
   font-weight: 400;
-  font-size: var(--fs-6);
-  margin: 8px 0 4px;
+  font-size: var(--fs-5);
+  line-height: 1.15;
+  margin: 0 0 6px;
   color: var(--tx-hi);
+  overflow-wrap: anywhere;
 }
 
 .sheet-body dl {
