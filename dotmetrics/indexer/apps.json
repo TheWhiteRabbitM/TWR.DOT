@@ -3439,6 +3439,17 @@
     "tier": 1,
     "firstSeenAt": 1786784436
   },
+  "amazdotcom": {
+    "label": "amazdotcom",
+    "domain": "amazdotcom.dot",
+    "url": "https://amazdotcom.dev-dot.li",
+    "firstSeenBlock": 12295147,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeifg5hhodc2jfexyk7c425zhs6pnuswy53l56zhjdwfm4n4vlfvj5a",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786882440
+  },
   "excluded": [
     "a5wz",
     "adddd",
