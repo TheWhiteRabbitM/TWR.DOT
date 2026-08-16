@@ -17,7 +17,7 @@
  *   node scripts/discover.mjs --no-short  # skip the 3-letter space
  */
 import { Contract, JsonRpcProvider, keccak256, solidityPacked, toUtf8Bytes, ZeroHash } from 'ethers';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { transform } from 'esbuild';
 
 const RPCS = [
@@ -116,23 +116,73 @@ console.log(`testing ${list.length} candidates…`);
 
 /* --------------------------------------------------------------- sweep -- */
 
+/**
+ * A chunk must be able to give up.
+ *
+ * The first run of this script hung: thirty minutes wall-clock for fourteen
+ * seconds of CPU, waiting on a `Promise.all` that would never settle because a
+ * public RPC had stopped answering and ethers has no deadline of its own. The
+ * per-call `.catch` did nothing — a rejected call is not the failure mode, a
+ * call that never returns is. So every chunk gets a deadline, and a chunk that
+ * misses it is retried on the next endpoint rather than waited on forever.
+ */
 const CHUNK = 100;
+const CHUNK_MS = 45_000;
+const PROGRESS = new URL('../.discover-progress.log', import.meta.url);
+
+const deadline = (p, ms) =>
+  Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('chunk timed out')), ms))]);
+
+let rpcIndex = 0;
+const nextProvider = () => {
+  rpcIndex = (rpcIndex + 1) % RPCS.length;
+  console.log(`\n  switching to ${RPCS[rpcIndex]}`);
+  return new JsonRpcProvider(RPCS[rpcIndex], undefined, { batchMaxCount: 100, staticNetwork: true });
+};
+
 const found = [];
 const t0 = Date.now();
+let reg = registry;
+let stalled = 0;
+
 for (let i = 0; i < list.length; i += CHUNK) {
   const slice_ = list.slice(i, i + CHUNK);
-  const owners = await Promise.all(slice_.map((c) => registry.owner(nodeOf(c)).catch(() => null)));
+  let owners = null;
+  for (let attempt = 0; attempt < 3 && !owners; attempt++) {
+    try {
+      owners = await deadline(
+        Promise.all(slice_.map((c) => reg.owner(nodeOf(c)).catch(() => null))),
+        CHUNK_MS,
+      );
+    } catch {
+      stalled++;
+      reg = new Contract(REGISTRY, ['function owner(bytes32) view returns (address)'], nextProvider());
+    }
+  }
+  // A chunk that never answered is REPORTED, not silently treated as empty:
+  // "no owner" and "never asked" are different claims and only one is ours.
+  if (!owners) {
+    console.log(`\n  ! gave up on candidates ${i}–${i + slice_.length} after 3 attempts`);
+    continue;
+  }
   slice_.forEach((label, j) => {
     const o = owners[j];
     if (o && !/^0x0+$/i.test(String(o))) found.push({ label, owner: String(o) });
   });
-  if ((i / CHUNK) % 20 === 0 || i + CHUNK >= list.length) {
+
+  // Written to a file rather than stdout: node buffers a piped stdout, so a
+  // long run reports nothing at all until it exits — which is exactly when the
+  // progress stops being useful.
+  if ((i / CHUNK) % 10 === 0 || i + CHUNK >= list.length) {
     const done = Math.min(i + CHUNK, list.length);
     const rate = Math.round(done / ((Date.now() - t0) / 1000));
-    process.stdout.write(`\r  ${done}/${list.length} (${rate}/s) · ${found.length} found   `);
+    writeFileSync(
+      PROGRESS,
+      `${done}/${list.length} (${rate}/s) · ${found.length} found · ${stalled} stall(s) · ${new Date().toISOString()}\n${found.map((f) => f.label).join(' ')}\n`,
+    );
   }
 }
-console.log(`\n\nfound ${found.length} registered name(s) missing from the directory\n`);
+console.log(`\nfound ${found.length} registered name(s) missing from the directory\n`);
 
 /* What each one actually is, so the list is worth acting on rather than just long. */
 for (const f of found) {

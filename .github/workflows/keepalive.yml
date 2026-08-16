@@ -1,21 +1,35 @@
-name: keep the published sites alive
+﻿name: keep the published sites alive
 
-# Levity/Bulletin retention is a window, not forever: Parity's own write-up puts
-# it at "approximately fourteen days", after which unrenewed data "falls off the
-# network automatically". Renewing means re-publishing — there is no renew verb
-# in the CLI — and `pad` is incremental, so a republish of unchanged files is
-# cheap.
+# Bulletin drops data that has not been renewed after fourteen days
+# (RetentionPeriod = 201,600 blocks at 6s, read from the live chain). This job
+# used to answer that by rebuilding and republishing all fourteen bundles every
+# week, on the belief â€” written into its own header â€” that "renewing means
+# re-publishing, there is no renew verb".
 #
-# italiarovente republishes daily, so it renews itself. dotmetrics used to
-# renew itself hourly too, but its refresh job now publishes the SITE only when
-# the app source actually changes (the directory reaches the page through a
-# DotNS text record instead), so a quiet fortnight would expire its bundle like
-# any other — it is in the matrix below for exactly that reason. The remaining
-# five only get published when someone changes them. This job is the difference
-# between "still up" and "was up when we last looked".
+# That is true of the CLI and false of the chain. The Bulletin runtime carries
+# `renew`, `force_renew` and `enable_auto_renew`, the last being a RECURRING
+# scheduler driven by its own on_initialize and a block inherent. It is feeless:
+# the cost is storage-authorization quota, not tokens. So every block of every
+# published bundle is now registered with it, and the chain renews them with no
+# caller at all â€” not a keeper, not a cron, nobody.
 #
-# Runs weekly — half the retention window, so a single failed run cannot expire
-# anything before the next one.
+# WHAT IS LEFT FOR THIS JOB, AND WHY IT IS NOT NOTHING
+# The renewal is autonomous; the things it depends on are not.
+#   - A registration is dropped with `AutoRenewalFailed` if the registering
+#     account's quota is exhausted at cycle time.
+#   - Publishing a new version mints new CIDs, and new CIDs are not registered
+#     until someone registers them. Forgetting that step is silent and only
+#     bites a fortnight later.
+#   - Nothing on-chain will tell us either of those happened.
+# So this re-arms whatever is unregistered (cheap, idempotent, feeless) and then
+# VERIFIES from chain state, failing loudly if anything is still missing. It
+# writes rarely and proves every time, which is the opposite of what it used to
+# do: fourteen republishes a week, each a coin flip against an unauthorised
+# storage account, proving nothing.
+#
+# It also no longer needs a secret. `pad` derives its storage pool from
+# DEV_PHRASE at //deploy/0â€¦9, so these keys are public by construction and
+# DEVNET_MNEMONIC is not used here any more.
 
 on:
   schedule:
@@ -27,64 +41,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  republish:
+  renewals:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    strategy:
-      # Sequential on purpose: every publish signs from the same account, and
-      # concurrent jobs would race the same transaction nonce.
-      max-parallel: 1
-      fail-fast: false
-      matrix:
-        include:
-          - dir: truereviews
-            name: truereviews.dot
-          - dir: thebutton
-            name: thebutton.dot
-          - dir: openpetition
-            name: openpetition.dot
-          - dir: wudcommunity
-            name: wudcommunity.dot
-          - dir: discreet
-            name: discreetly.dot
-          # No longer self-renewing: its hourly job gates site publishes on an
-          # actual app change, so the weekly renewal lives here like everyone
-          # else's. (`pad` is incremental — an unchanged republish is cheap.)
-          - dir: dotmetrics
-            name: dotmetrics.dot
-          # Same arrangement as dotmetrics: the hourly job only publishes when
-          # the catalog or the app actually changed, so retention is this job's
-          # business. Its build needs the catalog synced first, or a fresh
-          # checkout would publish whatever data was last committed.
-          - dir: dot-store
-            name: dot-store.dot
-            presteps: sync
-          # peoplebook's hourly-ish refresh only publishes when the directory
-          # changes, so a quiet fortnight would expire its bundle. Its data.json
-          # is committed, so a plain build renews with the last-known directory.
-          - dir: peoplebook
-            name: peoplebook.dot
-          # These three have no refresh job of their own at all: they are
-          # published only when we change them, so nothing renews them. All
-          # read their content from contracts rather than from a data file, so
-          # a plain build renews the bundle without any prestep.
-          - dir: chirp
-            name: chirponchain.dot
-          - dir: peoplewiki
-            name: peoplewiki.dot
-          # dotdirectory has no refresh job BY DESIGN — its list is read from
-          # the DotDirectory contract in the visitor's browser, so no runner
-          # ever touches its data and there is nothing to re-index. That makes
-          # this line the only thing standing between it and the fourteen-day
-          # retention cliff: the contract would survive the page expiring, and
-          # the page is how anyone sees the contract.
-          - dir: dotdirectory
-            name: dotdirectory.dot
-          # One static file, no build — so `npm ci` and `npm run build` would
-          # both fail on it. The staging step below handles it instead.
-          - dir: chirpwatch
-            name: chirpwatch.dot
-            presteps: static
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -92,70 +51,46 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: ${{ matrix.dir }}/package-lock.json
+          cache-dependency-path: dotdirectory/package-lock.json
 
       - name: Install dependencies
-        if: matrix.presteps != 'static'
-        working-directory: ${{ matrix.dir }}
+        working-directory: dotdirectory
         run: npm ci
 
-      - name: Install publish CLI
-        run: npm install -g @polkadot-community-foundation/polkadot-app-deploy@0.13.1
+      # Resolves each site through its own DotNS contenthash â€” the pointer the
+      # gateway actually serves â€” then walks the dag-pb DAG and registers every
+      # block. Registering only the root would keep an index alive while the
+      # JavaScript under it expired, which is a green light on a dead page.
+      - name: Re-arm any unregistered blocks
+        working-directory: dotdirectory
+        run: node scripts/renew-all.mjs --go
 
-      # dot-store bakes the catalog and the artwork into its bundle, so a
-      # retention republish has to sync them first — otherwise the renewal would
-      # quietly ship whatever data happened to be committed last.
-      - name: Sync the catalog from dotmetrics
-        if: matrix.presteps == 'sync'
-        working-directory: ${{ matrix.dir }}
-        run: node scripts/sync-catalog.mjs
-
-      # A static app has no toolchain to run. Staging its one file IS the build,
-      # and asking npm to do it would only invent a way to fail.
-      - name: Stage the static file
-        if: matrix.presteps == 'static'
-        working-directory: ${{ matrix.dir }}
-        run: sh build.sh
-
-      - name: Build
-        if: matrix.presteps != 'static'
-        working-directory: ${{ matrix.dir }}
-        run: npm run build
-
-      - name: Republish ${{ matrix.name }}
-        working-directory: ${{ matrix.dir }}
-        env:
-          MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
-          DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
-        run: |
-          set -euo pipefail
-          # pad draws a Bulletin storage account from a shared pool and some of
-          # those accounts are unauthorised; on a bad draw it fails hard instead
-          # of trying another. Seven renewals in a row is seven chances to lose
-          # that lottery. The script retries, keeps pad's full output so a
-          # failure is readable, and still treats "Verified on-chain" as the
-          # only proof — a renewal that did not verify did not happen.
-          bash ../.github/scripts/pad-publish.sh ./dist ${{ matrix.name }}
+      # Separate pass, read from AutoRenewals rather than from the previous
+      # step's exit code. A write that returned ok and changed nothing has
+      # happened on this chain before.
+      - name: Verify from chain state
+        working-directory: dotdirectory
+        run: node scripts/renew-all.mjs --verify
 
   authorization:
     # Watch the authorizations that publishing ACTUALLY depends on.
     #
     # This job used to check only our own account and hard-fail on it. That was
     # the wrong target twice over. `pad` does not sign with our account at all:
-    # it draws from a pool of storage accounts derived `//deploy/0…N`, and per
+    # it draws from a pool of storage accounts derived `//deploy/0â€¦N`, and per
     # its own DEPLOYMENT.md, "storage is gated by this quota, not by balance
     # (Bulletin has no fee model)". So the pool's authorization is what keeps
     # every published app alive, and it was invisible here.
     #
     # When first measured, five of the ten pool accounts were already NOT
-    # AUTHORIZED — which is exactly the "lottery" that pad-publish.sh retries
+    # AUTHORIZED â€” which is exactly the "lottery" that pad-publish.sh retries
     # around: a bad draw is a dead account, not a flaky network. And the five
     # live ones expired sooner than our own authorization did, so the job that
     # was meant to give early warning would have reported all-clear right up to
     # the day publishing stopped.
     #
     # Our own authorization still matters, but only for `dotns bulletin upload`
-    # (the dotmetrics directory pointer) — so it is reported as a warning
+    # (the dotmetrics directory pointer) â€” so it is reported as a warning
     # against that one pipeline rather than as a failure of everything.
     runs-on: ubuntu-latest
     steps:
@@ -170,13 +105,13 @@ jobs:
       - name: Install dotns
         run: npm install -g @polkadot-community-foundation/dotns-cli@0.8.0
 
-      - name: Report pool authorization — what publishing depends on
+      - name: Report pool authorization â€” what publishing depends on
         env:
           MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
           DOTNS_MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
         run: |
           set -uo pipefail
-          # The `//deploy/0…9` pool for the default DEV_PHRASE, as reported by
+          # The `//deploy/0â€¦9` pool for the default DEV_PHRASE, as reported by
           # `polkadot-app-bootstrap --env devnet`. Listed literally so this check
           # stays read-only: bootstrap attempts a grant as a side effect, and a
           # monitoring job should not try to write.
@@ -198,7 +133,7 @@ jobs:
           done
           node .github/scripts/report-pool.mjs /tmp/pool.jsonl
 
-      - name: Report our own authorization — used by the dotmetrics pointer only
+      - name: Report our own authorization â€” used by the dotmetrics pointer only
         if: always()
         env:
           MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
@@ -212,5 +147,5 @@ jobs:
             console.log(`our account: authorized=${a.authorized} expires ${a.expiresAt} (${days.toFixed(1)} days)`);
             console.log(`quota left:  ${a.transactions} transactions, ${(Number(a.bytes)/1048576).toFixed(1)} MiB`);
             if (!a.authorized || a.expired || days < 3)
-              console.log("::warning::`dotns bulletin upload` is about to stop working — the dotmetrics directory pointer depends on it (site publishes do not)");
+              console.log("::warning::`dotns bulletin upload` is about to stop working â€” the dotmetrics directory pointer depends on it (site publishes do not)");
           '

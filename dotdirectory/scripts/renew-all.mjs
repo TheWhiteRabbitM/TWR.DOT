@@ -46,6 +46,7 @@ const OURS = [
 
 const argv = process.argv.slice(2);
 const GO = argv.includes('--go');
+const VERIFY = argv.includes('--verify');
 const only = argv.filter((a) => !a.startsWith('--')).map((s) => s.replace(/\.dot$/, ''));
 const NAMES = only.length ? only : OURS;
 
@@ -183,7 +184,41 @@ try {
     api.constants.TransactionStorage.MaxPermanentStorageSize().catch(() => null),
   ]);
   const mb = (v) => (v == null ? '?' : (Number(v) / 1e6).toFixed(1) + ' MB');
-  console.log(`permanent storage: ${mb(used)} used of ${mb(cap)}\n`);
+  console.log(`permanent storage: ${mb(used)} used of ${mb(cap)}`);
+
+  /**
+   * The dependency that can actually kill this, reported every run.
+   *
+   * Every auto-renewal cycle charges the registering account's storage
+   * authorization, and the pallet drops the registration with
+   * `AutoRenewalFailed` if that quota is gone at cycle time. Those
+   * authorizations also expire on their own schedule and are refreshed by the
+   * chain's authorizer, not by us. So this is the number worth watching: the
+   * renewal is autonomous, its fuel is not.
+   */
+  const block = await api.query.System.Number.getValue();
+  const derived = sr25519CreateDerive(entropyToMiniSecret(mnemonicToEntropy(DEV_PHRASE)));
+  const auths = await Promise.all(
+    Array.from({ length: 10 }, async (_, i) => {
+      const address = ss58Encode(derived(`//deploy/${i}`).publicKey);
+      const a = await api.query.TransactionStorage.Authorizations.getValue({
+        type: 'Account',
+        value: address,
+      }).catch(() => null);
+      const expires = Number(a?.expiration ?? 0);
+      return { i, alive: expires > block, days: ((expires - block) * 6) / 86400 };
+    }),
+  );
+  const dead = auths.filter((a) => !a.alive);
+  const soon = auths.filter((a) => a.alive && a.days < 1);
+  const minDays = Math.min(...auths.filter((a) => a.alive).map((a) => a.days));
+  console.log(
+    `pool authorization: ${auths.length - dead.length}/10 alive` +
+      (dead.length ? `, ${dead.length} EXPIRED (${dead.map((a) => a.i).join(',')})` : '') +
+      (soon.length ? `, ${soon.length} expiring within a day` : '') +
+      (Number.isFinite(minDays) ? `, soonest in ${minDays.toFixed(1)}d` : '') +
+      '\n',
+  );
 
   // Resolve every name to its live bundle, then to its blocks.
   const plan = [];
@@ -213,6 +248,21 @@ try {
 
   const total = plan.reduce((n, p) => n + p.need.length, 0);
   console.log(`\n${total} registration(s) needed across ${plan.length} site(s)`);
+
+  // --verify is the watchdog's mode: read only, and FAIL if anything is
+  // unregistered. Reporting a gap with exit 0 is how a monitor becomes
+  // decoration — the whole reason the old indexer stayed broken for three days
+  // was a job that failed quietly and committed a success.
+  if (VERIFY) {
+    if (dead.length) console.log(`::warning::${dead.length} pool account(s) unauthorized — renewals charged to them will drop`);
+    if (total) {
+      console.log(`::error::${total} block(s) are not registered for auto-renewal`);
+      process.exit(1);
+    }
+    console.log('every published block is registered for auto-renewal');
+    process.exit(0);
+  }
+
   if (!GO || !total) { console.log(GO ? 'nothing to do' : '(report only — pass --go to sign)'); process.exit(0); }
 
   const derive = sr25519CreateDerive(entropyToMiniSecret(mnemonicToEntropy(DEV_PHRASE)));
