@@ -3317,7 +3317,7 @@
     "url": "https://openraonchain.dev-dot.li",
     "firstSeenBlock": 12116950,
     "owner": "0xFF54A5a1FDAc91bb4F2b4fBf4bfFf37CdbEA333f",
-    "contenthash": "bafybeiawp25qha2usuidtsrsga7vafuhlfiwm7tmx25jqbnwuflp5wcbgq",
+    "contenthash": "bafybeiexgire7rqaygmynyzcngbjnyjx7j24zvltrvkpvka5xhfh6zhy5m",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786500804
@@ -3445,10 +3445,13 @@
     "url": "https://amazdotcom.dev-dot.li",
     "firstSeenBlock": 12295147,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
-    "contenthash": "bafybeifg5hhodc2jfexyk7c425zhs6pnuswy53l56zhjdwfm4n4vlfvj5a",
+    "contenthash": "bafybeiczyam5vik46axzbl5nvutppniupwd4dequn47tvmzbx4eaf4qs44",
     "hasExecutable": false,
-    "tier": 1,
-    "firstSeenAt": 1786882440
+    "tier": 0,
+    "firstSeenAt": 1786882440,
+    "displayName": "Amazdot",
+    "description": "A market on Asset Hub where the money waits in a contract and only a paid order can write a review. Digital disputes settle without an arbiter: the seller wins by publishing the goods.",
+    "category": "commerce"
   },
   "excluded": [
     "a5wz",
