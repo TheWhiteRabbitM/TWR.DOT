@@ -1210,6 +1210,93 @@ footer {
   overflow-wrap: anywhere;
 }
 
+/* ---------------------------------------------------------------- howto -- */
+
+/* Same disclosure pattern as .why, but this one is an instruction rather than a
+   footnote, so it carries the accent and opens by default for the readers who
+   need it — the ones outside the Polkadot app, who cannot see the form. */
+.howto {
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--pink);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  padding: 12px 16px;
+}
+
+.howto summary {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tx-hi);
+  cursor: pointer;
+  list-style: none;
+}
+
+.howto summary::-webkit-details-marker {
+  display: none;
+}
+
+.howto summary:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.howto ol {
+  margin: 12px 0 0;
+  padding-left: 1.4em;
+  max-width: 72ch;
+  font-size: var(--fs-2);
+  color: var(--tx-mid);
+}
+
+.howto li {
+  margin-bottom: 8px;
+}
+
+.howto li strong {
+  color: var(--tx-hi);
+  font-weight: 500;
+}
+
+.howto code {
+  font-family: var(--mono);
+  font-size: 0.92em;
+  color: var(--tx-hi);
+}
+
+.howto p {
+  margin: 12px 0 0;
+  max-width: 72ch;
+  font-size: var(--fs-2);
+  color: var(--tx-mid);
+}
+
+.howto .howto-lede {
+  color: var(--tx-hi);
+}
+
+.howto em {
+  font-style: normal;
+  color: var(--tx-hi);
+  border-bottom: 1px dotted var(--line-hi, var(--line));
+}
+
+/* The asides are the ones people skip, so they read as asides — but they carry
+   the two facts most likely to be assumed wrong. */
+.howto .howto-note {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: var(--fs-1);
+  color: var(--tx-low);
+}
+
+.howto .howto-foot {
+  font-size: var(--fs-1);
+  color: var(--tx-low);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 0.01ms !important;

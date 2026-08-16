@@ -12,6 +12,7 @@ import { HeroPanel, RegistrationGrid } from './Charts';
  */
 const RegisterPanel = lazy(() => import('./RegisterPanel'));
 import { Discoveries } from './Discoveries';
+import { HowTo } from './HowTo';
 import { Retention } from './Retention';
 import {
   DIRECTORY,
@@ -196,6 +197,10 @@ export default function App({ app }: { app: App | null }) {
             <HeroPanel labels={state.snapshot.labels} records={records} />
             <RegistrationGrid labels={state.snapshot.labels} />
           </div>
+
+          {/* Before the form, not inside it: the form only exists inside the
+              Polkadot app, and these instructions are for everyone else. */}
+          <HowTo inHost={Boolean(app)} nameOnly={tally.registered} />
 
           {app ? (
             <Suspense fallback={null}>
