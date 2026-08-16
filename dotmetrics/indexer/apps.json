@@ -2191,7 +2191,7 @@
     "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
     "displayName": "peoplebook",
     "description": "The devnet identity directory, where every handle has a claimable on-chain avatar NFT. Read live from the People chain: every person who registered a .dot-style handle gets a generated mask. Claim yours for 1 PAS and the PeoplebookAvatars contract (deployed on the devnet Asset Hub) mints an ERC-721 to you and rolls its rarity on chain, gacha-style: Legendary 3%, Epic 10%, Rare 20%, Uncommon 30%, Common 37%. The image is generated inside the contract, so the NFT shows in any wallet with nothing hosted anywhere. Own a .dot? Add it at claim and the contract verifies it against the registry for better odds. Searchable, self-updating as people claim.",
-    "contenthash": "bafybeicdysqiuhsp3ycd6pn6pkkk4eu3leg5scpqkcz2zsrmaoz3hdni44",
+    "contenthash": "bafybeieg5d6p5uknpmaucvysx54sxjmhuygjeoj77z56jc7z3sbnj6ht7e",
     "category": "social",
     "screenshots": [
       "bafybeifw5eq2qesyncadkhn3xtpsp6xvp5emyhk7c3lqpe5xpi5bw2ueuy",
@@ -3317,7 +3317,7 @@
     "url": "https://openraonchain.dev-dot.li",
     "firstSeenBlock": 12116950,
     "owner": "0xFF54A5a1FDAc91bb4F2b4fBf4bfFf37CdbEA333f",
-    "contenthash": "bafybeia4u7jnbnurqq3bkoxnwekzrikw4552g3as3aymxiqaiapfhw6jim",
+    "contenthash": "bafybeiamopbu6wwya7i4weircfaq52nttflklui2xz66j6woicd23fhnve",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786500804
