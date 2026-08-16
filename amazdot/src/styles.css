@@ -1,0 +1,1150 @@
+﻿/*
+ * dotdirectory â€” dotmetrics' one-accent dark system, on Polkadot's palette.
+ *
+ * Follows the rules dotmetrics wrote for itself, because they are right and two
+ * apps in one ecosystem should not argue:
+ *
+ *   1. ONE accent. --pink marks the single most important thing and nothing
+ *      else. The rest of the brand palette (lime, cyan, violet) is deliberately
+ *      unused: three more saturated hues encoding nothing is the exact mistake
+ *      dotmetrics removed from its own sheet.
+ *   2. No gradients on data. Ever.
+ *   3. Tabular figures globally, so numbers stop jittering as they tick.
+ *   4. Three radii â€” 6 / 10 / 14. Seven type steps. 4px grid.
+ *
+ * LAYOUT, rewritten. The first version put 879px of header, prose and tiles
+ * above the first row of data, on a 694px viewport â€” so the page opened showing
+ * no directory at all. And 205 rows of structured data laid out as identical
+ * cards is a wall, not a reading. Now: a compact header, four figures that are
+ * all counts, and a dense sortable table. Provenance moved to the footer, the
+ * explanation to a <details> at the bottom. Data starts within the first screen.
+ *
+ * Palette is the official brand set â€” Polkadot Pink #FF2670, black, and the
+ * Storm greys. dotmetrics' --pink is already the brand pink, so the two read as
+ * siblings.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* Warm, not neutral. Read off polkadot.com: the ground is rgb(15,15,15) and
+     the surfaces are rgb(28,25,23) / rgb(41,37,36) â€” the warm "stone" ramp, not
+     the cool blue-greys an earlier version of this sheet used. Pure black and a
+     blue-grey card read as a different product on the same page. */
+  --bg-0: #0f0f0f;
+  --bg-1: #1c1917;
+  --bg-2: #231f1d;
+  --bg-3: #292524;
+
+  --line: #2c2725;
+  --line-strong: #57534e;
+
+  --tx-hi: #fafaf9;
+  --tx-mid: #a8a29e;
+  --tx-low: #78716c;
+
+  /* Pink appears nowhere in polkadot.com's own chrome â€” measured, zero uses on
+     the homepage. It is held in reserve, so here it marks one thing: the single
+     most important figure and the top tier. Everything structural is warm
+     neutral, and the light button below is how the site draws a call to action. */
+  --pink: #ff2670;
+  --on-pink: #0f0f0f;
+  --btn: #f5f5f4;
+  --btn-tx: #44403c;
+  --warn: #e8a13a;
+
+  /* The site's own steps: DM Sans 16/400 as base, with 12, 14 and 20 around it;
+     DM Serif Display at 20/24/30 and larger, always weight 400. */
+  --fs-0: 12px;
+  --fs-1: 14px;
+  --fs-2: 14px;
+  --fs-3: 16px;
+  --fs-5: 24px;
+  --fs-6: 44px;
+
+  /* 12px dominates on polkadot.com, with 8 and 16 either side. */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+
+  --display: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  --sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-0);
+  color: var(--tx-hi);
+  font-family: var(--sans);
+  font-size: var(--fs-3);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.92em;
+}
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------------------------------------------------------------- header -- */
+/* Compact on purpose: the directory is the page, not the preamble. */
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+  margin: 0;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pink);
+  flex: none;
+}
+
+/* Sentence case, weight 400, tight negative tracking â€” the site's headings are
+   a serif at size, never uppercase and never bold. */
+h1 {
+  font-family: var(--display);
+  font-size: var(--fs-6);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  margin: 0;
+}
+
+.standfirst {
+  max-width: 66ch;
+  margin: 0;
+  color: var(--tx-mid);
+  font-size: var(--fs-2);
+}
+
+/* ---------------------------------------------------------------- panels -- */
+
+.panel {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--tx-low);
+  font-family: var(--mono);
+  font-size: var(--fs-2);
+}
+
+.panel.error {
+  border-color: var(--warn);
+  color: var(--warn);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.panel.error span {
+  font-size: var(--fs-1);
+  overflow-wrap: anywhere;
+}
+
+.panel.error button {
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  background: none;
+  border: 1px solid currentColor;
+  color: inherit;
+  border-radius: var(--r-sm);
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+/* ----------------------------------------------------------------- stats -- */
+/* Four tiles, four counts. Three of them filter the table when clicked, which
+   is why they are buttons â€” a number you can act on beats a number you read. */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+}
+
+.stat {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.stat.clickable {
+  cursor: pointer;
+}
+
+.stat.clickable:hover {
+  border-color: var(--line-strong);
+  background: var(--bg-2);
+}
+
+.stat.on {
+  border-color: var(--pink);
+}
+
+.stat:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
+.stat:first-child .figure {
+  color: var(--pink);
+}
+
+.stat .figure {
+  font-family: var(--display);
+  font-size: var(--fs-5);
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.stat .label {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+}
+
+/* ------------------------------------------------------- hero + heatmap -- */
+
+.charts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 980px) {
+  .charts {
+    grid-template-columns: minmax(300px, 0.85fr) 1.6fr;
+    align-items: stretch;
+  }
+}
+
+.hero,
+.heat {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.hero-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hero-figure {
+  font-family: var(--display);
+  font-size: 64px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--tx-hi);
+}
+
+.spark {
+  flex: 1;
+  height: 46px;
+  min-width: 0;
+}
+
+.spark path {
+  fill: none;
+  stroke: var(--pink);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+}
+
+.hero-note {
+  margin: 0;
+  font-size: var(--fs-1);
+  line-height: 1.55;
+  color: var(--tx-mid);
+}
+
+.hero-note strong {
+  color: var(--tx-hi);
+  font-weight: 700;
+}
+
+.stale {
+  color: var(--warn);
+}
+
+/* ---- the registration grid ---- */
+
+.heat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.heat h2 {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 2px;
+  color: var(--tx-hi);
+}
+
+.heat-head p {
+  margin: 0;
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-0);
+  color: var(--tx-mid);
+  white-space: nowrap;
+}
+
+.legend line {
+  stroke: var(--pink);
+  stroke-width: 2;
+}
+
+.heat-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heat-row {
+  display: grid;
+  grid-template-columns: 3.6rem 1fr 1.6rem;
+  align-items: center;
+  gap: 10px;
+}
+
+.heat-day {
+  font-size: var(--fs-0);
+  color: var(--tx-mid);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.heat-cells {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 3px;
+}
+
+/* An empty hour is a cell, not a gap: the grid should read as a full day even
+   when nothing happened in it. */
+.cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--bg-3);
+}
+
+.cell.hit {
+  background: var(--pink);
+}
+
+.heat-total {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  text-align: right;
+  font-weight: 700;
+}
+
+.heat-total.on {
+  color: var(--tx-hi);
+}
+
+.heat-axis {
+  display: grid;
+  grid-template-columns: 3.6rem 1fr 1.6rem;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.heat-axis span {
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.heat-axis span:first-child {
+  grid-column: 2;
+}
+
+.heat-axis {
+  grid-template-columns: 3.6rem repeat(4, 1fr) 1.6rem;
+}
+
+.heat-axis span:nth-child(1) {
+  grid-column: 2;
+}
+
+.heat-axis span:nth-child(5) {
+  text-align: right;
+  grid-column: 6;
+}
+
+.heat-empty {
+  margin: 12px 0 0;
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.heat-empty.warn {
+  color: var(--warn);
+}
+
+.catsep {
+  width: 1px;
+  align-self: stretch;
+  background: var(--line);
+  margin: 0 2px;
+}
+
+.catchip.state.on {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
+/* ---------------------------------------------------------------- charts -- */
+/* Two hues at most: pink is the measured series, --bg-3 the remainder. No
+   gradients on data. One series carries no legend; the stacked bar labels its
+   segments directly instead of asking you to match colours to a key. */
+
+.charts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 900px) {
+  .charts {
+    grid-template-columns: 1.35fr 1fr;
+    align-items: stretch;
+  }
+}
+
+.chart {
+  margin: 0;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 12px 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chart figcaption {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--tx-mid);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+}
+
+.chart figcaption span {
+  color: var(--tx-low);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: auto;
+}
+
+.grid {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.tick {
+  fill: var(--tx-low);
+  font-family: var(--mono);
+  font-size: 9px;
+}
+
+.area {
+  fill: var(--pink);
+  opacity: 0.12;
+}
+
+.line {
+  fill: none;
+  stroke: var(--pink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.end {
+  fill: var(--pink);
+}
+
+.seg {
+  fill: var(--bg-3);
+}
+
+.seg.described {
+  fill: var(--pink);
+}
+
+.seg.deployed {
+  fill: var(--line-strong);
+}
+
+.seglabel {
+  fill: var(--tx-low);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+/* -------------------------------------------------------------- announce -- */
+
+.register {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.register h2 {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 2px;
+  color: var(--tx-hi);
+}
+
+.register-head p {
+  margin: 0;
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
+  max-width: 62ch;
+}
+
+/* The fields wrap into a single column on a narrow screen without a media
+   query: each one has a floor and the row is allowed to break. */
+.register-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.field > span {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.field input,
+.field textarea {
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  color: var(--tx-hi);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+  width: 100%;
+  min-width: 0;
+  resize: vertical;
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
+/* The `.dot` is part of every name here, so it is printed rather than typed —
+   and the input keeps it inside its own border so it reads as one field. */
+.with-suffix {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.with-suffix input {
+  padding-right: 3.4rem;
+}
+
+.suffix {
+  position: absolute;
+  right: 12px;
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  color: var(--tx-low);
+  pointer-events: none;
+}
+
+.lookup {
+  flex: 1 1 100%;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  min-height: 1.2em;
+}
+
+.lookup .yes {
+  color: var(--tx-mid);
+}
+
+.lookup .no {
+  color: var(--warn);
+}
+
+.register-form button {
+  flex: 0 0 auto;
+}
+
+.register-form button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.register-status {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.register-status.failed {
+  color: var(--warn);
+}
+
+.register-status.done {
+  color: var(--pink);
+}
+
+/* ---------------------------------------------------------------- counts -- */
+
+.counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 14px 20px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
+}
+
+.counts strong {
+  font-family: var(--display);
+  font-size: var(--fs-5);
+  font-weight: 400;
+  color: var(--tx-hi);
+  margin-right: 4px;
+}
+
+/* The first figure is the one a shopper actually came for, so it takes the
+   accent — and nothing else on the page does. */
+.counts span:first-child strong {
+  color: var(--pink);
+}
+
+/* -------------------------------------------------------------- controls -- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.controls input[type='search'],
+.controls select {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  color: var(--tx-hi);
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 9px 12px;
+}
+
+.controls input[type='search'] {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.controls input:focus-visible,
+.controls select:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  letter-spacing: 0.04em;
+  color: var(--tx-mid);
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.chip.on {
+  color: var(--tx-hi);
+  border-color: var(--line-strong);
+  background: var(--bg-3);
+}
+
+/* ------------------------------------------------------------------ grid -- */
+
+/* auto-fill, not auto-fit: with two items on a wide screen, auto-fit stretches
+   them to half the viewport each and a 0.5 PAS sticker looks like a billboard. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 12px;
+}
+
+.card {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.card-hit {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0 0 14px;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.card-hit:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: -2px;
+}
+
+.thumb {
+  aspect-ratio: 4 / 3;
+  background: var(--bg-3);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumb.blank span {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+}
+
+.card h3 {
+  margin: 12px 14px 4px;
+  font-family: var(--sans);
+  font-size: var(--fs-3);
+  font-weight: 500;
+  color: var(--tx-hi);
+}
+
+.price {
+  margin: 0 14px 6px;
+  font-family: var(--display);
+  font-size: var(--fs-5);
+  color: var(--tx-hi);
+}
+
+.price span {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  margin-left: 4px;
+}
+
+.price.big {
+  font-size: var(--fs-6);
+  margin-left: 0;
+}
+
+.by,
+.meta {
+  margin: 0 14px;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-mid);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.meta {
+  color: var(--tx-low);
+  margin-top: 4px;
+}
+
+.stars {
+  color: var(--tx-hi);
+}
+
+/* "No reviews" must not look like a bad score, so it is quiet rather than red. */
+.stars.none {
+  color: var(--tx-low);
+}
+
+/* ----------------------------------------------------------------- sheet -- */
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 15, 15, 0.82);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 10;
+}
+
+.sheet-body {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  max-width: 34rem;
+  width: 100%;
+  max-height: 88vh;
+  overflow: auto;
+}
+
+.sheet-body h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: var(--fs-6);
+  margin: 8px 0 4px;
+  color: var(--tx-hi);
+}
+
+.sheet-body dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  margin: 16px 0;
+  font-size: var(--fs-1);
+}
+
+.sheet-body dt {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--tx-low);
+}
+
+.sheet-body dd {
+  margin: 0;
+  color: var(--tx-hi);
+}
+
+.sheet-body .note {
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
+  border-left: 2px solid var(--line-strong);
+  padding-left: 12px;
+  margin: 0;
+}
+
+.close {
+  float: right;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-mid);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* ----------------------------------------------------------------- trade -- */
+
+.trade {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--pink);
+  border-radius: var(--r-lg);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tabs button {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  font-weight: 500;
+  color: var(--tx-mid);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 4px 2px;
+  cursor: pointer;
+}
+
+.tabs button.on {
+  color: var(--tx-hi);
+  border-bottom-color: var(--pink);
+}
+
+.tabs .who {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.orders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.orders li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  background: var(--bg-3);
+  border-radius: var(--r-sm);
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+}
+
+.oid {
+  color: var(--tx-low);
+}
+
+.ostate {
+  color: var(--tx-hi);
+}
+
+.oprice {
+  margin-left: auto;
+  color: var(--tx-hi);
+}
+
+.okey {
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  overflow-wrap: anywhere;
+}
+
+.sellform {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.field.narrow {
+  flex: 0 1 8rem;
+}
+
+.field > span {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select {
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  color: var(--tx-hi);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
+.hint {
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  max-width: 46ch;
+}
+
+.ghost {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
+  background: none;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.clear.small,
+.ghost.small {
+  padding: 3px 10px;
+  font-size: var(--fs-0);
+}
+
+.link {
+  background: none;
+  border: 0;
+  color: var(--tx-hi);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}
+
+/* ---------------------------------------------------------------- status -- */
+
+.status {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  color: var(--tx-low);
+}
+
+.status.bad,
+.status.failed {
+  color: var(--warn);
+}
+
+.status.done {
+  color: var(--pink);
+}
+
+.addr {
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
