@@ -1,14 +1,21 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import type { App } from '@parity/product-sdk/core';
 import {
-  GATEWAY, MARKET, readSellers, readShop, type Listing, type Seller, type Shop,
+  GATEWAY, MARKET, nameOf, readSellers, readShop,
+  type Listing, type Seller, type Shop,
 } from './chain';
+import { Price, Stars } from './Stars';
+import { HowTo } from './HowTo';
 
 /**
- * The trade panel arrives only when there is a wallet to sign with. Loading the
- * SDK for a reader who is only browsing would double the page — measured at
- * 460 kB against 1,027 kB on dotdirectory — and this page is served from
- * Bulletin, where that is not a rounding error.
+ * Amazon's structure on Polkadot's palette, which is what was asked for and is
+ * also the only combination that makes sense: the layout of a shop is solved
+ * work — a filter rail, a dense grid, stars and price carrying the most weight,
+ * a buy box pinned beside the item — while the colours and type are what make
+ * this look like it belongs beside dotdirectory rather than beside a retailer.
+ *
+ * The one borrowed colour is the amber call-to-action, and it was already in
+ * the sheet as --warn. Nothing else changed hue.
  */
 const TradePanel = lazy(() => import('./TradePanel'));
 
@@ -27,16 +34,14 @@ export default function Store({ app }: { app: App | null }) {
   const [sellers, setSellers] = useState<Map<string, Seller>>(new Map());
   const [query, setQuery] = useState('');
   const [kind, setKind] = useState<Kind>('all');
+  const [rated, setRated] = useState(false);
   const [sort, setSort] = useState<Sort>('new');
   const [open, setOpen] = useState<Listing | null>(null);
 
   const load = useCallback(async () => {
-    setState({ phase: 'loading' });
     try {
       const shop = await readShop();
       setState({ phase: 'ready', shop });
-      // Seller details are a second pass on purpose: the shelves are what the
-      // page is for, and they must not wait on reputation lookups.
       const masks = [...new Set(shop.listings.map((l) => l.seller.toString()))].map(BigInt);
       readSellers(masks).then(setSellers).catch(() => setSellers(new Map()));
     } catch (e) {
@@ -48,16 +53,21 @@ export default function Store({ app }: { app: App | null }) {
     void load();
   }, [load]);
 
+  const live = useMemo(
+    () => (state.phase === 'ready' ? state.shop.listings.filter((l) => l.stock > 0) : []),
+    [state],
+  );
+
   const rows = useMemo(() => {
-    if (state.phase !== 'ready') return [];
     const q = query.trim().toLowerCase();
-    let out = state.shop.listings.filter((l) => l.stock > 0);
+    let out = live;
     if (kind !== 'all') out = out.filter((l) => (kind === 'digital') === l.digital);
+    if (rated) out = out.filter((l) => (sellers.get(l.seller.toString())?.reviews ?? 0) > 0);
     if (q) {
       out = out.filter(
         (l) =>
           l.title.toLowerCase().includes(q) ||
-          (sellers.get(l.seller.toString())?.name ?? '').includes(q),
+          nameOf(sellers.get(l.seller.toString()), l.seller).label.toLowerCase().includes(q),
       );
     }
     const rate = (l: Listing) => sellers.get(l.seller.toString())?.ratingX100 ?? 0;
@@ -67,29 +77,25 @@ export default function Store({ app }: { app: App | null }) {
       if (sort === 'rated') return rate(b) - rate(a);
       return b.listedAt - a.listedAt;
     });
-  }, [state, query, kind, sort, sellers]);
+  }, [live, query, kind, rated, sort, sellers]);
 
-  const counts = useMemo(() => {
-    if (state.phase !== 'ready') return { digital: 0, physical: 0, sellers: 0 };
-    const live = state.shop.listings.filter((l) => l.stock > 0);
-    return {
-      digital: live.filter((l) => l.digital).length,
-      physical: live.filter((l) => !l.digital).length,
-      sellers: new Set(live.map((l) => l.seller.toString())).size,
-    };
-  }, [state]);
+  const openSeller = open ? sellers.get(open.seller.toString()) : undefined;
 
   return (
-    <main>
-      <header>
-        <p className="eyebrow">
-          <span className="dot" /> escrow on asset hub · no platform fee · no operator
-        </p>
-        <h1>Amazdot</h1>
-        <p className="lede">
-          A market where the money waits in a contract, and the reviews cannot be bought because
-          only a paid order can write one.
-        </p>
+    <div className="shell">
+      <header className="topbar">
+        <div className="brand">
+          <h1>Amazdot</h1>
+          <span className="tag">escrow on asset hub</span>
+        </div>
+        <input
+          type="search"
+          className="topsearch"
+          value={query}
+          placeholder="Search the market…"
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <span className="topnote">no fee · no operator</span>
       </header>
 
       {state.phase === 'loading' ? <p className="status">reading the shelves…</p> : null}
@@ -105,101 +111,112 @@ export default function Store({ app }: { app: App | null }) {
 
       {state.phase === 'ready' ? (
         <>
-          <section className="counts">
-            <span>
-              <strong>{counts.digital + counts.physical}</strong> in stock
-            </span>
-            <span>
-              <strong>{counts.digital}</strong> download now
-            </span>
-            <span>
-              <strong>{counts.physical}</strong> shipped
-            </span>
-            <span>
-              from <strong>{counts.sellers}</strong> {counts.sellers === 1 ? 'seller' : 'sellers'}
-            </span>
-          </section>
-
           {app ? (
             <Suspense fallback={null}>
               <TradePanel app={app} onChanged={() => void load()} />
             </Suspense>
-          ) : (
-            <p className="status">
-              Open this in the Polkadot app to buy or to sell — browsing needs nothing.
-            </p>
-          )}
+          ) : null}
 
-          <section className="controls">
-            <input
-              type="search"
-              value={query}
-              placeholder="Filter by name or seller…"
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <div className="chips">
-              {(['all', 'digital', 'physical'] as Kind[]).map((k) => (
-                <button
-                  key={k}
-                  type="button"
-                  className={`chip ${kind === k ? 'on' : ''}`}
-                  onClick={() => setKind(k)}
-                >
-                  {k}
-                </button>
-              ))}
-            </div>
-            <select value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
-              <option value="new">newest</option>
-              <option value="cheap">cheapest</option>
-              <option value="dear">dearest</option>
-              <option value="rated">best rated</option>
-            </select>
-          </section>
+          <HowTo inHost={Boolean(app)} />
 
-          {rows.length === 0 ? (
-            <p className="status">
-              {state.shop.listings.length === 0
-                ? 'Nothing is for sale yet. The contract is live and empty — the first listing is somebody’s to make.'
-                : 'Nothing matches that.'}
-            </p>
-          ) : (
-            <section className="grid">
-              {rows.map((l) => {
-                const s = sellers.get(l.seller.toString());
-                return (
-                  <article key={l.id} className="card">
-                    <button type="button" className="card-hit" onClick={() => setOpen(l)}>
-                      <div className={`thumb ${l.imageCid ? '' : 'blank'}`}>
-                        {l.imageCid ? (
-                          <img src={GATEWAY + l.imageCid} alt="" loading="lazy" />
-                        ) : (
-                          <span>{l.digital ? 'download' : 'parcel'}</span>
-                        )}
-                      </div>
-                      <h3>{l.title}</h3>
-                      <p className="price">
-                        {l.priceText} <span>PAS</span>
-                      </p>
-                      <p className="by">
-                        {s?.name ? `${s.name}.dot` : `mask #${l.seller}`}
-                        {s && s.reviews > 0 ? (
-                          <span className="stars">
-                            {(s.ratingX100 / 100).toFixed(1)}★ ({s.reviews})
-                          </span>
-                        ) : (
-                          <span className="stars none">no reviews yet</span>
-                        )}
-                      </p>
-                      <p className="meta">
-                        {l.digital ? 'digital' : 'shipped'} · {l.stock} left
-                      </p>
+          <div className="layout">
+            <aside className="rail">
+              <h2>Kind</h2>
+              <ul className="facets">
+                {(['all', 'digital', 'physical'] as Kind[]).map((k) => (
+                  <li key={k}>
+                    <button
+                      type="button"
+                      className={kind === k ? 'on' : ''}
+                      onClick={() => setKind(k)}
+                    >
+                      {k === 'all' ? 'Everything' : k === 'digital' ? 'Download now' : 'Shipped'}
+                      <span>
+                        {k === 'all'
+                          ? live.length
+                          : live.filter((l) => (k === 'digital') === l.digital).length}
+                      </span>
                     </button>
-                  </article>
-                );
-              })}
+                  </li>
+                ))}
+              </ul>
+
+              <h2>Seller</h2>
+              <ul className="facets">
+                <li>
+                  <label className="check">
+                    <input type="checkbox" checked={rated} onChange={(e) => setRated(e.target.checked)} />
+                    Has reviews
+                    <span>{live.filter((l) => (sellers.get(l.seller.toString())?.reviews ?? 0) > 0).length}</span>
+                  </label>
+                </li>
+              </ul>
+
+              <h2>How it settles</h2>
+              <p className="railnote">
+                Your money sits in the contract, not with the seller. A digital dispute is decided
+                by the chain; a shipped one only ends when both of you agree.
+              </p>
+            </aside>
+
+            <section className="results">
+              <div className="resulthead">
+                <span>
+                  <strong>{rows.length}</strong> {rows.length === 1 ? 'result' : 'results'}
+                  {rows.length !== live.length ? ` of ${live.length}` : ''}
+                </span>
+                <label className="sortby">
+                  Sort by
+                  <select value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+                    <option value="new">newest</option>
+                    <option value="cheap">price: low to high</option>
+                    <option value="dear">price: high to low</option>
+                    <option value="rated">seller rating</option>
+                  </select>
+                </label>
+              </div>
+
+              {rows.length === 0 ? (
+                <p className="status">
+                  {live.length === 0
+                    ? 'Nothing is for sale yet. The contract is live and empty — the first listing is somebody’s to make.'
+                    : 'Nothing matches that.'}
+                </p>
+              ) : (
+                <ul className="grid">
+                  {rows.map((l) => {
+                    const s = sellers.get(l.seller.toString());
+                    const n = nameOf(s, l.seller);
+                    return (
+                      <li key={l.id} className="card">
+                        <button type="button" className="card-hit" onClick={() => setOpen(l)}>
+                          <div className={`thumb ${l.imageCid ? '' : 'blank'}`}>
+                            {l.imageCid ? (
+                              <img src={GATEWAY + l.imageCid} alt="" loading="lazy" />
+                            ) : (
+                              <span>{l.digital ? 'download' : 'parcel'}</span>
+                            )}
+                          </div>
+                          <h3>{l.title}</h3>
+                          <Stars x100={s?.ratingX100 ?? 0} count={s?.reviews ?? 0} />
+                          <Price text={l.priceText} />
+                          <p className="by">
+                            {n.label}
+                            {n.proven ? <span className="tick" title="proven .dot name">✓</span> : null}
+                          </p>
+                          <p className={`avail ${l.stock <= 3 ? 'low' : ''}`}>
+                            {l.digital ? 'Instant download' : 'Ships from the seller'}
+                            {l.stock <= 3 ? ` · only ${l.stock} left` : ''}
+                          </p>
+                        </button>
+                        <span className="cta">{app ? 'Buy' : 'View'}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </section>
-          )}
+          </div>
 
           {open ? (
             <div
@@ -212,37 +229,55 @@ export default function Store({ app }: { app: App | null }) {
                 <button type="button" className="close" onClick={() => setOpen(null)}>
                   close
                 </button>
-                <h2>{open.title}</h2>
-                <p className="price big">
-                  {open.priceText} <span>PAS</span>
-                </p>
-                <dl>
-                  <dt>kind</dt>
-                  <dd>{open.digital ? 'digital — delivered as an encrypted key' : 'shipped'}</dd>
-                  <dt>seller</dt>
-                  <dd>
-                    {sellers.get(open.seller.toString())?.name
-                      ? `${sellers.get(open.seller.toString())?.name}.dot`
-                      : `mask #${open.seller}`}
-                    {sellers.get(open.seller.toString())?.owner
-                      ? ` · ${short(sellers.get(open.seller.toString())!.owner!)}`
-                      : ''}
-                  </dd>
-                  <dt>completed sales</dt>
-                  <dd>{sellers.get(open.seller.toString())?.sales ?? 0}</dd>
-                  <dt>in stock</dt>
-                  <dd>{open.stock}</dd>
-                  <dt>listing</dt>
-                  <dd>#{open.id}</dd>
-                </dl>
-                <p className="note">
-                  {open.digital
-                    ? 'Pay and the seller sends the key sealed to your mask. If it does not open, dispute: the seller must publish the key in the clear to be paid, and if they cannot, you are refunded.'
-                    : 'Pay and your address goes to the seller encrypted — never in the clear. A shipped order releases after you confirm, or after about three days. A dispute ends only when both of you agree a split.'}
-                </p>
-                {!app ? (
-                  <p className="status">Open this in the Polkadot app to buy.</p>
-                ) : null}
+                <div className="detail">
+                  <div className={`hero ${open.imageCid ? '' : 'blank'}`}>
+                    {open.imageCid ? (
+                      <img src={GATEWAY + open.imageCid} alt="" />
+                    ) : (
+                      <span>{open.digital ? 'download' : 'parcel'}</span>
+                    )}
+                  </div>
+
+                  <div className="detail-main">
+                    <h2>{open.title}</h2>
+                    <p className="soldby">
+                      {nameOf(openSeller, open.seller).label}
+                      {nameOf(openSeller, open.seller).proven ? (
+                        <span className="tick" title="proven .dot name">✓</span>
+                      ) : null}
+                      {openSeller?.owner ? <span className="addr"> · {short(openSeller.owner)}</span> : null}
+                    </p>
+                    <Stars x100={openSeller?.ratingX100 ?? 0} count={openSeller?.reviews ?? 0} />
+                    <p className="note">
+                      {open.digital
+                        ? 'Pay and the seller sends the key sealed to your mask. If it does not open, dispute: to be paid they must publish the key in the clear, and if they cannot, you are refunded.'
+                        : 'Pay and your address reaches the seller encrypted, never in the clear. Confirm when it arrives, or the seller is paid automatically after about three days. A dispute ends only when you both agree a split.'}
+                    </p>
+                  </div>
+
+                  {/* The buy box, pinned beside the item the way a shop does it. */}
+                  <aside className="buybox">
+                    <Price text={open.priceText} />
+                    <p className={`avail ${open.stock <= 3 ? 'low' : ''}`}>
+                      {open.stock > 0 ? 'In stock' : 'Sold out'}
+                      {open.stock <= 3 ? ` · only ${open.stock} left` : ''}
+                    </p>
+                    <p className="ship">
+                      {open.digital ? 'Delivered as an encrypted key' : 'Shipped by the seller'}
+                    </p>
+                    {app ? (
+                      <p className="status">Use the panel at the top of the page to buy.</p>
+                    ) : (
+                      <p className="status">Open in the Polkadot app to buy.</p>
+                    )}
+                    <dl>
+                      <dt>completed sales</dt>
+                      <dd>{openSeller?.sales ?? 0}</dd>
+                      <dt>listing</dt>
+                      <dd>#{open.id}</dd>
+                    </dl>
+                  </aside>
+                </div>
               </div>
             </div>
           ) : null}
@@ -254,34 +289,31 @@ export default function Store({ app }: { app: App | null }) {
               </span>
               <span>
                 via <strong>{new URL(state.shop.endpoint).host}</strong>
-                {state.shop.failedOver.length ? ` after ${state.shop.failedOver.join(', ')} refused` : ''}
+                {state.shop.failedOver.length
+                  ? ` after ${state.shop.failedOver.join(', ')} refused`
+                  : ''}
               </span>
               <span className="addr">contract {MARKET}</span>
             </div>
 
             <details className="why">
-              <summary>How the escrow settles without an arbiter</summary>
+              <summary>Why the stars here cannot be bought</summary>
               <p>
-                A digital seller commits to <code>keccak256(key)</code> before anyone pays. On
-                payment they send that key sealed to your mask. If you dispute, they can win by
-                publishing the key in the clear — the contract checks it against the commitment
-                made before the sale. So a false dispute gains a file everyone else now has, and
-                an honest seller never needs a judge.
+                A review can only be written from an order that was paid and completed, and a
+                seller cannot buy from their own mask — the contract refuses it. So a five-star
+                average costs whatever the items cost, paid to somebody else, rather than costing
+                nothing. It is not unfakeable; it is expensive to fake, which is the most any
+                marketplace has ever managed.
               </p>
               <p>
-                Physical goods have no such proof, and this does not pretend otherwise. Escrow,
-                your confirmation, a timeout that pays the seller, and a split both sides propose
-                separately. When neither yields, the money stays put. That is the honest shape of
-                the problem rather than an invented winner.
-              </p>
-              <p>
-                No admin, no owner, no pause, no fee. Not as a promise — there is no function that
-                could take a cut, freeze an order or empty the escrow.
+                A tick beside a name means the holder proved they own that <code>.dot</code> — the
+                contract recomputed the namehash and asked the registry. A name without a tick is
+                just text the seller typed.
               </p>
             </details>
           </footer>
         </>
       ) : null}
-    </main>
+    </div>
   );
 }

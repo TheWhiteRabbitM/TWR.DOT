@@ -34,6 +34,7 @@ const MASKS_ABI = [
   'function ownerOf(uint256 id) view returns (address)',
   'function maskOf(address who) view returns (uint256)',
   'function verifiedName(uint256 id) view returns (string)',
+  'function profileOf(uint256 id) view returns (string displayName, string telegram, string x, string bio)',
   'function tierOf(uint256 id) view returns (uint8)',
 ];
 
@@ -83,15 +84,35 @@ export interface Listing {
   listedAt: number;
 }
 
+/**
+ * A shop, and the two different kinds of name it might have.
+ *
+ * The mask contract keeps these apart on purpose and so does this: a `.dot` is
+ * PROVEN — the contract recomputed its namehash and asked the registry who owns
+ * it — while a display name is free text the holder typed. Collapsing them into
+ * one `name` field, which an earlier version of this file did, means a seller
+ * can type "polkadot" and be rendered exactly like a seller who owns
+ * polkadot.dot. The tick has to mean something or it should not be drawn.
+ */
 export interface Seller {
   mask: bigint;
   owner: string | null;
-  /** A `.dot` the holder PROVED they own, or null. Never one merely claimed. */
-  name: string | null;
+  /** A `.dot` the holder PROVED they own. Shown with a tick. */
+  verified: string | null;
+  /** Free text the holder chose. Shown plainly, never with a tick. */
+  display: string | null;
   sales: number;
   ratingX100: number;
   reviews: number;
 }
+
+/** What to call a shop, and whether that name is proof of anything. */
+export const nameOf = (s: Seller | undefined, mask: bigint) =>
+  s?.verified
+    ? { label: `${s.verified}.dot`, proven: true }
+    : s?.display
+      ? { label: s.display, proven: false }
+      : { label: `mask #${mask}`, proven: false };
 
 export interface Shop {
   listings: Listing[];
@@ -182,9 +203,10 @@ export async function readSellers(masks: bigint[]): Promise<Map<string, Seller>>
 
   await Promise.all(
     masks.map(async (mask) => {
-      const [owner, name, sales, rating] = await Promise.all([
+      const [owner, verified, profile, sales, rating] = await Promise.all([
         registry.ownerOf(mask).catch(() => null),
         registry.verifiedName(mask).catch(() => ''),
+        registry.profileOf(mask).catch(() => null),
         market.sales(mask).then(Number).catch(() => 0),
         market.rating(mask).catch(() => [0n, 0n]),
       ]);
@@ -192,7 +214,8 @@ export async function readSellers(masks: bigint[]): Promise<Map<string, Seller>>
       out.set(mask.toString(), {
         mask,
         owner: held,
-        name: String(name ?? '').trim() || null,
+        verified: String(verified ?? '').trim() || null,
+        display: String(profile?.[0] ?? '').trim() || null,
         sales,
         ratingX100: Number(rating[0] ?? 0),
         reviews: Number(rating[1] ?? 0),

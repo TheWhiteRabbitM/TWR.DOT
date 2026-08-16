@@ -697,6 +697,441 @@ h1 {
   color: var(--pink);
 }
 
+/* --------------------------------------------------------------- topbar -- */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* `flex-direction: row` is explicit and load-bearing: the base sheet styles the
+   `header` element as a column, and a class that only sets `display: flex`
+   inherits that direction. The search box then took `flex: 1 1 18rem` as a
+   height and rendered as a 190px square in the middle of the page. */
+.topbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.brand h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: var(--fs-6);
+  line-height: 1;
+  margin: 0;
+  color: var(--tx-hi);
+}
+
+.tag,
+.topnote {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  letter-spacing: 0.04em;
+}
+
+/* The search sits between the name and the small print, the way a shop puts it
+   — it is the control people reach for first and it should not be below the
+   fold on a phone. */
+.topsearch {
+  flex: 1 1 18rem;
+  min-width: 0;
+  font-family: var(--sans);
+  font-size: var(--fs-3);
+  color: var(--tx-hi);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+}
+
+.topsearch:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
+.topnote {
+  margin-left: auto;
+}
+
+/* --------------------------------------------------------------- layout -- */
+
+.layout {
+  display: grid;
+  grid-template-columns: 13rem 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rail h2 {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+  margin: 16px 0 6px;
+}
+
+.rail h2:first-child {
+  margin-top: 0;
+}
+
+.facets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.facets button,
+.facets .check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  font-family: var(--sans);
+  font-size: var(--fs-2);
+  color: var(--tx-mid);
+  background: none;
+  border: 0;
+  padding: 5px 0;
+  cursor: pointer;
+}
+
+.facets button.on {
+  color: var(--tx-hi);
+  font-weight: 500;
+}
+
+.facets span {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.railnote {
+  font-size: var(--fs-1);
+  color: var(--tx-low);
+  margin: 0;
+  max-width: 24ch;
+}
+
+.resulthead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-2);
+  color: var(--tx-mid);
+}
+
+.resulthead strong {
+  color: var(--tx-hi);
+}
+
+.sortby {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-1);
+  color: var(--tx-low);
+}
+
+.sortby select {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  color: var(--tx-hi);
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 6px 10px;
+}
+
+/* --------------------------------------------------------------- rating -- */
+
+/* Clipped overlay rather than rounded glyphs: 4.4 and 4.6 are a real
+   difference when choosing between two sellers. */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 14px 4px;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+}
+
+.rating.none {
+  color: var(--tx-low);
+}
+
+.stars-track {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.stars-off {
+  color: var(--line-strong);
+}
+
+.stars-on {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--warn);
+}
+
+.rating-n::before {
+  content: '(';
+}
+
+.rating-n::after {
+  content: ')';
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* ---------------------------------------------------------------- price -- */
+
+.pricetag {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 2px;
+  margin: 0 14px 4px;
+  color: var(--tx-hi);
+  font-family: var(--display);
+  line-height: 1;
+}
+
+.pricetag .cur {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-low);
+  margin-top: 2px;
+}
+
+.pricetag .whole {
+  font-size: 28px;
+}
+
+.pricetag .frac {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  margin-top: 2px;
+}
+
+.tick {
+  color: var(--warn);
+  margin-left: 4px;
+}
+
+.avail {
+  margin: 4px 14px 0;
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  color: var(--tx-mid);
+}
+
+.avail.low {
+  color: var(--warn);
+}
+
+/* The one borrowed colour, and it is the one a shop uses for the action. */
+.cta {
+  display: block;
+  margin: 10px 14px 14px;
+  margin-top: auto;
+  padding: 8px 0;
+  text-align: center;
+  border-radius: 999px;
+  background: var(--warn);
+  color: #241a05;
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------- detail -- */
+
+.detail {
+  display: grid;
+  grid-template-columns: 12rem 1fr 13rem;
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hero {
+  aspect-ratio: 1;
+  background: var(--bg-3);
+  border-radius: var(--r-md);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero.blank span,
+.thumb.blank span {
+  font-family: var(--mono);
+  font-size: var(--fs-0);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tx-low);
+}
+
+.detail-main h2 {
+  margin-top: 0;
+}
+
+.soldby {
+  margin: 0 0 6px;
+  font-family: var(--mono);
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
+}
+
+.detail-main .rating,
+.detail-main .pricetag {
+  margin-left: 0;
+}
+
+.buybox {
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 14px;
+}
+
+.buybox .pricetag,
+.buybox .avail {
+  margin-left: 0;
+}
+
+.ship {
+  margin: 8px 0;
+  font-size: var(--fs-1);
+  color: var(--tx-mid);
+}
+
+.buybox dl {
+  margin: 12px 0 0;
+  grid-template-columns: 1fr auto;
+}
+
+/* ---------------------------------------------------------------- howto -- */
+
+.howto {
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--pink);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  padding: 12px 16px;
+}
+
+.howto summary {
+  font-family: var(--sans);
+  font-size: var(--fs-1);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tx-hi);
+  cursor: pointer;
+  list-style: none;
+}
+
+.howto summary::-webkit-details-marker {
+  display: none;
+}
+
+.howto-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 8px 28px;
+  margin-top: 10px;
+}
+
+.howto h3 {
+  font-family: var(--sans);
+  font-size: var(--fs-3);
+  font-weight: 500;
+  color: var(--tx-hi);
+  margin: 8px 0 4px;
+}
+
+.howto ol {
+  margin: 0;
+  padding-left: 1.3em;
+  font-size: var(--fs-2);
+  color: var(--tx-mid);
+}
+
+.howto li {
+  margin-bottom: 6px;
+}
+
+.howto li strong,
+.howto em {
+  color: var(--tx-hi);
+  font-style: normal;
+  font-weight: 500;
+}
+
+.howto-foot {
+  margin: 12px 0 0;
+  font-size: var(--fs-1);
+  color: var(--tx-low);
+  max-width: 78ch;
+}
+
 /* ---------------------------------------------------------------- counts -- */
 
 .counts {
@@ -789,16 +1224,22 @@ h1 {
   gap: 12px;
 }
 
+/* Column with the action pushed to the floor, so buttons line up across a row
+   whatever the titles do. Ragged call-to-action buttons are the first thing
+   that reads as amateur in a product grid, and titles are never equal length. */
 .card {
   background: var(--bg-1);
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-hit {
   display: block;
   width: 100%;
+  flex: 1 1 auto;
   text-align: left;
   background: none;
   border: 0;
