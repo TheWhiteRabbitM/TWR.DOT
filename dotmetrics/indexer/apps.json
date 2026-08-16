@@ -1125,7 +1125,7 @@
     "url": "https://frenchan-app77.dev-dot.li",
     "firstSeenBlock": 11720119,
     "owner": "0x6145aCa18d6E644172E20297ac5f40eB8d73035b",
-    "contenthash": "bafybeicrvdcftxaslioyc2icepkk4abggnj72znkgt4sjrng55m4zkpkd4",
+    "contenthash": "bafybeiekexrca4wh7p7rfcwd2so2ekxzfbor4j3pwja6avhuf3x3sxioe4",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785671148,
@@ -3452,6 +3452,16 @@
     "displayName": "Amazdot",
     "description": "A market on Asset Hub where the money waits in a contract and only a paid order can write a review. Digital disputes settle without an arbiter: the seller wins by publishing the goods.",
     "category": "commerce"
+  },
+  "rabbithole": {
+    "label": "rabbithole",
+    "domain": "rabbithole.dot",
+    "url": "https://rabbithole.dev-dot.li",
+    "firstSeenBlock": 12312418,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1786920624
   },
   "excluded": [
     "a5wz",
