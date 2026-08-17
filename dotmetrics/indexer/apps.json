@@ -3466,6 +3466,20 @@
     "tier": 2,
     "firstSeenAt": 1786920624
   },
+  "tikami-hello": {
+    "label": "tikami-hello",
+    "domain": "tikami-hello.dot",
+    "url": "https://tikami-hello.dev-dot.li",
+    "firstSeenBlock": 12329816,
+    "owner": "0xD87C41528eB02aa87005a77575339e1CE5628be5",
+    "displayName": "tikami-hello",
+    "description": "Kleines Product zum Testen von Host, Wallet und Deploy.",
+    "iconCid": "bafk2bzaced3g23zqu4qwmesuy2divoa7htmzidosqmksztbgbbrokw3y2mksq",
+    "contenthash": "bafybeigazj5tkmnknlglwmrhfgrrw5pjmuhzppv275igbc267wajhjxcoq",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786959300
+  },
   "excluded": [
     "a5wz",
     "adddd",
