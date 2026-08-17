@@ -3480,6 +3480,17 @@
     "tier": 0,
     "firstSeenAt": 1786959300
   },
+  "therabbithole": {
+    "label": "therabbithole",
+    "domain": "therabbithole.dot",
+    "url": "https://therabbithole.dev-dot.li",
+    "firstSeenBlock": 12339288,
+    "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
+    "contenthash": "bafybeigr6r2u4cxo4ufoytvicc3ukrfegpimfpdwuo4iqn2jdvkmwexed4",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786980228
+  },
   "excluded": [
     "a5wz",
     "adddd",
