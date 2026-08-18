@@ -3491,6 +3491,16 @@
     "tier": 1,
     "firstSeenAt": 1786980228
   },
+  "bonbonbon": {
+    "label": "bonbonbon",
+    "domain": "bonbonbon.dot",
+    "url": "https://bonbonbon.dev-dot.li",
+    "firstSeenBlock": 12357937,
+    "owner": "0x8F49CAe7d0d0B4F381C8A5E8df8020A3a61D2849",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1787022708
+  },
   "excluded": [
     "a5wz",
     "adddd",
@@ -3504,6 +3514,7 @@
     "btcusd",
     "call",
     "cfcv",
+    "cg7s",
     "cig6",
     "claude",
     "codqx",
