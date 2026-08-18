@@ -3332,9 +3332,9 @@
     "firstSeenBlock": 12148890,
     "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
     "displayName": "PublicResearch",
-    "description": "Fund the research you want to exist. Proposals are stored on the Bulletin Chain, indexed through the Statement Store, and funded directly in CASH.",
+    "description": "Fund the research you want to exist, and browse every app published to the devnet. Proposals live on the Bulletin Chain, the index and its votes and comments on the Statement Store, and funding settles in CASH.",
     "iconCid": "bafk2bzacec3ymxtr3apd7go35zoqu2ylrey5zqjiat6h5o5oilmsaqs5byhq4",
-    "contenthash": "bafybeihovjdxpby4qk5g6tgqeurcqfrqnzt6riy2azoudlykushe7s6ubu",
+    "contenthash": "bafybeifu34vb2jzcmktc7326brq4mmhvthovj766wlc65cqm4pttrkfvmi",
     "hasExecutable": true,
     "tier": 0,
     "firstSeenAt": 1786566924
@@ -3486,7 +3486,7 @@
     "url": "https://therabbithole.dev-dot.li",
     "firstSeenBlock": 12339288,
     "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
-    "contenthash": "bafybeifh3zm7thq2imae4bc6m5vivb2vdc3qcw2skxxd6wuxfix5qzum6m",
+    "contenthash": "bafybeih55ztrj4byvukscoqvyrcd2hp5b3qy3fy7d5p4zo4efgzmogbq3y",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786980228
@@ -3510,7 +3510,7 @@
     "displayName": "DOT Creatures",
     "description": "On-chain creature battling game on Polkadot. Mint, battle, trade, and stake unique NFT creatures.",
     "iconCid": "bafk2bzacebjd3xmbmiuzqdfejevcfpy34czjdyaemrxhhwaa72g3i4wpadg6o",
-    "contenthash": "bafybeibs2hw36jumwexcbxacmqpv7eqvm5lktcel42hd54v54okqkrqbxu",
+    "contenthash": "bafybeiam5k5unq22duxyyfbis62fvbsfns23aydpcghmflmdzafdrgqvtu",
     "hasExecutable": true,
     "tier": 0,
     "firstSeenAt": 1787031576
