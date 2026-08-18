@@ -3515,6 +3515,16 @@
     "tier": 0,
     "firstSeenAt": 1787031576
   },
+  "openstudios": {
+    "label": "openstudios",
+    "domain": "openstudios.dot",
+    "url": "https://openstudios.dev-dot.li",
+    "firstSeenBlock": 12368002,
+    "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1787046648
+  },
   "excluded": [
     "a5wz",
     "adddd",
