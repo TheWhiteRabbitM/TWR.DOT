@@ -3544,6 +3544,17 @@
     "iconCid": "bafk2bzacebpxqo63lxdaieygqwzui6gibmdescnsxrvddswred2mu2rqhzfk6",
     "contenthash": "bafybeigysw7jvasxtpcktqm7u3mgzpevgxch6xlzor35lozi6hwpb57jsm"
   },
+  "polkadot-forum": {
+    "label": "polkadot-forum",
+    "domain": "polkadot-forum.dot",
+    "url": "https://polkadot-forum.dev-dot.li",
+    "firstSeenBlock": 12401180,
+    "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
+    "contenthash": "bafybeigomrioeftnv52tpr4bqx6qnmyyahqkwwg42e4nerdvbajyavbr54",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1787121468
+  },
   "excluded": [
     "a5wz",
     "adddd",
