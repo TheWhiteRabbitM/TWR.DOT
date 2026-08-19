@@ -3559,6 +3559,16 @@
     "tier": 1,
     "firstSeenAt": 1787121468
   },
+  "clockchain": {
+    "label": "clockchain",
+    "domain": "clockchain.dot",
+    "url": "https://clockchain.dev-dot.li",
+    "firstSeenBlock": 12425128,
+    "owner": "0xE5c1D15C7D15eBc5297fD99043bac98519F64429",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1787176560
+  },
   "excluded": [
     "a5wz",
     "adddd",
@@ -3656,6 +3666,7 @@
     "kqc0",
     "kwzy",
     "kx12",
+    "kz8v",
     "l6qrt",
     "liii",
     "lvfry",
@@ -3714,6 +3725,7 @@
     "uyni",
     "v7hk",
     "v7tc",
+    "v8bx",
     "v944",
     "v9wnw",
     "vdxvg",
