@@ -3526,9 +3526,13 @@
     "url": "https://openstudios.dev-dot.li",
     "firstSeenBlock": 12368002,
     "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
-    "hasExecutable": false,
-    "tier": 2,
-    "firstSeenAt": 1787046648
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787046648,
+    "displayName": "Open Studios",
+    "description": "Buy art directly from the artist. No platform fee, no server, nothing in the middle.",
+    "iconCid": "bafk2bzacedslcug22txmizxd6k4a43nyf2icrxovcxawsuh2nitmy634h3erm",
+    "contenthash": "bafybeiegbxepmxqvv6gahhka6qmmknx5a3cvznumfovndpdz3ec5migwfa"
   },
   "humanpolls": {
     "label": "humanpolls",
@@ -3550,7 +3554,7 @@
     "url": "https://polkadot-forum.dev-dot.li",
     "firstSeenBlock": 12401180,
     "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
-    "contenthash": "bafybeicl74sqr4ltoax6tfknctpxxnllajl6m6wptu75ocdplnoqul3lpq",
+    "contenthash": "bafybeiatujyd6tk4kgir727ll5fnta3sxopyhj2omjv64kch35l47cxqgq",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1787121468
