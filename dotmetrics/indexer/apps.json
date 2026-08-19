@@ -2710,7 +2710,7 @@
     "displayName": "SubsTrade Hub",
     "description": "Fully on-chain order-book DEX on Asset Hub.",
     "iconCid": "bafk2bzaceba7qxzppuneuvrbcp3uys3cgj6jam7xkcyzzlzatdqemgqlra7zc",
-    "contenthash": "bafybeidiqdf6diyqmn55tt46rdrnaykeixcav6ahq3ycimb2ne4vwdhbjq",
+    "contenthash": "bafybeifsc5y7vya3t25ki4rmhpvyvytgfdxjhd2ontaqtdmqivmfk2e7ci",
     "alive": true,
     "lastSeenAliveAt": 1786344620,
     "livenessCheckedAt": 1786320000,
@@ -3554,7 +3554,7 @@
     "url": "https://polkadot-forum.dev-dot.li",
     "firstSeenBlock": 12401180,
     "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
-    "contenthash": "bafybeiatujyd6tk4kgir727ll5fnta3sxopyhj2omjv64kch35l47cxqgq",
+    "contenthash": "bafybeict3ckf2e3vyduhs2e4br5ic74f63fgwklxznuguenyzosj7t254u",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1787121468
