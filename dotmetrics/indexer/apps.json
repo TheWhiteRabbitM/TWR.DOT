@@ -3262,7 +3262,7 @@
     "url": "https://humanfeed.dev-dot.li",
     "firstSeenBlock": 12049736,
     "owner": "0x5dd6fFc78573FF60ea4dFeCe4f3AE4f2Cd7e4378",
-    "contenthash": "bafybeigumpeyja6q3exguqj2cs27w7jxafj6j3pvewngdyk2jp3cunhzyq",
+    "contenthash": "bafybeib2xulppu2uoz6uissyrzamaqrawm73s6jnd7t6q2bezpjwdnhuxy",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786359504
@@ -3370,9 +3370,13 @@
     "url": "https://throwdown.dev-dot.li",
     "firstSeenBlock": 12184912,
     "owner": "0x8F49CAe7d0d0B4F381C8A5E8df8020A3a61D2849",
-    "hasExecutable": false,
-    "tier": 2,
-    "firstSeenAt": 1786643532
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786643532,
+    "displayName": "THROWDOWN",
+    "description": "Rock Paper Scissors Lizard Spock, as a tournament that runs for days. One hand a day, sealed before it is shown, graded by every client at once — no referee.",
+    "iconCid": "bafk2bzacedkyebrffqo626uggo26fbycvvjdlwgdin73o6owlmblfiak74tfu",
+    "contenthash": "bafybeicyvuyqboya27mtpcf2jod4rrtvabksjvuk6mqlbcnbzt2vls7ft4"
   },
   "awakenedgazette": {
     "label": "awakenedgazette",
@@ -3392,8 +3396,9 @@
     "firstSeenBlock": 12186663,
     "owner": "0x3A1735bf10c4ebCa3D17fD8C9b6436E80D41BBeC",
     "hasExecutable": false,
-    "tier": 2,
-    "firstSeenAt": 1786648188
+    "tier": 1,
+    "firstSeenAt": 1786648188,
+    "contenthash": "bafybeighpvzye3fgplkbaf3cxllgzaffdxsoatgqjubrxtwfmq4ur2gl3i"
   },
   "postespresso": {
     "label": "postespresso",
@@ -3613,6 +3618,7 @@
     "hdddddddd",
     "hddddddddddd",
     "hdddj",
+    "hidw",
     "hluds",
     "hrinj",
     "hrud",
