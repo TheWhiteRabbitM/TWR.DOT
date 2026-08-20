@@ -1,0 +1,9 @@
+{
+  "$v": 1,
+  "displayName": "Polkadot Forum",
+  "description": "A copy of forum.polkadot.network that runs on chain. The whole archive is kept read-only with its original authors, new posts are written by mask holders, and there are no moderators, no admins and no delete button.",
+  "icon": {
+    "cid": "bafybeia7sjzysbxolp4i5xraw5twud3yf2ncx6muadt6bnrdhdkivx2vla",
+    "format": "png"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "$v": 1,
+  "displayName": "Is it AI?",
+  "description": "Paste any text and see which AI writing patterns are in it, where they are, and what to write instead. It fixes the ones a machine should fix and leaves the rest to you. Nothing is uploaded.",
+  "icon": {
+    "cid": "bafybeihpdjyg5reeqime67hblqq6es5oag6vfulgu6lebeu4igiiz3k2ma",
+    "format": "png"
+  }
+}
