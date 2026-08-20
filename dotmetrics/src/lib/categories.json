@@ -11,12 +11,26 @@
     "confidence": "none",
     "why": []
   },
+  "aidetector": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "ajedreztest01": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
     "why": [
       "chess~"
+    ]
+  },
+  "amazdotcom": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "market"
     ]
   },
   "arcadeonchain": {
@@ -39,6 +53,12 @@
       "roguelike"
     ]
   },
+  "awakenedgazette": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "batoutofhell": {
     "category": "other",
     "source": "unclassified",
@@ -58,6 +78,12 @@
     "why": []
   },
   "bobman-dev": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "bonbonbon": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -169,11 +195,36 @@
       "payments"
     ]
   },
+  "circlecredit": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "humans",
+      "verified"
+    ]
+  },
+  "clockchain": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "comicpirate": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
     "why": []
+  },
+  "common-ground": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "personhood",
+      "proof",
+      "private"
+    ]
   },
   "community": {
     "category": "other",
@@ -241,6 +292,22 @@
     "confidence": "none",
     "why": []
   },
+  "creatures": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "game"
+    ]
+  },
+  "dailydigest": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "community"
+    ]
+  },
   "dashboard": {
     "category": "other",
     "source": "unclassified",
@@ -250,6 +317,12 @@
     ]
   },
   "ddddddddd": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "detourvzw": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -380,6 +453,14 @@
       "transparency~"
     ]
   },
+  "dotdirectory": {
+    "category": "explorers",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "directory~"
+    ]
+  },
   "dotexplorer": {
     "category": "explorers",
     "source": "derived:manifest",
@@ -416,6 +497,12 @@
     "confidence": "declared",
     "why": []
   },
+  "dotnote-demo": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "dotparcel": {
     "category": "other",
     "source": "unclassified",
@@ -437,6 +524,12 @@
     "why": [
       "weather"
     ]
+  },
+  "drawproof": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "dripstream": {
     "category": "finance",
@@ -494,6 +587,12 @@
     "why": []
   },
   "exit-radar": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "federation": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -578,6 +677,15 @@
     "confidence": "none",
     "why": []
   },
+  "hello": {
+    "category": "publishing",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "page",
+      "bulletin"
+    ]
+  },
   "hello-devnet-ynrc46": {
     "category": "curiosities",
     "source": "derived:app-text",
@@ -645,6 +753,26 @@
     "source": "unclassified",
     "confidence": "none",
     "why": []
+  },
+  "hindsight": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "humanfeed": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "humanpolls": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "anonymous"
+    ]
   },
   "hydration": {
     "category": "other",
@@ -968,6 +1096,27 @@
     "confidence": "declared",
     "why": []
   },
+  "openraonchain": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "openstudios": {
+    "category": "media",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "artist",
+      "art"
+    ]
+  },
+  "p2p-lending": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "pactprotocol": {
     "category": "finance",
     "source": "derived:app-text",
@@ -1054,6 +1203,14 @@
     "confidence": "none",
     "why": []
   },
+  "polkacrew": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "social"
+    ]
+  },
   "polkadevs": {
     "category": "other",
     "source": "unclassified",
@@ -1065,6 +1222,14 @@
     "source": "unclassified",
     "confidence": "none",
     "why": []
+  },
+  "polkadot-forum": {
+    "category": "social",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "forum~"
+    ]
   },
   "polkanote": {
     "category": "other",
@@ -1100,6 +1265,18 @@
     "confidence": "none",
     "why": []
   },
+  "polkashoot": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "postespresso": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "ppppppppp": {
     "category": "other",
     "source": "unclassified",
@@ -1121,6 +1298,15 @@
     "confidence": "none",
     "why": []
   },
+  "public-research": {
+    "category": "publishing",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "published",
+      "bulletin"
+    ]
+  },
   "qqqqqqqqq": {
     "category": "other",
     "source": "unclassified",
@@ -1135,6 +1321,12 @@
       "game",
       "quiz~"
     ]
+  },
+  "rabbithole": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "radioactivedrums": {
     "category": "media",
@@ -1160,6 +1352,14 @@
     "why": [
       "sandbox~",
       "probe~"
+    ]
+  },
+  "rampatlas": {
+    "category": "explorers",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "atlas~"
     ]
   },
   "reputacion": {
@@ -1195,11 +1395,11 @@
     "why": []
   },
   "site-forge": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "tools",
+    "source": "derived:manifest",
+    "confidence": "medium",
     "why": [
-      "site~"
+      "builder"
     ]
   },
   "squadbuilder": {
@@ -1278,6 +1478,26 @@
     "source": "unclassified",
     "confidence": "none",
     "why": []
+  },
+  "therabbithole": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "throwdown": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "tikami-hello": {
+    "category": "curiosities",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "hello"
+    ]
   },
   "tintaprotocol": {
     "category": "other",
@@ -1387,6 +1607,12 @@
       "proof"
     ]
   },
+  "witnessledger": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "wonderland": {
     "category": "other",
     "source": "unclassified",
@@ -1400,6 +1626,14 @@
     "why": []
   },
   "worldblog": {
+    "category": "publishing",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "blog~"
+    ]
+  },
+  "worldblog-app": {
     "category": "publishing",
     "source": "derived:manifest",
     "confidence": "medium",

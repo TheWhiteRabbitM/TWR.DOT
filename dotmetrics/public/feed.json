@@ -1,7 +1,304 @@
 {
-  "generatedAt": 1786344621,
-  "count": 205,
+  "generatedAt": 1787221242,
+  "count": 238,
   "apps": [
+    {
+      "label": "aidetector",
+      "domain": "aidetector.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787216352,
+      "url": "https://aidetector.dev-dot.li"
+    },
+    {
+      "label": "dailydigest",
+      "domain": "dailydigest.dot",
+      "displayName": "Polkadot Daily Digest",
+      "description": "A daily, source-linked briefing on the Polkadot ecosystem - technical updates, governance, and community discussion, condensed into a single readable edition.",
+      "tier": 0,
+      "firstSeenAt": 1787213736,
+      "url": "https://dailydigest.dev-dot.li"
+    },
+    {
+      "label": "circlecredit",
+      "domain": "circlecredit.dot",
+      "displayName": "circlecredit",
+      "description": "Lending circles — uncollateralised credit between verified humans.",
+      "tier": 0,
+      "firstSeenAt": 1787213076,
+      "url": "https://circlecredit.dev-dot.li"
+    },
+    {
+      "label": "federation",
+      "domain": "federation.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1787186136,
+      "url": "https://federation.dev-dot.li"
+    },
+    {
+      "label": "polkacrew",
+      "domain": "polkacrew.dot",
+      "displayName": "PolkaCrew",
+      "description": "Multiplayer social deduction with Bulletin replays and Asset Hub consensus.",
+      "tier": 0,
+      "firstSeenAt": 1787184060,
+      "url": "https://polkacrew.dev-dot.li"
+    },
+    {
+      "label": "clockchain",
+      "domain": "clockchain.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787176560,
+      "url": "https://clockchain.dev-dot.li"
+    },
+    {
+      "label": "polkadot-forum",
+      "domain": "polkadot-forum.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787121468,
+      "url": "https://polkadot-forum.dev-dot.li"
+    },
+    {
+      "label": "humanpolls",
+      "domain": "humanpolls.dot",
+      "displayName": "humanpolls",
+      "description": "One person, one answer — anonymous polls and paid surveys.",
+      "tier": 0,
+      "firstSeenAt": 1787058420,
+      "url": "https://humanpolls.dev-dot.li"
+    },
+    {
+      "label": "openstudios",
+      "domain": "openstudios.dot",
+      "displayName": "Open Studios",
+      "description": "Buy art directly from the artist. No platform fee, no server, nothing in the middle.",
+      "tier": 0,
+      "firstSeenAt": 1787046648,
+      "url": "https://openstudios.dev-dot.li"
+    },
+    {
+      "label": "creatures",
+      "domain": "creatures.dot",
+      "displayName": "DOT Creatures",
+      "description": "On-chain creature battling game on Polkadot. Mint, battle, trade, and stake unique NFT creatures.",
+      "tier": 0,
+      "firstSeenAt": 1787031576,
+      "url": "https://creatures.dev-dot.li"
+    },
+    {
+      "label": "bonbonbon",
+      "domain": "bonbonbon.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1787022708,
+      "url": "https://bonbonbon.dev-dot.li"
+    },
+    {
+      "label": "therabbithole",
+      "domain": "therabbithole.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786980228,
+      "url": "https://therabbithole.dev-dot.li"
+    },
+    {
+      "label": "tikami-hello",
+      "domain": "tikami-hello.dot",
+      "displayName": "tikami-hello",
+      "description": "Kleines Product zum Testen von Host, Wallet und Deploy.",
+      "tier": 0,
+      "firstSeenAt": 1786959300,
+      "url": "https://tikami-hello.dev-dot.li"
+    },
+    {
+      "label": "rabbithole",
+      "domain": "rabbithole.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1786920624,
+      "url": "https://rabbithole.dev-dot.li"
+    },
+    {
+      "label": "amazdotcom",
+      "domain": "amazdotcom.dot",
+      "displayName": "Amazdot",
+      "description": "A market on Asset Hub where the money waits in a contract and only a paid order can write a review. Digital disputes settle without an arbiter: the seller wins by publishing the goods.",
+      "tier": 0,
+      "firstSeenAt": 1786882440,
+      "url": "https://amazdotcom.dev-dot.li"
+    },
+    {
+      "label": "worldblog-app",
+      "domain": "worldblog-app.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786784436,
+      "url": "https://worldblog-app.dev-dot.li"
+    },
+    {
+      "label": "polkashoot",
+      "domain": "polkashoot.dot",
+      "displayName": "Polkashoot",
+      "description": "Shoot grifters down—decentralized",
+      "tier": 0,
+      "firstSeenAt": 1786728528,
+      "url": "https://polkashoot.dev-dot.li"
+    },
+    {
+      "label": "dotdirectory",
+      "domain": "dotdirectory.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786693344,
+      "url": "https://dotdirectory.dev-dot.li"
+    },
+    {
+      "label": "awakenedgazette",
+      "domain": "awakenedgazette.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786660308,
+      "url": "https://awakenedgazette.dev-dot.li"
+    },
+    {
+      "label": "postespresso",
+      "domain": "postespresso.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786650672,
+      "url": "https://postespresso.dev-dot.li"
+    },
+    {
+      "label": "detourvzw",
+      "domain": "detourvzw.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786648188,
+      "url": "https://detourvzw.dev-dot.li"
+    },
+    {
+      "label": "throwdown",
+      "domain": "throwdown.dot",
+      "displayName": "THROWDOWN",
+      "description": "Rock Paper Scissors Lizard Spock, as a tournament that runs for days. One hand a day, sealed before it is shown, graded by every client at once — no referee.",
+      "tier": 0,
+      "firstSeenAt": 1786643532,
+      "url": "https://throwdown.dev-dot.li"
+    },
+    {
+      "label": "rampatlas",
+      "domain": "rampatlas.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786640160,
+      "url": "https://rampatlas.dev-dot.li"
+    },
+    {
+      "label": "common-ground",
+      "domain": "common-ground.dot",
+      "displayName": "Common Ground",
+      "description": "A decentralized forum for thoughtful Polkadot discussions, with private-by-default masks, on-chain moderation and optional Proof of Personhood.",
+      "tier": 0,
+      "firstSeenAt": 1786616508,
+      "url": "https://common-ground.dev-dot.li"
+    },
+    {
+      "label": "public-research",
+      "domain": "public-research.dot",
+      "displayName": "PublicResearch",
+      "description": "Fund the research you want to exist, and browse every app published to the devnet. Proposals live on the Bulletin Chain, the index and its votes and comments on the Statement Store, and funding settles in CASH.",
+      "tier": 0,
+      "firstSeenAt": 1786566924,
+      "url": "https://public-research.dev-dot.li"
+    },
+    {
+      "label": "openraonchain",
+      "domain": "openraonchain.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786500804,
+      "url": "https://openraonchain.dev-dot.li"
+    },
+    {
+      "label": "p2p-lending",
+      "domain": "p2p-lending.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786481124,
+      "url": "https://p2p-lending.dev-dot.li"
+    },
+    {
+      "label": "hello",
+      "domain": "hello.dot",
+      "displayName": "Hello Dot",
+      "description": "A one-page introduction to the decentralized web on Polkadot. No server delivered it — the page is a static bundle on Bulletin, bound to a .dot name by its content hash.",
+      "tier": 0,
+      "firstSeenAt": 1786459044,
+      "url": "https://hello.dev-dot.li"
+    },
+    {
+      "label": "witnessledger",
+      "domain": "witnessledger.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786457568,
+      "url": "https://witnessledger.dev-dot.li"
+    },
+    {
+      "label": "dotnote-demo",
+      "domain": "dotnote-demo.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786446492,
+      "url": "https://dotnote-demo.dev-dot.li"
+    },
+    {
+      "label": "humanfeed",
+      "domain": "humanfeed.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786359504,
+      "url": "https://humanfeed.dev-dot.li"
+    },
+    {
+      "label": "drawproof",
+      "domain": "drawproof.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1786347780,
+      "url": "https://drawproof.dev-dot.li"
+    },
+    {
+      "label": "hindsight",
+      "domain": "hindsight.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1786347708,
+      "url": "https://hindsight.dev-dot.li"
+    },
     {
       "label": "gdztestdomain",
       "domain": "gdztestdomain.dot",
@@ -104,9 +401,9 @@
     {
       "label": "site-forge",
       "domain": "site-forge.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "SiteForge",
+      "description": "AI website builder on Polkadot Products Devnet. Promo, signup, and builder as a static Product.",
+      "tier": 0,
       "firstSeenAt": 1786180068,
       "url": "https://site-forge.dev-dot.li"
     },
