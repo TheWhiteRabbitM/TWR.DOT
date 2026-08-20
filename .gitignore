@@ -30,3 +30,9 @@ Thumbs.db
 arcadeonchain/shots/
 gameboyonchain/shots/
 nesonchain/shots/
+
+# polkadot-forum: the imported Discourse archive is derived data (~47 MB).
+# Regenerate with `npm run import`; the published copy lives on Bulletin.
+polkadot-forum/public/forum-index.json
+polkadot-forum/public/forum-home.json
+polkadot-forum/public/t-*.json
