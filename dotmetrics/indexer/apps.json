@@ -3532,7 +3532,7 @@
     "displayName": "Open Studios",
     "description": "Buy art directly from the artist. No platform fee, no server, nothing in the middle.",
     "iconCid": "bafk2bzacedslcug22txmizxd6k4a43nyf2icrxovcxawsuh2nitmy634h3erm",
-    "contenthash": "bafybeiegbxepmxqvv6gahhka6qmmknx5a3cvznumfovndpdz3ec5migwfa"
+    "contenthash": "bafybeibh7467wgii2p6ug4hk55epbxcik6rer6xd3yywttwb7slscxannm"
   },
   "humanpolls": {
     "label": "humanpolls",
@@ -3566,8 +3566,9 @@
     "firstSeenBlock": 12425128,
     "owner": "0xE5c1D15C7D15eBc5297fD99043bac98519F64429",
     "hasExecutable": false,
-    "tier": 2,
-    "firstSeenAt": 1787176560
+    "tier": 1,
+    "firstSeenAt": 1787176560,
+    "contenthash": "bafybeifrojdhjjvbl2jxoqnnf4htljqa7s33agdwj6qbmt75bo4ugaognu"
   },
   "federation": {
     "label": "federation",
@@ -3592,6 +3593,34 @@
     "hasExecutable": true,
     "tier": 0,
     "firstSeenAt": 1787184060
+  },
+  "circlecredit": {
+    "label": "circlecredit",
+    "domain": "circlecredit.dot",
+    "url": "https://circlecredit.dev-dot.li",
+    "firstSeenBlock": 12441135,
+    "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
+    "displayName": "circlecredit",
+    "description": "Lending circles — uncollateralised credit between verified humans.",
+    "iconCid": "bafk2bzaceclhmmzygkenezzlvokuyw6fqtj74hxjmeaes6dvib4iehymmi2no",
+    "contenthash": "bafybeifd6zav5omx5k6idzaewhyuqktvcybohhg636ibm4teimwihtwpcq",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787213076
+  },
+  "dailydigest": {
+    "label": "dailydigest",
+    "domain": "dailydigest.dot",
+    "url": "https://dailydigest.dev-dot.li",
+    "firstSeenBlock": 12441469,
+    "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
+    "displayName": "Polkadot Daily Digest",
+    "description": "A daily, source-linked briefing on the Polkadot ecosystem - technical updates, governance, and community discussion, condensed into a single readable edition.",
+    "iconCid": "bafk2bzacedreey72tudjbjv2nv3w365imrl5d3cjc4gkx2akpe6as7aztbisw",
+    "contenthash": "bafybeidja7xuxrdhc5qijock2dr2ms6hucna2m53ctkacq6aa7cy4zsfnm",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787213736
   },
   "excluded": [
     "a5wz",
@@ -3639,6 +3668,7 @@
     "etxv4",
     "executable",
     "eyda",
+    "ez6s",
     "fbhoro",
     "fddjj",
     "fikbx",
@@ -3693,6 +3723,7 @@
     "kz8v",
     "l6qrt",
     "liii",
+    "lksd",
     "lvfry",
     "m9mem",
     "mlgxcw",
@@ -3728,10 +3759,12 @@
     "rjhi",
     "rjijr",
     "rpjr",
+    "rst5",
     "s8oc",
     "sctit",
     "svqk",
     "sx4y",
+    "t49f",
     "t8lz",
     "t9kz",
     "test",
