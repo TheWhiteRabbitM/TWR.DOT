@@ -3,8 +3,11 @@
 **Reported by:** Claude Code (Anthropic's coding agent), which built, deployed and
 published every app in this repository end-to-end during the first three days of the
 devnet (2026-07-23 → 2026-07-26), operated by the repository owner. Last updated
-2026-07-29: **finding 13 added** — a security-relevant result established by direct
-experiment on Bulletin write authorization, disclosed here rather than used quietly.
+2026-08-20: **findings 22-27 added** after building a full on-chain forum
+(archive import of 3,590 topics, mask-gated writes, personal filters). Between them they
+cost a working day, and one of them is a capability nobody documents.
+(2026-07-29: **finding 13 added** — a security-relevant result established by direct
+experiment on Bulletin write authorization, disclosed here rather than used quietly.)
 (2026-07-27: finding 6 **corrected**, finding 8a added after auditing how the ecosystem
 can be discovered.)
 
@@ -35,6 +38,9 @@ Ranked by what it costs a developer, not by how hard it looks to fix.
 
 | # | Finding | Impact |
 |---|---|---|
+| 22 | The `.dot.li` service worker keeps serving the old app after a republish, and `?cid=` does not beat it | **Makes a correct deploy look broken.** Six fixes shipped, none of them visible; only unregistering the worker or a private window shows the new build |
+| 24 | `createApp()` returns a `chain` handle that throws until `createChainClient()` is called separately | **Fails at signing time**, after the user has already pressed the button |
+| 26 | `pad` gives up at preflight when `ReviveApi.address` is slow, and every endpoint is slow at once | **Turns a ten-minute chain hiccup into four failed deploys** |
 | 12 | Personhood write paths cannot be exercised without a granted account | **Blocks every app's real purpose.** Everything here ships demo-first because of it |
 | 4a | External links do nothing in the mobile shell. Root cause is likely an `OpenUrl` device permission we never requested — but it fails as an unresolved promise, not a refusal | **Silent dead end.** Cost us a day and three wrong diagnoses; a named refusal would have cost minutes |
 | 6 | `registry.resolver(node)` points at a resolver that reverts; records are readable only by calling the content resolver directly | **Breaks standard ENS-style resolution.** Once known, it is the unlock for all app metadata |
@@ -484,3 +490,163 @@ Two requests, in order of how much they would help:
 A note for anyone writing CI against this: pipe `pad` through `grep` and a
 seven-second failure prints *nothing*, leaving a log that shows a successful
 build followed by `exit 1`. We now keep the full output and show it on give-up.
+
+---
+
+## 22. The `.dot.li` shell serves a stale app after a republish, and nothing the developer controls clears it
+
+**Severity: critical — it makes a correct deploy look broken, for hours.**
+
+A republish of `polkadot-forum.dot` set a new contenthash, `pad` printed
+`Verified on-chain` and `P2P retrieval: ✓`, and the browser kept running the
+previous build. Not a stale render: the old JavaScript, with old strings in it.
+We shipped six fixes across an afternoon and the operator saw none of them, so
+each one was diagnosed as a code failure and "fixed" again.
+
+The cause, found by inspecting the page:
+
+```js
+await navigator.serviceWorker.getRegistrations()
+// [{ scope: "https://polkadot-forum.dot.li/", active: true }]
+await caches.keys()
+// ["workbox-precache-v2-https://polkadot-forum.dot.li/"]
+```
+
+The shell registers a Workbox service worker scoped to the name's origin, and it
+precaches the app. A new contenthash on chain does not invalidate that cache.
+What does not help: a normal reload, a hard reload, and `?cid=<newCID>` — the
+override reaches the loader (we confirmed the iframe `src` carried the new CID)
+and the service worker still answers with the cached build.
+
+What works is only this, or a private window:
+
+```js
+navigator.serviceWorker.getRegistrations().then(r => r.forEach(x => x.unregister()));
+caches.keys().then(k => k.forEach(x => caches.delete(x)));
+```
+
+Three requests:
+
+1. **Key the precache on the contenthash.** The name resolves to a CID already;
+   a cache whose key ignores it will always be able to disagree with the chain.
+2. **Take the new version on the next load** (`skipWaiting` + `clientsClaim` when
+   the resolved CID changed), rather than on the next browser restart.
+3. **Give the developer a purge.** Any documented gesture — a query parameter, a
+   shell menu item — beats telling every tester to paste two lines of JavaScript
+   into a console.
+
+Publishing to an immutable chain and then reading through a cache that outlives
+it inverts the property the platform is selling.
+
+## 23. Name → CID resolution stays cached after the chain has already moved
+
+**Severity: medium — it delays every verification, including the honest ones.**
+
+Separate from the service worker above, and visible even in a browser with no
+service worker registered: after `pad` confirmed `Verified on-chain`, the loader
+kept handing the app frame the *previous* CID. We read it directly:
+
+```js
+document.querySelector('iframe').src
+// https://polkadot-forum.app.dot.li/?cid=<PREVIOUS_CID>&v=3&chainBackend=smoldot-shared-worker
+```
+
+Across several republishes the lag ran from about one minute to several, and one
+forced reload still returned the older value before eventually turning over.
+On-chain state was correct the whole time.
+
+Suggestion: bound the cache to a short TTL and state it in the docs, so a
+developer knows whether to wait or to start debugging. Right now the two are
+indistinguishable, which is the expensive part.
+
+## 24. `createApp()` hands back a `chain` handle that is not connected
+
+**Severity: medium — the failure surfaces at signing time, in front of a user.**
+
+`createApp({ name, cloudStorage: false })` returns an object with a `chain`
+property, and calling it throws:
+
+```
+Chain not connected (genesis: 0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b3…).
+Call createChainClient() first to establish connections.
+```
+
+The write path had already resolved an account and a mask, so the error appeared
+after the user pressed "post reply". Adding `createChainClient({ chains: { assetHub:
+devnet_asset_hub } })` before touching `app.chain` fixed it.
+
+Suggestion: either connect lazily inside `getClient`/`getRawClient`, or let
+`createApp` take the chain descriptors it will need. An object that exposes a
+method that always throws until a second, unrelated function has been called is
+the kind of thing every app rediscovers by shipping it broken.
+
+## 25. Gzip-compressed files in a published bundle come back unusable
+
+**Severity: medium — it silently breaks whatever depended on them.**
+
+To lighten a 54 MB bundle we gzipped the static archive it ships (64 shard files
+plus an index, 48.7 MB → 13.3 MB) and decompressed in the browser with
+`DecompressionStream`. Under `vite preview` the app worked: shards fetched,
+inflated, rendered. Published through `pad` and served from `.dot.li`, every
+lookup into those files failed, and the app reported its own "not found in the
+bundle" for content that was demonstrably in the CAR.
+
+We reverted to uncompressed files and the archive came back. We did not
+establish whether the bytes are altered, the request is answered differently, or
+a `Content-Encoding` is applied on top — only that the same bundle behaves
+differently under the sandbox than under a plain static server.
+
+Suggestion: state in the docs whether pre-compressed assets are supported. A
+50 MB bundle is a real problem for a light client, compression is the obvious
+answer, and a developer who tries it gets a silent data failure rather than a
+refusal.
+
+## 26. `pad` aborts at preflight when `ReviveApi.address` is slow, on every endpoint
+
+**Severity: medium — a transient chain condition becomes a failed deploy.**
+
+Four publishes in a row failed before uploading anything:
+
+```
+Deployment failed: DotNS connect: failed to resolve EVM address from
+5G9yNPUEDx2FT43jcGQVNNesVaoVg4mrZzTQXLt3h7gPWVtd via ReviveApi.address after 3
+attempts (ReviveApi.address timed out after 30000ms); RPC: wss://asset-hub-paseo-rpc.n.dwellir.com
+— retry or set DOTNS_RPC to another endpoint
+```
+
+Taking the advice in the message did not help: `sys.ibp.network`,
+`asset-hub-paseo.dotters.network`, `asset-hub-paseo-rpc.dwellir.com` and
+`paseo-asset-hub.rpc.amforc.com` all timed out the same way, so it was the call
+rather than the provider. About ten minutes later the identical command
+succeeded on the first attempt.
+
+Suggestions:
+
+1. **Back off and keep trying** instead of giving up after 3 × 30 s. The deploy
+   has nothing at stake yet at that point.
+2. **Do not recommend switching endpoint** when the failure is chain-wide; the
+   message sends developers on a tour of RPC providers for nothing.
+
+## 27. The bn254 pairing precompile works inside PolkaVM contracts, and nothing says so
+
+**Severity: low, and this one is good news — it is undocumented capability, not a bug.**
+
+We needed to know whether zero-knowledge membership proofs (groth16, for an
+anonymous jury) can be verified on chain before designing around them. The docs
+we found do not list which precompiles `pallet-revive` exposes, so we tested it.
+
+`eth_call` against the devnet Asset Hub answers on `0x02` (sha256), `0x04`
+(identity), `0x06` (bn254 add) and `0x08` (bn254 pairing). More usefully, so does
+a deployed contract: `PairingProbe` at
+`0xA61d094340d83D4c7e4a17e9ceca9414da3273f4` `staticcall`s `0x08` and returns
+true both for the empty input and for a real check, `e(G1,G2)·e(-G1,G2) = 1`,
+computed in-contract.
+
+So groth16 verification is feasible on this chain today. Suggestion: list the
+available precompiles and their addresses in the contracts documentation. A
+capability nobody knows about gets designed around instead of used, and the
+workarounds are considerably worse than the feature.
+
+One implementation note for whoever writes those docs: the G2 words must be
+supplied in EIP-197 order, imaginary part first. Getting that wrong returns a
+clean `false` rather than an error, which is a long afternoon.
