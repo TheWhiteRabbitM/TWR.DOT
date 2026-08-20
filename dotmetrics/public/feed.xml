@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 20 Aug 2026 15:05:06 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 20 Aug 2026 15:59:43 GMT</lastBuildDate>
+    <item>
+      <title>huangchaojun</title>
+      <link>https://huangchaojun.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">huangchaojun</guid>
+      <pubDate>Thu, 20 Aug 2026 15:02:36 GMT</pubDate>
+    </item>
     <item>
       <title>aidetector</title>
       <link>https://aidetector.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">dotparcel</guid>
       <pubDate>Fri, 07 Aug 2026 08:41:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>Stake Forensics</title>
-      <link>https://stake-forensics.dev-dot.li</link>
-      <description>Pattern detection across Polkadot unbonding activity. Scans a configurable historical window, scores addresses by volume, frequency, timing regularity, round-number amounts, net outflow and clustering, and flags the ones most likely to be generating repeat sell pressure.</description>
-      <guid isPermaLink="false">stake-forensics</guid>
-      <pubDate>Fri, 07 Aug 2026 08:39:12 GMT</pubDate>
     </item>
   </channel>
 </rss>

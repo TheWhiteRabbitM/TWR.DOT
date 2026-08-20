@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787238306,
-  "count": 238,
+  "generatedAt": 1787241583,
+  "count": 239,
   "apps": [
+    {
+      "label": "huangchaojun",
+      "domain": "huangchaojun.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1787238156,
+      "url": "https://huangchaojun.dev-dot.li"
+    },
     {
       "label": "aidetector",
       "domain": "aidetector.dot",
