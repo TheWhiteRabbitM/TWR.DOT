@@ -4,6 +4,8 @@ import { profileOfMask, categoryKeyOf } from './chain';
 import { getSigner, like as likeTx, reply as replyTx, type Signer } from './forum';
 import { avatarUrl, initials, fmtDate, sanitize, stripModeration, isPolicyTopic } from './ui';
 import { hiddenReason, muteMask, unmuteMask } from './filters';
+import { WritingCheck } from './WritingCheck';
+import { textOf } from './aicheck';
 import { hrefHome, hrefCategory, hrefNew, MaskAvatar } from './App';
 
 /**
@@ -86,6 +88,9 @@ function ArchivePostCard({ p, policy }: { p: ArchivePost; policy: boolean }) {
           <span className="post-when">{fmtDate(p.createdAt)}</span>
         </div>
         <div className="cooked" dangerouslySetInnerHTML={{ __html: html }} />
+        <div className="post-actions">
+          <WritingCheck id={`a-${p.postNumber}-${(p.username ?? '')}`} text={textOf(p.cooked)} when={p.createdAt} />
+        </div>
       </div>
     </article>
   );
@@ -179,6 +184,7 @@ function LivePostCard({ p, isTopic }: { p: LivePost; isTopic: boolean }) {
           <button className="act" disabled={busy} onClick={onLike}>
             ♥ {likes}
           </button>
+          <WritingCheck id={`l-${p.id}`} text={p.body} when={new Date(p.time * 1000).toISOString()} />
           <button
             className="act"
             title="hide posts from this mask, for you only"
@@ -258,6 +264,12 @@ function ReplyBox({ topicId, onPosted }: { topicId: number; onPosted: (p: LivePo
             placeholder="Write your reply. It goes on chain and stays there."
             onChange={(e) => setText(e.target.value)}
           />
+          {text.trim().length > 220 ? (
+            <div className="draft-check">
+              <WritingCheck id={`draft-${topicId}-${text.length}`} text={text} />
+              <span className="na">read your own draft before it becomes permanent</span>
+            </div>
+          ) : null}
           <div className="replybox-foot">
             <span className="na">{text.length}/8000 · nothing here gets deleted</span>
             <button className="primary" disabled={busy || text.trim().length === 0} onClick={submit}>

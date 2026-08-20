@@ -302,3 +302,33 @@ button.idchip.warn:hover, a.idchip.warn:hover { background: var(--pink); color: 
      right group so it and New Topic stay pinned right without overflowing. */
   .idchip { margin-left: auto; max-width: 52vw; overflow: hidden; text-overflow: ellipsis; }
 }
+
+/* writing check — on request only, never a badge stamped on someone's post */
+.wcheck { display: inline-flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.wcheck .act { display: inline-flex; align-items: center; gap: 7px; }
+.wscore { font-style: normal; font-family: var(--mono); font-size: 0.72rem; border-radius: 999px; padding: 0 6px; border: 1px solid currentColor; }
+.wscore.cool { color: #5eead4; }
+.wscore.warm { color: #e8a13a; }
+.wscore.hot { color: var(--pink-soft); }
+.wnote { font-size: 0.82rem; max-width: 52ch; margin: 0; }
+.wpanel {
+  background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--line-soft);
+  border-radius: var(--radius); padding: 12px 14px; max-width: 62ch;
+  animation: wfade .3s ease both;
+}
+.wpanel.cool { border-left-color: #5eead4; }
+.wpanel.warm { border-left-color: #e8a13a; }
+.wpanel.hot { border-left-color: var(--pink); }
+@keyframes wfade { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.wtop { display: flex; align-items: center; gap: 14px; }
+.wtop p { margin: 2px 0 0; font-size: 0.84rem; }
+.wbig { font-size: 1.9rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.wbig.cool { color: #5eead4; }
+.wbig.warm { color: #e8a13a; }
+.wbig.hot { color: var(--pink-soft); }
+.wlist { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.wlist li { display: inline-flex; align-items: baseline; gap: 6px; background: var(--bg); border: 1px solid var(--line); border-radius: 5px; padding: 2px 8px; font-size: 0.78rem; }
+.wlist code { background: none; border: none; padding: 0; font-size: 0.78rem; }
+.wsmall { font-size: 0.8rem; margin: 12px 0 0; line-height: 1.5; }
+.draft-check { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 10px 0; }
+.draft-check .na { font-size: 0.82rem; }

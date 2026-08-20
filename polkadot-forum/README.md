@@ -53,6 +53,25 @@ Filters work with one active reader; a jury needs a crowd. The one part that
 needed proving first is done. `PairingProbe` verifies `e(G1,G2)·e(-G1,G2) = 1`
 in-contract, so groth16 membership proofs are feasible on this chain today.
 
+## Reading the writing
+
+Any post, imported or on chain, has a "writing" button that runs
+[avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) over it and
+shows what it found. Two rules shaped it.
+
+It never runs on its own. Stamping a verdict on every post, above all on the
+imported ones written by named people who never agreed to be scored, would turn a
+reading tool into an accusation machine. Nothing is measured until a reader asks
+about one specific post, and the 112 KB engine is only downloaded at that point.
+
+It never claims to know. A high score means the prose carries patterns that
+cluster in generated text, not that a machine wrote it. Posts from before
+30 November 2022 say so outright: whatever the score, ChatGPT did not exist yet,
+and prose that reads like a machine is usually prose a machine learned from.
+
+The same check sits under the composer and the reply box, which is the friendlier
+use: read your own draft before it becomes permanent.
+
 ## Layout
 
 ```

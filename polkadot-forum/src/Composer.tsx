@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { ForumIndex } from './chain';
 import { getSigner, createTopic, type Signer } from './forum';
 import { hrefHome, hrefCategory } from './App';
+import { WritingCheck } from './WritingCheck';
 
 /**
  * Open a new topic — the only "create" surface, and it needs a mask. The body
@@ -115,6 +116,12 @@ export function Composer({ index, slug }: { index: ForumIndex; slug?: string }) 
         <span className="na">{body.length}/8000</span>
       </label>
 
+      {body.trim().length > 220 ? (
+        <div className="draft-check">
+          <WritingCheck id={`newtopic-${body.length}`} text={body} />
+          <span className="na">read your own draft before it becomes permanent</span>
+        </div>
+      ) : null}
       <div className="composer-foot">
         <span className="na">Signed by your mask. Once it is up, only you can change it.</span>
         <button
