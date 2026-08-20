@@ -3532,7 +3532,7 @@
     "displayName": "Open Studios",
     "description": "Buy art directly from the artist. No platform fee, no server, nothing in the middle.",
     "iconCid": "bafk2bzacedslcug22txmizxd6k4a43nyf2icrxovcxawsuh2nitmy634h3erm",
-    "contenthash": "bafybeibh7467wgii2p6ug4hk55epbxcik6rer6xd3yywttwb7slscxannm"
+    "contenthash": "bafybeifcmpksawei4tbta2qwg3zj7fr7tqrd3wpbcd2q6qgisfwpkglqly"
   },
   "humanpolls": {
     "label": "humanpolls",
@@ -3554,7 +3554,7 @@
     "url": "https://polkadot-forum.dev-dot.li",
     "firstSeenBlock": 12401180,
     "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
-    "contenthash": "bafybeibcgn7je26fnfz3njyv4p5l2icqclyg2gmmhgz3yst65zcia5jc24",
+    "contenthash": "bafybeih4a75uznhjane22vxy2wqqeehxp7inmcsexxd6a5udp5xdfrsus4",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1787121468
@@ -3602,8 +3602,8 @@
     "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
     "displayName": "circlecredit",
     "description": "Lending circles — uncollateralised credit between verified humans.",
-    "iconCid": "bafk2bzaceclhmmzygkenezzlvokuyw6fqtj74hxjmeaes6dvib4iehymmi2no",
-    "contenthash": "bafybeifd6zav5omx5k6idzaewhyuqktvcybohhg636ibm4teimwihtwpcq",
+    "iconCid": "bafk2bzaceamt26lj5g6fzaotm5d6ouy3mua3fwu5frqp2ur2rxjqixp55ooie",
+    "contenthash": "bafybeih54lr3cgyw2ri3fiygduy27qc5fkn5v7bqjctq23mbfz3d22g5aa",
     "hasExecutable": true,
     "tier": 0,
     "firstSeenAt": 1787213076
@@ -3627,7 +3627,11 @@
     "domain": "aidetector.dot",
     "url": "https://aidetector.dev-dot.li",
     "firstSeenBlock": 12442392,
-    "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea"
+    "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
+    "contenthash": "bafybeiddglhugrpneybrpn2s4yrxhzl65iduteiqa5bsqgx3xhl2mfcm4i",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1787216352
   },
   "excluded": [
     "a5wz",
