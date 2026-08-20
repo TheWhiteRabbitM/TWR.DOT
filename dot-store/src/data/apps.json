@@ -27,6 +27,14 @@
     "updateCount": 0,
     "key": "0x705cee40ef605a1937d733239e0f2bc992f7f2199bf689d50eed4bcc250e142d"
   },
+  "aidetector": {
+    "label": "aidetector",
+    "domain": "aidetector.dot",
+    "url": "https://aidetector.dev-dot.li",
+    "firstSeenBlock": 12442392,
+    "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
+    "key": "0xfed88ab93012e5885acdae7eb2b61fb2ceb0b6bea6cf004ba4e7c66f4548bb14"
+  },
   "ajedreztest01": {
     "label": "ajedreztest01",
     "domain": "ajedreztest01.dot",
@@ -42,6 +50,21 @@
     "livenessCheckedAt": 1786320000,
     "updateCount": 0,
     "key": "0x2cac295a6d715b89f5a6aa2b738beb66eb3117d2fa5ce0505373a853c3440a8f"
+  },
+  "amazdotcom": {
+    "label": "amazdotcom",
+    "domain": "amazdotcom.dot",
+    "url": "https://amazdotcom.dev-dot.li",
+    "firstSeenBlock": 12295147,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeiczyam5vik46axzbl5nvutppniupwd4dequn47tvmzbx4eaf4qs44",
+    "hasExecutable": false,
+    "tier": 0,
+    "firstSeenAt": 1786882440,
+    "displayName": "Amazdot",
+    "description": "A market on Asset Hub where the money waits in a contract and only a paid order can write a review. Digital disputes settle without an arbiter: the seller wins by publishing the goods.",
+    "category": "commerce",
+    "key": "0x5b3cc7c63bf39c689b4f9b00afea30bdea112b85174cff7957031f21def960f0"
   },
   "arcadeonchain": {
     "label": "arcadeonchain",
@@ -103,6 +126,18 @@
     "category": "games",
     "categorySource": "derived:manifest"
   },
+  "awakenedgazette": {
+    "label": "awakenedgazette",
+    "domain": "awakenedgazette.dot",
+    "url": "https://awakenedgazette.dev-dot.li",
+    "firstSeenBlock": 12192400,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeif5zgwzoqydfmnpjlruymgub4q2csvaily52ellbhhszj5p2kldyq",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786660308,
+    "key": "0x8327d020306c2cbcb83e0979ff78de6ec9e8cb850d5b110ca59ff66cd7473f76"
+  },
   "batoutofhell": {
     "label": "batoutofhell",
     "domain": "batoutofhell.dot",
@@ -162,6 +197,17 @@
     "lastSeenAliveAt": 1786344620,
     "livenessCheckedAt": 1786320000,
     "key": "0x193c8b216b23ce0bc91af59594e43d835ca1c425492da3da47c521cadd7be8b3"
+  },
+  "bonbonbon": {
+    "label": "bonbonbon",
+    "domain": "bonbonbon.dot",
+    "url": "https://bonbonbon.dev-dot.li",
+    "firstSeenBlock": 12357937,
+    "owner": "0x8F49CAe7d0d0B4F381C8A5E8df8020A3a61D2849",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1787022708,
+    "key": "0x797acdc21a8d205a8b4916cdee57ed3206ec3ecb7880622ff5011d9d3a785184"
   },
   "broadside": {
     "label": "broadside",
@@ -410,7 +456,7 @@
     "displayName": "ChopDot",
     "description": "Split shared spending, collect payments, and keep one clear group record.",
     "iconCid": "bafk2bzacecmdaf5z2o2runzlorl2l2wct3b6ottrlirorwa36x56aumb63ohi",
-    "contenthash": "bafybeictzjr6xbrlwxgakewozfr6umwyhapvege5qbkxquoodjns6g4nvm",
+    "contenthash": "bafybeieuof7cylay55qetaj4jn3dvng7jrndjn5eibrtyrx2qr4zaz2te4",
     "hasExecutable": true,
     "tier": 0,
     "firstSeenAt": 1786284660,
@@ -422,6 +468,33 @@
     "key": "0xb68d9fe725bf3465e4fb9da51647409cd54ee083a4fe1f071b9971698ac28ac7",
     "category": "finance",
     "categorySource": "derived:manifest"
+  },
+  "circlecredit": {
+    "label": "circlecredit",
+    "domain": "circlecredit.dot",
+    "url": "https://circlecredit.dev-dot.li",
+    "firstSeenBlock": 12441135,
+    "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
+    "displayName": "circlecredit",
+    "description": "Lending circles — uncollateralised credit between verified humans.",
+    "iconCid": "bafk2bzaceclhmmzygkenezzlvokuyw6fqtj74hxjmeaes6dvib4iehymmi2no",
+    "contenthash": "bafybeifd6zav5omx5k6idzaewhyuqktvcybohhg636ibm4teimwihtwpcq",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787213076,
+    "key": "0x483136818c59611dfe9fd0a68ce3e8ccc17480118e924f47b5c3080707f074e6"
+  },
+  "clockchain": {
+    "label": "clockchain",
+    "domain": "clockchain.dot",
+    "url": "https://clockchain.dev-dot.li",
+    "firstSeenBlock": 12425128,
+    "owner": "0xE5c1D15C7D15eBc5297fD99043bac98519F64429",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1787176560,
+    "contenthash": "bafybeifrojdhjjvbl2jxoqnnf4htljqa7s33agdwj6qbmt75bo4ugaognu",
+    "key": "0x678a76fec945d3eb4602d846e504a032e64c4097aa3fb2f46aafb444314fa843"
   },
   "comicpirate": {
     "label": "comicpirate",
@@ -438,6 +511,21 @@
     "livenessCheckedAt": 1786320000,
     "updateCount": 0,
     "key": "0x7859c529c4f76186384aa2acc84878675ff0a04fbd87d51f6e377e982749a122"
+  },
+  "common-ground": {
+    "label": "common-ground",
+    "domain": "common-ground.dot",
+    "url": "https://common-ground.dev-dot.li",
+    "firstSeenBlock": 12172367,
+    "owner": "0xC4c7cD497ca9A0FBC3d11f50827091969540D6Ad",
+    "displayName": "Common Ground",
+    "description": "A decentralized forum for thoughtful Polkadot discussions, with private-by-default masks, on-chain moderation and optional Proof of Personhood.",
+    "iconCid": "bafk2bzaceddtivcuaxlwyiw7cijk4bfjhkzvvjeuuloaumlg5tjtvjx46a4ng",
+    "contenthash": "bafybeidv2aeoejhc5tcybbodzhdnivqk3mzizrrytroj42v6j4whsrbvjm",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786616508,
+    "key": "0x896cfc4d66cd09634a544fbeb25940e857cc980300cf330b00a142e968210f0e"
   },
   "community": {
     "label": "community",
@@ -585,6 +673,36 @@
     "contenthashChangedAt": 1785858282,
     "key": "0xaad85f3d125fee7df77593f86bff378409eacb72149d72b294a03a08595461c2"
   },
+  "creatures": {
+    "label": "creatures",
+    "domain": "creatures.dot",
+    "url": "https://creatures.dev-dot.li",
+    "firstSeenBlock": 12361645,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "displayName": "DOT Creatures",
+    "description": "On-chain creature battling game on Polkadot. Mint, battle, trade, and stake unique NFT creatures.",
+    "iconCid": "bafk2bzacebjd3xmbmiuzqdfejevcfpy34czjdyaemrxhhwaa72g3i4wpadg6o",
+    "contenthash": "bafybeiam5k5unq22duxyyfbis62fvbsfns23aydpcghmflmdzafdrgqvtu",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787031576,
+    "key": "0xa1558487155f58c00e384524f92bc20ecf1eaed4a0f2ce150254f347aae376cf"
+  },
+  "dailydigest": {
+    "label": "dailydigest",
+    "domain": "dailydigest.dot",
+    "url": "https://dailydigest.dev-dot.li",
+    "firstSeenBlock": 12441469,
+    "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
+    "displayName": "Polkadot Daily Digest",
+    "description": "A daily, source-linked briefing on the Polkadot ecosystem - technical updates, governance, and community discussion, condensed into a single readable edition.",
+    "iconCid": "bafk2bzacedreey72tudjbjv2nv3w365imrl5d3cjc4gkx2akpe6as7aztbisw",
+    "contenthash": "bafybeidja7xuxrdhc5qijock2dr2ms6hucna2m53ctkacq6aa7cy4zsfnm",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787213736,
+    "key": "0x74dce307f6a19a9067801ed621f9e28d73e087553ad6a8bbb4f067c05362bf14"
+  },
   "dashboard": {
     "label": "dashboard",
     "domain": "dashboard.dot",
@@ -608,6 +726,18 @@
     "firstSeenAt": 1785855288,
     "updateCount": 0,
     "key": "0x958de7de833c76b9085b70132ea4eecda9fc37b4b599b36348c8928d066af2fe"
+  },
+  "detourvzw": {
+    "label": "detourvzw",
+    "domain": "detourvzw.dot",
+    "url": "https://detourvzw.dev-dot.li",
+    "firstSeenBlock": 12186663,
+    "owner": "0x3A1735bf10c4ebCa3D17fD8C9b6436E80D41BBeC",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786648188,
+    "contenthash": "bafybeicpi5gdfhlnpqdndfuvga443efe3jirzbcsyeljfi4kcuisupf2ze",
+    "key": "0x0e6dcb345fe20ffac2ee64079708e27270116b4f998fc8948c44727f3d68cb10"
   },
   "devnet-atlas": {
     "label": "devnet-atlas",
@@ -698,7 +828,7 @@
     "displayName": "Discreet",
     "description": "Private bookings for real people: anonymous verified humans, escrow deposits, kept-word reputation.",
     "iconCid": "bafybeiephmlsnmaym2rgxb3enx5uaxxlt5brjhqtsu6zk6cnsoam2qwt3q",
-    "contenthash": "bafybeich55ko7mz76ihssg7au4gubnml43nmmympl7xmgiz5sco6z376pq",
+    "contenthash": "bafybeib2crwxw452e7c6nwwij6bopt4d4xu247bt2flfzalq3ogmiijxvm",
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
@@ -850,7 +980,7 @@
     "tier": 0,
     "firstSeenAt": 1785317484,
     "updateCount": 137,
-    "contenthash": "bafybeibmwutzbqaxe2l3toga56enooe7me2dnahdvds7ymjys6iy6fnl4y",
+    "contenthash": "bafybeidaudspsrz3v22edstdlhezvxjvr2eheku24igucqqxlnzttegehe",
     "alive": true,
     "lastSeenAliveAt": 1786344620,
     "livenessCheckedAt": 1786320000,
@@ -902,6 +1032,18 @@
     "key": "0xdc1dd3b39abd9a48513c07e9873260af3342417dae6c5c89f50570cec8ffa9dd",
     "category": "explorers",
     "categorySource": "derived:app-text"
+  },
+  "dotdirectory": {
+    "label": "dotdirectory",
+    "domain": "dotdirectory.dot",
+    "url": "https://dotdirectory.dev-dot.li",
+    "firstSeenBlock": 12207966,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeihmaq4mbkjwslwdgkpxd2qkphedj4c4rf4f4o3q5dgzohmzez2xxq",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786693344,
+    "key": "0xada2a33fcba6e0930408cbc8c80cca1020d7a0f33c767f896cfd8015771e7471"
   },
   "dotexplorer": {
     "label": "dotexplorer",
@@ -994,7 +1136,7 @@
     "displayName": "dotmetrics",
     "description": "The index of the .dot ecosystem: every app discovered on-chain, growth and live analytics.",
     "iconCid": "bafybeigjz5uicnhen3hrfr34pvs3ksm4u4l2gxxk2452zwbsepfuvjkl7u",
-    "contenthash": "bafybeievzbof4oihtgn7jk562cczyhscfjebigfmqxcu73mfyaxhjrlhga",
+    "contenthash": "bafybeiape5vgsccro43ovt5grvfsppaf74tf33jn4ygtef3vz5xd7sc22u",
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
@@ -1009,6 +1151,18 @@
     ],
     "key": "0x82b8669de7f4f2ff6ebd5812ce34f85c7c8a11cdcaf2e66bb22e3cf35cf7b4c0",
     "categorySource": "owner"
+  },
+  "dotnote-demo": {
+    "label": "dotnote-demo",
+    "domain": "dotnote-demo.dot",
+    "url": "https://dotnote-demo.dev-dot.li",
+    "firstSeenBlock": 12091136,
+    "owner": "0x569CA372c88e6B7918a3cf81BF3e3f666ACeeD51",
+    "contenthash": "bafybeihjnz4hbu5puf35eacqs5m2fjm4jcd5ob2bpq4yqy55gwptlzsd7e",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786446492,
+    "key": "0xfb5397890adb50cc84c8897b3bab21567cfee47ca65f44fd682f56fcb0407ae4"
   },
   "dotparcel": {
     "label": "dotparcel",
@@ -1064,6 +1218,17 @@
     "key": "0x1086718e2f6596e723d5afe474280d42175df78d3b1751ab0ff89141dba7ecd8",
     "category": "tools",
     "categorySource": "derived:manifest"
+  },
+  "drawproof": {
+    "label": "drawproof",
+    "domain": "drawproof.dot",
+    "url": "https://drawproof.dev-dot.li",
+    "firstSeenBlock": 12044352,
+    "owner": "0x21F76fC30F54c2c32E0e1F57A65f3A1Aa9713394",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1786347780,
+    "key": "0x9d6ac7c665db4d5d965cc383f22b1d65e5026fcb458ffc39c4f1f4e174d5798e"
   },
   "dripstream": {
     "label": "dripstream",
@@ -1222,6 +1387,17 @@
     "updateCount": 0,
     "key": "0x4dbc57677fd4f3ef8e6963b59fee015d0bba1f77a1365824c2b739c6dbf0f57d"
   },
+  "federation": {
+    "label": "federation",
+    "domain": "federation.dot",
+    "url": "https://federation.dev-dot.li",
+    "firstSeenBlock": 12429462,
+    "owner": "0x8F49CAe7d0d0B4F381C8A5E8df8020A3a61D2849",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1787186136,
+    "key": "0xa62eaff475b919aee421c8331ffd687164e48cbb223d162738009d73f0ba791a"
+  },
   "fffffffff": {
     "label": "fffffffff",
     "domain": "fffffffff.dot",
@@ -1262,7 +1438,7 @@
     "url": "https://frenchan-app77.dev-dot.li",
     "firstSeenBlock": 11720119,
     "owner": "0x6145aCa18d6E644172E20297ac5f40eB8d73035b",
-    "contenthash": "bafybeigjwrrpntad3fyiqz2kzsq3ruvxf3a4oizhwg2wjy5cxlxg6npuqi",
+    "contenthash": "bafybeigjfd2ql7fco3wvcvwoavjwzpy3sqm5pr3segfhpeykeaztptkewq",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785671148,
@@ -1422,6 +1598,21 @@
     "updateCount": 0,
     "key": "0x21f9566ec153f3966c6abd165ef47924794d755a886cb342bbefca60a12c8719"
   },
+  "hello": {
+    "label": "hello",
+    "domain": "hello.dot",
+    "url": "https://hello.dev-dot.li",
+    "firstSeenBlock": 12097115,
+    "owner": "0xF8d186c352e2ea0B9C02c211525A20DdcB8CD2dD",
+    "displayName": "Hello Dot",
+    "description": "A one-page introduction to the decentralized web on Polkadot. No server delivered it — the page is a static bundle on Bulletin, bound to a .dot name by its content hash.",
+    "iconCid": "bafk2bzacederugkk5q7we7te3zo3refclzs5ibxsvkkjuwvk6leo6norzpvys",
+    "contenthash": "bafybeienblwb3p24mv2jsnsjgkit2a6nhghfovwwykkmp4nzrtnrrtd34i",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786459044,
+    "key": "0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8"
+  },
   "hello-devnet-ynrc46": {
     "label": "hello-devnet-ynrc46",
     "domain": "hello-devnet-ynrc46.dot",
@@ -1554,6 +1745,45 @@
     "updateCount": 0,
     "key": "0xf82044ce7deaf2cfca977b600b23b3dfc3d85df78cf76a50a2f552836031c44f"
   },
+  "hindsight": {
+    "label": "hindsight",
+    "domain": "hindsight.dot",
+    "url": "https://hindsight.dev-dot.li",
+    "firstSeenBlock": 12044316,
+    "owner": "0x21F76fC30F54c2c32E0e1F57A65f3A1Aa9713394",
+    "contenthash": "bafybeid7fku3frz4lacsfjr33yfjkzt3sn6cbuajodfyjr3xrjb2mxesae",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786347708,
+    "key": "0xe59c23377084fa976e49e8dcac19e29799ca135e96b7f29779dfd1ffdf779f61"
+  },
+  "humanfeed": {
+    "label": "humanfeed",
+    "domain": "humanfeed.dot",
+    "url": "https://humanfeed.dev-dot.li",
+    "firstSeenBlock": 12049736,
+    "owner": "0x5dd6fFc78573FF60ea4dFeCe4f3AE4f2Cd7e4378",
+    "contenthash": "bafybeif5wnppljtrw4s2tyx5s45bqh2n4wgypnf5hwsm5nz2rwmyerti3i",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786359504,
+    "key": "0x3b29924e3692aa457c77eacb7d03f8b74d6573d801d1a44e6971ab77e788675e"
+  },
+  "humanpolls": {
+    "label": "humanpolls",
+    "domain": "humanpolls.dot",
+    "url": "https://humanpolls.dev-dot.li",
+    "firstSeenBlock": 12373182,
+    "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787058420,
+    "displayName": "humanpolls",
+    "description": "One person, one answer — anonymous polls and paid surveys.",
+    "iconCid": "bafk2bzacebpxqo63lxdaieygqwzui6gibmdescnsxrvddswred2mu2rqhzfk6",
+    "contenthash": "bafybeigysw7jvasxtpcktqm7u3mgzpevgxch6xlzor35lozi6hwpb57jsm",
+    "key": "0xa5693310960b2ff361133c4ce45a9f03b7b2defa089a3449c463fecab2ecc35c"
+  },
   "hydration": {
     "label": "hydration",
     "domain": "hydration.dot",
@@ -1640,7 +1870,7 @@
     "displayName": "Italia Rovente",
     "description": "How much hotter Italy has become since 1940: stripes, records, seas, 107 cities.",
     "iconCid": "bafybeifh6ar4ukh4kxp5znfrce3bissnpnqdbhdpfczvgcjbfxk6pb6wpq",
-    "contenthash": "bafybeibyioiqytaffytrrg5au67v32gqgbp4gsjsyeqq2hdti7vi3isrye",
+    "contenthash": "bafybeibd3d3sak23am4rufw5oajwmeoslktuxzz2ocysafp6qitrzmni7a",
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
@@ -1763,7 +1993,7 @@
     "url": "https://marketplace.dev-dot.li",
     "firstSeenBlock": 11896704,
     "owner": "0x21F76fC30F54c2c32E0e1F57A65f3A1Aa9713394",
-    "contenthash": "bafybeifusjfqusshlfyb3xhogirghdeat2wtoybxghssmeymp55meucsqu",
+    "contenthash": "bafybeicq4ohf5bbxw2s55al2dpwctgva2kvypjbzpfpmmeieoanwcx6764",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786037256,
@@ -1782,7 +2012,7 @@
     "url": "https://micropagos.dev-dot.li",
     "firstSeenBlock": 11896825,
     "owner": "0x21F76fC30F54c2c32E0e1F57A65f3A1Aa9713394",
-    "contenthash": "bafybeihrx6xjpt7pamt46idjrqdrx6637lpd6lqi7nz2vcji5loho6xxze",
+    "contenthash": "bafybeifvms7qskasintm5l4dmrl56y6avxaaqz6p2pbhl6n7obcnmkmq6q",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786037508,
@@ -1815,7 +2045,7 @@
     "tier": 1,
     "firstSeenAt": 1785743688,
     "updateCount": 1,
-    "contenthash": "bafybeibdjza5lsxy4yjuvre4jutt35xnkxqk3ynnnwv4z5mcknt6swknxm",
+    "contenthash": "bafybeiekm5ljxjvzwszillg7ro6r3pnhj2tuncbz7buv3h3o3qgmpywn24",
     "alive": true,
     "lastSeenAliveAt": 1786344620,
     "livenessCheckedAt": 1786320000,
@@ -1981,7 +2211,7 @@
     "url": "https://navalstrike01.dev-dot.li",
     "firstSeenBlock": 11859281,
     "owner": "0xE510Df763d6F8B1545987ced0407EB1b52FD9cA2",
-    "contenthash": "bafybeigx363ggoozz5mak5nfwwyg3noegvjphqh7shu4fq7ikixderaplm",
+    "contenthash": "bafybeifl3buy3u3edjcvqbxaw2oguis3qpu5yqxgyc66wzdy557z5vkhoe",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785960000,
@@ -2333,7 +2563,7 @@
     "displayName": "OpenPetition",
     "description": "Petitions signed by real people: one signature per person, verifiable by anyone.",
     "iconCid": "bafybeibsnisp6zaggzpccx6o2z6i7skk7qsmbu7wovtcft3bwjrkhu5iym",
-    "contenthash": "bafybeiaerehqmpdkpp2lgzguovfehemuss5v3jddlbddubywcvyppo2lba",
+    "contenthash": "bafybeiei33vu3w3l4mkjsycd3yx3n6ygyyiu2tuprxornoupfhgt5yd2zm",
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
@@ -2348,6 +2578,45 @@
     ],
     "key": "0xcc5ab0b120e3e7c17437ce69ce1b93c44260c7976ac7a9b031ac907e50738241",
     "categorySource": "owner"
+  },
+  "openraonchain": {
+    "label": "openraonchain",
+    "domain": "openraonchain.dot",
+    "url": "https://openraonchain.dev-dot.li",
+    "firstSeenBlock": 12116950,
+    "owner": "0xFF54A5a1FDAc91bb4F2b4fBf4bfFf37CdbEA333f",
+    "contenthash": "bafybeiagbyhooasrisjrbskcsdd5cwxiwqwrcutvayypsy6om2azuxmt3m",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786500804,
+    "key": "0xe7c6216fe8e2a70a54c4d196ae7856869b94fd23d84da02b1954adf6534d3d8e"
+  },
+  "openstudios": {
+    "label": "openstudios",
+    "domain": "openstudios.dot",
+    "url": "https://openstudios.dev-dot.li",
+    "firstSeenBlock": 12368002,
+    "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787046648,
+    "displayName": "Open Studios",
+    "description": "Buy art directly from the artist. No platform fee, no server, nothing in the middle.",
+    "iconCid": "bafk2bzacedslcug22txmizxd6k4a43nyf2icrxovcxawsuh2nitmy634h3erm",
+    "contenthash": "bafybeibh7467wgii2p6ug4hk55epbxcik6rer6xd3yywttwb7slscxannm",
+    "key": "0xeeee882a191903651e8896cf0624db49b917fbf7e64127a29de8dfacd8da0393"
+  },
+  "p2p-lending": {
+    "label": "p2p-lending",
+    "domain": "p2p-lending.dot",
+    "url": "https://p2p-lending.dev-dot.li",
+    "firstSeenBlock": 12107382,
+    "owner": "0x65109534F24535EF49d755C4b67472Dc21237dc3",
+    "contenthash": "bafybeihkfozavuxwcyzv64ztpcn5cfdmio75ow3bujj6g6wufexvg3i6r4",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786481124,
+    "key": "0x66bc9c27a2eccedcf44c68e09cd8f069bfe3016ff0d4a1a1c6b4fbbb7006bfe3"
   },
   "pactprotocol": {
     "label": "pactprotocol",
@@ -2448,7 +2717,7 @@
     "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
     "displayName": "peoplebook",
     "description": "The devnet identity directory, where every handle has a claimable on-chain avatar NFT. Read live from the People chain: every person who registered a .dot-style handle gets a generated mask. Claim yours for 1 PAS and the PeoplebookAvatars contract (deployed on the devnet Asset Hub) mints an ERC-721 to you and rolls its rarity on chain, gacha-style: Legendary 3%, Epic 10%, Rare 20%, Uncommon 30%, Common 37%. The image is generated inside the contract, so the NFT shows in any wallet with nothing hosted anywhere. Own a .dot? Add it at claim and the contract verifies it against the registry for better odds. Searchable, self-updating as people claim.",
-    "contenthash": "bafybeifcwisd2q435azq7ewhtmqfpmutt3egtlqn73rcakze2atof6jefu",
+    "contenthash": "bafybeieprzy6dqpko4gvhgdehauufcrzupvammbandfcpsbbmccjxhmfwq",
     "category": "social",
     "screenshots": [
       "bafybeifw5eq2qesyncadkhn3xtpsp6xvp5emyhk7c3lqpe5xpi5bw2ueuy",
@@ -2575,6 +2844,21 @@
     "contenthashChangedAt": 1786329976,
     "key": "0xb3a387ec4b78c6de42cb1407389f34385488f8bfd2a1d5b2d91bd001c8486faa"
   },
+  "polkacrew": {
+    "label": "polkacrew",
+    "domain": "polkacrew.dot",
+    "url": "https://polkacrew.dev-dot.li",
+    "firstSeenBlock": 12428572,
+    "owner": "0xb7ea7CbAa5446AD93417C2b48Dd3BF96B49264dA",
+    "displayName": "PolkaCrew",
+    "description": "Multiplayer social deduction with Bulletin replays and Asset Hub consensus.",
+    "iconCid": "bafk2bzaced3smkncqk6e2sb72cpwjo3tir522r7pxby6yf6xzsm3ymwgppao4",
+    "contenthash": "bafybeig7kwvd3ozwfbsq5dg54nvprjer5ey77syen74nfiiokoqiyfzdwy",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787184060,
+    "key": "0x482cc69225c1fb680c1038a691b2ca4679d048b2a3934cf08621dec7df8ca1eb"
+  },
   "polkadevs": {
     "label": "polkadevs",
     "domain": "polkadevs.dot",
@@ -2607,6 +2891,18 @@
     "livenessCheckedAt": 1786320000,
     "updateCount": 0,
     "key": "0x64d071dd3c02efbc714cc96c2ce728d7b4669b74da1dc1abc1624a8dd75ad17e"
+  },
+  "polkadot-forum": {
+    "label": "polkadot-forum",
+    "domain": "polkadot-forum.dot",
+    "url": "https://polkadot-forum.dev-dot.li",
+    "firstSeenBlock": 12401180,
+    "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
+    "contenthash": "bafybeibcgn7je26fnfz3njyv4p5l2icqclyg2gmmhgz3yst65zcia5jc24",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1787121468,
+    "key": "0x9d5082c7d32b0ce505390b8ecfa30874eb19b050a629132cc55f6dbb663fc774"
   },
   "polkanote": {
     "label": "polkanote",
@@ -2675,7 +2971,7 @@
     "url": "https://polkaroulette00.dev-dot.li",
     "firstSeenBlock": 11775304,
     "owner": "0x65109534F24535EF49d755C4b67472Dc21237dc3",
-    "contenthash": "bafybeibrol5zz4mttpzmkej23npnidtklziyevlvvi5iyy7xu57hgtctcq",
+    "contenthash": "bafybeicdl3fwg3wirbexmt5vr7abv57wqjlo3nw73witeyt5s2cny6crdq",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785785628,
@@ -2685,6 +2981,33 @@
     "updateCount": 2,
     "contenthashChangedAt": 1785826104,
     "key": "0xe8bd0ea500fb5243606b3066aa47f82c0adb3c813b5893fc68a1f4af62b6fc9f"
+  },
+  "polkashoot": {
+    "label": "polkashoot",
+    "domain": "polkashoot.dot",
+    "url": "https://polkashoot.dev-dot.li",
+    "firstSeenBlock": 12224080,
+    "owner": "0x65109534F24535EF49d755C4b67472Dc21237dc3",
+    "displayName": "Polkashoot",
+    "description": "Shoot grifters down—decentralized",
+    "iconCid": "bafk2bzacecuip45o3ayqynzokk6qbd53blp2ru46ut7xsabuedxkxj224al4e",
+    "contenthash": "bafybeia56cukpmm7ikth3ex6q3p6vqh5jxwq6uulj67hm7l5rvjjxz4hym",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786728528,
+    "key": "0x14ea37800838458db49230a41e3c956ffd5cafde9cafbeb0ffac380d4678e88b"
+  },
+  "postespresso": {
+    "label": "postespresso",
+    "domain": "postespresso.dot",
+    "url": "https://postespresso.dev-dot.li",
+    "firstSeenBlock": 12187678,
+    "owner": "0x7D257ACc9fBb1d7548f31FE137120aFa7dF71dc6",
+    "contenthash": "bafybeibqjqkpn4numrp4oshbbtgfqg4nemc6rszourpn3onzko7xofsfky",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786650672,
+    "key": "0x13960cc34c81533465bb8f72c7826df19290c7b49db1f5127da784dd97d8e88d"
   },
   "ppppppppp": {
     "label": "ppppppppp",
@@ -2732,6 +3055,21 @@
     "updateCount": 0,
     "key": "0x9ae42b2a2627b96592c5684a088d3270da8cf4565c4cc9a6e9962875a3d24a07"
   },
+  "public-research": {
+    "label": "public-research",
+    "domain": "public-research.dot",
+    "url": "https://public-research.dev-dot.li",
+    "firstSeenBlock": 12148890,
+    "owner": "0x973B9B525fd78ab00a53AC407F9a0d7856430261",
+    "displayName": "PublicResearch",
+    "description": "Fund the research you want to exist, and browse every app published to the devnet. Proposals live on the Bulletin Chain, the index and its votes and comments on the Statement Store, and funding settles in CASH.",
+    "iconCid": "bafk2bzacec3ymxtr3apd7go35zoqu2ylrey5zqjiat6h5o5oilmsaqs5byhq4",
+    "contenthash": "bafybeidgfketqgbgwmlm4k2cxchjoiwknisc7regxqw7aaedlsftch5vhi",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786566924,
+    "key": "0x0a91f27a7d1c809f9442c17eb7af4dd883e646ecf214c82a43b6d043e416d4e3"
+  },
   "qqqqqqqqq": {
     "label": "qqqqqqqqq",
     "domain": "qqqqqqqqq.dot",
@@ -2764,6 +3102,17 @@
     "key": "0xc4bded1a0477568b9f7914aed1d2070354f4f7c03505403926de173d360c5746",
     "category": "games",
     "categorySource": "derived:manifest"
+  },
+  "rabbithole": {
+    "label": "rabbithole",
+    "domain": "rabbithole.dot",
+    "url": "https://rabbithole.dev-dot.li",
+    "firstSeenBlock": 12312418,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1786920624,
+    "key": "0x2b0fe3b0bd2341773bf2b2642cc848e70466de7b2ff5ed090505b13d0fd57565"
   },
   "radioactivedrums": {
     "label": "radioactivedrums",
@@ -2827,13 +3176,25 @@
     "category": "tools",
     "categorySource": "derived:app-text"
   },
+  "rampatlas": {
+    "label": "rampatlas",
+    "domain": "rampatlas.dot",
+    "url": "https://rampatlas.dev-dot.li",
+    "firstSeenBlock": 12183382,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeihbyuwnbbpyvl3qvtq4mj4mdzjof3niba3kaqoyz7lkbgf6gcqvbm",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786640160,
+    "key": "0x92ec4e5712c5751c27f79c3c6224747d94acb49e58e2721f57b2f0d342a2e5ab"
+  },
   "reputacion": {
     "label": "reputacion",
     "domain": "reputacion.dot",
     "url": "https://reputacion.dev-dot.li",
     "firstSeenBlock": 11896786,
     "owner": "0x21F76fC30F54c2c32E0e1F57A65f3A1Aa9713394",
-    "contenthash": "bafybeifzr6ma5rbc26q5topn4xm4utmixfnbvs3gq3igr5fzi2vdl27eya",
+    "contenthash": "bafybeic7lfwjkx2ohu7gsfa3sruyizuudvlpjnxtxll2gl3ukytzdjg4cm",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786037424,
@@ -2909,15 +3270,18 @@
     "url": "https://site-forge.dev-dot.li",
     "firstSeenBlock": 11966434,
     "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
-    "contenthash": "bafybeihwvcfquaa4azeukcyp2m7pmalazqril3nnqt4s2eaxst2jbke6mq",
-    "hasExecutable": false,
-    "tier": 1,
+    "contenthash": "bafybeibdhrictnvxzp5d66nbmfht2ufdnlmshj3ewhgty2gygfi44fuvny",
+    "hasExecutable": true,
+    "tier": 0,
     "firstSeenAt": 1786180068,
     "alive": true,
     "lastSeenAliveAt": 1786344620,
     "livenessCheckedAt": 1786320000,
     "updateCount": 1,
     "contenthashChangedAt": 1786250741,
+    "displayName": "SiteForge",
+    "description": "AI website builder on Polkadot Products Devnet. Promo, signup, and builder as a static Product.",
+    "iconCid": "bafk2bzaceddi34dcbfhyopkx6i6zpfbkzyuaonyip27yrgu5wyx73h55pos32",
     "key": "0x75644620967f7cfb2e3c4336562f8f4a7e933a65381ec21b511fb1043ec6c82c"
   },
   "squadbuilder": {
@@ -3021,7 +3385,7 @@
     "displayName": "SubsTrade Hub",
     "description": "Fully on-chain order-book DEX on Asset Hub.",
     "iconCid": "bafk2bzaceba7qxzppuneuvrbcp3uys3cgj6jam7xkcyzzlzatdqemgqlra7zc",
-    "contenthash": "bafybeidiqdf6diyqmn55tt46rdrnaykeixcav6ahq3ycimb2ne4vwdhbjq",
+    "contenthash": "bafybeifsc5y7vya3t25ki4rmhpvyvytgfdxjhd2ontaqtdmqivmfk2e7ci",
     "alive": true,
     "lastSeenAliveAt": 1786344620,
     "livenessCheckedAt": 1786320000,
@@ -3086,7 +3450,7 @@
     "displayName": "The Button",
     "description": "One button. One press per human, ever. A proof-of-personhood experiment.",
     "iconCid": "bafybeidw2eymucu2nex5x32swt7tgjokyicmtcby7l6xlotprzklhcjs2u",
-    "contenthash": "bafybeicfh4vtpbpnvexm47b2uxaadekxsr4e7zv2wylkswbhqwqr5n5kre",
+    "contenthash": "bafybeie35ebubfnmkrmryunfivqgyvmkcxxgfcbuoysq5fq4inrwbku56m",
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
@@ -3117,6 +3481,48 @@
     "livenessCheckedAt": 1786320000,
     "updateCount": 0,
     "key": "0x838d0a83f919060364f40e97ebcbe13c1bafde2020b1a4fca4818bc844b68c44"
+  },
+  "therabbithole": {
+    "label": "therabbithole",
+    "domain": "therabbithole.dot",
+    "url": "https://therabbithole.dev-dot.li",
+    "firstSeenBlock": 12339288,
+    "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea",
+    "contenthash": "bafybeid72wfc3nzhihpupbrxbkbsyvqf2y6htvfr5qn47kp5rq45gmll4i",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786980228,
+    "key": "0x53972c37f0434a635c24c51a862e37ddbf2a66ebe4bc003d9f129bdcafd5b959"
+  },
+  "throwdown": {
+    "label": "throwdown",
+    "domain": "throwdown.dot",
+    "url": "https://throwdown.dev-dot.li",
+    "firstSeenBlock": 12184912,
+    "owner": "0x8F49CAe7d0d0B4F381C8A5E8df8020A3a61D2849",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786643532,
+    "displayName": "THROWDOWN",
+    "description": "Rock Paper Scissors Lizard Spock, as a tournament that runs for days. One hand a day, sealed before it is shown, graded by every client at once — no referee.",
+    "iconCid": "bafk2bzacedkyebrffqo626uggo26fbycvvjdlwgdin73o6owlmblfiak74tfu",
+    "contenthash": "bafybeiax7kgm4qxqyaeirpvs42c6vacxrjb72iiauriebnwuvw6fgkwn7e",
+    "key": "0x7ba0a8cf67bbcd2de5caf54a6de06648b0c21b0c9d72e172e943f58b579a2da8"
+  },
+  "tikami-hello": {
+    "label": "tikami-hello",
+    "domain": "tikami-hello.dot",
+    "url": "https://tikami-hello.dev-dot.li",
+    "firstSeenBlock": 12329816,
+    "owner": "0xD87C41528eB02aa87005a77575339e1CE5628be5",
+    "displayName": "tikami-hello",
+    "description": "Kleines Product zum Testen von Host, Wallet und Deploy.",
+    "iconCid": "bafk2bzaced3g23zqu4qwmesuy2divoa7htmzidosqmksztbgbbrokw3y2mksq",
+    "contenthash": "bafybeigazj5tkmnknlglwmrhfgrrw5pjmuhzppv275igbc267wajhjxcoq",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1786959300,
+    "key": "0x8dd6fe908b354a5cc9a060959da56353962cc59329e3cefabfdbb86dc9107abb"
   },
   "tintaprotocol": {
     "label": "tintaprotocol",
@@ -3166,7 +3572,7 @@
     "displayName": "TrueReviews",
     "description": "Reviews you can trust: one verified human, one review per place, on real map businesses.",
     "iconCid": "bafybeifofgztfjpqeolrlll3rzlzirsostuf2nqhk3fjoyzkkgbubqvqz4",
-    "contenthash": "bafybeifbhuuq5jm5wnfgzazk6lycpzfbtmyxq5l5mzpps4fidforlfhtjq",
+    "contenthash": "bafybeido3hm6dkdaxg6fukijz6u47lyycowfsl67nleajvaf5wayzlrwii",
     "hasExecutable": false,
     "tier": 0,
     "contract": "0x29af38913652b32989d1d96c51af641980e55698",
@@ -3280,7 +3686,7 @@
     "displayName": "vault-control",
     "description": "A security-first control center for your Polkadot accounts: multisigs, keyless cold vaults, delegations - every action approved on your phone.",
     "iconCid": "bafk2bzacea337ymq47v5qswtrz4elupys6r5aptnrazjd5kmc3sd2bteaexzi",
-    "contenthash": "bafybeigvd5idzbownlyqxlqf3c24pdubjak6gitbifusobmvjvynx7qw5y",
+    "contenthash": "bafybeie5ctd52d6a3q4ploxo5qbgns4lrmwq6voyhtcotz57i3uxnw5alq",
     "alive": true,
     "lastSeenAliveAt": 1786344620,
     "livenessCheckedAt": 1786320000,
@@ -3293,7 +3699,7 @@
     "url": "https://votaciones.dev-dot.li",
     "firstSeenBlock": 11896747,
     "owner": "0x21F76fC30F54c2c32E0e1F57A65f3A1Aa9713394",
-    "contenthash": "bafybeiguest4cbeebsdgzbfthaqesj7lsd56cyejoliyt63ymfdquvhniq",
+    "contenthash": "bafybeifzl4selkfahn5nqouujov5drspxtqru36ar3xf6b23stu7f4ko5y",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1786037352,
@@ -3406,6 +3812,18 @@
     "category": "identity",
     "categorySource": "derived:manifest"
   },
+  "witnessledger": {
+    "label": "witnessledger",
+    "domain": "witnessledger.dot",
+    "url": "https://witnessledger.dev-dot.li",
+    "firstSeenBlock": 12096396,
+    "owner": "0x35Cdb23fF7fc86E8DCcd577CA309bFEA9c978D20",
+    "contenthash": "bafybeidvtx4cuwywprii4wmv5lajfis4dvjfbwuqhezqg25lw2bxjafjny",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786457568,
+    "key": "0x2719d5a519f227e014f96fe653dfefa4f9e553b97476d34b3560e48f67780599"
+  },
   "wonderland": {
     "label": "wonderland",
     "domain": "wonderland.dot",
@@ -3457,6 +3875,18 @@
     "category": "publishing",
     "categorySource": "derived:manifest"
   },
+  "worldblog-app": {
+    "label": "worldblog-app",
+    "domain": "worldblog-app.dot",
+    "url": "https://worldblog-app.dev-dot.li",
+    "firstSeenBlock": 12250569,
+    "owner": "0xdACA60632d5A821057781c9F65CAe90956a5B3db",
+    "contenthash": "bafybeidbxvno3qymacqf6ltpi5oqiqgr7fkg2biiwlpxozpehrl2etv5cy",
+    "hasExecutable": false,
+    "tier": 1,
+    "firstSeenAt": 1786784436,
+    "key": "0x64776bd1dc1390ef47d1603c44cbc60e874e4996df5e1f2a6ea89ecfd4eb3c5a"
+  },
   "wudcommunity": {
     "label": "wudcommunity",
     "domain": "wudcommunity.dot",
@@ -3467,7 +3897,7 @@
     "displayName": "WUD Community",
     "description": "Unofficial WUD dashboard: live supply, holders, whale-to-plankton leaderboard.",
     "iconCid": "bafybeibvvsaqjl3upr6yari35yscsgbkifjkorkghfmjpptysnp343v5zm",
-    "contenthash": "bafybeicdp5cuz6qlz3mhovigvwgt3ige4b33peeoc4ok6sh6tz5moewjmm",
+    "contenthash": "bafybeihr3xmluazgoh3q7ycob5izcpwn2gyew72hkr2oqtussrgeug3u6y",
     "hasExecutable": false,
     "tier": 0,
     "alive": true,
@@ -3513,7 +3943,7 @@
     "url": "https://yechops-preview.dev-dot.li",
     "firstSeenBlock": 11518722,
     "owner": "0x40C862e3C61B4c62BA0B04668167E9006e900b3B",
-    "contenthash": "bafybeib76qsjhyr7spv5r5ihdk4xh73rcmfngolo35mojdmlwtxqmhncbe",
+    "contenthash": "bafybeiciqwd5cg7wmakjs5zifmbfc2ils5m55os3fvxgsr6afn4vcp2tse",
     "hasExecutable": false,
     "tier": 1,
     "firstSeenAt": 1785229452,
