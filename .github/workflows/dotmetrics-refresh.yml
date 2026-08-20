@@ -145,6 +145,23 @@ jobs:
           node indexer/directory-digest.mjs commit "$CID"
           sed -i "s|export const DIRECTORY_CID = '[a-z0-9]*'|export const DIRECTORY_CID = '$CID'|" src/lib/directory.ts
 
+      # The two indexes find names in different ways and therefore drift apart.
+      # This walks blocks and reads the label out of the raw calldata, so it sees
+      # every registration; DotDirectory2 only learns a name when somebody
+      # proposes the exact string, because DotNS is namehash-keyed and cannot
+      # list itself. Left alone the directory trails by however many names nobody
+      # guessed — it was twenty-six behind when this was added. Announcing is
+      # permissionless, so the run can close the gap itself.
+      #
+      # Deliberately non-fatal. A failing step here once took the whole re-index
+      # down with it and silently stopped the site from ever being republished;
+      # a directory that is briefly out of date is not worth that risk.
+      - name: Announce anything the directory is missing
+        continue-on-error: true
+        env:
+          MNEMONIC: ${{ secrets.DEVNET_MNEMONIC }}
+        run: node ../dotdirectory/scripts/sync-from-dotmetrics.mjs --go || true
+
       - name: Did the app source change?
         id: sitegate
         run: node indexer/app-tree-hash.mjs check
