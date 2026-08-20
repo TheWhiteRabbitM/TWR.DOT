@@ -10,12 +10,15 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 
 // ethers only to recover the eth sender out of the RLP payload; the chain work
-// is all @polkadot/api.
-const require = createRequire('C:/Users/miche/Downloads/DOT APP/contract/');
-const { ethers } = require('C:/Users/miche/Downloads/DOT APP/contract/node_modules/ethers');
+// is all @polkadot/api. This used to be pulled through createRequire from an
+// absolute path on one laptop, so the script could only ever run on that laptop:
+// on the runner it threw MODULE_NOT_FOUND, the whole re-index step exited 1, and
+// every step after it — including the one that moves the directory record — was
+// skipped. The index kept being refreshed and committed while the site went on
+// serving an old directory.
+import { ethers } from 'ethers';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(HERE, 'ecosystem.json');
