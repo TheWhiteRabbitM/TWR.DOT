@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12452975,
-  "updatedAt": "2026-08-20T15:51:53.533Z",
+  "lastBlock": 12454533,
+  "updatedAt": "2026-08-20T16:53:52.598Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "cebe037ad42209aee909794a56bf2835df149e03babe7da63fa362e1da70f406",
-    "cid": "bafybeie3bjm6jgezts2uizh4gp5davznijdjydh3cw3u53e4ubrzy6vbbm",
-    "uploadedAt": "2026-08-20T16:00:47.105Z"
+    "digest": "9a05360a243634e279e1f8b93f207fac3ba264a4e9eb7b5875a76adc749ed3e1",
+    "cid": "bafybeifnabaqxw5egj3jc4lg2ihzsfgkoua2zqx6g7bnh23ldr2pdkbaqu",
+    "uploadedAt": "2026-08-20T17:03:31.429Z"
   },
   "sitePublish": {
-    "treeHash": "052dd417177b79659a94406fdc62287b1626d0f0bd82f4de7f9ae6f1e1d9e8eb",
-    "publishedAt": "2026-08-20T10:29:11.659Z"
+    "treeHash": "c0adef05d0667cff80bbda94fb7e8d0020249568f10084e8825800f78b11d08d",
+    "publishedAt": "2026-08-20T17:06:22.489Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-20T15:59:42.000Z",
+    "updatedAt": "2026-08-20T17:01:50.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -218,7 +218,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-20T15:59:43.000Z",
+    "updatedAt": "2026-08-20T17:01:51.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -468,9 +468,9 @@
         "live": "alive"
       },
       "dforms-app": {
-        "contenthash": "bafybeia23vthv5jxnu5aycxmzm3becparpsvd65d5anqyofzioro4v6tyi",
-        "updateCount": 1,
-        "changedAt": 1786019415,
+        "contenthash": "bafybeihsvsxmzearnytnawn6anqio2omh56qy5wx7shhraykww6uwlo6eu",
+        "updateCount": 2,
+        "changedAt": 1787245311,
         "live": "alive"
       },
       "discovery": {
@@ -525,9 +525,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeigtlpoom757zru5pshtvaetotxmf5zaxdnvunzpsguhd37qay36fi",
-        "updateCount": 144,
-        "changedAt": 1787241583,
+        "contenthash": "bafybeiealgtcmsizs65wrohsahntv5dlnwlor4uxrfek3vfqgacxlpeewe",
+        "updateCount": 145,
+        "changedAt": 1787245311,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -650,6 +650,11 @@
         "live": "unknown"
       },
       "fffffffff": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "finalhandler": {
         "contenthash": "",
         "updateCount": 0,
         "live": "unknown"
@@ -843,6 +848,11 @@
         "live": "alive"
       },
       "lllllllll": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
+      "mapfinalzz": {
         "contenthash": "",
         "updateCount": 0,
         "live": "unknown"
@@ -1219,6 +1229,11 @@
         "contenthash": "bafybeihbyuwnbbpyvl3qvtq4mj4mdzjof3niba3kaqoyz7lkbgf6gcqvbm",
         "updateCount": 0,
         "live": "alive"
+      },
+      "refactfinalz": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
       },
       "reputacion": {
         "contenthash": "bafybeic7lfwjkx2ohu7gsfa3sruyizuudvlpjnxtxll2gl3ukytzdjg4cm",

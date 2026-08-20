@@ -4,7 +4,28 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 20 Aug 2026 15:59:43 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 20 Aug 2026 17:01:51 GMT</lastBuildDate>
+    <item>
+      <title>finalhandler</title>
+      <link>https://finalhandler.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">finalhandler</guid>
+      <pubDate>Thu, 20 Aug 2026 16:45:12 GMT</pubDate>
+    </item>
+    <item>
+      <title>refactfinalz</title>
+      <link>https://refactfinalz.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">refactfinalz</guid>
+      <pubDate>Thu, 20 Aug 2026 16:34:12 GMT</pubDate>
+    </item>
+    <item>
+      <title>mapfinalzz</title>
+      <link>https://mapfinalzz.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">mapfinalzz</guid>
+      <pubDate>Thu, 20 Aug 2026 16:06:12 GMT</pubDate>
+    </item>
     <item>
       <title>huangchaojun</title>
       <link>https://huangchaojun.dev-dot.li</link>
@@ -333,27 +354,6 @@
       <description>Finds addresses that repeatedly move DOT toward fiat exposure — transfers to tagged centralized-exchange addresses, plus on-chain DOT to USDC/USDT swaps on Asset Hub. Scores and ranks by volume, frequency, timing regularity, round-number amounts, net outflow and clustering.</description>
       <guid isPermaLink="false">exit-radar</guid>
       <pubDate>Sat, 08 Aug 2026 06:46:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>Personhood Explorer</title>
-      <link>https://whoisaperson.dev-dot.li</link>
-      <description>Look up proof-of-personhood state for any account. Shows registration on the People chain, the contextual alias, and whether a .dot name is claimable. Read-only.</description>
-      <guid isPermaLink="false">whoisaperson</guid>
-      <pubDate>Sat, 08 Aug 2026 03:09:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>dot-drive</title>
-      <link>https://dot-drive.dev-dot.li</link>
-      <description>Big files, encrypted on your device and stored on Bulletin, with the key handed over in a sealed letter. The bytes are unreadable and nothing points at them. Fourteen days, then gone, and the app says so on every row.</description>
-      <guid isPermaLink="false">dot-drive</guid>
-      <pubDate>Fri, 07 Aug 2026 08:44:12 GMT</pubDate>
-    </item>
-    <item>
-      <title>dotparcel</title>
-      <link>https://dotparcel.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">dotparcel</guid>
-      <pubDate>Fri, 07 Aug 2026 08:41:48 GMT</pubDate>
     </item>
   </channel>
 </rss>
