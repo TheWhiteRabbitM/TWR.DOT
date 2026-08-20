@@ -3622,6 +3622,13 @@
     "tier": 0,
     "firstSeenAt": 1787213736
   },
+  "aidetector": {
+    "label": "aidetector",
+    "domain": "aidetector.dot",
+    "url": "https://aidetector.dev-dot.li",
+    "firstSeenBlock": 12442392,
+    "owner": "0xB5C0B171068ca7f6C2b42F19B7B98b7d24DD8bea"
+  },
   "excluded": [
     "a5wz",
     "adddd",
@@ -3752,6 +3759,7 @@
     "qgle",
     "qmld006",
     "r6sisrsrs",
+    "r82s",
     "r8pn",
     "rdjdv",
     "rg3q",
