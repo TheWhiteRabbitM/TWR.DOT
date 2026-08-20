@@ -82,6 +82,10 @@ jobs:
           # instead of a forum with no history in it.
           - dir: polkadot-forum
             name: polkadot-forum.dot
+          # No chain reads at all: the detector runs in the tab. A plain build
+          # renews it.
+          - dir: aidetector
+            name: aidetector.dot
           # One static file, no build — so `npm ci` and `npm run build` would
           # both fail on it. The staging step below handles it instead.
           - dir: chirpwatch

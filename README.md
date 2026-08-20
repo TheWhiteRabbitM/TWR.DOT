@@ -1,4 +1,4 @@
-# TWR.DOT: eighteen apps on the Polkadot App platform
+# TWR.DOT: nineteen apps on the Polkadot App platform
 
 Apps built end-to-end on the [Polkadot Products Devnet](https://docs.polkadot.com/):
 contracts, frontends, on-chain publishing, gallery manifests and self-updating
@@ -55,6 +55,7 @@ account, and the answer to whether this is a person and which one.
 | [`italiarovente/`](italiarovente/) | `italiarovente.dot` | Italy warming since 1940: stripes, records, seas and a clickable map of 107 cities from open ERA5 data. Daily self-refresh. Port of [italiarovente.app](https://italiarovente.app). | none |
 | [`wudcommunity/`](wudcommunity/) | `wudcommunity.dot` | Unofficial $WUD community dashboard: live supply and holders from Asset Hub, whale to plankton leaderboard over 221k holders. Artwork used with the community permission. | reads Asset Hub mainnet |
 | [`ethonchain/`](ethonchain/) | `ethonchain.dot` | Six real pages from ethereum.org served from a content hash. No server, no host, no CDN. Unofficial, unaffiliated. | none |
+| [`aidetector/`](aidetector/) | `aidetector.dot` | Paste text, see which AI writing patterns are in it and what to write instead. The rules are Conor Bronsdon’s avoid-ai-writing, MIT; the swaps and the interface are here. Runs entirely in the tab. | none |
 | [`arcadeonchain/`](arcadeonchain/) | `arcadeonchain.dot` | An arcade room with three cabinets. Game Boy and NES cores running against ROMs from the same bundle as the page. | none |
 
 Support folders: [`contract/`](contract/) is the shared CDM/Hardhat workspace all
