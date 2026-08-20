@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12461073,
-  "updatedAt": "2026-08-20T20:49:15.987Z",
+  "lastBlock": 12462574,
+  "updatedAt": "2026-08-20T21:46:26.886Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "beedf2cdf3bead45e2891e651357de09f2f3cd8609efebe4dd784de6b2bbda9c",
-    "cid": "bafybeiaq356dvgnfs24d66lztfk65foi7uhdcesonauv4w4dfhgxxchaau",
-    "uploadedAt": "2026-08-20T20:55:25.086Z"
+    "digest": "05d96b450f2290b9263be37be420b1e4c15f0a4ab280b902d31bb31db42b965b",
+    "cid": "bafybeic2ztp6ggewhzjrkxxodmgr4h6wsp4hdpu754n7icth5hkb7id57a",
+    "uploadedAt": "2026-08-20T21:54:36.623Z"
   },
   "sitePublish": {
     "treeHash": "938e22efa976e706fdbee1c28d89982168be259bbe169bda73f9de7b0ce40f7c",
     "publishedAt": "2026-08-20T19:10:09.511Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-20T20:54:14.000Z",
+    "updatedAt": "2026-08-20T21:51:30.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -224,7 +224,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-20T20:54:14.000Z",
+    "updatedAt": "2026-08-20T21:51:30.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -532,9 +532,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiggosrizpmhgmynaeuh3o2ofxgtxjrqzmswsqu7qv5bjpcsgbhyoa",
-        "updateCount": 149,
-        "changedAt": 1787259254,
+        "contenthash": "bafybeid44iebbsyqbsdeh7nnub2vgtnplbkguguiygmspkf2tjd7mci6r4",
+        "updateCount": 150,
+        "changedAt": 1787262690,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1175,9 +1175,9 @@
         "live": "alive"
       },
       "postespresso": {
-        "contenthash": "bafybeienma2yl3jrnqzcd3k54vxwglnwvoewa5v2obr2pru337cydyie5u",
-        "updateCount": 2,
-        "changedAt": 1787259254,
+        "contenthash": "bafybeiauy53ga5wqrr3qb5skgsslz5ios6gswy7gbtho244htdyic6ixke",
+        "updateCount": 3,
+        "changedAt": 1787262690,
         "live": "alive"
       },
       "ppppppppp": {
