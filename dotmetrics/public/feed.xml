@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Thu, 20 Aug 2026 17:01:51 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 20 Aug 2026 17:56:30 GMT</lastBuildDate>
+    <item>
+      <title>wraptestctl</title>
+      <link>https://wraptestctl.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">wraptestctl</guid>
+      <pubDate>Thu, 20 Aug 2026 17:19:24 GMT</pubDate>
+    </item>
     <item>
       <title>finalhandler</title>
       <link>https://finalhandler.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description>AI website builder on Polkadot Products Devnet. Promo, signup, and builder as a static Product.</description>
       <guid isPermaLink="false">site-forge</guid>
       <pubDate>Sat, 08 Aug 2026 09:07:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>Exit Radar</title>
-      <link>https://exit-radar.dev-dot.li</link>
-      <description>Finds addresses that repeatedly move DOT toward fiat exposure — transfers to tagged centralized-exchange addresses, plus on-chain DOT to USDC/USDT swaps on Asset Hub. Scores and ranks by volume, frequency, timing regularity, round-number amounts, net outflow and clustering.</description>
-      <guid isPermaLink="false">exit-radar</guid>
-      <pubDate>Sat, 08 Aug 2026 06:46:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

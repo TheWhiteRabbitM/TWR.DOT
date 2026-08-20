@@ -604,6 +604,12 @@
     "confidence": "none",
     "why": []
   },
+  "finalhandler": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "flowfarm-staking": {
     "category": "finance",
     "source": "derived:manifest",
@@ -859,6 +865,12 @@
     "why": []
   },
   "lllllllll": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "mapfinalzz": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -1367,6 +1379,12 @@
     "why": [
       "atlas~"
     ]
+  },
+  "refactfinalz": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "reputacion": {
     "category": "other",
