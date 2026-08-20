@@ -31,8 +31,9 @@ arcadeonchain/shots/
 gameboyonchain/shots/
 nesonchain/shots/
 
-# polkadot-forum: the imported Discourse archive is derived data (~47 MB).
-# Regenerate with `npm run import`; the published copy lives on Bulletin.
+# polkadot-forum: the expanded archive (~47 MB of JSON) is derived. The packed
+# copy in polkadot-forum/archive/ IS committed, so a clean checkout can rebuild
+# the identical bundle; `npm run build` unpacks it. `npm run import` refreshes.
 polkadot-forum/public/forum-index.json
 polkadot-forum/public/forum-home.json
 polkadot-forum/public/t-*.json

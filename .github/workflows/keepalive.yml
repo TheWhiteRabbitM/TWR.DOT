@@ -72,6 +72,16 @@ jobs:
             name: chirponchain.dot
           - dir: peoplewiki
             name: peoplewiki.dot
+          # Reads everything live from contracts, so there is no data to refresh
+          # and a plain build renews the bundle. It had no automation at all
+          # until now, which meant nothing was renewing it.
+          - dir: dotdirectory
+            name: dotdirectory.dot
+          # The Discourse archive is committed packed (archive/), and the build
+          # unpacks it, so a clean checkout republishes the identical bundle
+          # instead of a forum with no history in it.
+          - dir: polkadot-forum
+            name: polkadot-forum.dot
           # One static file, no build — so `npm ci` and `npm run build` would
           # both fail on it. The staging step below handles it instead.
           - dir: chirpwatch
