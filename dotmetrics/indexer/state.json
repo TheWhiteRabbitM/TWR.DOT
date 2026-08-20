@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12450430,
-  "updatedAt": "2026-08-20T14:06:15.336Z",
+  "lastBlock": 12451678,
+  "updatedAt": "2026-08-20T14:58:07.574Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "1385f95b83493e955249a0bdf1f20a871b045e7ca0ff6633d01067dfdc3ef792",
-    "cid": "bafybeigtrwygelohtxi6gtibqifqkx3fpijatwybi6vi6ti2hzvtiyrhpm",
-    "uploadedAt": "2026-08-20T14:14:23.735Z"
+    "digest": "a0f0feaea4fda60742658a074b5f9ae5969dc8900b17abd23d7cebadfb128985",
+    "cid": "bafybeiasqo4ga5wyjmfjsgimve2qad6crfewiuwqcqcc62enmofvb4msyy",
+    "uploadedAt": "2026-08-20T15:06:21.847Z"
   },
   "sitePublish": {
     "treeHash": "052dd417177b79659a94406fdc62287b1626d0f0bd82f4de7f9ae6f1e1d9e8eb",
     "publishedAt": "2026-08-20T10:29:11.659Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-20T14:13:09.000Z",
+    "updatedAt": "2026-08-20T15:05:06.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -218,7 +218,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-20T14:13:10.000Z",
+    "updatedAt": "2026-08-20T15:05:06.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -525,9 +525,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiclb7r6x6p6inlu2ou5utczhi6oibpwwuxa6gphm56mkib7hewosi",
-        "updateCount": 142,
-        "changedAt": 1787235190,
+        "contenthash": "bafybeiaazyjenvkmpfhcuai6772bqf6dt44u2wrwacnb2qhceniy5jr5kq",
+        "updateCount": 143,
+        "changedAt": 1787238306,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -763,8 +763,9 @@
         "live": "alive"
       },
       "humanfeed": {
-        "contenthash": "bafybeif5wnppljtrw4s2tyx5s45bqh2n4wgypnf5hwsm5nz2rwmyerti3i",
-        "updateCount": 0,
+        "contenthash": "bafybeifbl55xh5sxyuy7ckc6cpy7bggyfbqxyers7knratslejgpwgyjrq",
+        "updateCount": 1,
+        "changedAt": 1787238306,
         "live": "alive"
       },
       "humanpolls": {
