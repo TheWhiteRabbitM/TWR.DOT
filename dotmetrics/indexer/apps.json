@@ -3569,6 +3569,30 @@
     "tier": 2,
     "firstSeenAt": 1787176560
   },
+  "federation": {
+    "label": "federation",
+    "domain": "federation.dot",
+    "url": "https://federation.dev-dot.li",
+    "firstSeenBlock": 12429462,
+    "owner": "0x8F49CAe7d0d0B4F381C8A5E8df8020A3a61D2849",
+    "hasExecutable": false,
+    "tier": 2,
+    "firstSeenAt": 1787186136
+  },
+  "polkacrew": {
+    "label": "polkacrew",
+    "domain": "polkacrew.dot",
+    "url": "https://polkacrew.dev-dot.li",
+    "firstSeenBlock": 12428572,
+    "owner": "0xb7ea7CbAa5446AD93417C2b48Dd3BF96B49264dA",
+    "displayName": "PolkaCrew",
+    "description": "Multiplayer social deduction with Bulletin replays and Asset Hub consensus.",
+    "iconCid": "bafk2bzaced3smkncqk6e2sb72cpwjo3tir522r7pxby6yf6xzsm3ymwgppao4",
+    "contenthash": "bafybeig7kwvd3ozwfbsq5dg54nvprjer5ey77syen74nfiiokoqiyfzdwy",
+    "hasExecutable": true,
+    "tier": 0,
+    "firstSeenAt": 1787184060
+  },
   "excluded": [
     "a5wz",
     "adddd",
@@ -3737,6 +3761,7 @@
     "wryz",
     "wsxal",
     "wtnd",
+    "wvma",
     "xe0g",
     "xqdb",
     "ye4u",
