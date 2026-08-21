@@ -5,11 +5,23 @@
     "h": 970,
     "capturedAt": 1786947205
   },
+  "aidetector": {
+    "file": "shots/aidetector.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292195
+  },
   "ajedreztest01": {
     "file": "shots/ajedreztest01.webp",
     "w": 480,
     "h": 970,
     "capturedAt": 1785748069
+  },
+  "amazdotcom": {
+    "file": "shots/amazdotcom.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292309
   },
   "arcadeonchain": {
     "file": "shots/arcadeonchain.webp",
@@ -22,6 +34,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786947870
+  },
+  "awakenedgazette": {
+    "file": "shots/awakenedgazette.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292349
   },
   "batoutofhell": {
     "file": "shots/batoutofhell.webp",
@@ -113,11 +131,29 @@
     "h": 970,
     "capturedAt": 1786946797
   },
+  "circlecredit": {
+    "file": "shots/circlecredit.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292215
+  },
+  "clockchain": {
+    "file": "shots/clockchain.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292235
+  },
   "comicpirate": {
     "file": "shots/comicpirate.webp",
     "w": 480,
     "h": 970,
     "capturedAt": 1786946818
+  },
+  "common-ground": {
+    "file": "shots/common-ground.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292397
   },
   "community": {
     "file": "shots/community.webp",
@@ -160,6 +196,24 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786947265
+  },
+  "creatures": {
+    "file": "shots/creatures.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292280
+  },
+  "dailydigest": {
+    "file": "shots/dailydigest.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292205
+  },
+  "detourvzw": {
+    "file": "shots/detourvzw.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292368
   },
   "devnet-atlas": {
     "file": "shots/devnet-atlas.webp",
@@ -251,6 +305,12 @@
     "h": 970,
     "capturedAt": 1786008462
   },
+  "dotdirectory": {
+    "file": "shots/dotdirectory.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292339
+  },
   "dotfinder": {
     "file": "shots/dotfinder.webp",
     "w": 480,
@@ -274,6 +334,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785748166
+  },
+  "dotnote-demo": {
+    "file": "shots/dotnote-demo.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292456
   },
   "doyoulike": {
     "file": "shots/doyoulike.webp",
@@ -377,6 +443,12 @@
     "h": 970,
     "capturedAt": 1785747992
   },
+  "hello": {
+    "file": "shots/hello.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292437
+  },
   "hello-devnet-ynrc46": {
     "file": "shots/hello-devnet-ynrc46.webp",
     "w": 480,
@@ -412,6 +484,18 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1785748146
+  },
+  "hindsight": {
+    "file": "shots/hindsight.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292508
+  },
+  "humanpolls": {
+    "file": "shots/humanpolls.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292260
   },
   "imthebest": {
     "file": "shots/imthebest.webp",
@@ -599,6 +683,24 @@
     "h": 970,
     "capturedAt": 1786947470
   },
+  "openraonchain": {
+    "file": "shots/openraonchain.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292417
+  },
+  "openstudios": {
+    "file": "shots/openstudios.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292270
+  },
+  "p2p-lending": {
+    "file": "shots/p2p-lending.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292427
+  },
   "pactprotocol": {
     "file": "shots/pactprotocol.webp",
     "w": 480,
@@ -665,6 +767,12 @@
     "h": 970,
     "capturedAt": 1786946765
   },
+  "polkacrew": {
+    "file": "shots/polkacrew.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292225
+  },
   "polkadevs": {
     "file": "shots/polkadevs.webp",
     "w": 480,
@@ -689,11 +797,29 @@
     "h": 970,
     "capturedAt": 1786947387
   },
+  "polkashoot": {
+    "file": "shots/polkashoot.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292329
+  },
+  "postespresso": {
+    "file": "shots/postespresso.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292358
+  },
   "proofoftake": {
     "file": "shots/proofoftake.webp",
     "w": 480,
     "h": 970,
     "capturedAt": 1786008607
+  },
+  "public-research": {
+    "file": "shots/public-research.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292407
   },
   "radioactivedrums": {
     "file": "shots/radioactivedrums.webp",
@@ -712,6 +838,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786947903
+  },
+  "rampatlas": {
+    "file": "shots/rampatlas.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292388
   },
   "reputacion": {
     "file": "shots/reputacion.webp",
@@ -785,6 +917,24 @@
     "h": 970,
     "capturedAt": 1785748258
   },
+  "therabbithole": {
+    "file": "shots/therabbithole.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292290
+  },
+  "throwdown": {
+    "file": "shots/throwdown.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292378
+  },
+  "tikami-hello": {
+    "file": "shots/tikami-hello.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292299
+  },
   "tintaprotocol": {
     "file": "shots/tintaprotocol.webp",
     "w": 480,
@@ -857,6 +1007,12 @@
     "h": 970,
     "capturedAt": 1786946879
   },
+  "witnessledger": {
+    "file": "shots/witnessledger.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292447
+  },
   "wonderland": {
     "file": "shots/wonderland.webp",
     "w": 480,
@@ -874,6 +1030,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786946849
+  },
+  "worldblog-app": {
+    "file": "shots/worldblog-app.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787292319
   },
   "wudcommunity": {
     "file": "shots/wudcommunity.webp",
