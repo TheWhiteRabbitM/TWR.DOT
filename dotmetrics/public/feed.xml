@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 21 Aug 2026 21:47:09 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 21 Aug 2026 22:49:41 GMT</lastBuildDate>
+    <item>
+      <title>Verifiable Infrastructure</title>
+      <link>https://verifiable-infrastructure.dev-dot.li</link>
+      <description>Verifiable histories, transparent escrow, and fully backed arcade token distributions.</description>
+      <guid isPermaLink="false">verifiable-infrastructure</guid>
+      <pubDate>Fri, 21 Aug 2026 22:27:36 GMT</pubDate>
+    </item>
     <item>
       <title>secretballot</title>
       <link>https://secretballot.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description>Split shared spending, collect payments, and keep one clear group record.</description>
       <guid isPermaLink="false">chopdotproof02</guid>
       <pubDate>Sun, 09 Aug 2026 14:11:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>off-the-hook</title>
-      <link>https://off-the-hook.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">off-the-hook</guid>
-      <pubDate>Sat, 08 Aug 2026 22:25:48 GMT</pubDate>
     </item>
   </channel>
 </rss>

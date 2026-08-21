@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12499820,
-  "updatedAt": "2026-08-21T21:41:56.352Z",
+  "lastBlock": 12501403,
+  "updatedAt": "2026-08-21T22:44:25.029Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "0caa5176f558453ea81314200c24ce6acad4cd50356a0e95e026c94ce9e2175b",
-    "cid": "bafybeia5m3j6t5a5pbp6jdakkpfl4nfw7iwvpt6g5fcey5ixflwt5geaim",
-    "uploadedAt": "2026-08-21T21:49:05.888Z"
+    "digest": "dfa7995964e75ee147a70bd2ab36b2808e3e4d8a3016d548973f87e923195a02",
+    "cid": "bafybeicgl56b5dzr5xcnutglb5bg4zs36kbt7q4ud7i37he4yrvogwko34",
+    "uploadedAt": "2026-08-21T22:51:16.385Z"
   },
   "sitePublish": {
     "treeHash": "c59eaec8e8eaef660b2ffb7b274f4a5a9a60e71a6b7e242759b5adbddda0d4cb",
     "publishedAt": "2026-08-21T14:14:06.508Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-21T21:47:08.000Z",
+    "updatedAt": "2026-08-21T22:49:41.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -209,7 +209,8 @@
       "secretballot": "alive",
       "stillhere": "alive",
       "whenwemeet": "alive",
-      "whopaysdot": "alive"
+      "whopaysdot": "alive",
+      "verifiable-infrastructure": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -230,7 +231,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-21T21:47:08.000Z",
+    "updatedAt": "2026-08-21T22:49:41.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -543,9 +544,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeigyitunweewcku4nwsrm4twvodpkmaqrv4mmljkqxjsaykxh4qr5i",
-        "updateCount": 173,
-        "changedAt": 1787348828,
+        "contenthash": "bafybeif3dqycqcui3pk3ommoj6mdczlo7voon5fiy5ierkc6yu2o6omrgu",
+        "updateCount": 174,
+        "changedAt": 1787352581,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1282,9 +1283,9 @@
         "live": "unknown"
       },
       "secretballot": {
-        "contenthash": "bafybeieoayfkzjm2vtuijkieyzndeaqtwjoopuw5edq4kanegat2roqixu",
-        "updateCount": 1,
-        "changedAt": 1787321346,
+        "contenthash": "bafybeic7rq667evloxsng3r5b5fjxusilckmfkielopytltceuqn3rstry",
+        "updateCount": 2,
+        "changedAt": 1787352581,
         "live": "alive"
       },
       "site-forge": {
@@ -1424,6 +1425,11 @@
         "contenthash": "bafybeie5ctd52d6a3q4ploxo5qbgns4lrmwq6voyhtcotz57i3uxnw5alq",
         "updateCount": 6,
         "changedAt": 1787221242,
+        "live": "alive"
+      },
+      "verifiable-infrastructure": {
+        "contenthash": "bafybeiazk3z4i76mvsgzux2rcy5g4x6rw7c3zao7gjyxtemgiktvg7ra2y",
+        "updateCount": 0,
         "live": "alive"
       },
       "votaciones": {

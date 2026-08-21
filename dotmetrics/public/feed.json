@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787348829,
-  "count": 249,
+  "generatedAt": 1787352581,
+  "count": 250,
   "apps": [
+    {
+      "label": "verifiable-infrastructure",
+      "domain": "verifiable-infrastructure.dot",
+      "displayName": "Verifiable Infrastructure",
+      "description": "Verifiable histories, transparent escrow, and fully backed arcade token distributions.",
+      "tier": 0,
+      "firstSeenAt": 1787351256,
+      "url": "https://verifiable-infrastructure.dev-dot.li"
+    },
     {
       "label": "secretballot",
       "domain": "secretballot.dot",
