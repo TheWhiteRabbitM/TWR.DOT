@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12475047,
-  "updatedAt": "2026-08-21T05:51:07.162Z",
+  "lastBlock": 12477340,
+  "updatedAt": "2026-08-21T07:11:22.958Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "e91fda5aebaa8395f2f030b82a62af95f4cb52c17285a3cc6a2183909b61dffa",
-    "cid": "bafybeicjatvtzeeasdycjqccnawvocryaijznmgbyjdlckxzfttld7vkhu",
-    "uploadedAt": "2026-08-21T05:58:51.799Z"
+    "digest": "42ef2c31bbb3ac6ff20c62637946e6af2de4d0d3ffc3f2a74603d97e96db34e2",
+    "cid": "bafybeihpmcucenizgrwo343dpaze5brohili4tyxaygkl4oa2bmuojuzvu",
+    "uploadedAt": "2026-08-21T07:20:21.919Z"
   },
   "sitePublish": {
-    "treeHash": "1f6c49d4b8f131fe3f1f3b28a7baff7984de15186e9cc6fb863cd0c18054ba10",
-    "publishedAt": "2026-08-21T04:16:36.339Z"
+    "treeHash": "2836508598e5a30bd359ff269a5f19bdf2a57ea15c25d1bcf8bed03923e4081d",
+    "publishedAt": "2026-08-21T07:22:15.952Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-21T05:57:49.000Z",
+    "updatedAt": "2026-08-21T07:18:34.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -224,7 +224,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-21T05:57:50.000Z",
+    "updatedAt": "2026-08-21T07:18:34.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -532,9 +532,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibrxyow65xsnwnvv5zg5bdg5lwdfb3kvty5l7r4mkusxbniz2mrlq",
-        "updateCount": 157,
-        "changedAt": 1787291870,
+        "contenthash": "bafybeicyhqp4u536dzpx4hd2sulfpyal6mmd6kscvgsvawvrmuu53wui34",
+        "updateCount": 158,
+        "changedAt": 1787296714,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -780,9 +780,9 @@
         "live": "unknown"
       },
       "humanfeed": {
-        "contenthash": "bafybeicc43tu2kwhqhgq4c3uczu45qhkys2nthew2zhxwsr7x6imyl5rtu",
-        "updateCount": 4,
-        "changedAt": 1787291870,
+        "contenthash": "bafybeiafi6fvpdcmqo57xiw4zb4uvlc4egb6przo5k2a4w3nxngccqsnn4",
+        "updateCount": 5,
+        "changedAt": 1787296714,
         "live": "alive"
       },
       "humanpolls": {
