@@ -521,3 +521,70 @@ on your behalf"*.
 
 A prompt with no visible cause is one a reader is right to refuse, and refusing it poisons
 the session. Request on the action, not in anticipation of it.
+
+## T25 — anonymous voting does not need a zk toolchain on this chain
+
+SYMPTOM: you want one-person-one-vote where nobody can see who voted how, and
+every guide sends you to Semaphore, a circom circuit, a proving key and a
+trusted setup ceremony before you have written a line.
+
+CAUSE: an assumption, not a limitation. pallet-revive exposes 0x05 modexp,
+0x06 bn254 add, 0x07 bn254 mul and 0x08 pairing, and keccak is in the VM.
+That is enough for a linkable ring signature (bLSAG) verified in the contract.
+
+WORKS: SecretBallot 0x7921323f3F926d6A17513291e7616a6B4fA01aC3 verifies a
+signature made in a browser. Shape of it:
+
+  - each voter enrols a public key P = xG; the ring is the set of enrolled P
+  - signing over message m with secret x at ring position s:
+      key image I = x * H(P_s)              # same every time this voter signs
+      pick random alpha, and random r_i for every i != s
+      c_{s+1} = keccak(m, alpha*G, alpha*H(P_s))
+      for each i walking the ring:
+        c_{i+1} = keccak(m, r_i*G + c_i*P_i, r_i*H(P_i) + c_i*I)
+      close the loop: r_s = alpha - c_s * x  (mod n)
+  - the contract recomputes the whole chain from (c_0, r[], I) and checks it
+    closes on c_0. It stores I, and refuses a second ballot carrying it.
+
+TRAPS, all of which cost real time:
+  - hash-to-curve must be identical on both sides, byte for byte. Try-and-
+    increment, and take the square root with modexp because the field prime is
+    3 mod 4, so sqrt(a) = a^((p+1)/4).
+  - a ring of one hides nobody. Refuse ballots until at least two have enrolled,
+    and close enrolment when the first ballot lands or the set moves under the
+    signature.
+  - never colour a ring member by how a ballot voted in your UI. The chain
+    cannot make that link, and a picture that appears to make it is worse than
+    no picture: it teaches the user the opposite of what is true.
+
+## T26 — a .dot name's LENGTH decides whether you may register it
+
+SYMPTOM: pad builds, uploads, merkleizes, and then:
+  Deployment failed (not retryable): whenwe.dot requires ProofOfPersonhoodFull,
+  but this signer is NoStatus.
+
+CAUSE: short labels are reserved for higher personhood tiers. Six characters
+was refused; ten characters (whenwemeet.dot) published first time from the same
+signer.
+
+WORKS: pick a label of ten characters or more when publishing from the pool,
+and check the name BEFORE you spend a build on it. Nothing about the bundle
+changed between the failure and the success.
+
+## T27 — estimateGas returns null on a big batch, and it is not your contract
+
+SYMPTOM: Error: missing revert data (action="estimateGas", data=null,
+reason=null, ... code=CALL_EXCEPTION) on a call that is correct.
+
+CAUSE: the estimator declined to size a large array argument and returned
+nothing. ethers reports that as a call exception, which reads exactly like a
+require() failing, so you go and debug a working contract.
+
+WORKS: smaller batches with an explicit gasLimit.
+
+  for (let i = 0; i < items.length; i += 5) {
+    await (await c.announceMany(items.slice(i, i + 5), { gasLimit: 900_000_000n })).wait();
+  }
+
+Twenty-six items failed to estimate; five per call with an explicit limit went
+through unchanged.

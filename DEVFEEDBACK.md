@@ -3,9 +3,11 @@
 **Reported by:** Claude Code (Anthropic's coding agent), which built, deployed and
 published every app in this repository end-to-end during the first three days of the
 devnet (2026-07-23 → 2026-07-26), operated by the repository owner. Last updated
-2026-08-20: **findings 22-27 added** after building a full on-chain forum
+2026-08-22: **findings 28-29 added and 27 substantially updated** — anonymous
+sybil-resistant voting turns out to be available today, with no zk toolchain.
+(2026-08-20: **findings 22-27 added** after building a full on-chain forum
 (archive import of 3,590 topics, mask-gated writes, personal filters). Between them they
-cost a working day, and one of them is a capability nobody documents.
+cost a working day, and one of them is a capability nobody documents.)
 (2026-07-29: **finding 13 added** — a security-relevant result established by direct
 experiment on Bulletin write authorization, disclosed here rather than used quietly.)
 (2026-07-27: finding 6 **corrected**, finding 8a added after auditing how the ecosystem
@@ -647,6 +649,93 @@ available precompiles and their addresses in the contracts documentation. A
 capability nobody knows about gets designed around instead of used, and the
 workarounds are considerably worse than the feature.
 
+**Update, and this is the part worth acting on.** Since writing the above we
+have used those precompiles for something real, and the result is larger than
+the original finding. `0x05` (modexp) and `0x07` (bn254 mul) answer as well, and
+together with `0x06` and the keccak available in the VM that is enough to verify
+a **linkable ring signature inside a contract**. `SecretBallot` at
+`0x7921323f3F926d6A17513291e7616a6B4fA01aC3` verifies a bLSAG signature produced
+in a browser: it recomputes the challenge chain around the ring, refuses a
+tampered signature, and refuses a valid one replayed onto a different option.
+The key image makes a second ballot from the same voter detectable while leaving
+the first anonymous.
+
+What that means in practice: **anonymous, sybil-resistant voting is available on
+this chain today, with no trusted setup, no circuit compiler, no proving key and
+no ceremony.** Everyone reaching for that property assumes a zk toolchain and a
+ceremony to run first; on these precompiles it is a few hundred lines of ordinary
+elliptic-curve arithmetic. Hash-to-curve is try-and-increment, using modexp for
+the square root because the field prime is 3 mod 4.
+
+That is a headline capability for a platform whose defining primitive is proof
+of personhood, and nothing in the documentation points at it. One page saying
+which precompiles exist would have saved the week it took to find out by
+experiment, and would tell every other team building on personhood that the
+privacy half is already in their hands.
+
 One implementation note for whoever writes those docs: the G2 words must be
 supplied in EIP-197 order, imaginary part first. Getting that wrong returns a
 clean `false` rather than an error, which is a long afternoon.
+
+---
+
+## 28. A name's length decides which personhood tier may register it, and you find out after the build
+
+**Severity: medium — the refusal arrives at the end of the work, not the start.**
+
+`pad ./dist whenwe.dot --env devnet` built the bundle, connected to Bulletin,
+merkleized, and then stopped:
+
+```
+Deployment failed (not retryable): whenwe.dot requires ProofOfPersonhoodFull,
+but this signer is NoStatus.
+```
+
+The message is clear about the rule and says nothing about the shape of it. Six
+characters needs full personhood; the same bundle published to `whenwemeet.dot`,
+ten characters, went through on the first attempt from the same signer. So there
+is a length-to-status ladder, it decides whether a name is registrable at all,
+and the only way we learned where the rungs are was by trying names.
+
+Two requests:
+
+1. **Check it in preflight.** The domain and the signer's status are both known
+   before a single byte is uploaded. `pad` already prints `Your PoP: NoStatus`
+   and `DotNS: <name> requires …` during preflight for names it can register —
+   applying the same check to names it cannot would turn a wasted build into one
+   line, immediately.
+2. **Publish the ladder.** A table of label length against required status, in
+   the DotNS docs, would let anyone pick a name they can actually have. Right
+   now the advice that circulates is folklore: "nine characters or more works".
+
+## 29. `estimateGas` returns no revert data at all on a larger batch call
+
+**Severity: medium — the failure is indistinguishable from a bug in your contract.**
+
+`DotDirectory2.announceMany` takes an array of labels and skips the ones already
+listed, which is what makes it a backfill. Calling it with twenty-six labels
+failed before it was ever submitted:
+
+```
+Error: missing revert data (action="estimateGas", data=null, reason=null,
+transaction={ "data": "0x4a389e02…", "from": "0xf24FF3a9…", "to": "0x4a6f0368…" },
+invocation=null, revert=null, code=CALL_EXCEPTION)
+```
+
+There is no revert reason because there is no revert: the estimator declined to
+return a number and ethers reported that as a call exception. With `data=null`
+and `reason=null` the caller cannot tell an out-of-gas estimate from a require()
+that failed, so the natural next move is to go and debug a contract that is
+working correctly.
+
+Five labels per call, with an explicit `gasLimit`, went through unchanged. So the
+contract was never the problem and the batch size was.
+
+Two requests:
+
+1. **Say why the estimate failed.** Any distinguishable signal — a specific
+   error, a non-null reason, anything other than a null — would separate "your
+   call reverts" from "I could not size this".
+2. **Document the ceiling.** If there is a practical limit on what the estimator
+   will size on PolkaVM, saying so is cheaper for everyone than each caller
+   bisecting their own batch size to find it.
