@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12484323,
-  "updatedAt": "2026-08-21T11:45:32.549Z",
+  "lastBlock": 12486508,
+  "updatedAt": "2026-08-21T13:14:20.799Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "4bb96742f47fb7a24d6d5075d564334e927f1378229a88b4398164d6d714502c",
-    "cid": "bafybeifxvx7fbyknxuu65utur4j75dfnnbu3v5x2ekiebt2vdlw5yareli",
-    "uploadedAt": "2026-08-21T11:54:11.980Z"
+    "digest": "76d5496dc2a243598cbb5351fb996a34c6d79d8dac8d4625807a21534534d3c9",
+    "cid": "bafybeif2wvuneltpvuvyrkw7bparuwusy267ylzhfblblbeiirzrqoulke",
+    "uploadedAt": "2026-08-21T13:22:29.229Z"
   },
   "sitePublish": {
-    "treeHash": "2836508598e5a30bd359ff269a5f19bdf2a57ea15c25d1bcf8bed03923e4081d",
-    "publishedAt": "2026-08-21T07:22:15.952Z"
+    "treeHash": "a035861066e3d5f0bbd7caf2ee4c78fcfe7181c9958b2f11f5ff0783db0d192e",
+    "publishedAt": "2026-08-21T13:24:23.203Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-21T11:53:05.000Z",
+    "updatedAt": "2026-08-21T13:20:57.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -205,7 +205,11 @@
       "worldblog-app": "alive",
       "clockchain": "alive",
       "thisisatest": "alive",
-      "blockchoir": "alive"
+      "blockchoir": "alive",
+      "secretballot": "alive",
+      "stillhere": "alive",
+      "whenwemeet": "alive",
+      "whopaysdot": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -226,7 +230,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-21T11:53:05.000Z",
+    "updatedAt": "2026-08-21T13:20:58.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -539,9 +543,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeihaqbgfhldpbwdetnsy3vsj7hvg6s4t3lcmvgrksmuxlikkvvjgym",
-        "updateCount": 163,
-        "changedAt": 1787313185,
+        "contenthash": "bafybeic5uupbwprkftnlnmr77tvqz3tegv7wx2exw2y2ygzmg277mysbxy",
+        "updateCount": 164,
+        "changedAt": 1787318458,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -787,9 +791,9 @@
         "live": "unknown"
       },
       "humanfeed": {
-        "contenthash": "bafybeifr5tnh77c6ltefvnnuprmlie7r5qf5ocn5nuebeqwb5bfpfcivh4",
-        "updateCount": 6,
-        "changedAt": 1787309791,
+        "contenthash": "bafybeigl5ejiomzjhedtvpwacgkhofueowcmlqmx3qrxihrwd2tlfxxq3i",
+        "updateCount": 7,
+        "changedAt": 1787318458,
         "live": "alive"
       },
       "humanpolls": {
@@ -1277,6 +1281,11 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "secretballot": {
+        "contenthash": "bafybeial7gye7zdv3rwcibzilunee4hv4l3krifnuv7wopuxni7ctozxhq",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "site-forge": {
         "contenthash": "bafybeibdhrictnvxzp5d66nbmfht2ufdnlmshj3ewhgty2gygfi44fuvny",
         "updateCount": 2,
@@ -1308,6 +1317,11 @@
         "contenthash": "bafybeiaizmleygo2rxnxmczbjnhv6suhpnwpttpjqalvwfpby3pudsf7sa",
         "updateCount": 5,
         "changedAt": 1785684961,
+        "live": "alive"
+      },
+      "stillhere": {
+        "contenthash": "bafybeiam4edmvb7hytr3eaufdj74dvlyfvduw3q5qy4ioryyzei75onbnm",
+        "updateCount": 0,
         "live": "alive"
       },
       "substrade-hub": {
@@ -1445,10 +1459,20 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "whenwemeet": {
+        "contenthash": "bafybeihgrns4p4w2b6wazxi4nqe5yx3jvvfiokdfhfm7r44cinfu2xtwoe",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "whoisaperson": {
         "contenthash": "bafybeialw732dits5vzjo2oomgwgkictqpwti3u7vyj2zkx7our5xh5xle",
         "updateCount": 4,
         "changedAt": 1786298125,
+        "live": "alive"
+      },
+      "whopaysdot": {
+        "contenthash": "bafybeietppj6upxsbupa6ztfgofnylq7paamtwzn3ycsxhvay56dwjhgeu",
+        "updateCount": 0,
         "live": "alive"
       },
       "witnessledger": {

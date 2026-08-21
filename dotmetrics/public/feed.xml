@@ -4,7 +4,35 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 21 Aug 2026 11:53:05 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 21 Aug 2026 13:20:58 GMT</lastBuildDate>
+    <item>
+      <title>secretballot</title>
+      <link>https://secretballot.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">secretballot</guid>
+      <pubDate>Fri, 21 Aug 2026 12:49:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>whopaysdot</title>
+      <link>https://whopaysdot.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">whopaysdot</guid>
+      <pubDate>Fri, 21 Aug 2026 12:24:24 GMT</pubDate>
+    </item>
+    <item>
+      <title>stillhere</title>
+      <link>https://stillhere.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">stillhere</guid>
+      <pubDate>Fri, 21 Aug 2026 12:12:24 GMT</pubDate>
+    </item>
+    <item>
+      <title>whenwemeet</title>
+      <link>https://whenwemeet.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">whenwemeet</guid>
+      <pubDate>Fri, 21 Aug 2026 12:00:36 GMT</pubDate>
+    </item>
     <item>
       <title>blockchoir</title>
       <link>https://blockchoir.dev-dot.li</link>
@@ -326,34 +354,6 @@
       <description></description>
       <guid isPermaLink="false">off-the-hook</guid>
       <pubDate>Sat, 08 Aug 2026 22:25:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>comicpirate</title>
-      <link>https://comicpirate.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">comicpirate</guid>
-      <pubDate>Sat, 08 Aug 2026 21:22:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>batoutofhell</title>
-      <link>https://batoutofhell.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">batoutofhell</guid>
-      <pubDate>Sat, 08 Aug 2026 21:05:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>bobman-dev</title>
-      <link>https://bobman-dev.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">bobman-dev</guid>
-      <pubDate>Sat, 08 Aug 2026 20:24:36 GMT</pubDate>
-    </item>
-    <item>
-      <title>northvane</title>
-      <link>https://northvane.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">northvane</guid>
-      <pubDate>Sat, 08 Aug 2026 18:29:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

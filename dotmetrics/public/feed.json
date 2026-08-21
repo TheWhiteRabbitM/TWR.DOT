@@ -1,7 +1,43 @@
 {
-  "generatedAt": 1787313185,
-  "count": 245,
+  "generatedAt": 1787318458,
+  "count": 249,
   "apps": [
+    {
+      "label": "secretballot",
+      "domain": "secretballot.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787316540,
+      "url": "https://secretballot.dev-dot.li"
+    },
+    {
+      "label": "whopaysdot",
+      "domain": "whopaysdot.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787315064,
+      "url": "https://whopaysdot.dev-dot.li"
+    },
+    {
+      "label": "stillhere",
+      "domain": "stillhere.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787314344,
+      "url": "https://stillhere.dev-dot.li"
+    },
+    {
+      "label": "whenwemeet",
+      "domain": "whenwemeet.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787313636,
+      "url": "https://whenwemeet.dev-dot.li"
+    },
     {
       "label": "blockchoir",
       "domain": "blockchoir.dot",
