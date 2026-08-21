@@ -1,8 +1,8 @@
 {
-  "measuredAt": 1787324400,
-  "headBlock": 12488852,
+  "measuredAt": 1787327628,
+  "headBlock": 12490282,
   "windowBlocks": 151,
-  "windowSeconds": 576,
+  "windowSeconds": 300,
   "contractEvents": 0,
   "activeContracts": 0,
   "contractCalls": 0,
@@ -10,9 +10,9 @@
   "reverts": 0,
   "topContracts": [],
   "perContract": {
-    "headBlock": 12488852,
+    "headBlock": 12490282,
     "windowBlocks": 151,
-    "windowSeconds": 576,
+    "windowSeconds": 300,
     "events": {}
   }
 }
