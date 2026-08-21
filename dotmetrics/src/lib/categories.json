@@ -1608,6 +1608,12 @@
     "confidence": "none",
     "why": []
   },
+  "verifiable-infrastructure": {
+    "category": "tools",
+    "source": "owner",
+    "confidence": "declared",
+    "why": []
+  },
   "votaciones": {
     "category": "other",
     "source": "unclassified",
