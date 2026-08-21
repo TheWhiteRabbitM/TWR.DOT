@@ -1,4 +1,4 @@
-# TWR.DOT: nineteen apps on the Polkadot App platform
+# TWR.DOT: twenty-four apps on the Polkadot App platform
 
 Apps built end-to-end on the [Polkadot Products Devnet](https://docs.polkadot.com/):
 contracts, frontends, on-chain publishing, gallery manifests and self-updating
@@ -47,6 +47,16 @@ account, and the answer to whether this is a person and which one.
 | [`dotmetrics/`](dotmetrics/) | `dotmetrics.dot` | The index of the .dot ecosystem: every registered app found by walking blocks, growth charts, live contract metrics, a real-time registry tail in the browser, hourly self-refresh. | reads 4 contracts live |
 | [`dot-store/`](dot-store/) | `dot-store.dot` | The app store view of the same ground: what is published, browsable. | reads DotNS |
 | [`chirpwatch/`](chirpwatch/) | `chirpwatch.dot` | Are the chirp contracts answering, and are their numbers moving? One page, no framework, no indexer in between. | reads chirp live |
+
+## Things people already do, without the company in the middle
+
+| App | Domain | What it is | On-chain |
+|---|---|---|---|
+| [`secretballot/`](secretballot/) | `secretballot.dot` | Real OpenGov referenda, counted a second way: one person one vote, on a ballot nobody can read. The proof is a linkable ring signature verified **inside the contract** using the bn254 precompiles, with no trusted setup. | SecretBallot `0x7921323f…1aC3` |
+| [`whenwemeet/`](whenwemeet/) | `whenwemeet.dot` | Pick the times that suit you and see what suits everyone. No account, no email, and nobody left holding your diary. | WhenWe `0x707e80b9…81e7` |
+| [`stillhere/`](stillhere/) | `stillhere.dot` | A message that publishes itself if you stop checking in. The web2 version needs a company to still exist; this one needs arithmetic. | StillHere `0xCcF00284…2BbA` |
+| [`whopays/`](whopays/) | `whopaysdot.dot` | A shared tab: who paid what and who owes whom, without handing anyone your social graph. | WhoPays `0xbB584a13…1929` |
+| [`blockchoir/`](blockchoir/) | `blockchoir.dot` | A piece of music in contract storage. One person adds one note every thirty blocks, on a scale where nothing can clash, so nobody needs to be in charge of it. | BlockCanvas `0x7cA0698F…57b4` |
 
 ## Demonstrations
 
