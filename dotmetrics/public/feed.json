@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1787296714,
+  "generatedAt": 1787299500,
   "count": 244,
   "apps": [
     {
@@ -7,7 +7,7 @@
       "domain": "thisisatest.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1787281860,
       "url": "https://thisisatest.dev-dot.li"
     },

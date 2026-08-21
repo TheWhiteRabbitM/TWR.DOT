@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12477340,
-  "updatedAt": "2026-08-21T07:11:22.958Z",
+  "lastBlock": 12478437,
+  "updatedAt": "2026-08-21T07:59:42.041Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "42ef2c31bbb3ac6ff20c62637946e6af2de4d0d3ffc3f2a74603d97e96db34e2",
-    "cid": "bafybeihpmcucenizgrwo343dpaze5brohili4tyxaygkl4oa2bmuojuzvu",
-    "uploadedAt": "2026-08-21T07:20:21.919Z"
+    "digest": "f0dd677e163219d67353c17cffc91ba65778542ce44ab27a985369a90985f441",
+    "cid": "bafybeigm6rqsmaf72ru444fscjzrikgw25bftxys7uo66llkiepcltppbu",
+    "uploadedAt": "2026-08-21T08:06:53.469Z"
   },
   "sitePublish": {
     "treeHash": "2836508598e5a30bd359ff269a5f19bdf2a57ea15c25d1bcf8bed03923e4081d",
     "publishedAt": "2026-08-21T07:22:15.952Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-21T07:18:34.000Z",
+    "updatedAt": "2026-08-21T08:04:59.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -203,7 +203,8 @@
       "tikami-hello": "alive",
       "witnessledger": "alive",
       "worldblog-app": "alive",
-      "clockchain": "alive"
+      "clockchain": "alive",
+      "thisisatest": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -224,7 +225,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-21T07:18:34.000Z",
+    "updatedAt": "2026-08-21T08:05:00.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -532,9 +533,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeicyhqp4u536dzpx4hd2sulfpyal6mmd6kscvgsvawvrmuu53wui34",
-        "updateCount": 158,
-        "changedAt": 1787296714,
+        "contenthash": "bafybeidd5r6q4zgdqona4gmkfktmdw5u35of2une5r2k6h2c3aaz5rqbjm",
+        "updateCount": 159,
+        "changedAt": 1787299500,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -577,9 +578,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeifk65ph25ixv57c46pm5f3iljt7wwaouz55lya36lmlegiaodzhrm",
-        "updateCount": 78,
-        "changedAt": 1787288536,
+        "contenthash": "bafybeiaedybc5hxky4ljxh6b4jrdgbgc7yhphnmvsdtwjdv6otb2xzoema",
+        "updateCount": 79,
+        "changedAt": 1787299500,
         "live": "alive"
       },
       "dotnote-demo": {
@@ -1341,9 +1342,9 @@
         "live": "alive"
       },
       "thisisatest": {
-        "contenthash": "",
+        "contenthash": "bafybeidiki36djyt7etu4w2bzxheluygn6kbzpi36m2shz53kczxkdj4ae",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "throwdown": {
         "contenthash": "bafybeiax7kgm4qxqyaeirpvs42c6vacxrjb72iiauriebnwuvw6fgkwn7e",
