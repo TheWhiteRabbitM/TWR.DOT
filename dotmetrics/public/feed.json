@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787277986,
-  "count": 243,
+  "generatedAt": 1787282849,
+  "count": 244,
   "apps": [
+    {
+      "label": "thisisatest",
+      "domain": "thisisatest.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1787281860,
+      "url": "https://thisisatest.dev-dot.li"
+    },
     {
       "label": "wraptestctl",
       "domain": "wraptestctl.dot",

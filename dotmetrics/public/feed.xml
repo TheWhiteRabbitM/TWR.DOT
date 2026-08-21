@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 21 Aug 2026 02:06:26 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 21 Aug 2026 03:27:29 GMT</lastBuildDate>
+    <item>
+      <title>thisisatest</title>
+      <link>https://thisisatest.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">thisisatest</guid>
+      <pubDate>Fri, 21 Aug 2026 03:11:00 GMT</pubDate>
+    </item>
     <item>
       <title>wraptestctl</title>
       <link>https://wraptestctl.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">worldblog</guid>
       <pubDate>Sat, 08 Aug 2026 14:50:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>SiteForge</title>
-      <link>https://site-forge.dev-dot.li</link>
-      <description>AI website builder on Polkadot Products Devnet. Promo, signup, and builder as a static Product.</description>
-      <guid isPermaLink="false">site-forge</guid>
-      <pubDate>Sat, 08 Aug 2026 09:07:48 GMT</pubDate>
     </item>
   </channel>
 </rss>
