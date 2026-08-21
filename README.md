@@ -1,14 +1,54 @@
-# TWR.DOT: twenty-four apps on the Polkadot App platform
+# TWR.DOT
 
-Apps built end-to-end on the [Polkadot Products Devnet](https://docs.polkadot.com/):
-contracts, frontends, on-chain publishing, gallery manifests and self-updating
-automation. It started with seven in the devnet first three days (July 23 to 26, 2026)
-and kept going. Everything here is live inside the Polkadot app (mobile/desktop)
-and at the `dot.li` web gateway.
+Twenty-four apps built end to end on the [Polkadot Products Devnet](https://docs.polkadot.com/),
+to find out what the platform can actually do by making it do things.
+
+## What this is
+
+Polkadot is building two primitives that do not exist together anywhere else: a
+way to know that somebody is a distinct human without knowing which human, and a
+way to publish an application that no host is holding. Separately, neither is
+new. Together they change what an application can be, and the only way to find
+out how is to build the applications and see which assumptions break.
+
+So this repository is not a demo suite. It is a survey. Each app takes one thing
+people already do — argue, vote, agree a time, split a bill, review a place, keep
+a promise — and asks what happens to it when there is no server, no account, no
+moderator, and no company in the middle that has to still exist next year.
+
+Some of the answers are better than the web2 version. A dead man's switch that
+depends on arithmetic rather than on a company still being alive is strictly
+better. A scheduling poll that never learns your email is strictly better. Some
+answers are worse, and where they are, the README for that app says so.
+
+## What came out of it
+
+Three things worth more than the apps.
+
+**A ring signature verified inside a contract.** `secretballot.dot` counts real
+OpenGov referenda a second way, one person one vote, on a ballot nobody can read.
+The proof is a linkable ring signature checked by the contract itself using the
+bn254 precompiles this chain exposes: no trusted setup, no circuit compiler, no
+ceremony. It means anonymous but sybil-resistant voting is available today, and
+it makes the comparison on that page possible — what the stake decided beside
+what the people decided, on the same referendum.
+
+**A forum nobody can moderate, with the archive intact.** `polkadot-forum.dot`
+carries 3,590 topics imported from forum.polkadot.network with their original
+authors, read only, beside a live board where mask holders write and nothing can
+be deleted. Moderation moves to the reader: personal mute lists, shareable, with
+no central delete button anywhere in the contract.
+
+**Twenty-seven findings for the people building the platform.**
+[`DEVFEEDBACK.md`](DEVFEEDBACK.md) is the part most likely to be useful to
+somebody else: each item is something that cost a day, stated as fact with the
+error text, followed by a suggestion. It includes the shell service worker that
+makes a correct deploy look broken, and one undocumented capability that turned
+out to matter more than anything else here.
 
 Built by Claude Code (Anthropic coding agent) operated by
 [@TheWhiteRabbitM](https://github.com/TheWhiteRabbitM). Devnet only, so tokens
-carry no value.
+carry no value and nothing here is investment advice or a product.
 
 ## Identity, and the things built on it
 

@@ -189,7 +189,58 @@ function choirGlyph(px, py) {
   return cov(d);
 }
 
+
+/** secretballot: the ring, with a tick inside it. The ring is what hides you,
+ *  the tick is what you are still able to say. */
+function ballotGlyph(px, py) {
+  let d = Infinity;
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2 - Math.PI / 2;
+    d = Math.min(d, sdCircle(px, py, 256 + Math.cos(a) * 150, 256 + Math.sin(a) * 150, 19));
+  }
+  const tick = Math.min(sdSeg(px, py, 214, 258, 246, 292, 20), sdSeg(px, py, 246, 292, 306, 216, 20));
+  return cov(Math.min(d, tick));
+}
+
+/** whenwemeet: a calendar with one square filled. Everyone knows the shape, and
+ *  the filled cell is the answer the question was asked for. */
+function meetGlyph(px, py) {
+  const frame = Math.abs(sdRound(px, py, 256, 268, 150, 132, 26)) - 17;
+  const bar = sdSeg(px, py, 120, 196, 392, 196, 9);
+  const peg = Math.min(sdRound(px, py, 190, 128, 15, 26, 12), sdRound(px, py, 322, 128, 15, 26, 12));
+  let cells = Infinity;
+  for (let r = 0; r < 2; r++)
+    for (let c = 0; c < 3; c++) {
+      const on = r === 1 && c === 1;
+      const x = 178 + c * 78, y = 258 + r * 76;
+      cells = Math.min(cells, on ? sdRound(px, py, x, y, 30, 26, 9) : sdCircle(px, py, x, y, 11));
+    }
+  return cov(Math.min(frame, bar, peg, cells));
+}
+
+/** stillhere: a pulse that stops. The line runs, spikes, and flattens, which is
+ *  the whole arrangement in one stroke. */
+function pulseGlyph(px, py) {
+  const p = [[96, 268], [176, 268], [212, 186], [258, 348], [300, 268], [416, 268]];
+  let d = Infinity;
+  for (let i = 0; i < p.length - 1; i++) d = Math.min(d, sdSeg(px, py, p[i][0], p[i][1], p[i+1][0], p[i+1][1], 19));
+  return cov(d);
+}
+
+/** whopays: one round bill, cut. Two lines from the centre are all it takes to
+ *  say a shared thing being divided. */
+function payGlyph(px, py) {
+  const ring = Math.abs(sdCircle(px, py, 256, 256, 148)) - 19;
+  const cut1 = sdSeg(px, py, 256, 256, 256, 108, 15);
+  const cut2 = sdSeg(px, py, 256, 256, 384, 330, 15);
+  return cov(Math.min(ring, cut1, cut2));
+}
+
 const ICONS = [
+  { name: 'secretballot', from: '#ff7aa8', to: '#a3003f', glyph: ballotGlyph },
+  { name: 'whenwemeet', from: '#ffcc70', to: '#a35a08', glyph: meetGlyph },
+  { name: 'stillhere', from: '#7ee8d6', to: '#0d5f6b', glyph: pulseGlyph },
+  { name: 'whopays', from: '#9ae6a0', to: '#1a6b3c', glyph: payGlyph },
   { name: 'dotdirectory', from: '#ffc266', to: '#b45309', glyph: directoryGlyph },
   { name: 'blockchoir', from: '#67e8f9', to: '#0e5f8a', glyph: choirGlyph },
   { name: 'polkadot-forum', from: '#ff4d8d', to: '#b3004f', glyph: forumGlyph },
