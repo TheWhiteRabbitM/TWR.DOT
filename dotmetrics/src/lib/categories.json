@@ -1424,6 +1424,12 @@
     "confidence": "none",
     "why": []
   },
+  "secretballot": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "site-forge": {
     "category": "tools",
     "source": "derived:manifest",
@@ -1466,6 +1472,12 @@
     "why": [
       "wallet"
     ]
+  },
+  "stillhere": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "substrade-hub": {
     "category": "other",
@@ -1634,6 +1646,12 @@
       "fortune~"
     ]
   },
+  "whenwemeet": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "whoisaperson": {
     "category": "identity",
     "source": "derived:manifest",
@@ -1642,6 +1660,12 @@
       "personhood",
       "proof"
     ]
+  },
+  "whopaysdot": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "witnessledger": {
     "category": "other",
