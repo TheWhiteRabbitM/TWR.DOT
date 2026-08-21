@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Fri, 21 Aug 2026 10:56:31 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 21 Aug 2026 11:53:05 GMT</lastBuildDate>
+    <item>
+      <title>blockchoir</title>
+      <link>https://blockchoir.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">blockchoir</guid>
+      <pubDate>Fri, 21 Aug 2026 11:40:24 GMT</pubDate>
+    </item>
     <item>
       <title>thisisatest</title>
       <link>https://thisisatest.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">northvane</guid>
       <pubDate>Sat, 08 Aug 2026 18:29:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>worldblog</title>
-      <link>https://worldblog.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">worldblog</guid>
-      <pubDate>Sat, 08 Aug 2026 14:50:48 GMT</pubDate>
     </item>
   </channel>
 </rss>

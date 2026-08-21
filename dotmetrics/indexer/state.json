@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12483090,
-  "updatedAt": "2026-08-21T10:50:36.453Z",
+  "lastBlock": 12484323,
+  "updatedAt": "2026-08-21T11:45:32.549Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "881dd2a47902d65a0a0839f8a5993b84d9650bc6a3b233c68a05a8323db80ff3",
-    "cid": "bafybeibqbux5zxt5qd4y7a3uv7cyvk22zkz7qt4n2xmysef4h4re6fbo3m",
-    "uploadedAt": "2026-08-21T10:57:42.786Z"
+    "digest": "4bb96742f47fb7a24d6d5075d564334e927f1378229a88b4398164d6d714502c",
+    "cid": "bafybeifxvx7fbyknxuu65utur4j75dfnnbu3v5x2ekiebt2vdlw5yareli",
+    "uploadedAt": "2026-08-21T11:54:11.980Z"
   },
   "sitePublish": {
     "treeHash": "2836508598e5a30bd359ff269a5f19bdf2a57ea15c25d1bcf8bed03923e4081d",
     "publishedAt": "2026-08-21T07:22:15.952Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-21T10:56:30.000Z",
+    "updatedAt": "2026-08-21T11:53:05.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -204,7 +204,8 @@
       "witnessledger": "alive",
       "worldblog-app": "alive",
       "clockchain": "alive",
-      "thisisatest": "alive"
+      "thisisatest": "alive",
+      "blockchoir": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -225,7 +226,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-21T10:56:31.000Z",
+    "updatedAt": "2026-08-21T11:53:05.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -284,6 +285,11 @@
         "contenthash": "",
         "updateCount": 0,
         "live": "unknown"
+      },
+      "blockchoir": {
+        "contenthash": "bafybeifxqiimnajkpiczgum3jddkuclwn7bfpvqgb3ifb47azgrwwqhk6u",
+        "updateCount": 0,
+        "live": "alive"
       },
       "blueprint": {
         "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
@@ -533,9 +539,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifemrginuzynqxfnkjkkf5ausipy3tngk3fx4dqod6iwadhydtree",
-        "updateCount": 162,
-        "changedAt": 1787309791,
+        "contenthash": "bafybeihaqbgfhldpbwdetnsy3vsj7hvg6s4t3lcmvgrksmuxlikkvvjgym",
+        "updateCount": 163,
+        "changedAt": 1787313185,
         "live": "alive"
       },
       "dotcheckapp": {

@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787309791,
-  "count": 244,
+  "generatedAt": 1787313185,
+  "count": 245,
   "apps": [
+    {
+      "label": "blockchoir",
+      "domain": "blockchoir.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787312424,
+      "url": "https://blockchoir.dev-dot.li"
+    },
     {
       "label": "thisisatest",
       "domain": "thisisatest.dot",
