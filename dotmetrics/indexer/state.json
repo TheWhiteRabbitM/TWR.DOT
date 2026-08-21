@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12481690,
-  "updatedAt": "2026-08-21T09:55:16.791Z",
+  "lastBlock": 12483090,
+  "updatedAt": "2026-08-21T10:50:36.453Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "1eb8134fb9b124af08efe036e98cedb8b620ab39bb9fc8d014d7b08f1956eb7e",
-    "cid": "bafybeigx4yhbiwg55ns2jfhwgwmg4laojpn5uhdiplluykiq6rp454mozi",
-    "uploadedAt": "2026-08-21T10:04:55.480Z"
+    "digest": "881dd2a47902d65a0a0839f8a5993b84d9650bc6a3b233c68a05a8323db80ff3",
+    "cid": "bafybeibqbux5zxt5qd4y7a3uv7cyvk22zkz7qt4n2xmysef4h4re6fbo3m",
+    "uploadedAt": "2026-08-21T10:57:42.786Z"
   },
   "sitePublish": {
     "treeHash": "2836508598e5a30bd359ff269a5f19bdf2a57ea15c25d1bcf8bed03923e4081d",
     "publishedAt": "2026-08-21T07:22:15.952Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-21T10:02:57.000Z",
+    "updatedAt": "2026-08-21T10:56:30.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -225,7 +225,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-21T10:02:57.000Z",
+    "updatedAt": "2026-08-21T10:56:31.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -533,9 +533,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidyxpl3oaeuyaolfc2hdkhhrvncub575cqxo6ayv2rkcfrwn4trg4",
-        "updateCount": 161,
-        "changedAt": 1787306577,
+        "contenthash": "bafybeifemrginuzynqxfnkjkkf5ausipy3tngk3fx4dqod6iwadhydtree",
+        "updateCount": 162,
+        "changedAt": 1787309791,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -781,9 +781,9 @@
         "live": "unknown"
       },
       "humanfeed": {
-        "contenthash": "bafybeiafi6fvpdcmqo57xiw4zb4uvlc4egb6przo5k2a4w3nxngccqsnn4",
-        "updateCount": 5,
-        "changedAt": 1787296714,
+        "contenthash": "bafybeifr5tnh77c6ltefvnnuprmlie7r5qf5ocn5nuebeqwb5bfpfcivh4",
+        "updateCount": 6,
+        "changedAt": 1787309791,
         "live": "alive"
       },
       "humanpolls": {
