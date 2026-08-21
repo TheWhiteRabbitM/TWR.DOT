@@ -157,7 +157,41 @@ function aiGlyph(px, py) {
   return Math.max(cov(text) * cut, cov(glass));
 }
 
+
+/** dotdirectory: an index. Rows of different length with a marker beside each,
+ *  which is what a list of names looks like before it looks like anything else. */
+function directoryGlyph(px, py) {
+  const rows = [
+    [150, 400, 150],
+    [150, 356, 226],
+    [150, 312, 302],
+    [150, 268, 378],
+  ];
+  let d = Infinity;
+  for (const [x0, x1, y] of rows) {
+    d = Math.min(d, sdSeg(px, py, x0 + 66, y, x1, y, 19));
+    d = Math.min(d, sdRound(px, py, x0 - 8, y, 19, 19, 6));
+  }
+  return cov(d);
+}
+
+/** blockchoir: four voices at four heights, which is a chord drawn as blocks and
+ *  a step sequencer drawn as music. Same shape either way, which is the app. */
+function choirGlyph(px, py) {
+  const bars = [
+    [140, 300, 118],
+    [222, 256, 202],
+    [304, 330, 148],
+    [386, 214, 244],
+  ];
+  let d = Infinity;
+  for (const [x, top, h] of bars) d = Math.min(d, sdRound(px, py, x, top + h / 2, 30, h / 2, 26));
+  return cov(d);
+}
+
 const ICONS = [
+  { name: 'dotdirectory', from: '#ffc266', to: '#b45309', glyph: directoryGlyph },
+  { name: 'blockchoir', from: '#67e8f9', to: '#0e5f8a', glyph: choirGlyph },
   { name: 'polkadot-forum', from: '#ff4d8d', to: '#b3004f', glyph: forumGlyph },
   { name: 'aidetector', from: '#a78bfa', to: '#4c1d95', glyph: aiGlyph },
 ];

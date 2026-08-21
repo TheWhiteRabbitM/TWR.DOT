@@ -1,0 +1,9 @@
+{
+  "$v": 1,
+  "displayName": "Block Choir",
+  "description": "A piece of music that lives in contract storage. One person adds one note every thirty blocks, on a scale where nothing can clash, so strangers write it together and nobody has to be in charge of it.",
+  "icon": {
+    "cid": "bafybeiby5gbyh7xqhjuhgdqgnurdgkgzcwbqx7glev5a4asbxlfa2am5ka",
+    "format": "png"
+  }
+}

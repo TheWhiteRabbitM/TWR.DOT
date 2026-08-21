@@ -1,0 +1,9 @@
+{
+  "$v": 1,
+  "displayName": "DotDirectory",
+  "description": "The plaintext list of every registered .dot name, kept on chain. DotNS is namehash-keyed and cannot list itself, so this one is built by proposal: anyone can announce a name and it stays announced.",
+  "icon": {
+    "cid": "bafybeiayy5ykqc5xt4lycdgtmcajqlxpcns5hs7f4k3jmop5hhlftpejai",
+    "format": "png"
+  }
+}

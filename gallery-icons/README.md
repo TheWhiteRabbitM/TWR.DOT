@@ -58,3 +58,5 @@ outstanding, because these two names are still held by the pool.
 |---|---|
 | `polkadot-forum.dot` | `bafybeia7sjzysbxolp4i5xraw5twud3yf2ncx6muadt6bnrdhdkivx2vla` |
 | `aidetector.dot` | `bafybeihpdjyg5reeqime67hblqq6es5oag6vfulgu6lebeu4igiiz3k2ma` |
+| `dotdirectory.dot` | `bafybeiayy5ykqc5xt4lycdgtmcajqlxpcns5hs7f4k3jmop5hhlftpejai` |
+| `blockchoir.dot` | `bafybeiby5gbyh7xqhjuhgdqgnurdgkgzcwbqx7glev5a4asbxlfa2am5ka` |
