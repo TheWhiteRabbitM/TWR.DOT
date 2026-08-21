@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12480075,
-  "updatedAt": "2026-08-21T09:00:51.066Z",
+  "lastBlock": 12481690,
+  "updatedAt": "2026-08-21T09:55:16.791Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "c6478f8bb1e4308e6e9c9e151bcda13f26fe4b2abf75b5d8eb3c6fad30895bce",
-    "cid": "bafybeifuygxvtw5umapi6uqv433q6nyy5imgj5zaf2mibmq4ngsmkt2h64",
-    "uploadedAt": "2026-08-21T09:07:28.513Z"
+    "digest": "1eb8134fb9b124af08efe036e98cedb8b620ab39bb9fc8d014d7b08f1956eb7e",
+    "cid": "bafybeigx4yhbiwg55ns2jfhwgwmg4laojpn5uhdiplluykiq6rp454mozi",
+    "uploadedAt": "2026-08-21T10:04:55.480Z"
   },
   "sitePublish": {
     "treeHash": "2836508598e5a30bd359ff269a5f19bdf2a57ea15c25d1bcf8bed03923e4081d",
     "publishedAt": "2026-08-21T07:22:15.952Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-21T09:06:08.000Z",
+    "updatedAt": "2026-08-21T10:02:57.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -225,7 +225,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-21T09:06:08.000Z",
+    "updatedAt": "2026-08-21T10:02:57.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -476,9 +476,9 @@
         "live": "alive"
       },
       "dforms-app": {
-        "contenthash": "bafybeibw5flkonhbp4pfvmwwrxx44bsp62ndbhykg3m3juwy2hu4w2yriy",
-        "updateCount": 3,
-        "changedAt": 1787303168,
+        "contenthash": "bafybeighefl6bu5l42kqwphl7mv2vxvbikvbmiwzn5phkveufpy3l7p44q",
+        "updateCount": 4,
+        "changedAt": 1787306577,
         "live": "alive"
       },
       "discovery": {
@@ -533,9 +533,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeichud42niiuhdhlzuxzhysa26nttu6ri7e6wjstsfddzet5qhz2fe",
-        "updateCount": 160,
-        "changedAt": 1787303168,
+        "contenthash": "bafybeidyxpl3oaeuyaolfc2hdkhhrvncub575cqxo6ayv2rkcfrwn4trg4",
+        "updateCount": 161,
+        "changedAt": 1787306577,
         "live": "alive"
       },
       "dotcheckapp": {
