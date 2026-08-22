@@ -1694,6 +1694,12 @@
     "confidence": "none",
     "why": []
   },
+  "work-commute-app": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "workspace": {
     "category": "other",
     "source": "unclassified",
