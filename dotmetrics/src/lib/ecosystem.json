@@ -1,29 +1,18 @@
 {
-  "measuredAt": 1787374512,
-  "headBlock": 12511637,
+  "measuredAt": 1787377764,
+  "headBlock": 12513254,
   "windowBlocks": 151,
   "windowSeconds": 300,
-  "contractEvents": 1,
-  "activeContracts": 1,
-  "contractCalls": 1,
-  "topCaller": {
-    "address": "0x2ea18af733a6f5525a421e46096c73be19930491",
-    "calls": 1,
-    "reverts": 0
-  },
+  "contractEvents": 0,
+  "activeContracts": 0,
+  "contractCalls": 0,
+  "topCaller": null,
   "reverts": 0,
-  "topContracts": [
-    {
-      "address": "0x41f5594302c46e8d6eb434beebeb0e2e11307454",
-      "events": 1
-    }
-  ],
+  "topContracts": [],
   "perContract": {
-    "headBlock": 12511637,
+    "headBlock": 12513254,
     "windowBlocks": 151,
     "windowSeconds": 300,
-    "events": {
-      "0x41f5594302c46e8d6eb434beebeb0e2e11307454": 1
-    }
+    "events": {}
   }
 }
