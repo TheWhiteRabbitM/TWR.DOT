@@ -47,6 +47,12 @@
     "h": 970,
     "capturedAt": 1786946828
   },
+  "blockchoir": {
+    "file": "shots/blockchoir.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787378426
+  },
   "blueprint": {
     "file": "shots/blueprint.webp",
     "w": 480,
@@ -863,6 +869,12 @@
     "h": 970,
     "capturedAt": 1786947701
   },
+  "secretballot": {
+    "file": "shots/secretballot.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787378385
+  },
   "site-forge": {
     "file": "shots/site-forge.webp",
     "w": 480,
@@ -893,6 +905,12 @@
     "h": 970,
     "capturedAt": 1786008627
   },
+  "stillhere": {
+    "file": "shots/stillhere.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787378405
+  },
   "substrade-hub": {
     "file": "shots/substrade-hub.webp",
     "w": 480,
@@ -922,6 +940,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1787292290
+  },
+  "thisisatest": {
+    "file": "shots/thisisatest.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787378437
   },
   "throwdown": {
     "file": "shots/throwdown.webp",
@@ -977,6 +1001,12 @@
     "h": 970,
     "capturedAt": 1786947275
   },
+  "verifiable-infrastructure": {
+    "file": "shots/verifiable-infrastructure.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787378376
+  },
   "votaciones": {
     "file": "shots/votaciones.webp",
     "w": 480,
@@ -1001,11 +1031,23 @@
     "h": 970,
     "capturedAt": 1786947574
   },
+  "whenwemeet": {
+    "file": "shots/whenwemeet.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787378415
+  },
   "whoisaperson": {
     "file": "shots/whoisaperson.webp",
     "w": 480,
     "h": 970,
     "capturedAt": 1786946879
+  },
+  "whopaysdot": {
+    "file": "shots/whopaysdot.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787378395
   },
   "witnessledger": {
     "file": "shots/witnessledger.webp",
