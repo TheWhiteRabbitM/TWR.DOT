@@ -247,9 +247,9 @@
     "why": []
   },
   "confidaoapp": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "tools",
+    "source": "owner",
+    "confidence": "declared",
     "why": []
   },
   "contribnet01": {
@@ -312,6 +312,15 @@
     "confidence": "medium",
     "why": [
       "community"
+    ]
+  },
+  "dao-personhood": {
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "personhood~",
+      "human"
     ]
   },
   "dashboard": {
