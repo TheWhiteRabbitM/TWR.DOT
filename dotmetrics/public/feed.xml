@@ -4,7 +4,7 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sat, 22 Aug 2026 13:55:04 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 22 Aug 2026 14:46:02 GMT</lastBuildDate>
     <item>
       <title>Verifiable Infrastructure</title>
       <link>https://verifiable-infrastructure.dev-dot.li</link>
@@ -223,9 +223,9 @@
       <pubDate>Thu, 13 Aug 2026 22:31:48 GMT</pubDate>
     </item>
     <item>
-      <title>postespresso</title>
+      <title>Postespresso</title>
       <link>https://postespresso.dev-dot.li</link>
-      <description></description>
+      <description>Create independent publications with sections, authors, and articles, without running a central server.</description>
       <guid isPermaLink="false">postespresso</guid>
       <pubDate>Thu, 13 Aug 2026 19:51:12 GMT</pubDate>
     </item>

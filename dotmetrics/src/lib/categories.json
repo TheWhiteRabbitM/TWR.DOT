@@ -1296,9 +1296,9 @@
     "why": []
   },
   "postespresso": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
+    "category": "publishing",
+    "source": "owner",
+    "confidence": "declared",
     "why": []
   },
   "ppppppppp": {

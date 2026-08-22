@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1787406904,
+  "generatedAt": 1787409962,
   "count": 250,
   "apps": [
     {
@@ -284,9 +284,9 @@
     {
       "label": "postespresso",
       "domain": "postespresso.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "Postespresso",
+      "description": "Create independent publications with sections, authors, and articles, without running a central server.",
+      "tier": 0,
       "firstSeenAt": 1786650672,
       "url": "https://postespresso.dev-dot.li"
     },
