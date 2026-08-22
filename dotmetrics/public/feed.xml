@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sat, 22 Aug 2026 17:44:06 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 22 Aug 2026 18:58:54 GMT</lastBuildDate>
+    <item>
+      <title>work-commute-app</title>
+      <link>https://work-commute-app.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">work-commute-app</guid>
+      <pubDate>Sat, 22 Aug 2026 18:34:24 GMT</pubDate>
+    </item>
     <item>
       <title>Startup Shields</title>
       <link>https://dao-personhood.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">podcasting</guid>
       <pubDate>Sun, 09 Aug 2026 19:37:36 GMT</pubDate>
-    </item>
-    <item>
-      <title>dot-muncher</title>
-      <link>https://dot-muncher.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">dot-muncher</guid>
-      <pubDate>Sun, 09 Aug 2026 15:59:48 GMT</pubDate>
     </item>
   </channel>
 </rss>

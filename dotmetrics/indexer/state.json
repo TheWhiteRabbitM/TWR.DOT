@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12533875,
-  "updatedAt": "2026-08-22T17:38:24.696Z",
+  "lastBlock": 12536080,
+  "updatedAt": "2026-08-22T18:52:34.892Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "7a4db9b5d17ffce16d1d0178913b366f27c579c8ef507cecaf06b34525dac246",
-    "cid": "bafybeifhmiv5nrozodfwmaym2y2pq5e2itb4nyypnh64pnx3un6f4uyjnu",
-    "uploadedAt": "2026-08-22T17:46:39.466Z"
+    "digest": "dd063ca611496f0d5e070acddce2e2e81ca7a12028c22e84cb02bbea3833d05e",
+    "cid": "bafybeiekixa3ao3u5tbogdadgosvgug7kybw2zrdd3u7hbsjim6bygiyya",
+    "uploadedAt": "2026-08-22T19:00:06.491Z"
   },
   "sitePublish": {
     "treeHash": "40dd34d2d961044d2bfb5e5c23854c2242c2cfc635bf2b6792b2f8916ab57549",
     "publishedAt": "2026-08-22T16:54:48.538Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-22T17:44:05.000Z",
+    "updatedAt": "2026-08-22T18:58:54.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -211,7 +211,8 @@
       "whenwemeet": "alive",
       "whopaysdot": "alive",
       "verifiable-infrastructure": "alive",
-      "dao-personhood": "alive"
+      "dao-personhood": "alive",
+      "work-commute-app": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -232,7 +233,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-22T17:44:06.000Z",
+    "updatedAt": "2026-08-22T18:58:54.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -553,9 +554,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeib5yqflbyrzl6brq764hgc5pagou4tmitmw3jqpud6dmdqjpo5ylu",
-        "updateCount": 192,
-        "changedAt": 1787420646,
+        "contenthash": "bafybeibnb3riwt7sm36wlcor6plgno5a7j54vslhqls7eommnvdx6ewari",
+        "updateCount": 193,
+        "changedAt": 1787425134,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1502,6 +1503,11 @@
       },
       "wonderland": {
         "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "work-commute-app": {
+        "contenthash": "bafybeibje5cylhpr2av7cirgwb6fxe6wwgiyr2pmpkeqxrsgufgp3rsetm",
         "updateCount": 0,
         "live": "alive"
       },

@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787420646,
-  "count": 251,
+  "generatedAt": 1787425134,
+  "count": 252,
   "apps": [
+    {
+      "label": "work-commute-app",
+      "domain": "work-commute-app.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787423664,
+      "url": "https://work-commute-app.dev-dot.li"
+    },
     {
       "label": "dao-personhood",
       "domain": "dao-personhood.dot",
