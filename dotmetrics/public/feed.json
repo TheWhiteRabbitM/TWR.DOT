@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787409962,
-  "count": 250,
+  "generatedAt": 1787413557,
+  "count": 251,
   "apps": [
+    {
+      "label": "dao-personhood",
+      "domain": "dao-personhood.dot",
+      "displayName": "Startup Shields",
+      "description": "Human-governed entity formation and counsel-gated capital issuance for Polkadot startups.",
+      "tier": 0,
+      "firstSeenAt": 1787409696,
+      "url": "https://dao-personhood.dev-dot.li"
+    },
     {
       "label": "verifiable-infrastructure",
       "domain": "verifiable-infrastructure.dot",
@@ -599,9 +608,9 @@
     {
       "label": "confidaoapp",
       "domain": "confidaoapp.dot",
-      "displayName": "ConfiDAO",
-      "description": "A 20-seat devnet DAO with encrypted proposals, public voter accounts, encrypted ballot choices, and reproducible tallies.",
-      "tier": 0,
+      "displayName": "",
+      "description": "",
+      "tier": 1,
       "firstSeenAt": 1786029024,
       "url": "https://confidaoapp.dev-dot.li"
     },

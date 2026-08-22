@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sat, 22 Aug 2026 14:46:02 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 22 Aug 2026 15:45:57 GMT</lastBuildDate>
+    <item>
+      <title>Startup Shields</title>
+      <link>https://dao-personhood.dev-dot.li</link>
+      <description>Human-governed entity formation and counsel-gated capital issuance for Polkadot startups.</description>
+      <guid isPermaLink="false">dao-personhood</guid>
+      <pubDate>Sat, 22 Aug 2026 14:41:36 GMT</pubDate>
+    </item>
     <item>
       <title>Verifiable Infrastructure</title>
       <link>https://verifiable-infrastructure.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">dot-muncher</guid>
       <pubDate>Sun, 09 Aug 2026 15:59:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>ChopDot</title>
-      <link>https://chopdotproof02.dev-dot.li</link>
-      <description>Split shared spending, collect payments, and keep one clear group record.</description>
-      <guid isPermaLink="false">chopdotproof02</guid>
-      <pubDate>Sun, 09 Aug 2026 14:11:00 GMT</pubDate>
     </item>
   </channel>
 </rss>

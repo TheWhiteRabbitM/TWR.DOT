@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12528834,
-  "updatedAt": "2026-08-22T14:40:55.694Z",
+  "lastBlock": 12530437,
+  "updatedAt": "2026-08-22T15:38:07.034Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "ddbb1e67ab7fef75c9fe41de768d4aa6a14aedfaee541851a252ed484bcfd81f",
-    "cid": "bafybeibtks7vnejvchxdccxo2zx6nfh5kau54yzx3a3b47yzphirl5ksiy",
-    "uploadedAt": "2026-08-22T14:47:23.872Z"
+    "digest": "15c4780f7162d66f7ccd9d19465ce897b66ef8dbe35f26bbb1c4a8311c995811",
+    "cid": "bafybeiebm4m6god5wh4uarsq5sewlnp3hq7j3nuvuljynw4ifu4fs5uadu",
+    "uploadedAt": "2026-08-22T15:47:34.652Z"
   },
   "sitePublish": {
     "treeHash": "a825759ff477ea89e09391ea49cd632aed6d2f5371b92a9bcb7bb187365ccd3d",
     "publishedAt": "2026-08-22T14:49:09.407Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-22T14:46:02.000Z",
+    "updatedAt": "2026-08-22T15:45:56.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -210,7 +210,8 @@
       "stillhere": "alive",
       "whenwemeet": "alive",
       "whopaysdot": "alive",
-      "verifiable-infrastructure": "alive"
+      "verifiable-infrastructure": "alive",
+      "dao-personhood": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -231,7 +232,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-22T14:46:02.000Z",
+    "updatedAt": "2026-08-22T15:45:57.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -463,6 +464,11 @@
         "updateCount": 0,
         "live": "alive"
       },
+      "dao-personhood": {
+        "contenthash": "bafybeig62itrods2rlrssr6tihwakc5uqrhpsfwrk5gkdwbqu5nhrb5hae",
+        "updateCount": 0,
+        "live": "alive"
+      },
       "dashboard": {
         "contenthash": "",
         "updateCount": 0,
@@ -547,9 +553,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeia4mmwayj5abcsgsgstyaqzcyyffomhsbesdvevvdhvd3ufqj2via",
-        "updateCount": 189,
-        "changedAt": 1787409962,
+        "contenthash": "bafybeiez2tjsla4z4agopmkndsrp7wm3hhujtkn7w4wovm4vchptj5aqfa",
+        "updateCount": 190,
+        "changedAt": 1787413557,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -592,9 +598,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeifnns3p762s6wwbgqukuipxnihtgkzsdfa5tdocmlxolq4j45tpli",
-        "updateCount": 83,
-        "changedAt": 1787385403,
+        "contenthash": "bafybeialsmaula24gbp4ebwlsjb2ky6vrsshbxnzasqxushcbkqo4q3xqm",
+        "updateCount": 84,
+        "changedAt": 1787413557,
         "live": "alive"
       },
       "dotnote-demo": {
@@ -1191,9 +1197,9 @@
         "live": "alive"
       },
       "postespresso": {
-        "contenthash": "bafybeig2ejbozrfo4guy2kr7jldyhnkruwtxzuib2yqnpnqw5jciimlk6u",
-        "updateCount": 9,
-        "changedAt": 1787409962,
+        "contenthash": "bafybeicjqpuoh4tojl7l254o5jpqqpeauyigl52n7mapjrdhhgmnth3ici",
+        "updateCount": 10,
+        "changedAt": 1787413557,
         "live": "alive"
       },
       "ppppppppp": {
