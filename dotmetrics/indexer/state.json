@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12515391,
-  "updatedAt": "2026-08-22T07:03:06.516Z",
+  "lastBlock": 12516772,
+  "updatedAt": "2026-08-22T07:48:44.572Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "f5fba4014e33955b7197d1ad83484120142c77008640b495ca29bb8ea469ccea",
-    "cid": "bafybeib57qpq7skswtei5zky7gfyrnuijilltirsbzubsw34nhhfc5ovni",
-    "uploadedAt": "2026-08-22T07:12:23.665Z"
+    "digest": "71d195dfd81a60bf5a172ba3bbdcebab9002acbb90ef51e42be15e10f50262d4",
+    "cid": "bafybeig4wvbsbg4wwbm6x4bdwfjektsnkccy5qyvfwc24qcclf7aeer4sy",
+    "uploadedAt": "2026-08-22T07:57:55.251Z"
   },
   "sitePublish": {
     "treeHash": "609f27b4226b5682a3d7d856685689d0c627ac6ed181cf62a4717a5acb5bd0d8",
     "publishedAt": "2026-08-22T07:14:58.432Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-22T07:10:57.000Z",
+    "updatedAt": "2026-08-22T07:56:43.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -231,7 +231,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-22T07:10:57.000Z",
+    "updatedAt": "2026-08-22T07:56:43.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -546,9 +546,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeify6wuiu2ll2y7rxfvmeaw4mosyzelx2wsjmsqce7u74yxahcabim",
-        "updateCount": 181,
-        "changedAt": 1787382657,
+        "contenthash": "bafybeibwtihtfkhyyunbcehaiswc6io2crk2ugnwvram4z5b6xoho5x7su",
+        "updateCount": 182,
+        "changedAt": 1787385403,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -591,9 +591,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeidge32ljwvmekz4km6eqzfrhs5h6ikzfudcrftjlfaefjpdsm6xdm",
-        "updateCount": 82,
-        "changedAt": 1787363964,
+        "contenthash": "bafybeifnns3p762s6wwbgqukuipxnihtgkzsdfa5tdocmlxolq4j45tpli",
+        "updateCount": 83,
+        "changedAt": 1787385403,
         "live": "alive"
       },
       "dotnote-demo": {
@@ -1190,9 +1190,9 @@
         "live": "alive"
       },
       "postespresso": {
-        "contenthash": "bafybeidd66etc7ilo73gfpv6xyucxccsatt32q6ixtlo6mjp3y2z66qtfa",
-        "updateCount": 4,
-        "changedAt": 1787382657,
+        "contenthash": "bafybeidr4g7ifjk2a5drinw33iadzph7oltbrnledsdeibyotjtw3tqwse",
+        "updateCount": 5,
+        "changedAt": 1787385403,
         "live": "alive"
       },
       "ppppppppp": {
