@@ -1,20 +1,20 @@
 {
-  "lastBlock": 12532244,
-  "updatedAt": "2026-08-22T16:44:13.879Z",
+  "lastBlock": 12533875,
+  "updatedAt": "2026-08-22T17:38:24.696Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
   "directory": {
-    "digest": "de098839e1387a2c0a8ab35ed4bbc0138c0ec69ea303648ef53ba8e8f7504426",
-    "cid": "bafybeiaatdfyxxheoaqlxpfcmctnspv4o3ni5n7i6uqmmkahxzym6sblnq",
-    "uploadedAt": "2026-08-22T16:52:33.868Z"
+    "digest": "7a4db9b5d17ffce16d1d0178913b366f27c579c8ef507cecaf06b34525dac246",
+    "cid": "bafybeifhmiv5nrozodfwmaym2y2pq5e2itb4nyypnh64pnx3un6f4uyjnu",
+    "uploadedAt": "2026-08-22T17:46:39.466Z"
   },
   "sitePublish": {
     "treeHash": "40dd34d2d961044d2bfb5e5c23854c2242c2cfc635bf2b6792b2f8916ab57549",
     "publishedAt": "2026-08-22T16:54:48.538Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-22T16:51:18.000Z",
+    "updatedAt": "2026-08-22T17:44:05.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -232,7 +232,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-22T16:51:19.000Z",
+    "updatedAt": "2026-08-22T17:44:06.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -553,9 +553,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiclholdc3vqxrdhhoj65hvhx4v3sguzw6npbucfl2pkupes3vuzha",
-        "updateCount": 191,
-        "changedAt": 1787417479,
+        "contenthash": "bafybeib5yqflbyrzl6brq764hgc5pagou4tmitmw3jqpud6dmdqjpo5ylu",
+        "updateCount": 192,
+        "changedAt": 1787420646,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -598,9 +598,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeialsmaula24gbp4ebwlsjb2ky6vrsshbxnzasqxushcbkqo4q3xqm",
-        "updateCount": 84,
-        "changedAt": 1787413557,
+        "contenthash": "bafybeifacw5rwtqjfmxyhx62nz2zdfqlilxsbpc3rvgoohewc5vlwm3w54",
+        "updateCount": 85,
+        "changedAt": 1787420646,
         "live": "alive"
       },
       "dotnote-demo": {
