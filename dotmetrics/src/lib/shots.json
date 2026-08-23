@@ -215,6 +215,12 @@
     "h": 970,
     "capturedAt": 1787292205
   },
+  "dao-personhood": {
+    "file": "shots/dao-personhood.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787464865
+  },
   "detourvzw": {
     "file": "shots/detourvzw.webp",
     "w": 480,
@@ -496,6 +502,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1787292508
+  },
+  "humanfeed": {
+    "file": "shots/humanfeed.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787464891
   },
   "humanpolls": {
     "file": "shots/humanpolls.webp",
@@ -1060,6 +1072,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1786947195
+  },
+  "work-commute-app": {
+    "file": "shots/work-commute-app.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787464854
   },
   "workspace": {
     "file": "shots/workspace.webp",
