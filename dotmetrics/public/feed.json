@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1787598647,
+  "generatedAt": 1787601257,
   "count": 256,
   "apps": [
     {
@@ -33,7 +33,7 @@
       "label": "industrial",
       "domain": "industrial.dot",
       "displayName": "Industrial Sensor",
-      "description": "Live industrial temperature and humidity monitoring through Polkadot Statement Store.",
+      "description": "Live industrial temperature and humidity monitoring through BLE and Polkadot Statement Store.",
       "tier": 0,
       "firstSeenAt": 1787566392,
       "url": "https://industrial.dev-dot.li"
