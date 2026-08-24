@@ -1,13 +1,13 @@
 {
-  "generatedAt": 1787569521,
+  "generatedAt": 1787572324,
   "count": 254,
   "apps": [
     {
       "label": "chopdotapp01",
       "domain": "chopdotapp01.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 1,
+      "displayName": "ChopDot",
+      "description": "Split shared spending, collect payments, and keep one clear group record.",
+      "tier": 0,
       "firstSeenAt": 1787566740,
       "url": "https://chopdotapp01.dev-dot.li"
     },

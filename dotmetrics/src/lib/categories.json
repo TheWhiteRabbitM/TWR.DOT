@@ -185,6 +185,12 @@
     "confidence": "none",
     "why": []
   },
+  "chopdotapp01": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "chopdotproof01": {
     "category": "finance",
     "source": "derived:manifest",
@@ -815,6 +821,12 @@
     "why": []
   },
   "imthebest": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "industrial": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
