@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1787562828,
+  "generatedAt": 1787566458,
   "count": 252,
   "apps": [
     {
@@ -339,7 +339,7 @@
       "label": "common-ground",
       "domain": "common-ground.dot",
       "displayName": "Common Ground",
-      "description": "A Polkadot forum with private masks and optional Proof of Personhood.",
+      "description": "A human-first technical forum on Polkadot, with private masks and optional Proof of Personhood.",
       "tier": 0,
       "firstSeenAt": 1786616508,
       "url": "https://common-ground.dev-dot.li"
