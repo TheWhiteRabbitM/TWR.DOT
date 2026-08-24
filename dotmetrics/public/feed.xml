@@ -4,7 +4,21 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Mon, 24 Aug 2026 10:14:18 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 24 Aug 2026 11:05:21 GMT</lastBuildDate>
+    <item>
+      <title>chopdotapp01</title>
+      <link>https://chopdotapp01.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">chopdotapp01</guid>
+      <pubDate>Mon, 24 Aug 2026 10:19:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Industrial Sensor</title>
+      <link>https://industrial.dev-dot.li</link>
+      <description>Live industrial temperature and humidity monitoring through Polkadot Statement Store.</description>
+      <guid isPermaLink="false">industrial</guid>
+      <pubDate>Mon, 24 Aug 2026 10:13:12 GMT</pubDate>
+    </item>
     <item>
       <title>work-commute-app</title>
       <link>https://work-commute-app.dev-dot.li</link>
@@ -340,20 +354,6 @@
       <description></description>
       <guid isPermaLink="false">gdztestdomain</guid>
       <pubDate>Sun, 09 Aug 2026 21:11:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>ledgerdemo42</title>
-      <link>https://ledgerdemo42.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">ledgerdemo42</guid>
-      <pubDate>Sun, 09 Aug 2026 19:42:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>podcasting</title>
-      <link>https://podcasting.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">podcasting</guid>
-      <pubDate>Sun, 09 Aug 2026 19:37:36 GMT</pubDate>
     </item>
   </channel>
 </rss>

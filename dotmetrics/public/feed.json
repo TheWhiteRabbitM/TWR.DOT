@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1787566458,
-  "count": 252,
+  "generatedAt": 1787569521,
+  "count": 254,
   "apps": [
+    {
+      "label": "chopdotapp01",
+      "domain": "chopdotapp01.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787566740,
+      "url": "https://chopdotapp01.dev-dot.li"
+    },
+    {
+      "label": "industrial",
+      "domain": "industrial.dot",
+      "displayName": "Industrial Sensor",
+      "description": "Live industrial temperature and humidity monitoring through Polkadot Statement Store.",
+      "tier": 0,
+      "firstSeenAt": 1787566392,
+      "url": "https://industrial.dev-dot.li"
+    },
     {
       "label": "work-commute-app",
       "domain": "work-commute-app.dot",

@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12603651,
-  "updatedAt": "2026-08-24T10:07:03.929Z",
+  "lastBlock": 12605146,
+  "updatedAt": "2026-08-24T10:57:10.998Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-24T10:14:18.000Z",
+    "updatedAt": "2026-08-24T11:05:21.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -212,7 +212,9 @@
       "whopaysdot": "alive",
       "verifiable-infrastructure": "alive",
       "dao-personhood": "alive",
-      "work-commute-app": "alive"
+      "work-commute-app": "alive",
+      "chopdotapp01": "alive",
+      "industrial": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -233,7 +235,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-24T10:14:18.000Z",
+    "updatedAt": "2026-08-24T11:05:21.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -374,6 +376,11 @@
       },
       "chirpwatch": {
         "contenthash": "bafybeifmg6s5ellx2rvadu6kjweaumvrhbooflomrhhmw7uz4uhvjfhiti",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "chopdotapp01": {
+        "contenthash": "bafybeig36b2ox2ukmdqddyimy5rrpmll2ojenztzmfkhltwln36aj7fesu",
         "updateCount": 0,
         "live": "alive"
       },
@@ -556,9 +563,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeia4t3vc36gcciiz3pwguo46xsxj3cl37svzx7tixcs3sd5dflwiy4",
-        "updateCount": 229,
-        "changedAt": 1787566458,
+        "contenthash": "bafybeifannuzgxs4zs64umtcjs6zxrfjoth2iazjdn6k743qmv3vzowfvm",
+        "updateCount": 230,
+        "changedAt": 1787569521,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -826,6 +833,11 @@
       },
       "imthebest": {
         "contenthash": "bafybeibythwzgodq7ni2gxogewcdkbgv2qkijfibgzjwfyrinhovnn2jzy",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "industrial": {
+        "contenthash": "bafybeidnkrll4j66qqtezfjgjj7pjhl7smxtywi3chwyaeypeogqhatk4a",
         "updateCount": 0,
         "live": "alive"
       },
