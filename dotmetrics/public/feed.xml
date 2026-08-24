@@ -4,11 +4,11 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Mon, 24 Aug 2026 13:25:14 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 24 Aug 2026 14:11:50 GMT</lastBuildDate>
     <item>
-      <title>ringscanner</title>
+      <title>RingScan</title>
       <link>https://ringscanner.dev-dot.li</link>
-      <description></description>
+      <description>How anonymous is Coinage cash? RingScan measures the real anonymity set of every recycler ring on the People chain - the crowd an unload hides in, denomination by denomination, read live. Read-only: no account, no signature.</description>
       <guid isPermaLink="false">ringscanner</guid>
       <pubDate>Mon, 24 Aug 2026 12:53:36 GMT</pubDate>
     </item>

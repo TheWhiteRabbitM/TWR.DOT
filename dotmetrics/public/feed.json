@@ -1,13 +1,13 @@
 {
-  "generatedAt": 1787577914,
+  "generatedAt": 1787580710,
   "count": 255,
   "apps": [
     {
       "label": "ringscanner",
       "domain": "ringscanner.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 2,
+      "displayName": "RingScan",
+      "description": "How anonymous is Coinage cash? RingScan measures the real anonymity set of every recycler ring on the People chain - the crowd an unload hides in, denomination by denomination, read live. Read-only: no account, no signature.",
+      "tier": 0,
       "firstSeenAt": 1787576016,
       "url": "https://ringscanner.dev-dot.li"
     },

@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12609310,
-  "updatedAt": "2026-08-24T13:17:23.573Z",
+  "lastBlock": 12610811,
+  "updatedAt": "2026-08-24T14:06:33.611Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-24T13:25:13.000Z",
+    "updatedAt": "2026-08-24T14:11:50.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -214,7 +214,8 @@
       "dao-personhood": "alive",
       "work-commute-app": "alive",
       "chopdotapp01": "alive",
-      "industrial": "alive"
+      "industrial": "alive",
+      "ringscanner": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -235,7 +236,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-24T13:25:14.000Z",
+    "updatedAt": "2026-08-24T14:11:50.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -564,9 +565,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeig6wadqyc75vwl2dr66jmiva7swuwt4krv5ehsvrtvnfparqosghu",
-        "updateCount": 232,
-        "changedAt": 1787577914,
+        "contenthash": "bafybeibofybznqqbsbng2kvgnutprbmyy75utibgh4juh3kb57kgqhtrri",
+        "updateCount": 233,
+        "changedAt": 1787580710,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1289,9 +1290,9 @@
         "live": "alive"
       },
       "ringscanner": {
-        "contenthash": "",
+        "contenthash": "bafybeihq5bti5m6lomnqst45mwgvjlqamudfnwy4ftkqeqraaat5jut4ky",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "rrrrrrrrr": {
         "contenthash": "",
