@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Mon, 24 Aug 2026 11:52:04 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 24 Aug 2026 13:25:14 GMT</lastBuildDate>
+    <item>
+      <title>ringscanner</title>
+      <link>https://ringscanner.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">ringscanner</guid>
+      <pubDate>Mon, 24 Aug 2026 12:53:36 GMT</pubDate>
+    </item>
     <item>
       <title>ChopDot</title>
       <link>https://chopdotapp01.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">hindsight</guid>
       <pubDate>Mon, 10 Aug 2026 07:41:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>gdztestdomain</title>
-      <link>https://gdztestdomain.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">gdztestdomain</guid>
-      <pubDate>Sun, 09 Aug 2026 21:11:00 GMT</pubDate>
     </item>
   </channel>
 </rss>

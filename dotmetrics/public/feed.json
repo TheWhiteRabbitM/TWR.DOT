@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787572324,
-  "count": 254,
+  "generatedAt": 1787577914,
+  "count": 255,
   "apps": [
+    {
+      "label": "ringscanner",
+      "domain": "ringscanner.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1787576016,
+      "url": "https://ringscanner.dev-dot.li"
+    },
     {
       "label": "chopdotapp01",
       "domain": "chopdotapp01.dot",

@@ -186,10 +186,12 @@
     "why": []
   },
   "chopdotapp01": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "payments"
+    ]
   },
   "chopdotproof01": {
     "category": "finance",
