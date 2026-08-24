@@ -1423,10 +1423,13 @@
     "why": []
   },
   "ringscanner": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "identity",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "anonymous",
+      "signature"
+    ]
   },
   "rrrrrrrrr": {
     "category": "other",
