@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12612505,
-  "updatedAt": "2026-08-24T15:03:48.696Z",
+  "lastBlock": 12613972,
+  "updatedAt": "2026-08-24T15:58:30.872Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-24T15:10:04.000Z",
+    "updatedAt": "2026-08-24T16:03:55.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -215,7 +215,8 @@
       "work-commute-app": "alive",
       "chopdotapp01": "alive",
       "industrial": "alive",
-      "ringscanner": "alive"
+      "ringscanner": "alive",
+      "web3gitproto": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -236,7 +237,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-24T15:10:04.000Z",
+    "updatedAt": "2026-08-24T16:03:56.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -565,9 +566,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiglr7npdm6xgojbana6surxn3i2xtbhb2uqlkygsfv23mdkaenkza",
-        "updateCount": 234,
-        "changedAt": 1787584204,
+        "contenthash": "bafybeifvnqddoqw5r23mhlxyyb7siynjihaf7pntpdsdm7uze5lqfsxyrm",
+        "updateCount": 235,
+        "changedAt": 1787587436,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -813,9 +814,9 @@
         "live": "unknown"
       },
       "humanfeed": {
-        "contenthash": "bafybeidzfpopartzmvamkh3tpj7asbu36lv4nkndyzspoy65q47zdxnruy",
-        "updateCount": 12,
-        "changedAt": 1787469091,
+        "contenthash": "bafybeifbly4p766rvn7ygbgud5xmbtwgdpbuw7bc4lf6psk3oxpx6623mi",
+        "updateCount": 13,
+        "changedAt": 1787587436,
         "live": "alive"
       },
       "humanpolls": {
@@ -1487,6 +1488,11 @@
         "contenthash": "bafybeihbpqqstbdgrgyb6sanwr7ighhwtq6pkr6q5w2h6qiggv4646d2y4",
         "updateCount": 1,
         "changedAt": 1785886097,
+        "live": "alive"
+      },
+      "web3gitproto": {
+        "contenthash": "bafybeifjc3gmiippcwafvdgfieuai4aqo7y2nz3iod33e4kmkm37yzra3m",
+        "updateCount": 0,
         "live": "alive"
       },
       "web3poker": {

@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787584204,
-  "count": 255,
+  "generatedAt": 1787587436,
+  "count": 256,
   "apps": [
+    {
+      "label": "web3gitproto",
+      "domain": "web3gitproto.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787584224,
+      "url": "https://web3gitproto.dev-dot.li"
+    },
     {
       "label": "ringscanner",
       "domain": "ringscanner.dot",

@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Mon, 24 Aug 2026 15:10:04 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 24 Aug 2026 16:03:56 GMT</lastBuildDate>
+    <item>
+      <title>web3gitproto</title>
+      <link>https://web3gitproto.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">web3gitproto</guid>
+      <pubDate>Mon, 24 Aug 2026 15:10:24 GMT</pubDate>
+    </item>
     <item>
       <title>RingScan</title>
       <link>https://ringscanner.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">drawproof</guid>
       <pubDate>Mon, 10 Aug 2026 07:43:00 GMT</pubDate>
-    </item>
-    <item>
-      <title>hindsight</title>
-      <link>https://hindsight.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">hindsight</guid>
-      <pubDate>Mon, 10 Aug 2026 07:41:48 GMT</pubDate>
     </item>
   </channel>
 </rss>
