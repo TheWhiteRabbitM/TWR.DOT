@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787655462,
-  "count": 256,
+  "generatedAt": 1787658813,
+  "count": 257,
   "apps": [
+    {
+      "label": "blockfall",
+      "domain": "blockfall.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1787657976,
+      "url": "https://blockfall.dev-dot.li"
+    },
     {
       "label": "web3gitproto",
       "domain": "web3gitproto.dot",

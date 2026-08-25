@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Tue, 25 Aug 2026 10:57:42 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 25 Aug 2026 11:53:33 GMT</lastBuildDate>
+    <item>
+      <title>blockfall</title>
+      <link>https://blockfall.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">blockfall</guid>
+      <pubDate>Tue, 25 Aug 2026 11:39:36 GMT</pubDate>
+    </item>
     <item>
       <title>web3gitproto</title>
       <link>https://web3gitproto.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">humanfeed</guid>
       <pubDate>Mon, 10 Aug 2026 10:58:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>drawproof</title>
-      <link>https://drawproof.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">drawproof</guid>
-      <pubDate>Mon, 10 Aug 2026 07:43:00 GMT</pubDate>
     </item>
   </channel>
 </rss>
