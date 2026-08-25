@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12647976,
-  "updatedAt": "2026-08-25T11:47:21.593Z",
+  "lastBlock": 12650409,
+  "updatedAt": "2026-08-25T13:15:08.519Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-25T11:53:33.000Z",
+    "updatedAt": "2026-08-25T13:22:58.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -216,7 +216,8 @@
       "chopdotapp01": "alive",
       "industrial": "alive",
       "ringscanner": "alive",
-      "web3gitproto": "alive"
+      "web3gitproto": "alive",
+      "blockfall": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -237,7 +238,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-25T11:53:33.000Z",
+    "updatedAt": "2026-08-25T13:22:59.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -305,9 +306,9 @@
         "live": "alive"
       },
       "blockfall": {
-        "contenthash": "",
+        "contenthash": "bafybeih7d3l7ec32nxkdcr4hgqgx2oq5chiow66foo4qot53a4ypyth7oa",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "blueprint": {
         "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
@@ -571,9 +572,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeigeebm7zsv7wk3bux5tbfmk7nxlcdghqrf7ir33muf2vlze5swhyy",
-        "updateCount": 254,
-        "changedAt": 1787658813,
+        "contenthash": "bafybeihtoezzu4vlktnwrjc623od2btj4y7hayh32fuae5skdug36452gi",
+        "updateCount": 255,
+        "changedAt": 1787664179,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -819,9 +820,9 @@
         "live": "unknown"
       },
       "humanfeed": {
-        "contenthash": "bafybeifbly4p766rvn7ygbgud5xmbtwgdpbuw7bc4lf6psk3oxpx6623mi",
-        "updateCount": 13,
-        "changedAt": 1787587436,
+        "contenthash": "bafybeidrusagiwqyblvi7vr3ibairkrktchtcapp63uhlvsk7dbircccj4",
+        "updateCount": 14,
+        "changedAt": 1787664179,
         "live": "alive"
       },
       "humanpolls": {

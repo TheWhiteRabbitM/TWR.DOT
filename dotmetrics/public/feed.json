@@ -1,13 +1,13 @@
 {
-  "generatedAt": 1787658813,
+  "generatedAt": 1787664179,
   "count": 257,
   "apps": [
     {
       "label": "blockfall",
       "domain": "blockfall.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 2,
+      "displayName": "BLOCKFALL",
+      "description": "A two-player falling-block battle on one shared stream of pieces. Same material, same order, both boards side by side — your clears become their garbage three seconds later, and they watch it coming. No server, no referee.",
+      "tier": 0,
       "firstSeenAt": 1787657976,
       "url": "https://blockfall.dev-dot.li"
     },
