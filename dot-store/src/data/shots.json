@@ -125,6 +125,12 @@
     "h": 970,
     "capturedAt": 1787553745
   },
+  "chopdotapp01": {
+    "file": "shots/chopdotapp01.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787637841
+  },
   "chopdotproof01": {
     "file": "shots/chopdotproof01.webp",
     "w": 480,
@@ -521,6 +527,12 @@
     "h": 970,
     "capturedAt": 1787553712
   },
+  "industrial": {
+    "file": "shots/industrial.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787637851
+  },
   "italiarovente": {
     "file": "shots/italiarovente.webp",
     "w": 480,
@@ -869,6 +881,12 @@
     "h": 970,
     "capturedAt": 1787553318
   },
+  "ringscanner": {
+    "file": "shots/ringscanner.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787637832
+  },
   "scytaledeploy": {
     "file": "shots/scytaledeploy.webp",
     "w": 480,
@@ -1036,6 +1054,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1787553463
+  },
+  "web3gitproto": {
+    "file": "shots/web3gitproto.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787637822
   },
   "web3poker": {
     "file": "shots/web3poker.webp",
