@@ -4,7 +4,7 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Tue, 25 Aug 2026 17:56:46 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 25 Aug 2026 19:08:54 GMT</lastBuildDate>
     <item>
       <title>BLOCKFALL</title>
       <link>https://blockfall.dev-dot.li</link>
@@ -36,7 +36,7 @@
     <item>
       <title>Industrial Sensor</title>
       <link>https://industrial.dev-dot.li</link>
-      <description>Live industrial temperature and humidity monitoring through BLE and Polkadot Statement Store.</description>
+      <description>Live industrial temperature and humidity telemetry through local HTTP and Polkadot Statement Store.</description>
       <guid isPermaLink="false">industrial</guid>
       <pubDate>Mon, 24 Aug 2026 10:13:12 GMT</pubDate>
     </item>
