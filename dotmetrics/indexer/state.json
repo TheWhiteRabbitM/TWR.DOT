@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12650409,
-  "updatedAt": "2026-08-25T13:15:08.519Z",
+  "lastBlock": 12651987,
+  "updatedAt": "2026-08-25T14:07:05.410Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-25T13:22:58.000Z",
+    "updatedAt": "2026-08-25T14:12:36.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -238,7 +238,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-25T13:22:59.000Z",
+    "updatedAt": "2026-08-25T14:12:36.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -572,9 +572,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeihtoezzu4vlktnwrjc623od2btj4y7hayh32fuae5skdug36452gi",
-        "updateCount": 255,
-        "changedAt": 1787664179,
+        "contenthash": "bafybeidteppl3364hkwuqbrjjf2on7exuyos26tmli77p3xfkgozt344de",
+        "updateCount": 256,
+        "changedAt": 1787667156,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1130,9 +1130,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeih22bsoepsgzibf5acsnvnt3v5y4hbcpaw323epxfcl2idyyerore",
-        "updateCount": 28,
-        "changedAt": 1787551269,
+        "contenthash": "bafybeielki4gumcyljpciy5yxzxd7ysx2tbr7a6o73xt5d4ynaql7dwuqe",
+        "updateCount": 29,
+        "changedAt": 1787667156,
         "live": "alive"
       },
       "peoplewiki": {
@@ -1410,9 +1410,9 @@
         "live": "alive"
       },
       "throwdown": {
-        "contenthash": "bafybeiaqnacv7o5nouynpt4houl4wtmnspitmw73offszwx7otdgzneegm",
-        "updateCount": 1,
-        "changedAt": 1787611957,
+        "contenthash": "bafybeidwyqtegruyk7l7vqlebr44nnmcx6gg73h5kqpbq35iypcaxhaowu",
+        "updateCount": 2,
+        "changedAt": 1787667156,
         "live": "alive"
       },
       "tikami-hello": {

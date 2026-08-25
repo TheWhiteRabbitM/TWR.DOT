@@ -78,10 +78,12 @@
     "why": []
   },
   "blockfall": {
-    "category": "other",
-    "source": "unclassified",
-    "confidence": "none",
-    "why": []
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "player"
+    ]
   },
   "blueprint": {
     "category": "other",
