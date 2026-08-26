@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787728646,
-  "count": 259,
+  "generatedAt": 1787731770,
+  "count": 260,
   "apps": [
+    {
+      "label": "robonomics",
+      "domain": "robonomics.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1787731116,
+      "url": "https://robonomics.dev-dot.li"
+    },
     {
       "label": "debt-pools",
       "domain": "debt-pools.dot",
