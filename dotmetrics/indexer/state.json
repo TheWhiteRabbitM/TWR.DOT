@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12676432,
-  "updatedAt": "2026-08-26T05:00:19.505Z",
+  "lastBlock": 12677909,
+  "updatedAt": "2026-08-26T05:53:13.314Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-26T05:08:10.000Z",
+    "updatedAt": "2026-08-26T06:00:29.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -238,7 +238,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-26T05:08:10.000Z",
+    "updatedAt": "2026-08-26T06:00:29.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -499,6 +499,11 @@
         "updateCount": 0,
         "live": "unknown"
       },
+      "debt-pools": {
+        "contenthash": "",
+        "updateCount": 0,
+        "live": "unknown"
+      },
       "detourvzw": {
         "contenthash": "bafybeicpi5gdfhlnpqdndfuvga443efe3jirzbcsyeljfi4kcuisupf2ze",
         "updateCount": 0,
@@ -573,9 +578,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiaxylsz6gfyigs3tobzho45hidmbuopujm22h5pur3hhh22vdjqca",
-        "updateCount": 269,
-        "changedAt": 1787720890,
+        "contenthash": "bafybeiddzbbn32vij5na3ahyf7viuv4grmxa7lo4xxdlbwhjwj4lfryfqe",
+        "updateCount": 270,
+        "changedAt": 1787724029,
         "live": "alive"
       },
       "dotcheckapp": {

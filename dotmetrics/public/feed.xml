@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 26 Aug 2026 05:08:10 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 26 Aug 2026 06:00:29 GMT</lastBuildDate>
+    <item>
+      <title>debt-pools</title>
+      <link>https://debt-pools.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">debt-pools</guid>
+      <pubDate>Wed, 26 Aug 2026 05:33:12 GMT</pubDate>
+    </item>
     <item>
       <title>orlandotest</title>
       <link>https://orlandotest.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">witnessledger</guid>
       <pubDate>Tue, 11 Aug 2026 14:12:48 GMT</pubDate>
-    </item>
-    <item>
-      <title>dotnote-demo</title>
-      <link>https://dotnote-demo.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">dotnote-demo</guid>
-      <pubDate>Tue, 11 Aug 2026 11:08:12 GMT</pubDate>
     </item>
   </channel>
 </rss>

@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1787720890,
-  "count": 258,
+  "generatedAt": 1787724029,
+  "count": 259,
   "apps": [
+    {
+      "label": "debt-pools",
+      "domain": "debt-pools.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": 1787722392,
+      "url": "https://debt-pools.dev-dot.li"
+    },
     {
       "label": "orlandotest",
       "domain": "orlandotest.dot",
