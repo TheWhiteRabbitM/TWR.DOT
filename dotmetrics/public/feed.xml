@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Wed, 26 Aug 2026 19:31:34 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 26 Aug 2026 23:44:04 GMT</lastBuildDate>
+    <item>
+      <title>abbasnemati</title>
+      <link>https://abbasnemati.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">abbasnemati</guid>
+      <pubDate>Wed, 26 Aug 2026 19:54:36 GMT</pubDate>
+    </item>
     <item>
       <title>robonomics</title>
       <link>https://robonomics.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">p2p-lending</guid>
       <pubDate>Tue, 11 Aug 2026 20:45:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>Hello Dot</title>
-      <link>https://hello.dev-dot.li</link>
-      <description>A one-page introduction to the decentralized web on Polkadot. No server delivered it — the page is a static bundle on Bulletin, bound to a .dot name by its content hash.</description>
-      <guid isPermaLink="false">hello</guid>
-      <pubDate>Tue, 11 Aug 2026 14:37:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

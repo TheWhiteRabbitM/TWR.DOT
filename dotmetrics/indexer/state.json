@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12699796,
-  "updatedAt": "2026-08-26T19:23:32.867Z",
+  "lastBlock": 12705796,
+  "updatedAt": "2026-08-26T23:38:47.353Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-26T19:31:33.000Z",
+    "updatedAt": "2026-08-26T23:44:04.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -219,7 +219,8 @@
       "web3gitproto": "alive",
       "blockfall": "alive",
       "debt-pools": "alive",
-      "robonomics": "alive"
+      "robonomics": "alive",
+      "abbasnemati": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -240,13 +241,18 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-26T19:31:34.000Z",
+    "updatedAt": "2026-08-26T23:44:04.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
         "contenthash": "",
         "updateCount": 0,
         "live": "unknown"
+      },
+      "abbasnemati": {
+        "contenthash": "bafybeihsl2vfsm2jugq7qsucmg3pnkg2pryglpzqacknpnfbi3zmtf4pyi",
+        "updateCount": 0,
+        "live": "alive"
       },
       "adventure": {
         "contenthash": "bafybeies3roffhccpazgqlmicwtsabggu63tunbnmmizuckffgysuhis5i",
@@ -308,9 +314,9 @@
         "live": "alive"
       },
       "blockfall": {
-        "contenthash": "bafybeiac2nnco2dhfvrnjmimjzatxeng2ahdcaeyhobvgua3xmxji2276i",
-        "updateCount": 6,
-        "changedAt": 1787760437,
+        "contenthash": "bafybeidvmdhnol533d7uwi432hwyqwqduufutdv6xjljxkpo747s77qwwu",
+        "updateCount": 7,
+        "changedAt": 1787787844,
         "live": "alive"
       },
       "blueprint": {
@@ -580,9 +586,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeidblzujbcxepgcvn3fcyu5f4h3asrorwaergm2nvqg2532t5dll2y",
-        "updateCount": 280,
-        "changedAt": 1787772694,
+        "contenthash": "bafybeic744mi2i5tpn264kn3wezvdqkquzydko2l4xwr6j2qnjybiqxjyi",
+        "updateCount": 281,
+        "changedAt": 1787787844,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1315,8 +1321,9 @@
         "live": "alive"
       },
       "robonomics": {
-        "contenthash": "bafybeifymxrtip4usc5d656vfai6x7egzh55w6wwanaaprwz6ldpip3p2a",
-        "updateCount": 0,
+        "contenthash": "bafybeibahsrhun3q6bvl6uu3uy55c5yi6pbiz2o4ynpr7ddjbz7hefqyjy",
+        "updateCount": 1,
+        "changedAt": 1787787844,
         "live": "alive"
       },
       "rrrrrrrrr": {
