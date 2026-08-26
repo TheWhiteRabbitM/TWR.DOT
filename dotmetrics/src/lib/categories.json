@@ -354,6 +354,12 @@
     "confidence": "none",
     "why": []
   },
+  "debt-pools": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "detourvzw": {
     "category": "other",
     "source": "unclassified",
