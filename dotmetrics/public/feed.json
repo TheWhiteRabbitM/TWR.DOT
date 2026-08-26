@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1787745219,
+  "generatedAt": 1787750726,
   "count": 260,
   "apps": [
     {
@@ -14,9 +14,9 @@
     {
       "label": "debt-pools",
       "domain": "debt-pools.dot",
-      "displayName": "",
-      "description": "",
-      "tier": 2,
+      "displayName": "Debt Pools",
+      "description": "Debt Pools by Birssa: certified debt portfolios with disclosed risk and recovery-based distributions.",
+      "tier": 0,
       "firstSeenAt": 1787722392,
       "url": "https://debt-pools.dev-dot.li"
     },

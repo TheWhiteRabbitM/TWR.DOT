@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12687451,
-  "updatedAt": "2026-08-26T11:48:16.494Z",
+  "lastBlock": 12689949,
+  "updatedAt": "2026-08-26T13:19:58.942Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-26T11:53:38.000Z",
+    "updatedAt": "2026-08-26T13:25:26.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -217,7 +217,8 @@
       "industrial": "alive",
       "ringscanner": "alive",
       "web3gitproto": "alive",
-      "blockfall": "alive"
+      "blockfall": "alive",
+      "debt-pools": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -238,7 +239,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-26T11:53:39.000Z",
+    "updatedAt": "2026-08-26T13:25:26.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -306,9 +307,9 @@
         "live": "alive"
       },
       "blockfall": {
-        "contenthash": "bafybeig5f46matl3n7nnvqk32xf6spn46i2qhd3qzzw2ofppkyyllme37a",
-        "updateCount": 4,
-        "changedAt": 1787745219,
+        "contenthash": "bafybeicfi3yqz2xqvtq25kduci6x74mbogwg4zlgu2uejm7upnyqnucnze",
+        "updateCount": 5,
+        "changedAt": 1787750726,
         "live": "alive"
       },
       "blueprint": {
@@ -500,9 +501,9 @@
         "live": "unknown"
       },
       "debt-pools": {
-        "contenthash": "",
+        "contenthash": "bafybeibi6c4o23yla7n4zwgsucgtx47smcyd5cycupnlh34th43x4lc4ii",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "detourvzw": {
         "contenthash": "bafybeicpi5gdfhlnpqdndfuvga443efe3jirzbcsyeljfi4kcuisupf2ze",
@@ -578,9 +579,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibmm5zzjlz7jmo2342oc5giynp6g3iuonvqnnwd3fl5mh7enrolhe",
-        "updateCount": 276,
-        "changedAt": 1787745219,
+        "contenthash": "bafybeigak4xwr4n5s6hdx6a7ocmwmqbvtlku2trvlk2tl7nihlh7ehogba",
+        "updateCount": 277,
+        "changedAt": 1787750726,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1426,9 +1427,9 @@
         "live": "alive"
       },
       "throwdown": {
-        "contenthash": "bafybeifuwn5wgcvh54joqsgn7kojnivegdwfiqi3kxk4fepp4354buraxa",
-        "updateCount": 4,
-        "changedAt": 1787710195,
+        "contenthash": "bafybeiezk7fnj3vuie63lrir3cu3lupxictzvbq6ammh4ndup36csjhumy",
+        "updateCount": 5,
+        "changedAt": 1787750726,
         "live": "alive"
       },
       "tikami-hello": {
