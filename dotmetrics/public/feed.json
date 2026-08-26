@@ -1,5 +1,5 @@
 {
-  "generatedAt": 1787750726,
+  "generatedAt": 1787760437,
   "count": 260,
   "apps": [
     {
@@ -7,7 +7,7 @@
       "domain": "robonomics.dot",
       "displayName": "",
       "description": "",
-      "tier": 2,
+      "tier": 1,
       "firstSeenAt": 1787731116,
       "url": "https://robonomics.dev-dot.li"
     },

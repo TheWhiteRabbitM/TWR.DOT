@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12689949,
-  "updatedAt": "2026-08-26T13:19:58.942Z",
+  "lastBlock": 12694227,
+  "updatedAt": "2026-08-26T15:59:51.901Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-26T13:25:26.000Z",
+    "updatedAt": "2026-08-26T16:07:16.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -218,7 +218,8 @@
       "ringscanner": "alive",
       "web3gitproto": "alive",
       "blockfall": "alive",
-      "debt-pools": "alive"
+      "debt-pools": "alive",
+      "robonomics": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -239,7 +240,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-26T13:25:26.000Z",
+    "updatedAt": "2026-08-26T16:07:17.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -307,9 +308,9 @@
         "live": "alive"
       },
       "blockfall": {
-        "contenthash": "bafybeicfi3yqz2xqvtq25kduci6x74mbogwg4zlgu2uejm7upnyqnucnze",
-        "updateCount": 5,
-        "changedAt": 1787750726,
+        "contenthash": "bafybeiac2nnco2dhfvrnjmimjzatxeng2ahdcaeyhobvgua3xmxji2276i",
+        "updateCount": 6,
+        "changedAt": 1787760437,
         "live": "alive"
       },
       "blueprint": {
@@ -579,9 +580,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeigak4xwr4n5s6hdx6a7ocmwmqbvtlku2trvlk2tl7nihlh7ehogba",
-        "updateCount": 277,
-        "changedAt": 1787750726,
+        "contenthash": "bafybeieogwmdz2zhbu4rqlgyjnttz2vwmczyy6p2tne2k32fo6kjwgqkby",
+        "updateCount": 278,
+        "changedAt": 1787760437,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -853,9 +854,9 @@
         "live": "alive"
       },
       "industrial": {
-        "contenthash": "bafybeiha4tuzptlye4wwx2nthumy6enpilnfejp2s7ess6ssnl2ey3xlhe",
-        "updateCount": 6,
-        "changedAt": 1787691272,
+        "contenthash": "bafybeibu726siyie2tc3ai5jypo53iksqcunmlqwrkceczccjrl7kcdmau",
+        "updateCount": 7,
+        "changedAt": 1787760437,
         "live": "alive"
       },
       "ip-assets": {
@@ -1142,9 +1143,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeielki4gumcyljpciy5yxzxd7ysx2tbr7a6o73xt5d4ynaql7dwuqe",
-        "updateCount": 29,
-        "changedAt": 1787667156,
+        "contenthash": "bafybeihe6h6qqh2fvohjpegcckhqaxdaagq5kpq7obddojnwbsuymmduou",
+        "updateCount": 30,
+        "changedAt": 1787760437,
         "live": "alive"
       },
       "peoplewiki": {
@@ -1314,9 +1315,9 @@
         "live": "alive"
       },
       "robonomics": {
-        "contenthash": "",
+        "contenthash": "bafybeifymxrtip4usc5d656vfai6x7egzh55w6wwanaaprwz6ldpip3p2a",
         "updateCount": 0,
-        "live": "unknown"
+        "live": "alive"
       },
       "rrrrrrrrr": {
         "contenthash": "",
@@ -1427,9 +1428,9 @@
         "live": "alive"
       },
       "throwdown": {
-        "contenthash": "bafybeiezk7fnj3vuie63lrir3cu3lupxictzvbq6ammh4ndup36csjhumy",
-        "updateCount": 5,
-        "changedAt": 1787750726,
+        "contenthash": "bafybeifjze7vktwrrz2d2mwkr2j2vyuyvh3zrszuy7fsudje5kyjxu5siu",
+        "updateCount": 6,
+        "changedAt": 1787760437,
         "live": "alive"
       },
       "tikami-hello": {
