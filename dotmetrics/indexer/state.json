@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12711796,
-  "updatedAt": "2026-08-27T09:55:14.544Z",
+  "lastBlock": 12717796,
+  "updatedAt": "2026-08-27T20:36:17.164Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-27T10:00:46.000Z",
+    "updatedAt": "2026-08-27T20:42:50.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -241,7 +241,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-27T10:00:46.000Z",
+    "updatedAt": "2026-08-27T20:42:51.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -314,9 +314,9 @@
         "live": "alive"
       },
       "blockfall": {
-        "contenthash": "bafybeihdyfrejflhaxi75lp4lnuvz7b62rxbogmr5oxhtkh5rea53ihpva",
-        "updateCount": 8,
-        "changedAt": 1787824846,
+        "contenthash": "bafybeiexbvjay2x3yhba63cfvm2pob3fxhnsyejqotmjn6b7mejqgvlnqi",
+        "updateCount": 9,
+        "changedAt": 1787863371,
         "live": "alive"
       },
       "blueprint": {
@@ -586,9 +586,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeieauegoy5wx2oxdv4id6qoxdcpuxn6f2t7trdx5zmy3mreyiubewe",
-        "updateCount": 282,
-        "changedAt": 1787824846,
+        "contenthash": "bafybeicu6hbcwtxhv4miqnykhotiuetr6dx72gdiyz7r7cvoywqryjo2rm",
+        "updateCount": 283,
+        "changedAt": 1787863371,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -834,9 +834,9 @@
         "live": "unknown"
       },
       "humanfeed": {
-        "contenthash": "bafybeidrusagiwqyblvi7vr3ibairkrktchtcapp63uhlvsk7dbircccj4",
-        "updateCount": 14,
-        "changedAt": 1787664179,
+        "contenthash": "bafybeifmcgg6l7lf7gsstzmt5x53quw5brbhjyxdlb7ye5tl3c4zszdrqu",
+        "updateCount": 15,
+        "changedAt": 1787863371,
         "live": "alive"
       },
       "humanpolls": {
@@ -1103,8 +1103,9 @@
         "live": "alive"
       },
       "openraonchain": {
-        "contenthash": "bafybeiagbyhooasrisjrbskcsdd5cwxiwqwrcutvayypsy6om2azuxmt3m",
-        "updateCount": 0,
+        "contenthash": "bafybeignbgz45sdvpguoywhxyfohubusdnlowo6rvimeuo6l5zi3govxsu",
+        "updateCount": 1,
+        "changedAt": 1787863371,
         "live": "alive"
       },
       "openstudios": {
