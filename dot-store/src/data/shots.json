@@ -1,4 +1,10 @@
 {
+  "abbasnemati": {
+    "file": "shots/abbasnemati.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787849314
+  },
   "adventure": {
     "file": "shots/adventure.webp",
     "w": 480,
@@ -232,6 +238,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1787552711
+  },
+  "debt-pools": {
+    "file": "shots/debt-pools.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787849340
   },
   "detourvzw": {
     "file": "shots/detourvzw.webp",
@@ -892,6 +904,12 @@
     "w": 480,
     "h": 970,
     "capturedAt": 1787637832
+  },
+  "robonomics": {
+    "file": "shots/robonomics.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1787849330
   },
   "scytaledeploy": {
     "file": "shots/scytaledeploy.webp",
