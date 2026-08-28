@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12717796,
-  "updatedAt": "2026-08-27T20:36:17.164Z",
+  "lastBlock": 12723796,
+  "updatedAt": "2026-08-28T05:29:53.436Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-27T20:42:50.000Z",
+    "updatedAt": "2026-08-28T05:35:15.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -241,7 +241,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-27T20:42:51.000Z",
+    "updatedAt": "2026-08-28T05:35:16.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -314,9 +314,9 @@
         "live": "alive"
       },
       "blockfall": {
-        "contenthash": "bafybeiexbvjay2x3yhba63cfvm2pob3fxhnsyejqotmjn6b7mejqgvlnqi",
-        "updateCount": 9,
-        "changedAt": 1787863371,
+        "contenthash": "bafybeieo7cbt2h54dxd7hec5ud5fjnuv54l3wkmcdtrizb6gqmxmrnpm6m",
+        "updateCount": 10,
+        "changedAt": 1787895316,
         "live": "alive"
       },
       "blueprint": {
@@ -586,9 +586,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeicu6hbcwtxhv4miqnykhotiuetr6dx72gdiyz7r7cvoywqryjo2rm",
-        "updateCount": 283,
-        "changedAt": 1787863371,
+        "contenthash": "bafybeickelix2jof3ngpzkq26juzn5dtduhs3qe67qklltov2bhjwqpvlq",
+        "updateCount": 284,
+        "changedAt": 1787895316,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -1150,9 +1150,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeihe6h6qqh2fvohjpegcckhqaxdaagq5kpq7obddojnwbsuymmduou",
-        "updateCount": 30,
-        "changedAt": 1787760437,
+        "contenthash": "bafybeifx6bzyekyignsczk7f27hxlrxye4kcwvsdy565a654kejet7qgce",
+        "updateCount": 31,
+        "changedAt": 1787895316,
         "live": "alive"
       },
       "peoplewiki": {
