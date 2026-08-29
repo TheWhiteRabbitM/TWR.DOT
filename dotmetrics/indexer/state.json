@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12741796,
-  "updatedAt": "2026-08-29T09:09:07.628Z",
+  "lastBlock": 12747796,
+  "updatedAt": "2026-08-29T14:34:16.666Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-29T09:14:25.000Z",
+    "updatedAt": "2026-08-29T14:40:03.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -241,7 +241,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-29T09:14:26.000Z",
+    "updatedAt": "2026-08-29T14:40:04.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -314,9 +314,9 @@
         "live": "alive"
       },
       "blockfall": {
-        "contenthash": "bafybeihddzhawq4rkxwe5nhygppf3hewvkvbz2czuko7dukwxrwju2dewq",
-        "updateCount": 13,
-        "changedAt": 1787994866,
+        "contenthash": "bafybeia27ywi64cyhnqeqmxbk7n2ofmv7zmfzwz2uyrjnxnjztmfyjfhy4",
+        "updateCount": 14,
+        "changedAt": 1788014404,
         "live": "alive"
       },
       "blueprint": {
@@ -486,9 +486,9 @@
         "live": "alive"
       },
       "dailydigest": {
-        "contenthash": "bafybeideielin5qma2exvce5g5knlxwb3ewyummmmvrprox3klhqtipk4a",
-        "updateCount": 1,
-        "changedAt": 1787469091,
+        "contenthash": "bafybeigqxnm4fbxgghrfhcfcshmytmyzqu7uplufkaossywsiombnyreee",
+        "updateCount": 2,
+        "changedAt": 1788014404,
         "live": "alive"
       },
       "dao-personhood": {
@@ -586,9 +586,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiay3352gmbzcjr2jc45lpugzy5thhhoparko2kztvpvd3wafsahni",
-        "updateCount": 287,
-        "changedAt": 1787994866,
+        "contenthash": "bafybeibyy222w4yj3fn5tzzspbcuja43dbxsnzen4d5ez4ttauj2imfxye",
+        "updateCount": 288,
+        "changedAt": 1788014404,
         "live": "alive"
       },
       "dotcheckapp": {
