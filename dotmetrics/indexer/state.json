@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12795796,
-  "updatedAt": "2026-08-30T23:35:20.409Z",
+  "lastBlock": 12801796,
+  "updatedAt": "2026-08-31T05:41:46.125Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-08-30T23:40:38.000Z",
+    "updatedAt": "2026-08-31T05:47:00.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -220,7 +220,8 @@
       "blockfall": "alive",
       "debt-pools": "alive",
       "robonomics": "alive",
-      "abbasnemati": "alive"
+      "abbasnemati": "alive",
+      "mylinktree": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -241,7 +242,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-08-30T23:40:38.000Z",
+    "updatedAt": "2026-08-31T05:47:00.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -586,9 +587,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeibjan4juscm62flokamasgw5tmoziqjpc46k6e52l4r4vgfvisxfu",
-        "updateCount": 296,
-        "changedAt": 1788133238,
+        "contenthash": "bafybeidhbeoo5ni6tzqipjhp6a53h7xmezsgegtonjjgkh5f73qgrlaok4",
+        "updateCount": 297,
+        "changedAt": 1788155220,
         "live": "alive"
       },
       "dotcheckapp": {
@@ -990,6 +991,11 @@
       },
       "my-tutorial-app": {
         "contenthash": "bafybeiex2qwovnceuevuo3omcnc3gicxf4dve5pewnywpgiy7oqeapjeay",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "mylinktree": {
+        "contenthash": "bafybeia34vo3mhxtukzrrh5s3vi6fho7rui2komrshs3lmamsaflibqlua",
         "updateCount": 0,
         "live": "alive"
       },
@@ -1490,9 +1496,9 @@
         "live": "unknown"
       },
       "vault-control": {
-        "contenthash": "bafybeiaiimxylyzjzzqoeoqecc3tef76dhnb6j3pcs2qjmkhdfb6ss273y",
-        "updateCount": 8,
-        "changedAt": 1787824846,
+        "contenthash": "bafybeia65j2yeuxvperhvw3zwjqxcreiufwu7rcoi7rjtlarxcvip7erle",
+        "updateCount": 9,
+        "changedAt": 1788155220,
         "live": "alive"
       },
       "verifiable-infrastructure": {

@@ -4,7 +4,14 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Sun, 30 Aug 2026 23:40:38 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 31 Aug 2026 05:47:00 GMT</lastBuildDate>
+    <item>
+      <title>mylinktree</title>
+      <link>https://mylinktree.dev-dot.li</link>
+      <description></description>
+      <guid isPermaLink="false">mylinktree</guid>
+      <pubDate>Sat, 29 Aug 2026 04:56:00 GMT</pubDate>
+    </item>
     <item>
       <title>abbasnemati</title>
       <link>https://abbasnemati.dev-dot.li</link>
@@ -347,13 +354,6 @@
       <description></description>
       <guid isPermaLink="false">openraonchain</guid>
       <pubDate>Wed, 12 Aug 2026 02:13:24 GMT</pubDate>
-    </item>
-    <item>
-      <title>p2p-lending</title>
-      <link>https://p2p-lending.dev-dot.li</link>
-      <description></description>
-      <guid isPermaLink="false">p2p-lending</guid>
-      <pubDate>Tue, 11 Aug 2026 20:45:24 GMT</pubDate>
     </item>
   </channel>
 </rss>

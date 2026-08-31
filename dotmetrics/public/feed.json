@@ -1,7 +1,16 @@
 {
-  "generatedAt": 1788133238,
-  "count": 261,
+  "generatedAt": 1788155220,
+  "count": 262,
   "apps": [
+    {
+      "label": "mylinktree",
+      "domain": "mylinktree.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1787979360,
+      "url": "https://mylinktree.dev-dot.li"
+    },
     {
       "label": "abbasnemati",
       "domain": "abbasnemati.dot",
