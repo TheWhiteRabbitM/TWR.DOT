@@ -1,6 +1,6 @@
 {
-  "lastBlock": 12879796,
-  "updatedAt": "2026-09-02T14:35:34.507Z",
+  "lastBlock": 12885796,
+  "updatedAt": "2026-09-02T18:48:48.289Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [
@@ -341,6 +341,7 @@
     "rainbowprobe",
     "rampatlas",
     "rdjdv",
+    "redesignsubsquaretest",
     "refactfinalz",
     "reputacion",
     "rg3q",
