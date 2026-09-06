@@ -1,6 +1,6 @@
 {
-  "lastBlock": 13035796,
-  "updatedAt": "2026-09-06T14:17:00.299Z",
+  "lastBlock": 13041796,
+  "updatedAt": "2026-09-06T17:10:58.288Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [
@@ -108,6 +108,7 @@
     "dotmailbox",
     "dotmetrics",
     "dotnote-demo",
+    "dotns",
     "dotparcel",
     "dotusd",
     "doyoulike",
@@ -320,6 +321,7 @@
     "polkashoot",
     "postespresso",
     "ppppppppp",
+    "pr22",
     "proofoftake",
     "provenveil",
     "public-research",
