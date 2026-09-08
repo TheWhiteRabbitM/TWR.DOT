@@ -1,6 +1,6 @@
 {
-  "lastBlock": 13089796,
-  "updatedAt": "2026-09-07T23:36:14.429Z",
+  "lastBlock": 13095796,
+  "updatedAt": "2026-09-08T04:43:48.602Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [
@@ -285,6 +285,7 @@
     "ogk4",
     "ohoy",
     "oj98",
+    "oneperson",
     "ooooooooo",
     "oopsydaisy",
     "open-docs",
