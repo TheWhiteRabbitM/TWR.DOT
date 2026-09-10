@@ -1,6 +1,6 @@
 {
-  "lastBlock": 13167796,
-  "updatedAt": "2026-09-10T04:56:18.907Z",
+  "lastBlock": 13173796,
+  "updatedAt": "2026-09-10T09:50:29.179Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [
@@ -29,6 +29,7 @@
     "blockchoir",
     "blockfall",
     "blueprint",
+    "bmbr",
     "bobman-dev",
     "bonbonbon",
     "broadside",
@@ -95,6 +96,7 @@
     "docs",
     "domain-app",
     "domainservice",
+    "donations",
     "doomarcade00",
     "dot-drive",
     "dot-muncher",
@@ -384,6 +386,7 @@
     "substrade-hub",
     "svqk",
     "sx4y",
+    "sy0r",
     "sybildrop",
     "t49f",
     "t8lz",
