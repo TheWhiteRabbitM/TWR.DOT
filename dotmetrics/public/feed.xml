@@ -4,7 +4,7 @@
     <title>dotmetrics — .dot ecosystem registrations</title>
     <link>https://dotmetrics.dot</link>
     <description>Newly registered .dot names, most recent first.</description>
-    <lastBuildDate>Mon, 31 Aug 2026 05:47:00 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 17 Sep 2026 13:39:47 GMT</lastBuildDate>
     <item>
       <title>mylinktree</title>
       <link>https://mylinktree.dev-dot.li</link>
@@ -71,7 +71,7 @@
     <item>
       <title>Industrial Sensor</title>
       <link>https://industrial.dev-dot.li</link>
-      <description>Live industrial temperature and humidity telemetry through local HTTP and Polkadot Statement Store.</description>
+      <description>Industrial telemetry and paid actuator triggers through Polkadot Celerity and Asset Hub.</description>
       <guid isPermaLink="false">industrial</guid>
       <pubDate>Mon, 24 Aug 2026 10:13:12 GMT</pubDate>
     </item>
@@ -239,7 +239,7 @@
     <item>
       <title>DOT Creatures</title>
       <link>https://creatures.dev-dot.li</link>
-      <description>On-chain creature battling game on Polkadot. Mint, battle, trade, and stake unique NFT creatures.</description>
+      <description>Create a fighter, battle practice opponents, and trade with other players. Free test game on Polkadot.</description>
       <guid isPermaLink="false">creatures</guid>
       <pubDate>Tue, 18 Aug 2026 05:39:36 GMT</pubDate>
     </item>

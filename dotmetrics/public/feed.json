@@ -1,6 +1,6 @@
 {
-  "generatedAt": 1788155220,
-  "count": 262,
+  "generatedAt": 1789652387,
+  "count": 273,
   "apps": [
     {
       "label": "mylinktree",
@@ -87,7 +87,7 @@
       "label": "industrial",
       "domain": "industrial.dot",
       "displayName": "Industrial Sensor",
-      "description": "Live industrial temperature and humidity telemetry through local HTTP and Polkadot Statement Store.",
+      "description": "Industrial telemetry and paid actuator triggers through Polkadot Celerity and Asset Hub.",
       "tier": 0,
       "firstSeenAt": 1787566392,
       "url": "https://industrial.dev-dot.li"
@@ -303,7 +303,7 @@
       "label": "creatures",
       "domain": "creatures.dot",
       "displayName": "DOT Creatures",
-      "description": "On-chain creature battling game on Polkadot. Mint, battle, trade, and stake unique NFT creatures.",
+      "description": "Create a fighter, battle practice opponents, and trade with other players. Free test game on Polkadot.",
       "tier": 0,
       "firstSeenAt": 1787031576,
       "url": "https://creatures.dev-dot.li"
@@ -636,7 +636,7 @@
       "label": "whoisaperson",
       "domain": "whoisaperson.dot",
       "displayName": "Personhood Explorer",
-      "description": "Look up proof-of-personhood state for any account. Shows registration on the People chain, the contextual alias, and whether a .dot name is claimable. Read-only.",
+      "description": "Who is this? Enter an SS58 address, an EVM address, a .01 username or a .dot name and see all of them together, plus proof-of-personhood state — and what each result actually establishes, which is usually less than the tier name suggests. Read-only.",
       "tier": 0,
       "firstSeenAt": 1786158588,
       "url": "https://whoisaperson.dev-dot.li"
@@ -2359,6 +2359,105 @@
       "tier": 0,
       "firstSeenAt": 1784844996,
       "url": "https://thebutton.dev-dot.li"
+    },
+    {
+      "label": "donations",
+      "domain": "donations.dot",
+      "displayName": "Donations",
+      "description": "Public CASH pots. Anyone who opens the app sees them. Donate from Mobile.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://donations.dev-dot.li"
+    },
+    {
+      "label": "dotcatalog",
+      "domain": "dotcatalog.dot",
+      "displayName": "dotcatalog",
+      "description": "Every registered .dot name, read from the chain each time the page opens. Search by name or description, filter by whether a name has a site and a manifest. No submissions, no index, nothing stored between visits.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://dotcatalog.dev-dot.li"
+    },
+    {
+      "label": "dotns",
+      "domain": "dotns.dot",
+      "displayName": "DotNS",
+      "description": "Register and manage .dot names on Polkadot.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://dotns.dev-dot.li"
+    },
+    {
+      "label": "gavunwudxyz",
+      "domain": "gavunwudxyz.dot",
+      "displayName": "WUD Memecoin — gavunwud.xyz",
+      "description": "$WUD: memes, utility, and community madness on Polkadot. Flappy WUD play-to-earn, WUD Universe NFTs, Gavun AI, tokenomics and the full wiki — the gavunwud.xyz site, on-chain with no host.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://gavunwudxyz.dev-dot.li"
+    },
+    {
+      "label": "kiloeditor",
+      "domain": "kiloeditor.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": null,
+      "url": "https://kiloeditor.dev-dot.li"
+    },
+    {
+      "label": "oneperson",
+      "domain": "oneperson.dot",
+      "displayName": "One Person",
+      "description": "A game about proving you are one person without saying who you are, and where that proof stops working. You play the attacker. Built on a dated snapshot of 275 real ring VRF keys — no chain reads, nothing to rot.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://oneperson.dev-dot.li"
+    },
+    {
+      "label": "oopsydaisy",
+      "domain": "oopsydaisy.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": null,
+      "url": "https://oopsydaisy.dev-dot.li"
+    },
+    {
+      "label": "perantoapp",
+      "domain": "perantoapp.dot",
+      "displayName": "Peranto",
+      "description": "did:peranto — identidad, attesters y anclas on-chain en el Products Devnet.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://perantoapp.dev-dot.li"
+    },
+    {
+      "label": "pvterminal",
+      "domain": "pvterminal.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 2,
+      "firstSeenAt": null,
+      "url": "https://pvterminal.dev-dot.li"
+    },
+    {
+      "label": "redesignsubsquaretest",
+      "domain": "redesignsubsquaretest.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": null,
+      "url": "https://redesignsubsquaretest.dev-dot.li"
+    },
+    {
+      "label": "vados-door",
+      "domain": "vados-door.dot",
+      "displayName": "Door Keys",
+      "description": "Select Alice, Bob, both, or neither, then Apply to update the RFID door.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://vados-door.dev-dot.li"
     }
   ]
 }
