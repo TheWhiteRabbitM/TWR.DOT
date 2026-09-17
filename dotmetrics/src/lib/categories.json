@@ -324,9 +324,10 @@
   "creatures": {
     "category": "games",
     "source": "derived:manifest",
-    "confidence": "medium",
+    "confidence": "high",
     "why": [
-      "game"
+      "game",
+      "players"
     ]
   },
   "dailydigest": {
@@ -435,6 +436,12 @@
     "confidence": "none",
     "why": []
   },
+  "donations": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "doomarcade00": {
     "category": "games",
     "source": "derived:app-text",
@@ -476,6 +483,15 @@
     "source": "owner",
     "confidence": "declared",
     "why": []
+  },
+  "dotcatalog": {
+    "category": "publishing",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "page",
+      "site"
+    ]
   },
   "dotcheckapp": {
     "category": "social",
@@ -542,6 +558,12 @@
     "why": []
   },
   "dotnote-demo": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "dotns": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -688,6 +710,14 @@
     "source": "unclassified",
     "confidence": "none",
     "why": []
+  },
+  "gavunwudxyz": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "medium",
+    "why": [
+      "play"
+    ]
   },
   "gdztestdomain": {
     "category": "other",
@@ -879,6 +909,12 @@
     "why": []
   },
   "jjjjjjjjj": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "kiloeditor": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -1150,7 +1186,22 @@
     "confidence": "none",
     "why": []
   },
+  "oneperson": {
+    "category": "games",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "game",
+      "play"
+    ]
+  },
   "ooooooooo": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "oopsydaisy": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
@@ -1243,6 +1294,12 @@
     "category": "identity",
     "source": "owner",
     "confidence": "declared",
+    "why": []
+  },
+  "perantoapp": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
     "why": []
   },
   "petitions": {
@@ -1387,6 +1444,12 @@
       "bulletin"
     ]
   },
+  "pvterminal": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "qqqqqqqqq": {
     "category": "other",
     "source": "unclassified",
@@ -1441,6 +1504,12 @@
     "why": [
       "atlas~"
     ]
+  },
+  "redesignsubsquaretest": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "refactfinalz": {
     "category": "other",
@@ -1668,6 +1737,12 @@
     ]
   },
   "uuuuuuuuu": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "vados-door": {
     "category": "other",
     "source": "unclassified",
     "confidence": "none",
