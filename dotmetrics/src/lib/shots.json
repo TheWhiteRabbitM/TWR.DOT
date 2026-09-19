@@ -299,6 +299,12 @@
     "h": 970,
     "capturedAt": 1789384433
   },
+  "donations": {
+    "file": "shots/donations.webp",
+    "w": 480,
+    "h": 970,
+    "capturedAt": 1789811247
+  },
   "doomarcade00": {
     "file": "shots/doomarcade00.webp",
     "w": 480,
