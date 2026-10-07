@@ -1,6 +1,6 @@
 {
-  "lastBlock": 13920833,
-  "updatedAt": "2026-10-07T01:38:47.188Z",
+  "lastBlock": 13926833,
+  "updatedAt": "2026-10-07T08:45:38.742Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [
@@ -304,6 +304,7 @@
     "ozjh",
     "p2p-lending",
     "pactprotocol",
+    "paidaccess",
     "paperplane",
     "parlement-populaire",
     "pas-faucet-smoke",
