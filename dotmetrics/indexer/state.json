@@ -1,6 +1,6 @@
 {
-  "lastBlock": 14166833,
-  "updatedAt": "2026-10-16T17:30:54.875Z",
+  "lastBlock": 14172833,
+  "updatedAt": "2026-10-16T21:15:45.846Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [
@@ -188,6 +188,7 @@
     "hddddddddddd",
     "hdddj",
     "hello",
+    "hello-devnet",
     "hello-devnet-ynrc46",
     "hello-world-app",
     "hello-world-bernar",
@@ -195,6 +196,7 @@
     "hellodotworld",
     "helloworld",
     "hermes-agent-test",
+    "hfbd",
     "hhhhhhhhh",
     "hidw",
     "hindsight",
