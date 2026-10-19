@@ -1,44 +1,54 @@
 {
-  "measuredAt": 1789681056,
-  "headBlock": 13376361,
+  "measuredAt": 1792424772,
+  "headBlock": 14647780,
   "windowBlocks": 151,
-  "windowSeconds": 312,
-  "contractEvents": 121,
-  "activeContracts": 4,
-  "contractCalls": 4,
+  "windowSeconds": 348,
+  "contractEvents": 15,
+  "activeContracts": 6,
+  "contractCalls": 7,
   "topCaller": {
     "address": "0x216db17653c22dcb9a4d387b1e45f57102a30ca7",
-    "calls": 4,
+    "calls": 5,
     "reverts": 0
   },
   "reverts": 0,
   "topContracts": [
     {
-      "address": "0x7e75491ecfb04900eb05ee63caba2b33900aabb5",
-      "events": 67
-    },
-    {
-      "address": "0xb052e5efc5adeff1f21d48defb5169cb394a1a73",
-      "events": 50
+      "address": "0xb60e91ccacd08b6cb0ddb2e678f90791901e9338",
+      "events": 3
     },
     {
       "address": "0x86dbe5528b8f7a490fd090319e241340c9765687",
-      "events": 2
+      "events": 3
+    },
+    {
+      "address": "0xeb638324aecac23207f6f1d81d651d1638511d2a",
+      "events": 3
+    },
+    {
+      "address": "0x4103d0c53de8980415d02d35bf3e20f9708de487",
+      "events": 3
     },
     {
       "address": "0xdf37c7be00c52b8872277f16217bd92dd7960010",
       "events": 2
+    },
+    {
+      "address": "0x3dfa1599592aea38e89f55d1cb5cd305b3fdb428",
+      "events": 1
     }
   ],
   "perContract": {
-    "headBlock": 13376361,
+    "headBlock": 14647780,
     "windowBlocks": 151,
-    "windowSeconds": 312,
+    "windowSeconds": 348,
     "events": {
-      "0x7e75491ecfb04900eb05ee63caba2b33900aabb5": 67,
-      "0xb052e5efc5adeff1f21d48defb5169cb394a1a73": 50,
-      "0x86dbe5528b8f7a490fd090319e241340c9765687": 2,
-      "0xdf37c7be00c52b8872277f16217bd92dd7960010": 2
+      "0xb60e91ccacd08b6cb0ddb2e678f90791901e9338": 3,
+      "0x86dbe5528b8f7a490fd090319e241340c9765687": 3,
+      "0xeb638324aecac23207f6f1d81d651d1638511d2a": 3,
+      "0x4103d0c53de8980415d02d35bf3e20f9708de487": 3,
+      "0xdf37c7be00c52b8872277f16217bd92dd7960010": 2,
+      "0x3dfa1599592aea38e89f55d1cb5cd305b3fdb428": 1
     }
   }
 }

@@ -1,6 +1,6 @@
 {
-  "generatedAt": 1789681266,
-  "count": 273,
+  "generatedAt": 1792424980,
+  "count": 277,
   "apps": [
     {
       "label": "mylinktree",
@@ -2361,6 +2361,15 @@
       "url": "https://thebutton.dev-dot.li"
     },
     {
+      "label": "aggr-trade",
+      "domain": "aggr-trade.dot",
+      "displayName": "DOT / AGGR",
+      "description": "Live DOT spot and perpetual trades, aggregated price charts, trade audio, and liquidations.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://aggr-trade.dev-dot.li"
+    },
+    {
       "label": "donations",
       "domain": "donations.dot",
       "displayName": "Donations",
@@ -2397,6 +2406,15 @@
       "url": "https://gavunwudxyz.dev-dot.li"
     },
     {
+      "label": "hello-devnet",
+      "domain": "hello-devnet.dot",
+      "displayName": "Hello Devnet",
+      "description": "Hello world Polkadot Product to test deployment on the Products devnet.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://hello-devnet.dev-dot.li"
+    },
+    {
       "label": "kiloeditor",
       "domain": "kiloeditor.dot",
       "displayName": "",
@@ -2422,6 +2440,15 @@
       "tier": 1,
       "firstSeenAt": null,
       "url": "https://oopsydaisy.dev-dot.li"
+    },
+    {
+      "label": "paidaccess",
+      "domain": "paidaccess.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": null,
+      "url": "https://paidaccess.dev-dot.li"
     },
     {
       "label": "perantoapp",
@@ -2458,6 +2485,15 @@
       "tier": 0,
       "firstSeenAt": null,
       "url": "https://vados-door.dev-dot.li"
+    },
+    {
+      "label": "vpn-market",
+      "domain": "vpn-market.dot",
+      "displayName": "VPN 集市",
+      "description": "Anonymous VPN marketplace prototype: sellers list WireGuard/Xray/Shadowsocks nodes, buyers pay into escrow released per second, configs delivered end-to-end encrypted on-chain.",
+      "tier": 0,
+      "firstSeenAt": null,
+      "url": "https://vpn-market.dev-dot.li"
     }
   ]
 }
