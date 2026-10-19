@@ -1,6 +1,6 @@
 {
-  "lastBlock": 14268833,
-  "updatedAt": "2026-10-19T15:42:51.970Z",
+  "lastBlock": 14274833,
+  "updatedAt": "2026-10-19T21:08:40.561Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-10-19T15:49:39.000Z",
+    "updatedAt": "2026-10-19T21:14:02.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -255,7 +255,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-10-19T15:49:40.000Z",
+    "updatedAt": "2026-10-19T21:14:03.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -612,9 +612,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiezfyr4klzao26pw762kfqknyktirudug45t6br3x7xkgzxihvf4u",
-        "updateCount": 301,
-        "changedAt": 1792424980,
+        "contenthash": "bafybeihtz74fk26hxp2p6mqpac36b3isvuwuaw6wefspevchjiupltcedm",
+        "updateCount": 302,
+        "changedAt": 1792444443,
         "live": "alive"
       },
       "dotcatalog": {

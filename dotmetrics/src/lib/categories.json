@@ -17,6 +17,15 @@
     "confidence": "none",
     "why": []
   },
+  "aggr-trade": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "price",
+      "trade"
+    ]
+  },
   "aidetector": {
     "category": "other",
     "source": "unclassified",
@@ -766,6 +775,15 @@
       "bulletin"
     ]
   },
+  "hello-devnet": {
+    "category": "curiosities",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "hello",
+      "hello world"
+    ]
+  },
   "hello-devnet-ynrc46": {
     "category": "curiosities",
     "source": "derived:app-text",
@@ -1257,6 +1275,12 @@
       "escrow~",
       "marketplace~"
     ]
+  },
+  "paidaccess": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
   },
   "paperplane": {
     "category": "other",
@@ -1765,6 +1789,16 @@
     "source": "unclassified",
     "confidence": "none",
     "why": []
+  },
+  "vpn-market": {
+    "category": "finance",
+    "source": "derived:manifest",
+    "confidence": "high",
+    "why": [
+      "escrow",
+      "market~",
+      "marketplace"
+    ]
   },
   "vvvvvvvvv": {
     "category": "other",
