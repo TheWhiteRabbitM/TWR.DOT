@@ -1,67 +1,29 @@
 {
-  "measuredAt": 1792625400,
-  "headBlock": 14743769,
+  "measuredAt": 1792645092,
+  "headBlock": 14753469,
   "windowBlocks": 151,
   "windowSeconds": 312,
-  "contractEvents": 59,
-  "activeContracts": 11,
-  "contractCalls": 5,
+  "contractEvents": 3,
+  "activeContracts": 1,
+  "contractCalls": 3,
   "topCaller": {
     "address": "0x216db17653c22dcb9a4d387b1e45f57102a30ca7",
-    "calls": 5,
+    "calls": 3,
     "reverts": 0
   },
   "reverts": 0,
   "topContracts": [
     {
-      "address": "0xc3a3edab753f91488fd84e6134b5b0325dc22452",
-      "events": 22
-    },
-    {
-      "address": "0xb052e5efc5adeff1f21d48defb5169cb394a1a73",
-      "events": 6
-    },
-    {
-      "address": "0x398912c9bb03180ff049f0e034fe2e0024fb8406",
-      "events": 6
-    },
-    {
-      "address": "0x5df012daa06ca2602da153309c2e3a83284cb879",
-      "events": 5
-    },
-    {
-      "address": "0xc150df736fd7f3c2346a3ee4aff1292ab0e518b6",
-      "events": 3
-    },
-    {
       "address": "0x86dbe5528b8f7a490fd090319e241340c9765687",
-      "events": 3
-    },
-    {
-      "address": "0x51d07e49333089a7ec93176eba3f46ac1c1bb76d",
-      "events": 3
-    },
-    {
-      "address": "0xde94b9c414c2eadf5adf39bccf7c75cba4ae6b58",
       "events": 3
     }
   ],
   "perContract": {
-    "headBlock": 14743769,
+    "headBlock": 14753469,
     "windowBlocks": 151,
     "windowSeconds": 312,
     "events": {
-      "0xc3a3edab753f91488fd84e6134b5b0325dc22452": 22,
-      "0xb052e5efc5adeff1f21d48defb5169cb394a1a73": 6,
-      "0x398912c9bb03180ff049f0e034fe2e0024fb8406": 6,
-      "0x5df012daa06ca2602da153309c2e3a83284cb879": 5,
-      "0xc150df736fd7f3c2346a3ee4aff1292ab0e518b6": 3,
-      "0x86dbe5528b8f7a490fd090319e241340c9765687": 3,
-      "0x51d07e49333089a7ec93176eba3f46ac1c1bb76d": 3,
-      "0xde94b9c414c2eadf5adf39bccf7c75cba4ae6b58": 3,
-      "0x22a1e8ef1121e9f45e5fd9065f4f9a5a8a7144ad": 3,
-      "0x8c86ced3a1cefb2d96ece3179513f62e98d9622a": 3,
-      "0xdf37c7be00c52b8872277f16217bd92dd7960010": 2
+      "0x86dbe5528b8f7a490fd090319e241340c9765687": 3
     }
   }
 }
