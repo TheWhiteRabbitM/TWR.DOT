@@ -1,7 +1,25 @@
 {
-  "generatedAt": 1792866151,
-  "count": 277,
+  "generatedAt": 1792875683,
+  "count": 279,
   "apps": [
+    {
+      "label": "fino-dsantos00",
+      "domain": "fino-dsantos00.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1791992256,
+      "url": "https://fino-dsantos00.dev-dot.li"
+    },
+    {
+      "label": "fino-dsantos",
+      "domain": "fino-dsantos.dot",
+      "displayName": "",
+      "description": "",
+      "tier": 1,
+      "firstSeenAt": 1791991656,
+      "url": "https://fino-dsantos.dev-dot.li"
+    },
     {
       "label": "mylinktree",
       "domain": "mylinktree.dot",

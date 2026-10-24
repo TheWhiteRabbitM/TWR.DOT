@@ -1,6 +1,6 @@
 {
-  "lastBlock": 14430833,
-  "updatedAt": "2026-10-24T18:15:08.456Z",
+  "lastBlock": 14436833,
+  "updatedAt": "2026-10-24T20:56:00.976Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-10-24T18:22:31.000Z",
+    "updatedAt": "2026-10-24T21:01:23.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -234,7 +234,9 @@
       "aggr-trade": "alive",
       "hello-devnet": "alive",
       "paidaccess": "alive",
-      "vpn-market": "alive"
+      "vpn-market": "alive",
+      "fino-dsantos": "alive",
+      "fino-dsantos00": "alive"
     },
     "pendingDown": {},
     "transitions": [
@@ -255,7 +257,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-10-24T18:22:31.000Z",
+    "updatedAt": "2026-10-24T21:01:23.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -612,9 +614,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiherwkhrujpghzz3xke555sgc6swovb65oup7fcyc4vqpqdr6eq3q",
-        "updateCount": 328,
-        "changedAt": 1792866151,
+        "contenthash": "bafybeicztornabgopb7faw5w7bxy7hmkazfut6fh5zlthg5eur7oipg4ay",
+        "updateCount": 329,
+        "changedAt": 1792875683,
         "live": "alive"
       },
       "dotcatalog": {
@@ -755,6 +757,16 @@
         "contenthash": "",
         "updateCount": 0,
         "live": "unknown"
+      },
+      "fino-dsantos": {
+        "contenthash": "bafybeihxbrx7p4nczsucntyvw4uxpsbgoskfjlrrnouo3wjeetmkf4qfkm",
+        "updateCount": 0,
+        "live": "alive"
+      },
+      "fino-dsantos00": {
+        "contenthash": "bafybeigzlapmn2nheg2mgi5pmbdyxuuery4e3oqfobvhek4w5ai36m6ktq",
+        "updateCount": 0,
+        "live": "alive"
       },
       "flowfarm-staking": {
         "contenthash": "bafybeicwzsiam2vnmw7uaf7j45hbialgm4lm7terfs2fibd2xk5fhiiqi4",
