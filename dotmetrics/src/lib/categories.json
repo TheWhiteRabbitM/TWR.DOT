@@ -685,6 +685,18 @@
     "confidence": "none",
     "why": []
   },
+  "fino-dsantos": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
+  "fino-dsantos00": {
+    "category": "other",
+    "source": "unclassified",
+    "confidence": "none",
+    "why": []
+  },
   "flowfarm-staking": {
     "category": "finance",
     "source": "derived:manifest",
