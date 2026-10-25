@@ -1,54 +1,44 @@
 {
-  "measuredAt": 1792945920,
-  "headBlock": 14901034,
+  "measuredAt": 1792957596,
+  "headBlock": 14906611,
   "windowBlocks": 151,
-  "windowSeconds": 324,
-  "contractEvents": 15,
-  "activeContracts": 6,
-  "contractCalls": 12,
+  "windowSeconds": 300,
+  "contractEvents": 6,
+  "activeContracts": 4,
+  "contractCalls": 6,
   "topCaller": {
     "address": "0x216db17653c22dcb9a4d387b1e45f57102a30ca7",
-    "calls": 11,
+    "calls": 6,
     "reverts": 0
   },
   "reverts": 0,
   "topContracts": [
     {
       "address": "0x86dbe5528b8f7a490fd090319e241340c9765687",
-      "events": 3
-    },
-    {
-      "address": "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6",
-      "events": 3
-    },
-    {
-      "address": "0x0d78e5414aa8c45f40e4c40b0c862ff0486e3262",
-      "events": 3
-    },
-    {
-      "address": "0xef7b341915e7948ac10dabfa53f7f7069c7e42ec",
-      "events": 3
-    },
-    {
-      "address": "0x151f1de8dac967fba72f594bc64ca1fbe0083254",
       "events": 2
     },
     {
-      "address": "0x93f2743c98abcff4441c181ba886373fe2fbcbe8",
+      "address": "0x0d78e5414aa8c45f40e4c40b0c862ff0486e3262",
+      "events": 2
+    },
+    {
+      "address": "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6",
+      "events": 1
+    },
+    {
+      "address": "0xdf37c7be00c52b8872277f16217bd92dd7960010",
       "events": 1
     }
   ],
   "perContract": {
-    "headBlock": 14901034,
+    "headBlock": 14906611,
     "windowBlocks": 151,
-    "windowSeconds": 324,
+    "windowSeconds": 300,
     "events": {
-      "0x86dbe5528b8f7a490fd090319e241340c9765687": 3,
-      "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6": 3,
-      "0x0d78e5414aa8c45f40e4c40b0c862ff0486e3262": 3,
-      "0xef7b341915e7948ac10dabfa53f7f7069c7e42ec": 3,
-      "0x151f1de8dac967fba72f594bc64ca1fbe0083254": 2,
-      "0x93f2743c98abcff4441c181ba886373fe2fbcbe8": 1
+      "0x86dbe5528b8f7a490fd090319e241340c9765687": 2,
+      "0x0d78e5414aa8c45f40e4c40b0c862ff0486e3262": 2,
+      "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6": 1,
+      "0xdf37c7be00c52b8872277f16217bd92dd7960010": 1
     }
   }
 }
