@@ -1,21 +1,29 @@
 {
-  "measuredAt": 1793450520,
-  "headBlock": 15145160,
+  "measuredAt": 1793469324,
+  "headBlock": 15154456,
   "windowBlocks": 151,
   "windowSeconds": 300,
-  "contractEvents": 19,
-  "activeContracts": 7,
-  "contractCalls": 19,
+  "contractEvents": 40,
+  "activeContracts": 14,
+  "contractCalls": 9,
   "topCaller": {
     "address": "0x216db17653c22dcb9a4d387b1e45f57102a30ca7",
-    "calls": 14,
+    "calls": 6,
     "reverts": 0
   },
   "reverts": 0,
   "topContracts": [
     {
-      "address": "0x93f2743c98abcff4441c181ba886373fe2fbcbe8",
-      "events": 5
+      "address": "0x59dcf8bfffa7239243785c3fc336d8bb22312e8c",
+      "events": 7
+    },
+    {
+      "address": "0xc609e0c2dab4433d55a32fb098db8788c1956302",
+      "events": 4
+    },
+    {
+      "address": "0xb052e5efc5adeff1f21d48defb5169cb394a1a73",
+      "events": 4
     },
     {
       "address": "0x86dbe5528b8f7a490fd090319e241340c9765687",
@@ -30,30 +38,33 @@
       "events": 3
     },
     {
-      "address": "0xdf37c7be00c52b8872277f16217bd92dd7960010",
-      "events": 2
+      "address": "0x2b34bf94c6159e877217f5ef5b80d87056a2b274",
+      "events": 3
     },
     {
-      "address": "0x151f1de8dac967fba72f594bc64ca1fbe0083254",
-      "events": 2
-    },
-    {
-      "address": "0x78d2b449e93a9117ad6460610108c2ebf6c855bc",
-      "events": 1
+      "address": "0xb50269322010deef2afb162c009caf897971952c",
+      "events": 3
     }
   ],
   "perContract": {
-    "headBlock": 15145160,
+    "headBlock": 15154456,
     "windowBlocks": 151,
     "windowSeconds": 300,
     "events": {
-      "0x93f2743c98abcff4441c181ba886373fe2fbcbe8": 5,
+      "0x59dcf8bfffa7239243785c3fc336d8bb22312e8c": 7,
+      "0xc609e0c2dab4433d55a32fb098db8788c1956302": 4,
+      "0xb052e5efc5adeff1f21d48defb5169cb394a1a73": 4,
       "0x86dbe5528b8f7a490fd090319e241340c9765687": 3,
       "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6": 3,
       "0x0d78e5414aa8c45f40e4c40b0c862ff0486e3262": 3,
-      "0xdf37c7be00c52b8872277f16217bd92dd7960010": 2,
-      "0x151f1de8dac967fba72f594bc64ca1fbe0083254": 2,
-      "0x78d2b449e93a9117ad6460610108c2ebf6c855bc": 1
+      "0x2b34bf94c6159e877217f5ef5b80d87056a2b274": 3,
+      "0xb50269322010deef2afb162c009caf897971952c": 3,
+      "0x662d450ada2175fc9ae52af99882bce4d7a595fc": 3,
+      "0x4bbd25339844f0a88f9b4514f47965422c4b8581": 2,
+      "0x7e75491ecfb04900eb05ee63caba2b33900aabb5": 2,
+      "0x5df012daa06ca2602da153309c2e3a83284cb879": 1,
+      "0x532e7a3500a599f6ab1f846e3d4481a6ab18ba55": 1,
+      "0x8c3f3b13fbf2d598ec61d661ba430f9c4e19c316": 1
     }
   }
 }
