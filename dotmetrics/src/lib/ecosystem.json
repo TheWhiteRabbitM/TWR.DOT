@@ -1,49 +1,64 @@
 {
-  "measuredAt": 1793756004,
-  "headBlock": 15295119,
+  "measuredAt": 1793784144,
+  "headBlock": 15309016,
   "windowBlocks": 151,
   "windowSeconds": 300,
-  "contractEvents": 13,
-  "activeContracts": 5,
-  "contractCalls": 13,
+  "contractEvents": 17,
+  "activeContracts": 8,
+  "contractCalls": 16,
   "topCaller": {
-    "address": "0x216db17653c22dcb9a4d387b1e45f57102a30ca7",
-    "calls": 13,
+    "address": "0xd1976e033ab1fd94b4d54b0379bd4b17de5e0f94",
+    "calls": 9,
     "reverts": 0
   },
   "reverts": 0,
   "topContracts": [
     {
+      "address": "0x1d697411dae2780583c36a8c6548bb6650b9a273",
+      "events": 5
+    },
+    {
+      "address": "0x9aa003594d59c62ee17a73a569fd7b1dbdbd71e1",
+      "events": 2
+    },
+    {
       "address": "0x86dbe5528b8f7a490fd090319e241340c9765687",
-      "events": 3
+      "events": 2
     },
     {
       "address": "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6",
-      "events": 3
+      "events": 2
     },
     {
       "address": "0x0d78e5414aa8c45f40e4c40b0c862ff0486e3262",
-      "events": 3
-    },
-    {
-      "address": "0xdf37c7be00c52b8872277f16217bd92dd7960010",
       "events": 2
     },
     {
-      "address": "0x78d2b449e93a9117ad6460610108c2ebf6c855bc",
+      "address": "0x789a6c96692a1a0ad57e7efca7c26b6cd9b83ed9",
       "events": 2
+    },
+    {
+      "address": "0x65d761b79380ac7ebb03036b325353f13abc12f0",
+      "events": 1
+    },
+    {
+      "address": "0x578b61a47925bc91f5d4b50b2437d2e0b129bcbf",
+      "events": 1
     }
   ],
   "perContract": {
-    "headBlock": 15295119,
+    "headBlock": 15309016,
     "windowBlocks": 151,
     "windowSeconds": 300,
     "events": {
-      "0x86dbe5528b8f7a490fd090319e241340c9765687": 3,
-      "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6": 3,
-      "0x0d78e5414aa8c45f40e4c40b0c862ff0486e3262": 3,
-      "0xdf37c7be00c52b8872277f16217bd92dd7960010": 2,
-      "0x78d2b449e93a9117ad6460610108c2ebf6c855bc": 2
+      "0x1d697411dae2780583c36a8c6548bb6650b9a273": 5,
+      "0x9aa003594d59c62ee17a73a569fd7b1dbdbd71e1": 2,
+      "0x86dbe5528b8f7a490fd090319e241340c9765687": 2,
+      "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6": 2,
+      "0x0d78e5414aa8c45f40e4c40b0c862ff0486e3262": 2,
+      "0x789a6c96692a1a0ad57e7efca7c26b6cd9b83ed9": 2,
+      "0x65d761b79380ac7ebb03036b325353f13abc12f0": 1,
+      "0x578b61a47925bc91f5d4b50b2437d2e0b129bcbf": 1
     }
   }
 }
