@@ -1,29 +1,21 @@
 {
-  "measuredAt": 1794020364,
-  "headBlock": 15425044,
+  "measuredAt": 1794046872,
+  "headBlock": 15437873,
   "windowBlocks": 151,
   "windowSeconds": 300,
-  "contractEvents": 35,
-  "activeContracts": 10,
-  "contractCalls": 16,
+  "contractEvents": 20,
+  "activeContracts": 9,
+  "contractCalls": 14,
   "topCaller": {
     "address": "0x216db17653c22dcb9a4d387b1e45f57102a30ca7",
-    "calls": 8,
+    "calls": 12,
     "reverts": 0
   },
   "reverts": 0,
   "topContracts": [
     {
-      "address": "0x329aaa5b6bea94e750b2dacba74bf41291e6c2bd",
-      "events": 6
-    },
-    {
-      "address": "0x5fb56154ad2c1a97f7ae787ba246ad2c413cb82c",
-      "events": 6
-    },
-    {
-      "address": "0xd09e0f1c1e6ce8cf40df929ef4fc778629573651",
-      "events": 6
+      "address": "0x86dbe5528b8f7a490fd090319e241340c9765687",
+      "events": 3
     },
     {
       "address": "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6",
@@ -34,33 +26,40 @@
       "events": 3
     },
     {
-      "address": "0x4da0d37abe96c06ab19963f31ca2dc0412057a6f",
+      "address": "0xef7b341915e7948ac10dabfa53f7f7069c7e42ec",
       "events": 3
     },
     {
-      "address": "0x4e8920b1e69d0cea9b23cbfc87a17ee6fe02d2d3",
+      "address": "0x7e75491ecfb04900eb05ee63caba2b33900aabb5",
       "events": 3
     },
     {
-      "address": "0x5e122d6822e57b943ae964d0d345bd924ac44607",
+      "address": "0x9aa003594d59c62ee17a73a569fd7b1dbdbd71e1",
       "events": 2
+    },
+    {
+      "address": "0x151f1de8dac967fba72f594bc64ca1fbe0083254",
+      "events": 1
+    },
+    {
+      "address": "0xdf37c7be00c52b8872277f16217bd92dd7960010",
+      "events": 1
     }
   ],
   "perContract": {
-    "headBlock": 15425044,
+    "headBlock": 15437873,
     "windowBlocks": 151,
     "windowSeconds": 300,
     "events": {
-      "0x329aaa5b6bea94e750b2dacba74bf41291e6c2bd": 6,
-      "0x5fb56154ad2c1a97f7ae787ba246ad2c413cb82c": 6,
-      "0xd09e0f1c1e6ce8cf40df929ef4fc778629573651": 6,
+      "0x86dbe5528b8f7a490fd090319e241340c9765687": 3,
       "0x8fb37b0b0f69b1fc7bb30ad8f8b3f4e36e640df6": 3,
       "0x0d78e5414aa8c45f40e4c40b0c862ff0486e3262": 3,
-      "0x4da0d37abe96c06ab19963f31ca2dc0412057a6f": 3,
-      "0x4e8920b1e69d0cea9b23cbfc87a17ee6fe02d2d3": 3,
-      "0x5e122d6822e57b943ae964d0d345bd924ac44607": 2,
-      "0x86dbe5528b8f7a490fd090319e241340c9765687": 2,
-      "0xa73e39d6d4edbf6db9b3880228f935279f8cc16f": 1
+      "0xef7b341915e7948ac10dabfa53f7f7069c7e42ec": 3,
+      "0x7e75491ecfb04900eb05ee63caba2b33900aabb5": 3,
+      "0x9aa003594d59c62ee17a73a569fd7b1dbdbd71e1": 2,
+      "0x151f1de8dac967fba72f594bc64ca1fbe0083254": 1,
+      "0xdf37c7be00c52b8872277f16217bd92dd7960010": 1,
+      "0x78d2b449e93a9117ad6460610108c2ebf6c855bc": 1
     }
   }
 }
