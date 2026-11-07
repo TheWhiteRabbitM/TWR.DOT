@@ -1,6 +1,6 @@
 {
-  "lastBlock": 14772833,
-  "updatedAt": "2026-11-07T10:17:54.876Z",
+  "lastBlock": 14778833,
+  "updatedAt": "2026-11-07T16:32:41.551Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-11-07T10:24:32.000Z",
+    "updatedAt": "2026-11-07T16:39:23.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -257,7 +257,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-11-07T10:24:32.000Z",
+    "updatedAt": "2026-11-07T16:39:23.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -614,9 +614,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeiaxgpdh2lm7fztvlbbqqaf7k55a7bozqemgr5dzljox4q3cell5dq",
-        "updateCount": 384,
-        "changedAt": 1794047072,
+        "contenthash": "bafybeihlcrskpyqwaalwifelzosmd66er5tqftqbs6besumcxquvoq3hoi",
+        "updateCount": 385,
+        "changedAt": 1794069563,
         "live": "alive"
       },
       "dotcatalog": {
@@ -1235,9 +1235,9 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeic555f6tqb3qo5oeid4tojzvvsap7jfwqk7jqguub7fi4oyrthine",
-        "updateCount": 60,
-        "changedAt": 1794047072,
+        "contenthash": "bafybeifmuyhkmn7jh435isjre654m76w4xksoska6pklkm4mrodejaw5ay",
+        "updateCount": 61,
+        "changedAt": 1794069563,
         "live": "alive"
       },
       "peoplewiki": {
