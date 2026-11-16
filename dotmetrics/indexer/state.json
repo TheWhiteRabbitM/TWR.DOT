@@ -1,6 +1,6 @@
 {
-  "lastBlock": 14970833,
-  "updatedAt": "2026-11-16T09:51:21.403Z",
+  "lastBlock": 14976833,
+  "updatedAt": "2026-11-16T20:34:55.126Z",
   "registry": "0x527b08a640b527a3dae0c4be04d7344e430b6e50",
   "rpc": "wss://asset-hub-paseo-rpc.n.dwellir.com",
   "pending": [],
@@ -14,7 +14,7 @@
     "publishedAt": "2026-08-23T07:15:23.605Z"
   },
   "liveness": {
-    "updatedAt": "2026-11-16T09:57:58.000Z",
+    "updatedAt": "2026-11-16T20:41:50.000Z",
     "confirmRuns": 2,
     "state": {
       "ajedreztest01": "alive",
@@ -257,7 +257,7 @@
     ]
   },
   "changes": {
-    "updatedAt": "2026-11-16T09:57:58.000Z",
+    "updatedAt": "2026-11-16T20:41:50.000Z",
     "bootstrapped": true,
     "names": {
       "aaaaaaaaa": {
@@ -407,9 +407,9 @@
         "live": "alive"
       },
       "chirponchain": {
-        "contenthash": "bafybeid36e6fnhqtv2gcpoqq2lqbk5izokpj753frfbxsaavc2nnorpagi",
-        "updateCount": 20,
-        "changedAt": 1794246228,
+        "contenthash": "bafybeie6b5jnm7ftw3y5plzyuejkct4na76qf7vzga7nqhyksawegpadjy",
+        "updateCount": 21,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "chirpwatch": {
@@ -562,9 +562,9 @@
         "live": "alive"
       },
       "discreetly": {
-        "contenthash": "bafybeidme5s2fonesl3ghufv5yx6qmdmdhgkm6k2uju3mvyy2xdpqk5l3m",
-        "updateCount": 13,
-        "changedAt": 1794246228,
+        "contenthash": "bafybeihnxgjdmdcrpnjpvq4szmbfezqi764epkc3z65eemmzlywscecs3m",
+        "updateCount": 14,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "docs": {
@@ -614,9 +614,9 @@
         "live": "alive"
       },
       "dot-store": {
-        "contenthash": "bafybeifhm4g4m4pws5nslfre53tyi2ei5wemjmi44e5zpxyaaowjqjuz6i",
-        "updateCount": 417,
-        "changedAt": 1794823078,
+        "contenthash": "bafybeidwu7fm2nikajkhezhzi62fgy2hktbqd3xa7ajr5nmnv6aa7scij4",
+        "updateCount": 418,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "dotcatalog": {
@@ -664,9 +664,9 @@
         "live": "alive"
       },
       "dotmetrics": {
-        "contenthash": "bafybeigrjvbzpl2vulirrcng4hjiz5gcorgcinkjrtc5yq5lwkpqfc2giq",
-        "updateCount": 92,
-        "changedAt": 1794246228,
+        "contenthash": "bafybeidhafa3ncbi7blzw4eks2pr3aszrknz3xstblnugkuzui6g3xjfo4",
+        "updateCount": 93,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "dotnote-demo": {
@@ -1176,9 +1176,9 @@
         "live": "alive"
       },
       "openpetition": {
-        "contenthash": "bafybeif6nksacddmzxfrfwkctrjsxsblttcmkq6snhzavo6n4muc6svdwy",
-        "updateCount": 13,
-        "changedAt": 1794246228,
+        "contenthash": "bafybeibekvgdwvqeyuqdjpsbfxri3e5gxlqjgzujajjpkcj3z7gzao6qy4",
+        "updateCount": 14,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "openraonchain": {
@@ -1235,15 +1235,15 @@
         "live": "alive"
       },
       "peoplebook": {
-        "contenthash": "bafybeies4xeiiw4l3nxtohuokfvvdwvlftovq56c35mpbvzv4454rrr4xi",
-        "updateCount": 69,
-        "changedAt": 1794780045,
+        "contenthash": "bafybeig3crumctlzv6wl67qipqxidy7fbhim7rlhjsi34sphn6csoc77s4",
+        "updateCount": 70,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "peoplewiki": {
-        "contenthash": "bafybeihxufm3tefty2isvmltw5eqqxrlnprom3ak7e6sdqhnj5smv2rwc4",
-        "updateCount": 6,
-        "changedAt": 1794246228,
+        "contenthash": "bafybeihixs5e4jnc4ndbwiovqvvlkyiwihbofetd4i45ifniclyxzpiqbq",
+        "updateCount": 7,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "perantoapp": {
@@ -1515,9 +1515,9 @@
         "live": "unknown"
       },
       "thebutton": {
-        "contenthash": "bafybeifrepmng36viqsdpmgwuc54lbjxmei5jmophm6s5x6rn65syw6e3u",
-        "updateCount": 12,
-        "changedAt": 1794246228,
+        "contenthash": "bafybeihvcfyje6vg2mmuuaxtboxw64cvlxponqapmigqmn3vakhdukkhte",
+        "updateCount": 13,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "thepipersguild": {
@@ -1557,9 +1557,9 @@
         "live": "alive"
       },
       "truereviews": {
-        "contenthash": "bafybeihj2aeaixpiyrh6x2ncgvkmxqf7hurkeg5vfrf7fwckm247bjezzi",
-        "updateCount": 12,
-        "changedAt": 1794246228,
+        "contenthash": "bafybeigfovsdd4mcj527o7jiv2iwf3sl4hwxa2uargihwajwywblnggyuu",
+        "updateCount": 13,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "trustgraph": {
@@ -1706,9 +1706,9 @@
         "live": "unknown"
       },
       "wudcommunity": {
-        "contenthash": "bafybeih2zlnaof7yqag6cn2r37dbpcv7qfvonutzm2xplk4fawu25axaou",
-        "updateCount": 13,
-        "changedAt": 1794246228,
+        "contenthash": "bafybeidkt4ihd4giwmfkh6meguv54j53nhejjyl3cdi3xjju3hr45j3um4",
+        "updateCount": 14,
+        "changedAt": 1794861710,
         "live": "alive"
       },
       "wwwwwwwww": {
