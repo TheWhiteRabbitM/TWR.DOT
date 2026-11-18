@@ -1069,12 +1069,12 @@
     "hasExecutable": false,
     "tier": 0,
     "firstSeenAt": 1785317484,
-    "updateCount": 422,
-    "contenthash": "bafybeid2pyi7cdbocjcdywd5xvp6a3aax6enmyzl77xy5gfhmdyt2o3ty4",
+    "updateCount": 423,
+    "contenthash": "bafybeiek2v7bbout2bbms4oeihk6sbonirohoq5p4xlfpe753zecjsuvta",
     "alive": true,
     "lastSeenAliveAt": 1795011036,
     "livenessCheckedAt": 1794960000,
-    "contenthashChangedAt": 1794976366,
+    "contenthashChangedAt": 1795039699,
     "displayName": "dot-store",
     "description": "Every app registered on the Polkadot Products devnet, with real screenshots and on-chain reviews. Read from the chain on every load.",
     "iconCid": "bafk2bzaced3zjxs4yvrlndfacqnfnjrhjminirs67ivyc3jllryiubllehsiw",
@@ -2900,7 +2900,7 @@
     "owner": "0x4c8ad74eB2e8a804066E0bc7245A27A9Db9a983d",
     "displayName": "peoplebook",
     "description": "The devnet identity directory, where every handle has a claimable on-chain avatar NFT. Read live from the People chain: every person who registered a .dot-style handle gets a generated mask. Claim yours for 1 PAS and the PeoplebookAvatars contract (deployed on the devnet Asset Hub) mints an ERC-721 to you and rolls its rarity on chain, gacha-style: Legendary 3%, Epic 10%, Rare 20%, Uncommon 30%, Common 37%. The image is generated inside the contract, so the NFT shows in any wallet with nothing hosted anywhere. Own a .dot? Add it at claim and the contract verifies it against the registry for better odds. Searchable, self-updating as people claim.",
-    "contenthash": "bafybeidslvoobiavco5vkox3zcv3a3jstmudmbr7wvn3rdmmgvzugymllq",
+    "contenthash": "bafybeigzv4zjqcna4pddu554gdfp42rohxairqi6fqxffs3hbvyockjjq4",
     "category": "social",
     "screenshots": [
       "bafybeifw5eq2qesyncadkhn3xtpsp6xvp5emyhk7c3lqpe5xpi5bw2ueuy",
@@ -2913,8 +2913,8 @@
     "alive": true,
     "lastSeenAliveAt": 1795011036,
     "livenessCheckedAt": 1794960000,
-    "updateCount": 72,
-    "contenthashChangedAt": 1794955221
+    "updateCount": 73,
+    "contenthashChangedAt": 1795039699
   },
   "peoplewiki": {
     "label": "peoplewiki",
@@ -4613,5 +4613,5 @@
     "zluj",
     "zoro"
   ],
-  "generatedAt": 1795011037
+  "generatedAt": 1795039699
 }
